@@ -6,10 +6,12 @@ import com.team_3.School_Medical_Management_System.Model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//
+
 import java.util.List;
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "http://localhost:5173")
+
 public class StudentContoller {
     private StudentServiceInterFace studentService;
 
@@ -70,5 +72,10 @@ public class StudentContoller {
         }
     }
 
+
+    @GetMapping("Parents/{parentId}")
+    public List<Student> getStudentsByParentID(@PathVariable("parentId") int parentId) {
+        return studentService.getStudentsByParentID(parentId);
+    }
 
 }
