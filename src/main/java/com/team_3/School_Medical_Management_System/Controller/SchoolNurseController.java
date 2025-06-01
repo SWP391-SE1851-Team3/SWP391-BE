@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ChangePasswordRequest;
+import com.team_3.School_Medical_Management_System.DTO.LoginResponse;
 import com.team_3.School_Medical_Management_System.DTO.SchoolNurseDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.DTO.NurseLoginResponseDTO;
@@ -17,20 +18,23 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class SchoolNurseController {
     private SchoolNurseServiceInterFace schoolNurseService;
+
     @Autowired
     public SchoolNurseController(SchoolNurseServiceInterFace schoolNurseService) {
         this.schoolNurseService = schoolNurseService;
     }
+
     @GetMapping
     public List<SchoolNurse> getAllSchoolNurses() {
         return schoolNurseService.getSchoolNurses();
     }
+
     @GetMapping("/{fullName}")
     public ResponseEntity<SchoolNurse> getSchoolNurse(@PathVariable("fullName") String FullName) {
         var p = schoolNurseService.getSchoolNursesByName(FullName);
         if (p == null) {
             return ResponseEntity.notFound().build();
-        }else {
+        } else {
             return ResponseEntity.ok().body(p);
         }
     }
@@ -41,7 +45,7 @@ public class SchoolNurseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SchoolNurse> updateSchoolNurse(@PathVariable("id") int id,  SchoolNurseDTO schoolNurseDTO) {
+    public ResponseEntity<SchoolNurse> updateSchoolNurse(@PathVariable("id") int id, SchoolNurseDTO schoolNurseDTO) {
         var p = schoolNurseService.GetSchoolNursesById(id);
         if (p == null) {
             throw new RuntimeException("SchoolNurse not found");
@@ -59,8 +63,7 @@ public class SchoolNurseController {
         SchoolNurse nurse = schoolNurseService.LoginByAccount(loginRequest.getEmail(), loginRequest.getPassword());
         if (nurse != null) {
             // Trả về dữ liệu an toàn, không chứa mật khẩu, giu bao mat
-            NurseLoginResponseDTO response = new NurseLoginResponseDTO(nurse.getEmail(), null);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), 2));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }
@@ -68,11 +71,11 @@ public class SchoolNurseController {
 
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void>deleteSchoolNurse(@PathVariable("id") int id) {
+    public ResponseEntity<Void> deleteSchoolNurse(@PathVariable("id") int id) {
         var p = schoolNurseService.GetSchoolNursesById(id);
         if (p == null) {
             return ResponseEntity.notFound().build();
-        }else {
+        } else {
             schoolNurseService.DeleteSchoolNurses(id);
             return ResponseEntity.noContent().build();
         }
@@ -80,24 +83,13 @@ public class SchoolNurseController {
 
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        boolean succes = schoolNurseService.changePassword(changePasswordRequest.getEmail(),changePasswordRequest.getOldPassword(),changePasswordRequest.getNewPassword());
-        if(succes) {
+        boolean succes = schoolNurseService.changePassword(changePasswordRequest.getEmail(), changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
+        if (succes) {
             return ResponseEntity.ok("Password changed successfully");
-        }else {
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
