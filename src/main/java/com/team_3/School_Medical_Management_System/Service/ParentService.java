@@ -74,10 +74,10 @@ public class ParentService implements ParentSerivceInterFace {
     @Override
     public Parent LoginByAccount(String Email, String Password) {
         var p = parentRepo.LoginByAccount(Email, Password);
-        if (p.getEmail().length() < 10 || p.getEmail().length() > 15) {
-            throw new RuntimeException("Phone number too short");
+        if (p.getEmail().length() < 6) {
+            throw new RuntimeException("Email Parent too short");
         } else if (p.getPassword().isEmpty()){
-            throw new RuntimeException("Password is empty");
+            throw new RuntimeException("Password Parent is empty");
 
         }else {
             return p;

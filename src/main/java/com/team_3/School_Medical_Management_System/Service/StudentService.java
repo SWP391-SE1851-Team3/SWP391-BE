@@ -69,4 +69,14 @@ public class StudentService implements StudentServiceInterFace {
             return p;
         }
     }
+
+    @Override
+    public List<Student> getStudentsByParentID(int parentID) {
+        var p = studentInterface.getStudentsByParentID(parentID);
+        if(p == null) {
+            throw new RuntimeException("Student not found");
+        }else {
+            return p;
+        }
+    }
 }
