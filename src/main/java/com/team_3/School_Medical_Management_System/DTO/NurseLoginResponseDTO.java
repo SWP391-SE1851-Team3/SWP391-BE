@@ -1,7 +1,12 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class NurseLoginResponseDTO {
+    @Email
     private String email;
+    @NotBlank(message = "password Not allow empty")
     private String password;
 
     public NurseLoginResponseDTO() {}

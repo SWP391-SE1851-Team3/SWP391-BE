@@ -3,9 +3,10 @@ package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.ChangePasswordRequest;
 import com.team_3.School_Medical_Management_System.DTO.LoginResponse;
 import com.team_3.School_Medical_Management_System.DTO.SchoolNurseDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.DTO.NurseLoginResponseDTO;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class SchoolNurseController {
     }
 
     @PostMapping
-    public void addSchoolNurse(@RequestBody SchoolNurse schoolNurse) {
+    public void addSchoolNurse(@Valid @RequestBody SchoolNurse schoolNurse) {
         schoolNurseService.AddNewSchoolNurses(schoolNurse);
     }
 
@@ -60,7 +61,7 @@ public class SchoolNurseController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody NurseLoginResponseDTO loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody NurseLoginResponseDTO loginRequest) {
         SchoolNurse nurse = schoolNurseService.LoginByAccount(loginRequest.getEmail(), loginRequest.getPassword());
         if (nurse != null) {
             // Trả về dữ liệu an toàn, không chứa mật khẩu, giu bao mat

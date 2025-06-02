@@ -1,5 +1,5 @@
 package com.team_3.School_Medical_Management_System.Service;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.ParentSerivceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ParentSerivceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
 import jakarta.transaction.Transactional;

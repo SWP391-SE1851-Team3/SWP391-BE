@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @AllArgsConstructor
@@ -8,5 +9,6 @@ import lombok.*;
 @Setter
 @ToString
 public class StudentDTO {
+    @NotBlank(message = "ClassName Not allow empty")
     private String ClassName;
 }
