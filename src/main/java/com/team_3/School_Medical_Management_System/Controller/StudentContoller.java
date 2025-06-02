@@ -1,8 +1,9 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Student;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class StudentContoller {
     }
 
     @PostMapping
-    public void AddStudent(@RequestBody Student student) {
+    public void AddStudent(@Valid @RequestBody Student student) {
         studentService.addStudent(student);
     }
 
@@ -71,7 +72,6 @@ public class StudentContoller {
             return ResponseEntity.noContent().build();
         }
     }
-
 
     @GetMapping("Parents/{parentId}")
     public List<Student> getStudentsByParentID(@PathVariable("parentId") int parentId) {

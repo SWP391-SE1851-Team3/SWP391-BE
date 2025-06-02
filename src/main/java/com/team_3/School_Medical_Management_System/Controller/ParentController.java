@@ -6,6 +6,7 @@ import com.team_3.School_Medical_Management_System.DTO.ParentDTO;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.DTO.ParentLoginResponseDTO;
 import com.team_3.School_Medical_Management_System.Service.ParentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ParentController {
 
 
     @PostMapping
-    public ResponseEntity<Void> addParent(@RequestBody Parent Parent) {
+    public ResponseEntity<Void> addParent(@Valid @RequestBody Parent Parent) {
         var p = parentService.GetParentById(Parent.getParentID());
         if (p == null) {
             parentService.AddNewParent(Parent);

@@ -1,5 +1,5 @@
 package com.team_3.School_Medical_Management_System.Service;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.ManagerServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ManagerServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ManagerInterFace;
 import com.team_3.School_Medical_Management_System.Model.Manager;
 import jakarta.transaction.Transactional;

@@ -1,6 +1,6 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseInterFace;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import jakarta.transaction.Transactional;
