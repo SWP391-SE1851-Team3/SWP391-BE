@@ -1,8 +1,9 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Student;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "http://localhost:5173")
+
 public class StudentContoller {
     private StudentServiceInterFace studentService;
 
@@ -44,7 +47,7 @@ public class StudentContoller {
     }
 
     @PostMapping
-    public void AddStudent(@RequestBody Student student) {
+    public void AddStudent(@Valid @RequestBody Student student) {
         studentService.addStudent(student);
     }
 
@@ -70,5 +73,9 @@ public class StudentContoller {
         }
     }
 
+    @GetMapping("Parents/{parentId}")
+    public List<Student> getStudentsByParentID(@PathVariable("parentId") int parentId) {
+        return studentService.getStudentsByParentID(parentId);
+    }
 
 }

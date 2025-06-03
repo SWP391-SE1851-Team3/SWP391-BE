@@ -1,4 +1,4 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivce;
+package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
 import com.team_3.School_Medical_Management_System.Model.Student;
 
@@ -11,4 +11,5 @@ public interface StudentServiceInterFace {
     public List<Student> getStudents();
     public Student UpdateStudent(Student student);
     public Student GetStudentByName(String FullName, String ClassName);
+    public List<Student> getStudentsByParentID(int parentID);
 }

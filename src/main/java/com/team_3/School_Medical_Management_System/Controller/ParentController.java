@@ -1,10 +1,12 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ChangePasswordRequest;
+import com.team_3.School_Medical_Management_System.DTO.LoginResponse;
 import com.team_3.School_Medical_Management_System.DTO.ParentDTO;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.DTO.ParentLoginResponseDTO;
 import com.team_3.School_Medical_Management_System.Service.ParentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/parents")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ParentController {
 
     private ParentService parentService;
@@ -37,7 +39,7 @@ public class ParentController {
 
 
     @PostMapping
-    public ResponseEntity<Void> addParent(@RequestBody Parent Parent) {
+    public ResponseEntity<Void> addParent(@Valid @RequestBody Parent Parent) {
         var p = parentService.GetParentById(Parent.getParentID());
         if (p == null) {
             parentService.AddNewParent(Parent);
@@ -64,8 +66,7 @@ public class ParentController {
     public ResponseEntity<?> login(@RequestBody ParentLoginResponseDTO parentLoginResponseDTO) {
         var p = parentService.LoginByAccount(parentLoginResponseDTO.getEmail(), parentLoginResponseDTO.getPassword());
         if (p != null) {
-            ParentLoginResponseDTO response = new ParentLoginResponseDTO(p.getEmail(), null);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new LoginResponse(p.getEmail(), 3));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }

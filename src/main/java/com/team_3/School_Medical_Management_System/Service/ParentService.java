@@ -1,5 +1,5 @@
 package com.team_3.School_Medical_Management_System.Service;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.ParentSerivceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ParentSerivceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
 import jakarta.transaction.Transactional;
@@ -74,10 +74,10 @@ public class ParentService implements ParentSerivceInterFace {
     @Override
     public Parent LoginByAccount(String Email, String Password) {
         var p = parentRepo.LoginByAccount(Email, Password);
-        if (p.getEmail().length() < 10 || p.getEmail().length() > 15) {
-            throw new RuntimeException("Phone number too short");
+        if (p.getEmail().length() < 6) {
+            throw new RuntimeException("Email Parent too short");
         } else if (p.getPassword().isEmpty()){
-            throw new RuntimeException("Password is empty");
+            throw new RuntimeException("Password Parent is empty");
 
         }else {
             return p;

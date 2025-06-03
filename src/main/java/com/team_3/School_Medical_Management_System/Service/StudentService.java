@@ -1,6 +1,6 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentInterFace;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import jakarta.transaction.Transactional;
@@ -64,6 +64,16 @@ public class StudentService implements StudentServiceInterFace {
     public Student GetStudentByName(String FullName, String ClassName) {
         var p = studentInterface.GetStudentByName(FullName, ClassName);
         if(p.getFullName().isEmpty() || p.getClassName().isEmpty()) {
+            throw new RuntimeException("Student not found");
+        }else {
+            return p;
+        }
+    }
+
+    @Override
+    public List<Student> getStudentsByParentID(int parentID) {
+        var p = studentInterface.getStudentsByParentID(parentID);
+        if(p == null) {
             throw new RuntimeException("Student not found");
         }else {
             return p;
