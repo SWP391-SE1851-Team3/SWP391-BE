@@ -1,0 +1,88 @@
+package com.team_3.School_Medical_Management_System.Service;
+
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
+import com.team_3.School_Medical_Management_System.Repositories.MedicationSubmissionRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class MedicationSubmissionService implements MedicationSubmissionServiceInterface {
+
+    @Autowired
+    private MedicationSubmissionRepository medicationSubmissionRepository;
+
+    @Override
+    public MedicationSubmission submitMedication(MedicationSubmissionDTO medicationSubmissionDTO) {
+        MedicationSubmission submission = new MedicationSubmission();
+        submission.setParentId(medicationSubmissionDTO.getParentId());
+        submission.setStudentId(medicationSubmissionDTO.getStudentId());
+        submission.setMedicationName(medicationSubmissionDTO.getMedicationName());
+        submission.setMedicationSubmissionDate(LocalDateTime.now());
+        submission.setFrequencyPerDay(medicationSubmissionDTO.getFrequencyPerDay());
+        submission.setDurationDays(medicationSubmissionDTO.getDurationDays());
+        submission.setDosage(medicationSubmissionDTO.getDosage());
+        submission.setStartDate(medicationSubmissionDTO.getStartDate());
+        submission.setEndDate(medicationSubmissionDTO.getEndDate());
+        submission.setNotes(medicationSubmissionDTO.getNotes());
+
+        return medicationSubmissionRepository.save(submission);
+    }
+
+    @Override
+    public List<MedicationSubmission> getAllMedicationSubmissionsByParentId(int parentId) {
+        return medicationSubmissionRepository.findByParentId(parentId);
+    }
+
+    @Override
+    public List<MedicationSubmission> getAllPendingMedicationSubmissions() {
+        return medicationSubmissionRepository.findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
+    }
+
+    @Override
+    public MedicationSubmission approveMedicationSubmission(int submissionId) {
+        MedicationSubmission submission = medicationSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+
+        submission.setStatus(MedicationSubmission.SubmissionStatus.APPROVED);
+        submission.setProcessedDate(LocalDateTime.now());
+        return medicationSubmissionRepository.save(submission);
+    }
+
+    @Override
+    public MedicationSubmission rejectMedicationSubmission(int submissionId, String reason) {
+        MedicationSubmission submission = medicationSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+
+        submission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
+        submission.setRejectionReason(reason);
+        submission.setProcessedDate(LocalDateTime.now());
+        return medicationSubmissionRepository.save(submission);
+    }
+
+    @Override
+    public MedicationSubmission confirmMedicationAdministered(int submissionId, String administrationNotes) {
+        MedicationSubmission submission = medicationSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+
+        if (submission.getStatus() != MedicationSubmission.SubmissionStatus.APPROVED) {
+            throw new IllegalStateException("Cannot confirm administration for a submission that is not approved");
+        }
+
+        submission.setStatus(MedicationSubmission.SubmissionStatus.ADMINISTERED);
+        submission.setAdministeredDate(LocalDateTime.now());
+        submission.setAdministrationNotes(administrationNotes);
+
+        return medicationSubmissionRepository.save(submission);
+    }
+
+    @Override
+    public List<MedicationSubmission> getAllSubmissionsByStatus(MedicationSubmission.SubmissionStatus submissionStatus) {
+        return medicationSubmissionRepository.findByStatus(submissionStatus);
+    }
+}

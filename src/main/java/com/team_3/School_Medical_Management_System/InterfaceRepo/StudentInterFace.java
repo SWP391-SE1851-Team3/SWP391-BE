@@ -11,5 +11,5 @@ public interface StudentInterFace {
     public List<Student> getStudents();
     public Student UpdateStudent(Student student);
     public Student GetStudentByName(String FullName, String ClassName);
-
+    public List<Student> getStudentsByParentId(int parentId);
 }

@@ -17,7 +17,6 @@ public class StudentRepo implements StudentInterFace {
         this.entityManager = entityManager;
     }
 
-
     @Override
     public void addStudent(Student student) {
         entityManager.persist(student);
@@ -26,7 +25,6 @@ public class StudentRepo implements StudentInterFace {
     @Override
     public void removeStudent(int id) {
         entityManager.remove(id);
-
     }
 
     @Override
@@ -52,5 +50,13 @@ public class StudentRepo implements StudentInterFace {
                 setParameter("FullName", FullName).
                 setParameter("ClassName", ClassName).
                 getSingleResult();
+    }
+
+    @Override
+    public List<Student> getStudentsByParentId(int parentId) {
+        String sql = "select s from Student s where s.ParentID = :parentId";
+        return entityManager.createQuery(sql, Student.class)
+                .setParameter("parentId", parentId)
+                .getResultList();
     }
 }

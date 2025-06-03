@@ -18,7 +18,6 @@ public class StudentService implements StudentServiceInterFace {
         this.studentInterface = studentInterface;
     }
 
-
     @Override
     public void addStudent(Student student) {
         var p = getStudent(student.getStudentID());
@@ -68,5 +67,10 @@ public class StudentService implements StudentServiceInterFace {
         }else {
             return p;
         }
+    }
+
+    @Override
+    public List<Student> getStudentsByParentId(int parentId) {
+        return studentInterface.getStudentsByParentId(parentId);
     }
 }
