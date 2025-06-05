@@ -10,12 +10,5 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/medical-events")
 
 public class MedicalEventController {
-    @Autowired
-    private MedicalEventService medicalEventService;
-    @PostMapping("/api/medicalEvent")
-    public ResponseEntity<MedicalEventDTO> createMedicalEvent(@RequestBody MedicalEventDTO medicalEventDTO, @RequestParam int nusreID) {
-        // Logic to create a medical event
 
-        return ResponseEntity.ok().build();
-    }
 }
