@@ -22,7 +22,7 @@ public class SchoolNurse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private int NurseID;
-    @NotBlank(message = "UserName Not allow empty")
+   @NotBlank(message = "UserName Not allow empty")
     private String UserName;
     @NotBlank(message = "Password Not allow empty")
     private String Password;

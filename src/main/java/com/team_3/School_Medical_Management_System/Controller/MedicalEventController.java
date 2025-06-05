@@ -18,7 +18,7 @@ public class MedicalEventController {
         this.medicalEventService = medicalEventService;
     }
 
-    @PostMapping
+    @PostMapping("/create/{nurseId}")
     public ResponseEntity<MedicalEventDTO> createMedicalEvent(@RequestBody MedicalEventDTO dto, @RequestParam Integer nurseId) {
         return ResponseEntity.ok( medicalEventService.createMedicalEvent(dto, nurseId));
     }
@@ -28,10 +28,10 @@ public class MedicalEventController {
 //        return medicalEventService.getMedicalEventById(id);
 //    }
 //
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> updateMedicalEvent(@PathVariable Integer id, @RequestBody MedicalEventDTO medicalEventDTO) {
-//        return medicalEventService.updateMedicalEvent(id, medicalEventDTO);
-//    }
+    @PutMapping("/api/medical-events/{id}")
+    public ResponseEntity<MedicalEventDTO> updateMedicalEvent(@RequestParam Integer nurseID, @RequestBody MedicalEventDTO dto) {
+        return ResponseEntity.ok(medicalEventService);
+    }
 //
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<?> deleteMedicalEvent(@PathVariable Integer id) {

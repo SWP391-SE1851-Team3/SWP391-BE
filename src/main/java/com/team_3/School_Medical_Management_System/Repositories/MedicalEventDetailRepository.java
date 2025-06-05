@@ -9,7 +9,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MedicalEventDetailRepository extends JpaRepository<MedicalEventDetail, MedicalEventDetailId> {
-    List<MedicalEventDetail> findByStudentStudentID(Integer studentId);
-    List<MedicalEventDetail> findByEventEventID(Integer eventId);
-    List<MedicalEventDetail> findByProcessingStatus(String status);
+
 }

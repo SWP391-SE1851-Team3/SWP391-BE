@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "MedicalEventType")
 public class MedicalEventType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eventTypeID;
 
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "Nvarchar(255)")
     private String typeName;
 }

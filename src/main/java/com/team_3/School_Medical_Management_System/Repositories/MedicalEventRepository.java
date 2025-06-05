@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface MedicalEventRepository extends JpaRepository<MedicalEvent, Integer> {
 
-    List<MedicalEvent> findByParentId(Integer parentId);
+ //   List<MedicalEvent> findByParentId(Integer parentId);
    // List<MedicalEvent> findByEventDateTimeBetween(LocalDateTime start, LocalDateTime end);
 }

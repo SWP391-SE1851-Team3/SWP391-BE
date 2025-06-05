@@ -14,12 +14,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/auth")
 public class ForgotPasswordController {
-    private EmailService emailService;
     private ParentRepo parentRepo;
 
     @Autowired
-    public ForgotPasswordController(EmailService emailService, ParentRepo parentRepo) {
-        this.emailService = emailService;
+    public ForgotPasswordController(ParentRepo parentRepo) {
         this.parentRepo = parentRepo;
     }
 
@@ -30,12 +28,12 @@ public class ForgotPasswordController {
         var p = parentRepo.getParentByEmail(email);
         if (p != null) {
             String otp = String.valueOf(new Random().nextInt(900000) + 100000);
-            emailService.sendOTP(email, otp);
+            // Commented out email sending functionality
+            // emailService.sendOTP(email, otp);
             // Lưu OTP tạm
             otpStore.put(email, otp);
+            System.out.println("OTP for " + email + ": " + otp);
         }
-        return ResponseEntity.ok("Mã xác nhận đã được gửi tới email của bạn.");
-
+        return ResponseEntity.ok("Mã xác nhận đã được gửi tới email của bạn (Disabled in dev mode).");
     }
-
 }

@@ -5,8 +5,9 @@ import com.team_3.School_Medical_Management_System.Model.MedicalEventNotificatio
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MedicalEventNotificationRepo extends JpaRepository<MedicalEventNotification, MedicalEventNotificationId> {
-    List<MedicalEventNotification> findByParentIDParentID(Integer parentId);
-    List<MedicalEventNotification> findByEventIDEventID(Integer eventId);
+    Optional<MedicalEventNotification> findByEvent_EventId(Integer eventId);
+
 }
