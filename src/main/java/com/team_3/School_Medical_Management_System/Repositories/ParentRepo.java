@@ -1,6 +1,6 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
-import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentInterFace;
+import  com.team_3.School_Medical_Management_System.InterfaceRepo.ParentInterFace;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;

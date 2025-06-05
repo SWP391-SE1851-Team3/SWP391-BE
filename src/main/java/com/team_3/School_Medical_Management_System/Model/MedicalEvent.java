@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-
+// Luư thông tin của sự kiện y tế vào class này
 @Table(name = "MedicalEvent")
 public class MedicalEvent {
     @Id
@@ -21,7 +21,20 @@ public class MedicalEvent {
     private String heartRate;
     private LocalDateTime eventDateTime;
 
-    @ManyToOne
-    @JoinColumn(name = "ParentID")
-    private Parent parent;
+ @ManyToOne
+ @JoinColumn(name = "ParentID")
+ private Parent parent;
+
+    public MedicalEvent() {
+    }
+    public MedicalEvent(Integer eventID, String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Parent parent) {
+        this.eventID = eventID;
+        this.usageMethod = usageMethod;
+        this.isEmergency = isEmergency;
+        this.hasParentBeenInformed = hasParentBeenInformed;
+        this.temperature = temperature;
+        this.heartRate = heartRate;
+        this.eventDateTime = eventDateTime;
+        this.parent = parent;
+    }
 }

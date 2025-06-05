@@ -1,20 +1,23 @@
 package com.team_3.School_Medical_Management_System.Model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
+// Liên kết giữa sự kiện y tế và y tá trường học@
 @Entity
-@Data
-@Table(name = "MedicalEventNurseMapping")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @IdClass(MedicalEventNurseMappingId.class)
 public class MedicalEventNurseMapping {
     @Id
     @ManyToOne
     @JoinColumn(name = "NurseID")
-    private SchoolNurse nurse;
+    private SchoolNurse nurseID;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "EventID")
-    private MedicalEvent event;
+    private MedicalEvent eventID;
 }

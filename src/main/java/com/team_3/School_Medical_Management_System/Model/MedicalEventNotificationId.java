@@ -10,8 +10,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalEventNotificationId implements Serializable {
-    private Integer parent;
-    private Integer event;
+    private Integer parentID;
+    private Integer eventID;
 
     // dùng vậy thì JPA mới hiểu để sử dụng 2 khóa chính này cho việc tìm kiếm hoặc bất cứ việc gì đc
     // nếu không có thì sẽ báo lỗi không tìm thấy khóa chính
