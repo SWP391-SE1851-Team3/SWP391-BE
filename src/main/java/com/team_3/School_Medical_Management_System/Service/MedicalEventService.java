@@ -77,7 +77,19 @@ public class MedicalEventService {
         typeMapping.setEvent(event);
         typeMapping.setEventType(eventType);
         medicalEventTypeMappingRepository.save(typeMapping);
-        medicalEventRepository.save(event);
+
+        // 8. Gửi thông báo cho phụ huynh nếu cần
+        if (dto.getHasParentBeenInformed() != null && dto.getHasParentBeenInformed()) {
+            MedicalEventNotification notification = new MedicalEventNotification();
+            notification.setParentID(parent);
+            notification.setEventID(event);
+            notification.setTitle("Thông báo sự kiện y tế");
+            notification.setContent("Học sinh " + student.getFullName() + " gặp sự kiện y tế: " + dto.getEventType());
+            medicalEventNotificationRepository.save(notification); // Lưu vào bảng MedicalEventNotification
+        }
+
+        // 9. Trả về DTO
+        dto.setEventId(event.getEventID()); // Cập nhật eventId cho DTO
         return dto;
     }
 }
