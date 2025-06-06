@@ -4,8 +4,8 @@ import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissi
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
-import com.team_3.School_Medical_Management_System.Repositories.ConfirmMedicationSubmissionRepository;
-import com.team_3.School_Medical_Management_System.Repositories.MedicationSubmissionRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubmissionServiceInterface {
 
     @Autowired
-    private ConfirmMedicationSubmissionRepository confirmRepository;
+    private ConfirmMedicationSubmissionInterFace confirmRepository;
 
     @Autowired
-    private MedicationSubmissionRepository medicationSubmissionRepository;
+    private MedicationSubmissionInterFace medicationSubmissionInterFace;
 
     @Override
     public ConfirmMedicationSubmissionDTO createConfirmation(ConfirmMedicationSubmissionDTO confirmDTO) {
@@ -30,7 +30,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
         // Update the MedicationSubmission status based on nurse confirmation
         Optional<MedicationSubmission> medicationSubmissionOpt =
-            medicationSubmissionRepository.findById(confirmDTO.getMedicationSubmissionId());
+            medicationSubmissionInterFace.findById(confirmDTO.getMedicationSubmissionId());
 
         if (medicationSubmissionOpt.isPresent()) {
             MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
@@ -41,7 +41,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
                 medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
                 medicationSubmission.setProcessedDate(LocalDateTime.now());
             }
-            medicationSubmissionRepository.save(medicationSubmission);
+            medicationSubmissionInterFace.save(medicationSubmission);
         }
 
         ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
@@ -58,7 +58,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
             // Update the MedicationSubmission status
             Optional<MedicationSubmission> medicationSubmissionOpt =
-                medicationSubmissionRepository.findById(confirmation.getMedicationSubmissionId());
+                medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
 
             if (medicationSubmissionOpt.isPresent()) {
                 MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
@@ -68,7 +68,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
                     medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
                 }
                 medicationSubmission.setProcessedDate(LocalDateTime.now());
-                medicationSubmissionRepository.save(medicationSubmission);
+                medicationSubmissionInterFace.save(medicationSubmission);
             }
 
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
@@ -88,13 +88,13 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
             // Update the MedicationSubmission status if medication was taken
             if (receivedMedicine) {
                 Optional<MedicationSubmission> medicationSubmissionOpt =
-                    medicationSubmissionRepository.findById(confirmation.getMedicationSubmissionId());
+                    medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
 
                 if (medicationSubmissionOpt.isPresent()) {
                     MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
                     medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.ADMINISTERED);
                     medicationSubmission.setAdministeredDate(LocalDateTime.now());
-                    medicationSubmissionRepository.save(medicationSubmission);
+                    medicationSubmissionInterFace.save(medicationSubmission);
                 }
             }
 
