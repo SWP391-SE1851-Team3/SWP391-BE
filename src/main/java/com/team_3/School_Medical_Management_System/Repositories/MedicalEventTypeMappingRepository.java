@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface MedicalEventTypeMappingRepository extends JpaRepository<MedicalEventTypeMapping, MedicalEventTypeMappingId> {
     //Optional<MedicalEventTypeventIDeMapping> findByEvent_EventId(Integer eventId);
-    Optional<MedicalEventTypeMapping> findByeventID_eventID(Integer eventId);
+ //   Optional<MedicalEventTypeMapping> findByEventID_eventID(Integer eventId);
+
 
 }

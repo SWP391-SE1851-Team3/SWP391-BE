@@ -5,7 +5,11 @@ import com.team_3.School_Medical_Management_System.Service.MedicalEventService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/medical-events")
@@ -23,12 +27,14 @@ public class MedicalEventController {
     public ResponseEntity<MedicalEventDTO> createMedicalEvent(@RequestBody @Valid  MedicalEventDTO dto, @RequestParam Integer nurseId) {
         return ResponseEntity.ok( medicalEventService.createMedicalSudden(dto, nurseId));
     }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> getMedicalEventById(@PathVariable Integer id) {
-//        return medicalEventService.getMedicalEventById(id);
-//    }
-//
+
+    @GetMapping("/{parentId}")
+    public ResponseEntity<List<MedicalEventDTO>> getAllEventStudentById(@PathVariable Integer parentId) {
+
+
+        return ResponseEntity.ok(medicalEventService.getMedicalEventsByParentId(parentId));
+    }
+
     @PutMapping("/update/{eventId}")
     public ResponseEntity<MedicalEventDTO> updateMedicalEvent(
             @PathVariable Integer eventId,//({eventId}) dành cho @PathVariable

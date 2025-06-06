@@ -7,6 +7,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Transactional
 @Service
 public class MedicalEventService {
@@ -17,7 +20,8 @@ public class MedicalEventService {
     // Tiêm các repository để truy cập cơ sở dữ liệu
     @Autowired
     private MedicalEventRepository medicalEventRepository;
-
+@Autowired
+private ParentRepo parentRepo;
     @Autowired
     private MedicalEventTypeRepository medicalEventTypeRepository;
 
@@ -176,4 +180,108 @@ nurseMapping.setNurseID(nurse);
         dto.setEventId(medicalEvent.getEventID());
         return dto;
     }
+
+    // Tìm MedicalEventDetail theo EventID
+    public MedicalEventDetail findMedicalEventDetailByEventId(Integer eventId) {
+        List<MedicalEventDetail> allDetails = medicalEventDetailRepository.findAll();
+        for (MedicalEventDetail detail : allDetails) {
+            if (detail.getEvent().getEventID().equals(eventId)) {
+                return detail;
+            }
+        }
+        throw new RuntimeException("Không tìm thấy chi tiết sự kiện y tế với EventID: " + eventId);
+    }
+
+    // Tìm danh sách MedicalEvent theo ParentID
+    public List<MedicalEvent> findMedicalEventsByParentId(Integer parentId) {
+        List<MedicalEvent> allEvents = medicalEventRepository.findAll();
+        List<MedicalEvent> result = new ArrayList<>();
+        for (MedicalEvent event : allEvents) {
+            if (event.getParent().getParentID() == parentId) {
+                result.add(event);
+            }
+        }
+        return result;
+    }
+
+    // Tìm MedicalEvent theo ID
+    public MedicalEvent findMedicalEventById(Integer id) {
+        return medicalEventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện y tế với ID: " + id));
+    }
+
+    // Tìm MedicalEventTypeMapping theo EventID
+    public MedicalEventTypeMapping findMedicalEventTypeMappingByEventId(Integer eventId) {
+        List<MedicalEventTypeMapping> allMappings = medicalEventTypeMappingRepository.findAll();
+        for (MedicalEventTypeMapping mapping : allMappings) {
+            if (mapping.getEventID().getEventID().equals(eventId)) {
+                return mapping;
+            }
+        }
+        throw new RuntimeException("Không tìm thấy ánh xạ loại sự kiện y tế với EventID: " + eventId);
+    }
+
+    // Tìm Parent theo ParentID
+    public Parent findParentById(Integer parentId) {
+        return parentRepository.findById(parentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phụ huynh với ID: " + parentId));
+    }
+
+    // Lấy danh sách MedicalEventDTO theo ParentID
+    public List<MedicalEventDTO> getMedicalEventsByParentId(Integer parentId) {
+        // Bước 1: Kiểm tra đầu vào
+        if (parentId == null) {
+            throw new IllegalArgumentException("ParentID không được để trống");
+        }   
+
+        // Bước 2: Kiểm tra phụ huynh
+        Parent parent = findParentById(parentId);
+
+        // Bước 3: Tìm tất cả các sự kiện y tế của phụ huynh theo ID
+        List<MedicalEvent> events = findMedicalEventsByParentId(parentId);
+
+        // Bước 4: Chuyển thành danh sách DTO để trả về cho FE
+        List<MedicalEventDTO> result = new ArrayList<>();
+        for (MedicalEvent event : events) {
+            MedicalEventDTO dto = new MedicalEventDTO();
+            dto.setEventId(event.getEventID());
+            dto.setParentId(event.getParent().getParentID());
+            dto.setUsageMethod(event.getUsageMethod());
+            dto.setIsEmergency(event.getIsEmergency());
+            dto.setHasParentBeenInformed(event.getHasParentBeenInformed());
+            dto.setTemperature(event.getTemperature());
+            dto.setHeartRate(event.getHeartRate());
+            dto.setEventDateTime(event.getEventDateTime());
+
+            // Bước 4.1: Tìm chi tiết sự kiện y tế
+            try {
+                MedicalEventDetail detail = findMedicalEventDetailByEventId(event.getEventID());
+                dto.setStudentId(detail.getStudentID().getStudentID());
+                dto.setNote(detail.getNote());
+                dto.setResult(detail.getResult());
+                dto.setProcessingStatus(detail.getProcessingStatus());
+            } catch (RuntimeException e) {
+                dto.setStudentId(null);
+                dto.setNote(null);
+                dto.setResult(null);
+                dto.setProcessingStatus(null);
+            }
+
+            // Bước 4.2: Lấy loại sự kiện y tế
+            try {
+                MedicalEventTypeMapping typeMapping = findMedicalEventTypeMappingByEventId(event.getEventID());
+                dto.setEventType(typeMapping.getEventType().getTypeName());
+            } catch (RuntimeException e) {
+                dto.setEventType(null);
+            }
+
+            result.add(dto);
+        }
+
+        // Bước 5: Trả về danh sách
+        return result;
+    }
+
+    // Các phương thức khác (createMedicalEvent, updateMedicalEvent, ...)
 }
+
