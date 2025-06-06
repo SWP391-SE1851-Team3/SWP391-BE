@@ -22,7 +22,7 @@ public class MedicalEventDetail {
     @Id
     @ManyToOne
     @JoinColumn(name = "EventID")
-    private MedicalEvent eventID;
+    private MedicalEvent event;
 
     @Column(columnDefinition = "nvarchar(255)", nullable = false)
     private String note; // Ghi chú (ví dụ: "Đã cho uống paracetamol")
@@ -38,7 +38,7 @@ public class MedicalEventDetail {
 
     public MedicalEventDetail(Student student, MedicalEvent event, String note, String result, String processingStatus) {
         this.studentID = student;
-        this.eventID = event;
+        this.event = event;
         this.note = note;
         this.result = result;
         this.processingStatus = processingStatus;

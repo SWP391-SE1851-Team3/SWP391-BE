@@ -10,6 +10,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalEventTypeMappingId implements Serializable {
-    private Integer event;
+    private Integer eventID;
     private Integer eventType;
 }

@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MedicalEventNotificationRepo extends JpaRepository<MedicalEventNotification, MedicalEventNotificationId> {
-    Optional<MedicalEventNotification> findByEvent_EventId(Integer eventId);
+  //  Optional<MedicalEventNotification> findByeventID_eventID(Integer eventId);
 
 }

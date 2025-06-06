@@ -1,13 +1,18 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+
 public class MedicalEventDTO {
 
 //    private Integer eventId;
@@ -43,4 +48,21 @@ public class MedicalEventDTO {
     private String result; // Kết quả
     private String processingStatus; //
 
+    public MedicalEventDTO() {
+    }
+    public MedicalEventDTO( String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentId, Integer studentId, String eventType, String note, String result, String processingStatus) {
+
+        this.usageMethod = usageMethod;
+        this.isEmergency = isEmergency;
+        this.hasParentBeenInformed = hasParentBeenInformed;
+        this.temperature = temperature;
+        this.heartRate = heartRate;
+        this.eventDateTime = eventDateTime;
+        this.parentId = parentId;
+        this.studentId = studentId;
+        this.eventType = eventType;
+        this.note = note;
+        this.result = result;
+        this.processingStatus = processingStatus;
+    }
 }

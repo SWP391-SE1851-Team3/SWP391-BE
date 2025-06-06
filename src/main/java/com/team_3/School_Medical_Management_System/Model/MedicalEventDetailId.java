@@ -10,12 +10,12 @@ import java.io.Serializable;
 
 public class MedicalEventDetailId implements Serializable {
     private Integer studentID;
-    private Integer eventID ;
+    private Integer event;
 
     public MedicalEventDetailId() {
     }
     public MedicalEventDetailId(Integer  studentID, Integer eventID) {
         this.studentID = studentID;
-        this.eventID = eventID;
+        this.event = eventID;
     }
 }

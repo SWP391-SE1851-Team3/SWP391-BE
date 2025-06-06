@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MedicalEventNurseMappingRepository extends JpaRepository<MedicalEventNurseMapping, MedicalEventNurseMappingId> {
-    Optional<MedicalEventNurseMapping> findByEvent_EventId(Integer eventId);
+  //  Optional<MedicalEventNurseMapping> findByeventID_eventID(Integer eventId);
 }

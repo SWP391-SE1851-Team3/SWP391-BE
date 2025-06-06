@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventDTO;
 import com.team_3.School_Medical_Management_System.Service.MedicalEventService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,9 @@ public class MedicalEventController {
         this.medicalEventService = medicalEventService;
     }
 
-    @PostMapping("/create/{nurseId}")
-    public ResponseEntity<MedicalEventDTO> createMedicalEvent(@RequestBody MedicalEventDTO dto, @RequestParam Integer nurseId) {
-        return ResponseEntity.ok( medicalEventService.createMedicalEvent(dto, nurseId));
+    @PostMapping("/create")
+    public ResponseEntity<MedicalEventDTO> createMedicalEvent(@RequestBody @Valid  MedicalEventDTO dto, @RequestParam Integer nurseId) {
+        return ResponseEntity.ok( medicalEventService.createMedicalSudden(dto, nurseId));
     }
 //
 //    @GetMapping("/{id}")
@@ -28,9 +29,12 @@ public class MedicalEventController {
 //        return medicalEventService.getMedicalEventById(id);
 //    }
 //
-    @PutMapping("/api/medical-events/{id}")
-    public ResponseEntity<MedicalEventDTO> updateMedicalEvent(@RequestParam Integer nurseID, @RequestBody MedicalEventDTO dto) {
-        return ResponseEntity.ok(medicalEventService);
+    @PutMapping("/update/{eventId}")
+    public ResponseEntity<MedicalEventDTO> updateMedicalEvent(
+            @PathVariable Integer eventId,//({eventId}) dành cho @PathVariable
+            @Valid @RequestBody MedicalEventDTO dto,
+            @RequestParam Integer nurseId) {
+        return ResponseEntity.ok(medicalEventService.updateEventDTO(eventId, dto, nurseId));
     }
 //
 //    @DeleteMapping("/{id}")

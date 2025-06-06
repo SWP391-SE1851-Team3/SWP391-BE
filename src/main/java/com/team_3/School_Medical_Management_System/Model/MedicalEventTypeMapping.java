@@ -14,7 +14,7 @@ public class MedicalEventTypeMapping {
     @Id
     @ManyToOne
     @JoinColumn(name = "EventID")
-    private MedicalEvent event;
+    private MedicalEvent eventID;
 
     @Id
     @ManyToOne
