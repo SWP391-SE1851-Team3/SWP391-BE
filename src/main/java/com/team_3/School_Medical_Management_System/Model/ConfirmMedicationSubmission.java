@@ -17,10 +17,27 @@ public class ConfirmMedicationSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int confirmId;
     private int medicationSubmissionId;
-    private boolean status; // Approval status
     private int nurseId;
     private String evidence;
-    private boolean receivedMedicine; // Status after student takes medicine
+
     private LocalDateTime confirmedAt;
     private LocalDateTime medicationTakenAt;
+
+    @Enumerated(EnumType.STRING)
+    private ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status;
+
+    public enum confirmMedicationSubmissionStatus {
+        PENDING,
+        APPROVED,
+        REJECTED,
+        ADMINISTERED
+    }
+
+    @Enumerated(EnumType.STRING)
+    private ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine;
+
+    public enum confirmMedicationSubmissionReceivedMedicine {
+        YES,
+        NO
+    }
 }

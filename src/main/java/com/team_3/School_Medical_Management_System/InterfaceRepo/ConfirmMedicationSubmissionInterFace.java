@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ConfirmMedicationSubmissionInterFace extends JpaRepository<ConfirmMedicationSubmission, Integer> {
     Optional<ConfirmMedicationSubmission> findByMedicationSubmissionId(int medicationSubmissionId);
     List<ConfirmMedicationSubmission> findByNurseId(int nurseId);
-    List<ConfirmMedicationSubmission> findByStatus(boolean status);
-    List<ConfirmMedicationSubmission> findByReceivedMedicine(boolean receivedMedicine);
+    List<ConfirmMedicationSubmission> findByStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status);
+    List<ConfirmMedicationSubmission> findByReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine);
 }

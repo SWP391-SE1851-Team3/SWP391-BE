@@ -40,49 +40,55 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
     }
 
     @Override
-    public List<MedicationSubmission> getAllPendingMedicationSubmissions() {
-        return medicationSubmissionInterFace.findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
+    public List<MedicationSubmission> findAllSubmissions() {
+        // Implement according to your business logic
+        return medicationSubmissionInterFace.findAllSubmissions();
     }
 
-    @Override
-    public MedicationSubmission approveMedicationSubmission(int submissionId) {
-        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
-                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+//    @Override
+//    public List<MedicationSubmission> getAllPendingMedicationSubmissions() {
+//        return medicationSubmissionInterFace.findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
+//    }
 
-        submission.setStatus(MedicationSubmission.SubmissionStatus.APPROVED);
-        submission.setProcessedDate(LocalDateTime.now());
-        return medicationSubmissionInterFace.save(submission);
-    }
-
-    @Override
-    public MedicationSubmission rejectMedicationSubmission(int submissionId, String reason) {
-        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
-                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
-
-        submission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
-        submission.setRejectionReason(reason);
-        submission.setProcessedDate(LocalDateTime.now());
-        return medicationSubmissionInterFace.save(submission);
-    }
-
-    @Override
-    public MedicationSubmission confirmMedicationAdministered(int submissionId, String administrationNotes) {
-        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
-                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
-
-        if (submission.getStatus() != MedicationSubmission.SubmissionStatus.APPROVED) {
-            throw new IllegalStateException("Cannot confirm administration for a submission that is not approved");
-        }
-
-        submission.setStatus(MedicationSubmission.SubmissionStatus.ADMINISTERED);
-        submission.setAdministeredDate(LocalDateTime.now());
-        submission.setAdministrationNotes(administrationNotes);
-
-        return medicationSubmissionInterFace.save(submission);
-    }
-
-    @Override
-    public List<MedicationSubmission> getAllSubmissionsByStatus(MedicationSubmission.SubmissionStatus submissionStatus) {
-        return medicationSubmissionInterFace.findByStatus(submissionStatus);
-    }
+//    @Override
+//    public MedicationSubmission approveMedicationSubmission(int submissionId) {
+//        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
+//                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+//
+//        submission.setStatus(MedicationSubmission.SubmissionStatus.APPROVED);
+//        submission.setProcessedDate(LocalDateTime.now());
+//        return medicationSubmissionInterFace.save(submission);
+//    }
+//
+//    @Override
+//    public MedicationSubmission rejectMedicationSubmission(int submissionId, String reason) {
+//        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
+//                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+//
+//        submission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
+//        submission.setRejectionReason(reason);
+//        submission.setProcessedDate(LocalDateTime.now());
+//        return medicationSubmissionInterFace.save(submission);
+//    }
+//
+//    @Override
+//    public MedicationSubmission confirmMedicationAdministered(int submissionId, String administrationNotes) {
+//        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
+//                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+//
+//        if (submission.getStatus() != MedicationSubmission.SubmissionStatus.APPROVED) {
+//            throw new IllegalStateException("Cannot confirm administration for a submission that is not approved");
+//        }
+//
+//        submission.setStatus(MedicationSubmission.SubmissionStatus.ADMINISTERED);
+//        submission.setAdministeredDate(LocalDateTime.now());
+//        submission.setAdministrationNotes(administrationNotes);
+//
+//        return medicationSubmissionInterFace.save(submission);
+//    }
+//
+//    @Override
+//    public List<MedicationSubmission> getAllSubmissionsByStatus(MedicationSubmission.SubmissionStatus submissionStatus) {
+//        return medicationSubmissionInterFace.findByStatus(submissionStatus);
+//    }
 }

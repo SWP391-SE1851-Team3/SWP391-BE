@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,22 +23,22 @@ public class MedicationConfirmationController {
         return new ResponseEntity<>(createdConfirmation, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{confirmId}/status")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> updateConfirmationStatus(
-            @PathVariable int confirmId,
-            @RequestParam boolean approved) {
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, approved);
-        if (updatedConfirmation != null) {
-            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @PutMapping("/{confirmId}/status")
+//    public ResponseEntity<ConfirmMedicationSubmissionDTO> updateConfirmationStatus(
+//            @PathVariable int confirmId,
+//            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus APPROVED) {
+//        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, APPROVED);
+//        if (updatedConfirmation != null) {
+//            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 
     @PutMapping("/{confirmId}/medication-taken")
     public ResponseEntity<ConfirmMedicationSubmissionDTO> updateMedicationTaken(
             @PathVariable int confirmId,
-            @RequestParam boolean taken) {
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateMedicationTaken(confirmId, taken);
+            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine YES) {
+        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateMedicationTaken(confirmId, YES);
         if (updatedConfirmation != null) {
             return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
         }

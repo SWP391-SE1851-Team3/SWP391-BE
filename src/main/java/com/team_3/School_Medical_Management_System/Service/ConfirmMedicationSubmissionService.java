@@ -6,6 +6,7 @@ import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmis
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
+import com.team_3.School_Medical_Management_System.Repositories.ConfirmMedicationSubmissionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,12 @@ import java.util.stream.Collectors;
 public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubmissionServiceInterface {
 
     @Autowired
-    private ConfirmMedicationSubmissionInterFace confirmRepository;
+    private ConfirmMedicationSubmissionRepo confirmRepository;
 
     @Autowired
     private MedicationSubmissionInterFace medicationSubmissionInterFace;
+    @Autowired
+    private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionInterFace;
 
     @Override
     public ConfirmMedicationSubmissionDTO createConfirmation(ConfirmMedicationSubmissionDTO confirmDTO) {
@@ -29,19 +32,17 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         confirmation.setConfirmedAt(LocalDateTime.now());
 
         // Update the MedicationSubmission status based on nurse confirmation
-        Optional<MedicationSubmission> medicationSubmissionOpt =
-            medicationSubmissionInterFace.findById(confirmDTO.getMedicationSubmissionId());
+        Optional<ConfirmMedicationSubmission> confirmMedicationSubmissionOpt =
+                confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(confirmDTO.getMedicationSubmissionId());
 
-        if (medicationSubmissionOpt.isPresent()) {
-            MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
-            if (confirmDTO.isStatus()) {
-                medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.APPROVED);
-                medicationSubmission.setProcessedDate(LocalDateTime.now());
+        if (confirmMedicationSubmissionOpt.isPresent()) {
+            ConfirmMedicationSubmission confirmMedicationSubmission = confirmMedicationSubmissionOpt.get();
+            if (confirmDTO.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED) {
+                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
             } else {
-                medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
-                medicationSubmission.setProcessedDate(LocalDateTime.now());
+                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);
             }
-            medicationSubmissionInterFace.save(medicationSubmission);
+            confirmMedicationSubmissionInterFace.save(confirmMedicationSubmission);
         }
 
         ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
@@ -53,7 +54,6 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
-            confirmation.setStatus(status);
             confirmation.setConfirmedAt(LocalDateTime.now());
 
             // Update the MedicationSubmission status
@@ -61,14 +61,14 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
                 medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
 
             if (medicationSubmissionOpt.isPresent()) {
-                MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
+                ConfirmMedicationSubmission confirmMedicationSubmission = confirmationOpt.get();
                 if (status) {
-                    medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.APPROVED);
+                    confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
                 } else {
-                    medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.REJECTED);
+                    confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);;
                 }
-                medicationSubmission.setProcessedDate(LocalDateTime.now());
-                medicationSubmissionInterFace.save(medicationSubmission);
+                confirmMedicationSubmission.setConfirmedAt(LocalDateTime.now());
+                confirmMedicationSubmissionInterFace.save(confirmMedicationSubmission);
             }
 
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
@@ -78,26 +78,12 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     @Override
-    public ConfirmMedicationSubmissionDTO updateMedicationTaken(int confirmId, boolean receivedMedicine) {
+    public ConfirmMedicationSubmissionDTO updateMedicationTaken(int confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
             confirmation.setReceivedMedicine(receivedMedicine);
             confirmation.setMedicationTakenAt(LocalDateTime.now());
-
-            // Update the MedicationSubmission status if medication was taken
-            if (receivedMedicine) {
-                Optional<MedicationSubmission> medicationSubmissionOpt =
-                    medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
-
-                if (medicationSubmissionOpt.isPresent()) {
-                    MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
-                    medicationSubmission.setStatus(MedicationSubmission.SubmissionStatus.ADMINISTERED);
-                    medicationSubmission.setAdministeredDate(LocalDateTime.now());
-                    medicationSubmissionInterFace.save(medicationSubmission);
-                }
-            }
-
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
             return convertToDTO(savedConfirmation);
         }
@@ -137,10 +123,24 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         ConfirmMedicationSubmission entity = new ConfirmMedicationSubmission();
         entity.setConfirmId(dto.getConfirmId());
         entity.setMedicationSubmissionId(dto.getMedicationSubmissionId());
-        entity.setStatus(dto.isStatus());
+
+        // Convert boolean status to enum
+        if (dto.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED) {
+            entity.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
+        } else {
+            entity.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);
+        }
+
         entity.setNurseId(dto.getNurseId());
         entity.setEvidence(dto.getEvidence());
-        entity.setReceivedMedicine(dto.isReceivedMedicine());
+
+        // Convert boolean receivedMedicine to enum
+        if (dto.getReceivedMedicine() == ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES) {
+            entity.setReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES);
+        } else {
+            entity.setReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.NO);
+        }
+
         entity.setConfirmedAt(dto.getConfirmedAt());
         entity.setMedicationTakenAt(dto.getMedicationTakenAt());
         return entity;
@@ -150,10 +150,16 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         ConfirmMedicationSubmissionDTO dto = new ConfirmMedicationSubmissionDTO();
         dto.setConfirmId(entity.getConfirmId());
         dto.setMedicationSubmissionId(entity.getMedicationSubmissionId());
-        dto.setStatus(entity.isStatus());
+
+        // Set the status enum directly
+        dto.setStatus(entity.getStatus());
+
         dto.setNurseId(entity.getNurseId());
         dto.setEvidence(entity.getEvidence());
-        dto.setReceivedMedicine(entity.isReceivedMedicine());
+
+        // Set the receivedMedicine enum directly
+        dto.setReceivedMedicine(entity.getReceivedMedicine());
+
         dto.setConfirmedAt(entity.getConfirmedAt());
         dto.setMedicationTakenAt(entity.getMedicationTakenAt());
         return dto;

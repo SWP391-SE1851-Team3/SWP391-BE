@@ -31,8 +31,8 @@ public class MedicationSubmission {
     private Date endDate;
     private String notes;
 
-    @Enumerated(EnumType.STRING)
-    private SubmissionStatus status;
+//    @Enumerated(EnumType.STRING)
+//    private SubmissionStatus status;
 
     private LocalDateTime submissionDate;
     private LocalDateTime processedDate;
@@ -40,16 +40,16 @@ public class MedicationSubmission {
     private String rejectionReason;
     private String administrationNotes;
 
-    public enum SubmissionStatus {
-        PENDING,
-        APPROVED,
-        REJECTED,
-        ADMINISTERED
-    }
+//    public enum SubmissionStatus {
+//        PENDING,
+//        APPROVED,
+//        REJECTED,
+//        ADMINISTERED
+//    }
 
     @PrePersist
     public void prePersist() {
         this.submissionDate = LocalDateTime.now();
-        this.status = SubmissionStatus.PENDING;
+//        this.status = SubmissionStatus.PENDING;
     }
 }
