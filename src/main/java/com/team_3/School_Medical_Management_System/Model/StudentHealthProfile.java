@@ -23,11 +23,12 @@ public class StudentHealthProfile {
     private String TreatmentHistory;
     private String VisionLeft;
     private String VisionRight;
-    private String Hearings_Score;
+    private String HearingScore;
     private double Height;
     private double Weight;
     private String NoteOfParent;
     private Date LastUpdated;
     private  int StudentID;
     private int ParentID;
+    private String Vaccines;
 }

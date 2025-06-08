@@ -9,5 +9,6 @@ import lombok.*;
 @ToString
 public class LoginResponse {
     private String email;
-    private int role;// 1: Manager, 2: Nurse, 3: Parent
+    private int role;
+    private int parentId;// 1: Manager, 2: Nurse, 3: Parent
 }

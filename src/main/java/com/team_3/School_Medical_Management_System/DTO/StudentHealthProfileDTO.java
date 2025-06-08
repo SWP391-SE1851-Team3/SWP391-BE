@@ -15,6 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class StudentHealthProfileDTO {
+
     @NotBlank(message = "Full name is required")
     private String fullName;
     @NotBlank(message = "AllergyDetails Not allow empty")
@@ -28,13 +29,16 @@ public class StudentHealthProfileDTO {
     @NotBlank(message = "VisionRight Not allow empty")
     private String VisionRight;
     @NotBlank(message = "Hearings_Score Not allow empty")
-    private String Hearings_Score;
+    private String HearingScore;
     @NotNull(message = "Height is required")
     private double Height;
     @NotNull(message = "Weight is required")
     private double Weight;
+    private String Vaccines;
     @NotBlank(message = "NoteOfParent Not allow empty")
     private String NoteOfParent;
+
+
 
 
 }

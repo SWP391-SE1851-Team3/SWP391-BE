@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentDTO;
+import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import jakarta.validation.Valid;
@@ -74,7 +75,7 @@ public class StudentContoller {
     }
 
     @GetMapping("Parents/{parentId}")
-    public List<Student> getStudentsByParentID(@PathVariable("parentId") int parentId) {
+    public List<StudentMappingParent> getStudentsByParentID(@PathVariable("parentId") int parentId) {
         return studentService.getStudentsByParentID(parentId);
     }
 
