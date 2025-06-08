@@ -8,6 +8,7 @@ class SchoolMedicalManagementSystemApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

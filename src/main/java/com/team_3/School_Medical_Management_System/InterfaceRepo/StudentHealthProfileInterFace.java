@@ -6,10 +6,12 @@ import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import java.util.List;
 
 public interface StudentHealthProfileInterFace {
-    StudentHealthProfile getHealthProfileByStudentId(int studentId);
+    StudentHealthProfile getHealthProfileByStudentId(int profileId);
     List<StudentHealthProfile> getAllHealthProfiles();
     StudentHealthProfile updateHealthProfile(StudentHealthProfileDTO dto);
     void deleteHealthProfile(int studentId);
     StudentHealthProfile AddHealthProfile(StudentHealthProfileDTO dto);
     StudentHealthProfile getHealthProfileByStudentName(String studentName);
+    StudentHealthProfile getStudentHealthProfileByStudentId(int studentId);
+
 }

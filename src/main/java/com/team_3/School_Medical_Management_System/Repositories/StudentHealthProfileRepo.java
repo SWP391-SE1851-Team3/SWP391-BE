@@ -23,8 +23,8 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
 
 
     @Override
-    public StudentHealthProfile getHealthProfileByStudentId(int studentId) {
-        return entityManager.find(StudentHealthProfile.class, studentId);
+    public StudentHealthProfile getHealthProfileByStudentId(int profileId) {
+        return entityManager.find(StudentHealthProfile.class, profileId);
     }
 
     @Override
@@ -55,9 +55,10 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
             profile.setTreatmentHistory(dto.getTreatmentHistory());
             profile.setVisionLeft(dto.getVisionLeft());
             profile.setVisionRight(dto.getVisionRight());
-            profile.setHearings_Score(dto.getHearings_Score());
+            profile.setHearingScore(dto.getHearingScore());
             profile.setHeight(dto.getHeight());
             profile.setWeight(dto.getWeight());
+            profile.setVaccines(dto.getVaccines());
             profile.setNoteOfParent(dto.getNoteOfParent());
             profile.setLastUpdated(new Date());
             entityManager.merge(profile);
@@ -96,9 +97,10 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
             profile.setTreatmentHistory(dto.getTreatmentHistory());
             profile.setVisionLeft(dto.getVisionLeft());
             profile.setVisionRight(dto.getVisionRight());
-            profile.setHearings_Score(dto.getHearings_Score());
+            profile.setHearingScore(dto.getHearingScore());
             profile.setHeight(dto.getHeight());
             profile.setWeight(dto.getWeight());
+            profile.setVaccines(dto.getVaccines());
             profile.setNoteOfParent(dto.getNoteOfParent());
             profile.setLastUpdated(new Date());
             entityManager.persist(profile);
@@ -117,6 +119,12 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         } catch (NoResultException e) {
             return null; // hoặc throw custom exception nếu cần
         }
+    }
+
+    @Override
+    public StudentHealthProfile getStudentHealthProfileByStudentId(int studentId) {
+        String sql = "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :studentId";
+        return entityManager.createQuery(sql, StudentHealthProfile.class).getSingleResult();
     }
 }
 
