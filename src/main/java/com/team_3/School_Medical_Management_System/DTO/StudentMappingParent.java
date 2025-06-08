@@ -1,21 +1,14 @@
-package com.team_3.School_Medical_Management_System.Model;
+package com.team_3.School_Medical_Management_System.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-@Entity
-@Table
-@Getter
-@Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student {
-    @Id
-    @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@ToString
+@Getter
+@Setter
+public class StudentMappingParent {
     private int StudentID;
     private int Gender;
     @NotBlank(message = "FullName Not allow empty")
@@ -25,4 +18,3 @@ public class Student {
     private int IsActive;
     private int ParentID;
 }
-

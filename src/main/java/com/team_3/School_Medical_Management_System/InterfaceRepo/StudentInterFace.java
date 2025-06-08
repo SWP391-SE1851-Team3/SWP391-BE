@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.InterfaceRepo;
 
+import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.Model.Student;
 
 import java.util.List;

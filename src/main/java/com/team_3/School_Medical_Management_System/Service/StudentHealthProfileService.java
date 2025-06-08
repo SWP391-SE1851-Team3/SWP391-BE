@@ -21,8 +21,8 @@ public class StudentHealthProfileService implements StudentHealthProfileServiceI
     }
 
     @Override
-    public StudentHealthProfile getHealthProfileByStudentId(int studentId) {
-        var student = studentHealthProfileInterFace.getHealthProfileByStudentId(studentId);
+    public StudentHealthProfile getHealthProfileByStudentId(int profileId) {
+        var student = studentHealthProfileInterFace.getHealthProfileByStudentId(profileId);
         if (student == null) {
             throw new RuntimeException("Student not found");
         } else {
@@ -62,6 +62,16 @@ public class StudentHealthProfileService implements StudentHealthProfileServiceI
             throw new RuntimeException("StudentProfile not found");
 
         } else {
+            return student;
+        }
+    }
+
+    @Override
+    public StudentHealthProfile getStudentHealthProfileByStudentId(int studentId) {
+        var student = studentHealthProfileInterFace.getHealthProfileByStudentId(studentId);
+        if (student == null) {
+            throw new RuntimeException("StudentProfile not found");
+        }else {
             return student;
         }
     }

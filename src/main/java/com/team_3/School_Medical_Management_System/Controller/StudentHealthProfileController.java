@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -18,7 +19,6 @@ public class StudentHealthProfileController {
 
 
     private StudentHealthProfileServiceInterFace studentHealthProfileServiceInterFace;
-
 
     @Autowired
     public StudentHealthProfileController(StudentHealthProfileServiceInterFace studentHealthProfileServiceInterFace) {
@@ -31,9 +31,14 @@ public class StudentHealthProfileController {
     }
 
     @GetMapping("/{id}")
-    public StudentHealthProfile getStudentHealthProfile(@PathVariable int id) {
-        return studentHealthProfileServiceInterFace.getHealthProfileByStudentId(id);
+    public ResponseEntity<StudentHealthProfile> getStudentHealthProfile(@PathVariable int id) {
+        StudentHealthProfile profile = studentHealthProfileServiceInterFace.getHealthProfileByStudentId(id);
+        if (profile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Trả về lỗi 404 nếu không tìm thấy
+        }
+        return ResponseEntity.ok(profile);
     }
+
 
     @PostMapping
     public ResponseEntity<StudentHealthProfile> addStudentHealthProfile(@Valid @RequestBody StudentHealthProfileDTO dto) {
@@ -63,6 +68,20 @@ public class StudentHealthProfileController {
         studentHealthProfileServiceInterFace.updateHealthProfile(dto);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/byStudentId/{studentId}")
+    public ResponseEntity<StudentHealthProfile> getByStudentId(@PathVariable int studentId) {
+        var profile = studentHealthProfileServiceInterFace.getStudentHealthProfileByStudentId(studentId);
+        if(profile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }else {
+            return ResponseEntity.ok(profile);
+        }
+
+
+    }
+
+
 
 
 

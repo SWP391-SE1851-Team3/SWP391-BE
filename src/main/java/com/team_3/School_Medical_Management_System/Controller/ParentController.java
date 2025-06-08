@@ -66,7 +66,7 @@ public class ParentController {
     public ResponseEntity<?> login(@RequestBody ParentLoginResponseDTO parentLoginResponseDTO) {
         var p = parentService.LoginByAccount(parentLoginResponseDTO.getEmail(), parentLoginResponseDTO.getPassword());
         if (p != null) {
-            return ResponseEntity.ok(new LoginResponse(p.getEmail(), 3));
+            return ResponseEntity.ok(new LoginResponse(p.getEmail(), 3, p.getParentID()));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }
