@@ -14,9 +14,9 @@ import lombok.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int RoleID;
+    private Integer roleID;
     @NotBlank(message = "RoleName Not allow empty")
-    private String RoleName;
+    private String roleName;
 
 
 

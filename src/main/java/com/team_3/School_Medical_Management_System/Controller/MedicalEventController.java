@@ -1,51 +1,51 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
-import com.team_3.School_Medical_Management_System.DTO.MedicalEventDTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.Service.MedicalEventService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/medical-events")
 
 public class MedicalEventController {
-@Autowired
 
-    private MedicalEventService medicalEventService;
+    @Autowired
+    private MedicalEventService medicalEventService; // Service cho MedicalEvent
 
-    public MedicalEventController(MedicalEventService medicalEventService) {
-        this.medicalEventService = medicalEventService;
+    @PostMapping("/emergency")
+    @Operation(summary = "Tạo sự kiện y tế đột xuất và chi tiết liên quan")
+    public ResponseEntity<MedicalEventDTO> createEmergencyEvent(
+            @RequestBody MedicalEventDTO dto,
+            @RequestParam int studentId,
+            @RequestParam String note,
+            @RequestParam String result,
+            @RequestParam String processingStatus) {
+        MedicalEventDTO r = medicalEventService.createEmergencyEvent(dto, studentId, note, result, processingStatus);
+        return ResponseEntity.ok(r);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<MedicalEventDTO> createMedicalEvent(@RequestBody @Valid  MedicalEventDTO dto, @RequestParam Integer nurseId) {
-        return ResponseEntity.ok( medicalEventService.createMedicalSudden(dto, nurseId));
-    }
-
-    @GetMapping("/{parentId}")
-    public ResponseEntity<List<MedicalEventDTO>> getAllEventStudentById(@PathVariable Integer parentId) {
-
-
-        return ResponseEntity.ok(medicalEventService.getMedicalEventsByParentId(parentId));
-    }
-
-    @PutMapping("/update/{eventId}")
+    @PutMapping("/{eventId}")
+    @Operation(summary = "Cập nhật sự kiện y tế")
     public ResponseEntity<MedicalEventDTO> updateMedicalEvent(
-            @PathVariable Integer eventId,//({eventId}) dành cho @PathVariable
-            @Valid @RequestBody MedicalEventDTO dto,
-            @RequestParam Integer nurseId) {
-        return ResponseEntity.ok(medicalEventService.updateEventDTO(eventId, dto, nurseId));
+            @PathVariable int eventId,
+            @RequestBody MedicalEventDTO dto) {
+        MedicalEventDTO result = medicalEventService.updateMedicalEvent(eventId, dto);
+        return ResponseEntity.ok(result);
     }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> deleteMedicalEvent(@PathVariable Integer id) {
-//        return medicalEventService.deleteMedicalEvent(id);
-//    }
+
+    @GetMapping("/parent/{parentId}/emergency")
+    @Operation(summary = "Xem các sự kiện y tế đột xuất của con")
+    public ResponseEntity<List<MedicalEventDTO>> getEmergencyEventsByParent(@PathVariable int parentId) {
+        List<MedicalEventDTO> events = medicalEventService.getEmergencyEventsByParent(parentId);
+        return ResponseEntity.ok(events);
+    }
 
 }

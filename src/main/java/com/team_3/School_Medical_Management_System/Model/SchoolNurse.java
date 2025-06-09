@@ -21,24 +21,28 @@ public class SchoolNurse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private int NurseID;
-   @NotBlank(message = "UserName Not allow empty")
-    private String UserName;
+    private Integer nurseID;
+    @NotBlank(message = "UserName Not allow empty")
+    private String userName;
     @NotBlank(message = "Password Not allow empty")
-    private String Password;
+    private String password;
     @NotBlank(message = "FullName Not allow empty")
-    private String FullName;
+    private String fullName;
     @Pattern(regexp = "^(84|0)(3|5|7|8|9)[0-9]{8}$", message = "Phone invalid")
-    private String Phone;
+    private String phone;
     @Email
-    private String Email;
-    private int IsActive;
+    private String email;
+    private int isActive;
     //    @JsonIgnore
-    private int RoleID;
+    private int roleID;
     @NotBlank(message = "Certification Not allow empty")
-    private String Certification;
+    private String certification;
     @NotBlank(message = "Specialisation Not allow empty")
-    private String Specialisation;
+    private String specialisation;
 
+// một role sẽ có nhiều nurse
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "roleID", insertable = false, updatable = false)
+    private Role role;
 
 }

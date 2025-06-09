@@ -25,7 +25,7 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
 
     @Override
     public SchoolNurse getSchoolNursesByName(String FullName) {
-        String sql = "select s from SchoolNurse s where s.FullName = :FullName";
+        String sql = "select s from SchoolNurse s where s.fullName = :FullName";
         return entityManager.createQuery(sql, SchoolNurse.class).setParameter("FullName", FullName).getSingleResult();
     }
 

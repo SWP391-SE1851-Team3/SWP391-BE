@@ -47,7 +47,7 @@ public class StudentRepo implements StudentInterFace {
 
     @Override
     public Student GetStudentByName(String FullName, String ClassName) {
-        String sql = "select s from Student s where s.FullName = :FullName and s.ClassName = :ClassName";
+        String sql = "select s from Student s where s.fullName = :FullName and s.className = :ClassName";
         return entityManager.createQuery(sql, Student.class).
                 setParameter("FullName", FullName).
                 setParameter("ClassName", ClassName).
@@ -56,7 +56,7 @@ public class StudentRepo implements StudentInterFace {
 
     @Override
     public List<Student> getStudentsByParentID(int parentID) {
-        String sql = "select s from Student s where s.ParentID = :ParentID";
+        String sql = "select s from Student s where s.parentID = :ParentID";
         return entityManager.createQuery(sql, Student.class)
                 .setParameter("ParentID", parentID)
                 .getResultList();  // ✅ dùng cái này

@@ -1,30 +1,29 @@
 package com.team_3.School_Medical_Management_System.Model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-// lưu thông tin chi
+
 @Entity
 @Getter
 @Setter
 @ToString
-@IdClass(MedicalEventDetailId.class)
-public class MedicalEventDetail {
+@IdClass(MedicalEventDetailsId.class)
+public class MedicalEventDetails {
 
     @Id
     @ManyToOne
     @JoinColumn(name = "StudentID")
-    private Student studentID;
+    private Student student;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "EventID")
-    private MedicalEvent event;
+    private MedicalEvent medicalEvent;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(MAX)", nullable = false)
     private String note; // Ghi chú (ví dụ: "Đã cho uống paracetamol")
 
     @Column(columnDefinition = "nvarchar(255)", nullable = false)
@@ -33,12 +32,12 @@ public class MedicalEventDetail {
     @Column(columnDefinition = "nvarchar(255)", nullable = false)
     private String processingStatus;
 
-    public MedicalEventDetail() {
+    public MedicalEventDetails() {
     }
 
-    public MedicalEventDetail(Student student, MedicalEvent event, String note, String result, String processingStatus) {
-        this.studentID = student;
-        this.event = event;
+    public MedicalEventDetails(Student student, MedicalEvent event, String note, String result, String processingStatus) {
+        this.student = student;
+        this.medicalEvent = event;
         this.note = note;
         this.result = result;
         this.processingStatus = processingStatus;

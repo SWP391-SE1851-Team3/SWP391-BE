@@ -26,7 +26,7 @@ public class ParentRepo implements ParentInterFace {
 
     @Override
     public Parent getParentByName(String fullName) {
-        String jpql = "SELECT p FROM Parent p WHERE p.FullName = :fullName";
+        String jpql = "SELECT p FROM Parent p WHERE p.fullName = :fullName";
         return entityManager.createQuery(jpql, Parent.class)
                 .setParameter("fullName", fullName)
                 .getSingleResult();

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import org.springframework.data.relational.core.sql.In;
 
 
 @NoArgsConstructor
@@ -19,24 +19,28 @@ public class Parent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private int ParentID;
+    private Integer parentID;
     @NotBlank(message = "UserName Not allow empty")
-    private String UserName;
+    private String userName;
     @NotBlank(message = "Password Not allow empty")
-    private String Password;
+    private String password;
     @NotBlank(message = "FullName Not allow empty")
-    private String FullName;
+    private String fullName;
     @Pattern(regexp = "^(84|0)(3|5|7|8|9)[0-9]{8}$", message = "Phone invalid")
-    private String Phone;
+    private String phone;
     @Email
-    private String Email;
-    private int IsActive;
-    private int RoleID;
-    @NotBlank(message = "Occupation Not allow empty")
-    private String Occupation;
-    @NotBlank(message = "Relationship Not allow empty")
-    private String Relationship;
+    private String email;
+    private int isActive;
 
+    @NotBlank(message = "Occupation Not allow empty")
+    private String occupation;
+    @NotBlank(message = "Relationship Not allow empty")
+    private String relationship;
+
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "roleID", insertable = false, updatable = false)
+    private Role role;
 
 
 

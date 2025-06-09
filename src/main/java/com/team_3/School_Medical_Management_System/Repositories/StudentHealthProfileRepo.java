@@ -35,7 +35,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
 
     @Override
     public StudentHealthProfile updateHealthProfile(StudentHealthProfileDTO dto) {
-        String sql = "SELECT s FROM Student s WHERE s.FullName = :name";
+        String sql = "SELECT s FROM Student s WHERE s.fullName = :name";
         List<Student> listStudent = entityManager.createQuery(sql, Student.class).setParameter("name", dto.getFullName()).getResultList();
 
         if(listStudent.isEmpty()){
@@ -74,7 +74,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
     @Override
     public StudentHealthProfile AddHealthProfile(StudentHealthProfileDTO dto) {
         List<Student> students = entityManager.createQuery(
-                        "SELECT s FROM Student s WHERE s.FullName = :name", Student.class)
+                        "SELECT s FROM Student s WHERE s.fullName = :name", Student.class)
                 .setParameter("name", dto.getFullName())
                 .getResultList();
         if (students.isEmpty()) {
@@ -109,7 +109,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
 
     @Override
     public StudentHealthProfile getHealthProfileByStudentName(String studentName) {
-        String jpql = "SELECT s FROM StudentHealthProfile s JOIN Student st ON s.StudentID = st.StudentID WHERE st.FullName = :studentName";
+        String jpql = "SELECT s FROM StudentHealthProfile s JOIN Student st ON s.StudentID = st.studentID WHERE st.fullName = :studentName";
         try {
             return entityManager.createQuery(jpql, StudentHealthProfile.class)
                     .setParameter("studentName", studentName)

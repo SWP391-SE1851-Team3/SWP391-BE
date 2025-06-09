@@ -36,16 +36,21 @@ public class ParentController {
         Parent p = parentService.getParentByName(fullName);
         return ResponseEntity.ok(p);
     }
-
-
     @PostMapping
-    public ResponseEntity<Void> addParent(@Valid @RequestBody Parent Parent) {
-        var p = parentService.GetParentById(Parent.getParentID());
-        if (p == null) {
-            parentService.AddNewParent(Parent);
-        }
+    public ResponseEntity<Void> addParent(@Valid @RequestBody Parent parent) {
+        // Khi thêm mới một Parent, không nên kiểm tra ID vì ID sẽ tự động được tạo
+        parentService.AddNewParent(parent);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+//    @PostMapping
+//    public ResponseEntity<Void> addParent(@Valid @RequestBody Parent Parent) {
+//        var p = parentService.GetParentById(Parent.getParentID());
+//        if (p == null) {
+//            parentService.AddNewParent(Parent);
+//        }
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
 
 
     @PutMapping("/{id}")
@@ -96,6 +101,7 @@ public class ParentController {
 
 
 }
+
 
 
 
