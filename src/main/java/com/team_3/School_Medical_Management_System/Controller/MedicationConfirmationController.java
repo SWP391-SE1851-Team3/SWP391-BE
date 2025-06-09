@@ -23,16 +23,16 @@ public class MedicationConfirmationController {
         return new ResponseEntity<>(createdConfirmation, HttpStatus.CREATED);
     }
 
-//    @PutMapping("/{confirmId}/status")
-//    public ResponseEntity<ConfirmMedicationSubmissionDTO> updateConfirmationStatus(
-//            @PathVariable int confirmId,
-//            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus APPROVED) {
-//        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, APPROVED);
-//        if (updatedConfirmation != null) {
-//            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
+    @PutMapping("/{confirmId}/status")
+    public ResponseEntity<ConfirmMedicationSubmissionDTO> updateConfirmationStatus(
+            @PathVariable int confirmId,
+            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus APPROVED) {
+        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, APPROVED);
+        if (updatedConfirmation != null) {
+            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @PutMapping("/{confirmId}/medication-taken")
     public ResponseEntity<ConfirmMedicationSubmissionDTO> updateMedicationTaken(

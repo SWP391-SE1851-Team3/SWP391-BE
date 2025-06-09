@@ -50,7 +50,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     @Override
-    public ConfirmMedicationSubmissionDTO updateConfirmationStatus(int confirmId, boolean status) {
+    public ConfirmMedicationSubmissionDTO updateConfirmationStatus(int confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
@@ -62,7 +62,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
             if (medicationSubmissionOpt.isPresent()) {
                 ConfirmMedicationSubmission confirmMedicationSubmission = confirmationOpt.get();
-                if (status) {
+                if (status == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED) {
                     confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
                 } else {
                     confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);;
