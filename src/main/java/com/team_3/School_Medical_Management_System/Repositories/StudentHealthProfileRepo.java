@@ -49,7 +49,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         if(!existing.isEmpty()){
             StudentHealthProfile profile = existing.get(0); //lấy tk  vừa tìm thấy
             profile.setStudentID(student.getStudentID());
-            profile.setParentID(student.getParentID());
+            profile.setParentID(student.getParent().getParentID());
             profile.setAllergyDetails(dto.getAllergyDetails());
             profile.setChronicDiseases(dto.getChronicDiseases());
             profile.setTreatmentHistory(dto.getTreatmentHistory());
@@ -91,7 +91,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         } else {
             StudentHealthProfile profile = new StudentHealthProfile();
             profile.setStudentID(student.getStudentID());
-            profile.setParentID(student.getParentID());
+            profile.setParentID(student.getParent().getParentID());
             profile.setAllergyDetails(dto.getAllergyDetails());
             profile.setChronicDiseases(dto.getChronicDiseases());
             profile.setTreatmentHistory(dto.getTreatmentHistory());

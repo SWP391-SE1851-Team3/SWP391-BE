@@ -59,12 +59,19 @@ public class StudentRepo implements StudentInterFace {
 
     @Override
     public List<Student> getStudentsByParentID(int parentID) {
-        String sql = "select s from Student s where s.ParentID = :ParentID";
+        String sql = "select s from Student s where s.parent.ParentID = :ParentID";
         List<Student> students = entityManager.createQuery(sql, Student.class)
                 .setParameter("ParentID", parentID)
                 .getResultList();
 
 
         return students;
+    }
+
+    @Override
+    public Student GetStudentByFullName(String FullName) {
+        String sql = "select s from Student s where s.FullName = :FullName";
+        return entityManager.createQuery(sql, Student.class).
+                setParameter("FullName", FullName).getSingleResult();
     }
 }
