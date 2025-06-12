@@ -25,16 +25,5 @@ public class MedicationSubmissionDTO {
     @NotBlank(message = "Frequency Per Day cannot be empty")
     private int frequencyPerDay;
 
-    @NotBlank(message = "Duration Days cannot be empty")
-    private String durationDays;
-
-    @NotBlank(message = "Start Date cannot be empty")
-    private Date startDate;
-
-    @NotBlank(message = "End Date cannot be empty")
-    private Date endDate;
-
-
-
     private String notes;
 }

@@ -78,19 +78,6 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     @Override
-    public ConfirmMedicationSubmissionDTO updateMedicationTaken(int confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine) {
-        Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
-        if (confirmationOpt.isPresent()) {
-            ConfirmMedicationSubmission confirmation = confirmationOpt.get();
-            confirmation.setReceivedMedicine(receivedMedicine);
-            confirmation.setMedicationTakenAt(LocalDateTime.now());
-            ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
-            return convertToDTO(savedConfirmation);
-        }
-        return null;
-    }
-
-    @Override
     public ConfirmMedicationSubmissionDTO getConfirmationById(int confirmId) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         return confirmationOpt.map(this::convertToDTO).orElse(null);
@@ -135,11 +122,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         entity.setEvidence(dto.getEvidence());
 
         // Convert boolean receivedMedicine to enum
-        if (dto.getReceivedMedicine() == ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES) {
-            entity.setReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES);
-        } else {
-            entity.setReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.NO);
-        }
+
 
         entity.setConfirmedAt(dto.getConfirmedAt());
         entity.setMedicationTakenAt(dto.getMedicationTakenAt());
@@ -158,8 +141,6 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         dto.setEvidence(entity.getEvidence());
 
         // Set the receivedMedicine enum directly
-        dto.setReceivedMedicine(entity.getReceivedMedicine());
-
         dto.setConfirmedAt(entity.getConfirmedAt());
         dto.setMedicationTakenAt(entity.getMedicationTakenAt());
         return dto;

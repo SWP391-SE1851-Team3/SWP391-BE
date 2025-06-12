@@ -59,13 +59,6 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
                 .getResultList();
     }
 
-    @Override
-    public List<ConfirmMedicationSubmission> findByReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine) {
-        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.receivedMedicine = :receivedMedicine";
-        return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
-                .setParameter("receivedMedicine", receivedMedicine)
-                .getResultList();
-    }
 
     // Required methods from JpaRepository interface
 

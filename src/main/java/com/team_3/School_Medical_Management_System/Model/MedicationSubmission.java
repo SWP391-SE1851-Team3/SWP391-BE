@@ -25,11 +25,7 @@ public class MedicationSubmission {
     private String medicationName;
     private LocalDateTime medicationSubmissionDate;
     private int frequencyPerDay;
-    private String DurationDays;
     private String Dosage;
-    private boolean requestSupervisor;
-    private Date startDate;
-    private Date endDate;
     private String notes;
 
 //    @Enumerated(EnumType.STRING)

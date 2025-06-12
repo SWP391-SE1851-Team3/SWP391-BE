@@ -24,10 +24,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         submission.setMedicationName(medicationSubmissionDTO.getMedicationName());
         submission.setMedicationSubmissionDate(LocalDateTime.now());
         submission.setFrequencyPerDay(medicationSubmissionDTO.getFrequencyPerDay());
-        submission.setDurationDays(medicationSubmissionDTO.getDurationDays());
         submission.setDosage(medicationSubmissionDTO.getDosage());
-        submission.setStartDate(medicationSubmissionDTO.getStartDate());
-        submission.setEndDate(medicationSubmissionDTO.getEndDate());
         submission.setNotes(medicationSubmissionDTO.getNotes());
 
         return medicationSubmissionInterFace.save(submission);
