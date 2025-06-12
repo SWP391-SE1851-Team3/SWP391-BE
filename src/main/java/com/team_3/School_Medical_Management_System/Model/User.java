@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 @MappedSuperclass
 public abstract class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Column(name = "Id")
     protected Integer id;
-//sử dụng nó như một template để ánh xạ các thuộc tính chung vào các bảng con.
+
     @NotBlank(message = "Username không được để trống")
     @Column(unique = true)
     protected String userName;
@@ -30,9 +30,5 @@ public abstract class User {
     protected String email;
 
     @Column(nullable = false)
-    protected Boolean isActive;
-
-    @ManyToOne
-    @JoinColumn(name = "RoleID", nullable = false)
-    protected Role role;
+    protected int isActive;
 }

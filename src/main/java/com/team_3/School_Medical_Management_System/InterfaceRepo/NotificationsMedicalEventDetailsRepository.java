@@ -1,0 +1,8 @@
+package com.team_3.School_Medical_Management_System.InterfaceRepo;
+
+import com.team_3.School_Medical_Management_System.Model.NotificationsMedicalEventDetails;
+import com.team_3.School_Medical_Management_System.Model.NotificationsMedicalEventDetailsId;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface NotificationsMedicalEventDetailsRepository extends JpaRepository<NotificationsMedicalEventDetails, NotificationsMedicalEventDetailsId> {
+}

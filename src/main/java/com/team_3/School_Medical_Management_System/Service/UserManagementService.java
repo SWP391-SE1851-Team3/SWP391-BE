@@ -39,6 +39,7 @@ public class UserManagementService {
         this.parentRepository = parentRepository;
         this.managerRepository = managerRepository;
     }
+
     // 1. Tạo người dùng
     public UserDTO createUserDTO(UserDTO dto) {
         if (existsByUserNameAndEmail(dto.getUserName(), dto.getEmail())) {
@@ -63,45 +64,62 @@ public class UserManagementService {
 
     //  3 .Update người dùng
     public UserDTO updateUserDTO(UserDTO dto, Integer id) {
-
+        Role role = roleRepo.findById(dto.getRoleID())
+                .orElseThrow(() -> new RuntimeException("Role không tồn tại với ID: " + dto.getRoleID()));
         User user = findUserById(id);
-       /// Role  r=  roleRepo.findById(dto.getRoleID());
+        if (existsByUserNameAndEmailExceptId(dto.getUserName(), dto.getEmail(), id)) {
+            throw new RuntimeException("Username hoặc Email đã được sử dụng bởi người khác");
+        }
 
-      //  existsByUserNameAndEmail(dto.getUserName(), dto.getEmail());
-        return null; // Chưa hoàn thành
+        user.setFullName(dto.getFullName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setIsActive(dto.getIsActive());
+      //  user.setRole(role);
+        if(user instanceof  SchoolNurse){
+            ((SchoolNurse) user).setCertification(dto.getCertification());
+            ((SchoolNurse) user).setSpecialisation(dto.getSpecialisation());
+        } else if (user instanceof Parent) {
+            ((Parent) user).setOccupation(dto.getOccupation());
+            ((Parent) user).setRelationship(dto.getRelationship());
+        }
+         saveUser(user);
+        return convertToDTO(user);
+         // Chưa hoàn thành
+    }
+
+    // 4. Xoá người dùng
+    public  void deleteUserDTO(Integer id) {
+        User user = findUserById(id);
+        deleteUser(user);
     }
 
 
 
 
+    // 5
 
-
-
-
+private User deleteUser(User user) {
+        if (user instanceof Parent) {
+            parentRepository.delete((Parent) user);
+        } else if (user instanceof SchoolNurse) {
+            schoolNurseRepository.delete((SchoolNurse) user);
+        } else if (user instanceof Manager) {
+            managerRepository.delete((Manager) user);
+        } else {
+            throw new RuntimeException("Loại người dùng không hợp lệ");
+        }
+        return user;
+    }
 
     private boolean existsByUserNameAndEmailExceptId(String userName, String email, Integer id) {
-        return (parentRepository.existsByUserName(userName) && !parentRepository.existsById(id)) ||
-                (schoolNurseRepository.existsByUserName(userName) && !schoolNurseRepository.existsById(id)) ||
-                (managerRepository.existsByUserName(userName) && !managerRepository.existsById(id)) ||
-                (parentRepository.existsByEmail(email) && !parentRepository.existsById(id)) ||
-                (schoolNurseRepository.existsByEmail(email) && !schoolNurseRepository.existsById(id)) ||
-                (managerRepository.existsByEmail(email) && !managerRepository.existsById(id));
+        return (parentRepo.existsByUserName(userName) && !parentRepository.existsById(id)) ||
+                (schoolNurseRepo.existsByUserName(userName) && !schoolNurseRepository.existsById(id)) ||
+                (managerRepo.existsByUserName(userName) && !managerRepository.existsById(id)) ||
+                (parentRepo.existsByEmail(email) && !parentRepository.existsById(id)) ||
+                (schoolNurseRepo.existsByEmail(email) && !schoolNurseRepository.existsById(id)) ||
+                (managerRepo.existsByEmail(email) && !managerRepository.existsById(id));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private void saveUser(User user) {
@@ -117,7 +135,7 @@ public class UserManagementService {
 
     }
 
-    private  UserDTO convertToDTO(User user) {
+    private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUserName(user.getUserName());
@@ -125,7 +143,7 @@ public class UserManagementService {
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
         dto.setIsActive(user.getIsActive());
-        dto.setRoleID(user.getRole().getRoleID());
+       // dto.setRoleID(user.getRole().getRoleID());
 
         if (user instanceof Parent) {
             Parent parent = (Parent) user;
@@ -174,12 +192,9 @@ public class UserManagementService {
         user.setPhone(dto.getPhone());
         user.setEmail(dto.getEmail());
         user.setIsActive(dto.getIsActive());
-        user.setRole(role);
+       // user.setRole(role);
         return user;
     }
-
-
-
 
 
     private User findUserById(Integer id) {
@@ -195,7 +210,7 @@ public class UserManagementService {
         throw new RuntimeException("Người dùng không tồn tại với ID: " + id);
     }
 
-    // 2. Cập nhật người dùng
+
 
 
 }

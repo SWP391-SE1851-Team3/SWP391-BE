@@ -1,4 +1,5 @@
 package com.team_3.School_Medical_Management_System.Model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -6,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 
 @NoArgsConstructor
@@ -37,13 +37,11 @@ public class Parent extends User {
     @NotBlank(message = "Relationship Not allow empty")
     private String Relationship;
 
-  //  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "roleID", insertable = false, updatable = false)
     private Role role;
-
-
 
 
 }

@@ -31,5 +31,9 @@ public class Manager extends User {
     @Email
     private String Email;
     private int IsActive;
-    private int RoleID;
+   // private int RoleID;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "RoleID")
+    private Role role;
 }

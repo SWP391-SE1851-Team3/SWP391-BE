@@ -9,7 +9,7 @@ public class UserDTO {
     private String fullName;
     private String phone;
     private String email;
-    private Boolean isActive;
+    private int  isActive;
     private Integer roleID;
     private String roleName;
     private String occupation; // Chỉ cho Parent

@@ -5,10 +5,7 @@ import com.team_3.School_Medical_Management_System.Service.NotificationsParentSe
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -16,10 +13,15 @@ public class NotificationsParentController {
     @Autowired
     private NotificationsParentService notificationsParentService; // Service cho NotificationsParent
 
-    @PostMapping
-    @Operation(summary = "Gửi thông báo cho phụ huynh")
-    public ResponseEntity<NotificationsParentDTO> sendNotification(@RequestBody NotificationsParentDTO dto) {
-        NotificationsParentDTO result = notificationsParentService.sendNotification(dto);
-        return ResponseEntity.ok(result);
+    @PostMapping("/medical-event/{parentId}/{eventId}")
+    @Operation(summary = "Gửi thông báo cho phụ huynh về sự kiện y tế")
+
+    public ResponseEntity<NotificationsParentDTO> sendNotificationForMedicalEvent(
+            @PathVariable Integer parentId,
+            @PathVariable Integer eventId,
+            @PathVariable String content,
+            @PathVariable boolean status) {
+        NotificationsParentDTO result = notificationsParentService.sendNotification(parentId, eventId, content, status);
+        return ResponseEntity.status(201).body(result);
     }
 }
