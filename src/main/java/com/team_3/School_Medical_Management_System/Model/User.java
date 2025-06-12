@@ -8,8 +8,8 @@ import lombok.Data;
 @MappedSuperclass
 public abstract class User {
 
-    @Column(name = "Id")
-    protected Integer id;
+//    @Column(name = "Id")
+//    protected Integer id;
 
     @NotBlank(message = "Username không được để trống")
     @Column(unique = true)

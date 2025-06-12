@@ -31,9 +31,10 @@ public class MedicalEventService {
 
     @Autowired
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
-
+// mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
+    // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
     //===============================================================================================
-    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus) {
+    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus, Integer eventTypeId) {
         // Tạo mới một MedicalEvent
         MedicalEvent event = new MedicalEvent();
         event.setUsageMethod(dto.getUsageMethod());
@@ -44,10 +45,15 @@ public class MedicalEventService {
         event.setEventDateTime(dto.getEventDateTime());
         //  event.setParent();
 
+        // Kiểm tra xem học sinh có tồn tại trong cơ sở dữ liệu không
+         Optional<Student> studentOptional = studentRepository.findById(studentId);
+         if (studentOptional.isEmpty()){
+            throw new RuntimeException("Học sinh không tồn tại với ID: " + studentId);
+         }
         // Kiểm tra phụ huynh
         Optional<Parent> parent = parentRepository.findById(dto.getParentId());
         if (parent.isEmpty()) {
-            throw new RuntimeException("Phụ huynh không tồn tại trong hệ thống");
+            throw new RuntimeException("Phụ huynh không tồn tại trong hệ thống.");
         }
         event.setParent(parent.get());
 

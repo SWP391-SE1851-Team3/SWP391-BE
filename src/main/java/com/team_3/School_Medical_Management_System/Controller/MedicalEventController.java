@@ -27,8 +27,9 @@ public class MedicalEventController {
             @RequestParam int studentId,
             @RequestParam String note,
             @RequestParam String result,
-            @RequestParam String processingStatus) {
-        MedicalEventDTO r = medicalEventService.createEmergencyEvent(dto, studentId, note, result, processingStatus);
+            @RequestParam String processingStatus ,
+            @RequestParam Integer eventTypeId) {
+        MedicalEventDTO r = medicalEventService.createEmergencyEvent(dto, studentId, note, result, processingStatus,eventTypeId);
         return ResponseEntity.ok(r);
     }
 

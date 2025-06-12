@@ -137,7 +137,7 @@ private User deleteUser(User user) {
 
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
+       // dto.setId(user.getId());
         dto.setUserName(user.getUserName());
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
