@@ -1,4 +1,8 @@
 package com.team_3.School_Medical_Management_System.InterfaceRepo;
 
-public class RoleRepo extends {
+import com.team_3.School_Medical_Management_System.Model.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface RoleRepo extends JpaRepository<Role,Integer> {
+
 }

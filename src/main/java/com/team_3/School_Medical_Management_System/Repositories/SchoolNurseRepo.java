@@ -79,4 +79,18 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
         return true;
     }
 
+    @Override
+    public boolean existsByUserName(String userName) {
+        return entityManager.createQuery("FROM SchoolNurse s WHERE s.UserName = :userName", Long.class)
+                .setParameter("userName", userName)
+                .getSingleResult() > 0;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return entityManager.createQuery("FROM SchoolNurse s WHERE s.Email = :email", Long.class)
+                .setParameter("email", email)
+                .getSingleResult() > 0;
+    }
+
 }

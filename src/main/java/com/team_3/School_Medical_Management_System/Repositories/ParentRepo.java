@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public class ParentRepo implements ParentInterFace {
+public class ParentRepo implements ParentInterFace  {
     private EntityManager entityManager;
     @Autowired
     public ParentRepo(EntityManager entityManager) {
@@ -97,5 +97,21 @@ public class ParentRepo implements ParentInterFace {
         return entityManager.createQuery(jpql, Parent.class)
                 .setParameter("Email", Email)
                 .getSingleResult();
+    }
+
+    @Override
+    public boolean existsByUserName(String userName) {
+
+        return entityManager.createQuery(" FROM Parent p WHERE p.UserName = :userName", Long.class)
+                .setParameter("userName", userName)
+                .getSingleResult() > 0;
+
+    }
+
+    @Override
+    public boolean existsByEmail(String userName) {
+        return entityManager.createQuery(" FROM Parent p WHERE p.Email = :Email", Long.class)
+                .setParameter("Email", userName)
+                .getSingleResult() > 0;
     }
 }

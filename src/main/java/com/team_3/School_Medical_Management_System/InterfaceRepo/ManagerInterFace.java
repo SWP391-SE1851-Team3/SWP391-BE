@@ -4,4 +4,8 @@ import com.team_3.School_Medical_Management_System.Model.Manager;
 
 public interface ManagerInterFace {
     public Manager LoginByAccount(String Email, String Password);
+    public boolean existsByUserName(String userName);
+    public boolean existsByEmail(String email);
+    public void addNewManager(Manager manager);
+  /// public Manager findManagerById(int id);
 }

@@ -2,7 +2,9 @@ package com.team_3.School_Medical_Management_System.Model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 @MappedSuperclass
 public abstract class User {
     @Id

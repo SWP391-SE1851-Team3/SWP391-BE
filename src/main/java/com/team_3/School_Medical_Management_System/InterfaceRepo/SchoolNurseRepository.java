@@ -4,4 +4,7 @@ import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SchoolNurseRepository extends JpaRepository<SchoolNurse, Integer> {
+//
+//    boolean existsByUserName(String userName);
+//    boolean existsByEmail(String email);
 }

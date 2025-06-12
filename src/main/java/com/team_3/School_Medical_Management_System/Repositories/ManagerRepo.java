@@ -29,5 +29,27 @@ public class ManagerRepo implements ManagerInterFace {
             return null;
         }
     }
+    @Override
+    public boolean existsByUserName(String userName) {
+        return  entityManager.createQuery(" FROM Manager m WHERE m.UserName = :userName", Long.class)
+                .setParameter("userName", userName)
+                .getSingleResult() > 0;
+
+
+    }
+    @Override
+    public boolean existsByEmail(String email) {
+
+        return entityManager.createQuery(" FROM Manager m WHERE m.Email = :email", Long.class)
+                .setParameter("email", email)
+                .getSingleResult() > 0;
+    }
+    @Override
+    public void addNewManager(Manager manager) {
+       // entityManager.find()
+        entityManager.persist(manager);
+    }
+
+
 
 }
