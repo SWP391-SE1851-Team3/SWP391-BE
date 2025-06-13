@@ -44,8 +44,8 @@ public class MedicalEventController {
 
     @GetMapping("/parent/{parentId}/emergency")
     @Operation(summary = "Xem các sự kiện y tế đột xuất của con")
-    public ResponseEntity<List<MedicalEventDTO>> getEmergencyEventsByParent(@PathVariable int parentId) {
-        List<MedicalEventDTO> events = medicalEventService.getAllMedicalEventsByParent(parentId);
+    public ResponseEntity<List<MedicalEventDTO>> getEmergencyEventsByParent(@PathVariable int parentId,@PathVariable int studentId) {
+        List<MedicalEventDTO> events = medicalEventService.getAllMedicalEventsByParent(parentId, studentId);
         return ResponseEntity.ok(events);
     }
 

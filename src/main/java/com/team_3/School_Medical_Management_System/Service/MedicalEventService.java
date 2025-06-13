@@ -7,6 +7,8 @@ import com.team_3.School_Medical_Management_System.Model.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ public class MedicalEventService {
     @Autowired
     private MedicalEvent_EventTypeRepo medicalEventType;
 
+    @Autowired
+    private NotificationsParentRepository notificationsParentRepository; // Repository cho NotificationsParen
 
     @Autowired
     private MedicalEventTypeRepo medicalEventTypeRepo; // Repository cho MedicalEventType
@@ -31,9 +35,12 @@ public class MedicalEventService {
 
     @Autowired
     private StudentRepository studentRepository; // Repository cho Student
-
+    @Autowired
+    private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository;
     @Autowired
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
+    @Autowired
+    private JavaMailSender mailSender;
 
     // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
     // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
@@ -47,12 +54,6 @@ public class MedicalEventService {
         event.setTemperature(dto.getTemperature());
         event.setHeartRate(dto.getHeartRate());
         event.setEventDateTime(dto.getEventDateTime());
-
-
-
-
-
-
 
 
         Optional<MedicalEventType> me = medicalEventTypeRepo.findById(eventTypeId);
@@ -92,6 +93,41 @@ public class MedicalEventService {
         details.setProcessingStatus(processingStatus);
         medicalEventDetailsRepository.save(details);
 
+        if (savedEvent.getHasParentBeenInformed()) {
+            String title = "Thông báo sự kiện y tế khẩn cấp tại trường >>>>>";
+            String content = String.format(
+                    "Kính gửi phụ huynh %s,\n\nCó sự kiện y tế khẩn cấp xảy ra vào %s tại trường học ...... " +
+                            "Thông tin: Con anh/chị %s là: %s.Em đã bị %s tại trường học . Vui lòng liên hệ số điện thoại trường (\"19001818\") để biết thêm chi tiết.\n\nTrân trọng, Ban y tế trường học.",
+                    parent.get().getFullName(),
+                    savedEvent.getEventDateTime(),
+                    parent.get().getFullName(),
+                    student.get().getFullName(),
+                    me.get().getTypeName()
+            );
+
+            NotificationsParent notification = new NotificationsParent();
+            notification.setParent(parent.get());
+            notification.setTitle(title);
+            notification.setContent(content);
+            notification.setCreateAt(savedEvent.getEventDateTime());
+            notificationsParentRepository.save(notification);
+            // Gửi email thông báo cho phụ huynh
+
+            NotificationsMedicalEventDetails detailsNotification = new NotificationsMedicalEventDetails();
+            detailsNotification.setParentId(savedEvent.getParent().getParentID());
+            detailsNotification.setEventId(savedEvent.getEventID());
+            detailsNotification.setTitle(title);
+            detailsNotification.setContent(content);
+
+            try {
+                sendNotificationEmail(parent.get(), title, content, notification.getNotificationId());
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+            }
+
+        }
+
+
         // Tạo DTO để trả về
         MedicalEventDTO r = new MedicalEventDTO();
         r.setEventId(savedEvent.getEventID());
@@ -105,10 +141,28 @@ public class MedicalEventService {
         r.setTpyeName(me.get().getTypeName());
         r.setStudentId(studentId);
         return r;
+
     }
 
+    private void sendNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(parent.getEmail());
+        message.setSubject(title);
+        message.setText(content);
+        mailSender.send(message);
+        // Cập nhật trạng thái thông báo thành true sau khi gửi thành công
+        NotificationsParent notification = notificationsParentRepository.findById(notificationId)
+                .orElseThrow(() -> new RuntimeException("Notification not found with ID: " + notificationId));
+        // Kiểm tra xem notification có tồn tại không
+        if (notification != null) {
+            notification.setStatus(true);
+            notificationsParentRepository.save(notification);
+        }
+    }
+
+
     // Cập nhật sự kiện y tế
-    @Transactional
+  //  @Transactional
     public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto) {
         try {
             // Tìm sự kiện
@@ -194,7 +248,7 @@ public class MedicalEventService {
 
 
     // Lấy danh sách sự kiện y tế đột xuất của phụ huynh
-    public List<MedicalEventDTO> getAllMedicalEventsByParent(int parentId) {
+    public List<MedicalEventDTO> getAllMedicalEventsByParent(int parentId, int studentId) {
         // Bước 1: Kiểm tra xem phụ huynh có tồn tại trong cơ sở dữ liệu không
         boolean parentExists = parentRepository.existsById(parentId);
         if (!parentExists) {
@@ -223,7 +277,9 @@ public class MedicalEventService {
             dto.setTemperature(event.getTemperature()); // Gán nhiệt độ
             dto.setHeartRate(event.getHeartRate()); // Gán nhịp tim
             dto.setEventDateTime(event.getEventDateTime()); // Gán thời gian sự kiện
-            dto.setParentId(event.getParent().getParentID()); // Gán ID phụ huynh trực tiếp từ parentID
+            dto.setParentId(event.getParent().getParentID());
+            dto.setStudentId(studentId);
+
 
             // Thêm DTO vào danh sách
             eventDTOs.add(dto);
