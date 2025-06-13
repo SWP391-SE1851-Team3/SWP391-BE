@@ -16,6 +16,8 @@ public class MedicalEventDTO {
     private LocalDateTime eventDateTime;
     private Integer parentId;
     private Integer studentId;
+    private String tpyeName;
+
 
     public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentId, Integer studentId) {
         this.eventId = eventId;
@@ -27,6 +29,7 @@ public class MedicalEventDTO {
         this.eventDateTime = eventDateTime;
         this.parentId = parentId;
         this.studentId = studentId;
+        this.tpyeName = tpyeName;
     }
 
     public MedicalEventDTO() {

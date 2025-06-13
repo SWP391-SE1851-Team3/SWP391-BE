@@ -2,10 +2,7 @@ package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventUpdateDTO;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalEventDetailsRepository;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalEventRepo;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentRepository;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +16,12 @@ import java.util.Optional;
 @Transactional
 @Service
 public class MedicalEventService {
+    @Autowired
+    private MedicalEvent_EventTypeRepo medicalEventType;
+
+
+    @Autowired
+    private MedicalEventTypeRepo medicalEventTypeRepo; // Repository cho MedicalEventType
 
     @Autowired
     private MedicalEventRepo medicalEventRepository; // Repository cho MedicalEvent
@@ -31,7 +34,8 @@ public class MedicalEventService {
 
     @Autowired
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
-// mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
+
+    // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
     // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
     //===============================================================================================
     public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus, Integer eventTypeId) {
@@ -43,13 +47,23 @@ public class MedicalEventService {
         event.setTemperature(dto.getTemperature());
         event.setHeartRate(dto.getHeartRate());
         event.setEventDateTime(dto.getEventDateTime());
-        //  event.setParent();
 
+
+
+
+
+
+
+
+        Optional<MedicalEventType> me = medicalEventTypeRepo.findById(eventTypeId);
+        if (me.isEmpty()) {
+            throw new RuntimeException("Loại sự kiện không tồn tại với ID: " + eventTypeId);
+        }
         // Kiểm tra xem học sinh có tồn tại trong cơ sở dữ liệu không
-         Optional<Student> studentOptional = studentRepository.findById(studentId);
-         if (studentOptional.isEmpty()){
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        if (studentOptional.isEmpty()) {
             throw new RuntimeException("Học sinh không tồn tại với ID: " + studentId);
-         }
+        }
         // Kiểm tra phụ huynh
         Optional<Parent> parent = parentRepository.findById(dto.getParentId());
         if (parent.isEmpty()) {
@@ -60,6 +74,11 @@ public class MedicalEventService {
         // Lưu sự kiện
         MedicalEvent savedEvent = medicalEventRepository.save(event);
 
+
+        MedicalEvent_EventType m = new MedicalEvent_EventType();
+        m.setEventId(savedEvent.getEventID());
+        m.setEventTypeId(eventTypeId);
+        medicalEventType.save(m);
         // Tạo chi tiết sự kiện
         Optional<Student> student = studentRepository.findById(studentId);
         if (student.isEmpty()) {
@@ -83,7 +102,8 @@ public class MedicalEventService {
         r.setHeartRate(savedEvent.getHeartRate());
         r.setEventDateTime(savedEvent.getEventDateTime());
         r.setParentId(savedEvent.getParent().getParentID());
-
+        r.setTpyeName(me.get().getTypeName());
+        r.setStudentId(studentId);
         return r;
     }
 
