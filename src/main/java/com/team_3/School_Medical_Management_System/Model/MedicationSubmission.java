@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @ToString
@@ -22,11 +23,7 @@ public class MedicationSubmission {
 
     private int parentId;
     private int studentId;
-    private String medicationName;
-    private LocalDateTime medicationSubmissionDate;
-    private int frequencyPerDay;
-    private String Dosage;
-    private String notes;
+    private String medicineImage;
 
 //    @Enumerated(EnumType.STRING)
 //    private SubmissionStatus status;
@@ -37,16 +34,11 @@ public class MedicationSubmission {
     private String rejectionReason;
     private String administrationNotes;
 
-//    public enum SubmissionStatus {
-//        PENDING,
-//        APPROVED,
-//        REJECTED,
-//        ADMINISTERED
-//    }
+    @OneToMany(mappedBy = "medicationSubmission", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MedicationDetail> medicationDetails;
 
     @PrePersist
     public void prePersist() {
         this.submissionDate = LocalDateTime.now();
-//        this.status = SubmissionStatus.PENDING;
     }
 }

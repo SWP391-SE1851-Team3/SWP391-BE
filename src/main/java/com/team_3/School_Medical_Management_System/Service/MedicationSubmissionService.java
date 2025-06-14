@@ -3,10 +3,12 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
+import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,13 +23,33 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         MedicationSubmission submission = new MedicationSubmission();
         submission.setParentId(medicationSubmissionDTO.getParentId());
         submission.setStudentId(medicationSubmissionDTO.getStudentId());
-        submission.setMedicationName(medicationSubmissionDTO.getMedicationName());
-        submission.setMedicationSubmissionDate(LocalDateTime.now());
-        submission.setFrequencyPerDay(medicationSubmissionDTO.getFrequencyPerDay());
-        submission.setDosage(medicationSubmissionDTO.getDosage());
-        submission.setNotes(medicationSubmissionDTO.getNotes());
+        submission.setMedicineImage(medicationSubmissionDTO.getMedicineImage());
+        submission.setSubmissionDate(LocalDateTime.now());
+
+        // Chuyển đổi danh sách MedicationDetailDTO thành MedicationDetail
+        if (medicationSubmissionDTO.getMedicationDetails() != null && !medicationSubmissionDTO.getMedicationDetails().isEmpty()) {
+            List<MedicationDetail> medicationDetails = medicationSubmissionDTO.getMedicationDetails().stream()
+                    .map(detailDTO -> {
+                        MedicationDetail detail = new MedicationDetail();
+                        detail.setMedicationName(detailDTO.getMedicationName());
+                        detail.setDosage(detailDTO.getDosage());
+                        detail.setTimesToUse(detailDTO.getTimesToUse());
+                        detail.setNotes(detailDTO.getNotes());
+                        detail.setMedicationSubmission(submission);
+                        return detail;
+                    })
+                    .collect(Collectors.toList());
+
+            submission.setMedicationDetails(medicationDetails);
+        }
 
         return medicationSubmissionInterFace.save(submission);
+    }
+
+    public List<MedicationDetail> getDetailsBySubmissionId(int submissionId) {
+        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)
+                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + submissionId));
+        return submission.getMedicationDetails();
     }
 
     @Override

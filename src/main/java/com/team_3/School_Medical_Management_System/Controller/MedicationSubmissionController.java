@@ -7,6 +7,7 @@ import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Con
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
+import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import jakarta.validation.Valid;
@@ -44,6 +45,12 @@ public class MedicationSubmissionController {
     public ResponseEntity<MedicationSubmission> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
         MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
         return new ResponseEntity<>(submission, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/submissions/{submissionId}/details")
+    public ResponseEntity<List<MedicationDetail>> getSubmissionDetails(@PathVariable int submissionId) {
+        List<MedicationDetail> details = medicationSubmissionService.getDetailsBySubmissionId(submissionId);
+        return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
     @GetMapping("/submissions/{parentId}")
