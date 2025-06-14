@@ -7,8 +7,7 @@ import java.util.List;
 
 public interface ConfirmMedicationSubmissionServiceInterface {
     ConfirmMedicationSubmissionDTO createConfirmation(ConfirmMedicationSubmissionDTO confirmDTO);
-    ConfirmMedicationSubmissionDTO updateConfirmationStatus(int confirmId, boolean status);
-    ConfirmMedicationSubmissionDTO updateMedicationTaken(int confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine);
+    ConfirmMedicationSubmissionDTO updateConfirmationStatus(int confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status);
     ConfirmMedicationSubmissionDTO getConfirmationById(int confirmId);
     ConfirmMedicationSubmissionDTO getConfirmationBySubmissionId(int medicationSubmissionId);
     List<ConfirmMedicationSubmissionDTO> getConfirmationsByNurse(int nurseId);

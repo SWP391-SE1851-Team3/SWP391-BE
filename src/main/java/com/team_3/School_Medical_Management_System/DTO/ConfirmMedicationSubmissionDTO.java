@@ -16,7 +16,6 @@ public class ConfirmMedicationSubmissionDTO {
     private ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status;
     private int nurseId;
     private String evidence;
-    private ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine;
     private LocalDateTime confirmedAt;
     private LocalDateTime medicationTakenAt;
 }

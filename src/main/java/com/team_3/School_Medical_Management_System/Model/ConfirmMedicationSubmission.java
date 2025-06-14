@@ -35,11 +35,5 @@ public class ConfirmMedicationSubmission {
         ADMINISTERED
     }
 
-    @Enumerated(EnumType.STRING)
-    private confirmMedicationSubmissionReceivedMedicine receivedMedicine;
 
-    public enum confirmMedicationSubmissionReceivedMedicine {
-        YES,
-        NO
-    }
 }
