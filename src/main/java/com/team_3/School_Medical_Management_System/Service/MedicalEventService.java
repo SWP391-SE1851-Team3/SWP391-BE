@@ -32,21 +32,24 @@ public class MedicalEventService {
 
     @Autowired
     private ParentRepository parentRepository; // Repository cho Parent
-
     @Autowired
-    private StudentRepository studentRepository; // Repository cho Student
+    private StudentRepository studentRepository;
+// Repository cho Student
     @Autowired
     private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository;
     @Autowired
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
     @Autowired
     private JavaMailSender mailSender;
-
+@Autowired
+private StudentRepository studentRepo;
     // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
     // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
     //===============================================================================================
-    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus, Integer eventTypeId) {
+    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus, Integer eventTypeId ) {
         // Tạo mới một MedicalEvent
+
+
         MedicalEvent event = new MedicalEvent();
         event.setUsageMethod(dto.getUsageMethod());
         event.setIsEmergency(true); // Đặt là sự kiện khẩn cấp
@@ -140,6 +143,7 @@ public class MedicalEventService {
         r.setParentId(savedEvent.getParent().getParentID());
         r.setTpyeName(me.get().getTypeName());
         r.setStudentId(studentId);
+      //  r.setStudent(sameClassName);
         return r;
 
     }
@@ -163,13 +167,22 @@ public class MedicalEventService {
 
     // Cập nhật sự kiện y tế
   //  @Transactional
-    public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto) {
+    public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto,Integer eventTypeId ) {
         try {
             // Tìm sự kiện
             Optional<MedicalEvent> optionalEvent = medicalEventRepository.findById(eventId);
             if (optionalEvent.isEmpty()) {
                 throw new RuntimeException("Sự kiện y tế không tồn tại với ID: " + eventId);
             }
+            Optional<MedicalEventType> me = medicalEventTypeRepo.findById(eventTypeId);
+            if (me.isEmpty()) {
+                throw new RuntimeException("Loại sự kiện không tồn tại với ID: " + eventTypeId);
+            }
+            MedicalEvent_EventType m = new MedicalEvent_EventType();
+            m.setEventId(optionalEvent.get().getEventID());
+            m.setEventTypeId(eventTypeId);
+            medicalEventType.save(m);
+
 
             MedicalEvent event = optionalEvent.get();
             // Cập nhật thông tin cơ bản

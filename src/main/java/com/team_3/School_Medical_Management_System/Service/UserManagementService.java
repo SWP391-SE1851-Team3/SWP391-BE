@@ -187,7 +187,7 @@ private User deleteUser(User user) {
             throw new RuntimeException("Vai trò không hợp lệ");
         }
         user.setUserName(dto.getUserName());
-        user.setPassword("default_password"); // Cần mã hóa thực tế
+        user.setPassword("Tutao"); // Cần mã hóa thực tế
         user.setFullName(dto.getFullName());
         user.setPhone(dto.getPhone());
         user.setEmail(dto.getEmail());
