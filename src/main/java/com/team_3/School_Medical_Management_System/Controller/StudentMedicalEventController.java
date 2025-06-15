@@ -17,7 +17,7 @@ public class StudentMedicalEventController {
         this.service = service;
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public List<StudentMedicalEventDto> getRecentMedicalEvents() {
         return service.getRecentMedicalEvents();
     }

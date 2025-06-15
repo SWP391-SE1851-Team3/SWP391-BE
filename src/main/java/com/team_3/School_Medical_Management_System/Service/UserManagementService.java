@@ -137,13 +137,13 @@ private User deleteUser(User user) {
 
     private UserDTO convertToDTO(User user) {
         UserDTO dto = new UserDTO();
-       // dto.setId(user.getId());
+
         dto.setUserName(user.getUserName());
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
         dto.setIsActive(user.getIsActive());
-       // dto.setRoleID(user.getRole().getRoleID());
+
 
         if (user instanceof Parent) {
             Parent parent = (Parent) user;

@@ -71,4 +71,18 @@ private StudentService studentService;
         return ResponseEntity.ok(typeNames);
     }
 
+
+    @GetMapping("/api/viewDetails/{eventId}")
+    @Operation(summary = "Xem chi tiết sự kiện y tế")
+    public ResponseEntity<MedicalEventDetailsDTO> getMedicalEventDetails(@PathVariable Integer eventId) {
+        MedicalEventDetailsDTO response = medicalEventService.getMedicalEventDetails(eventId);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @DeleteMapping("api/deleteEvent/{eventId}")
+    public ResponseEntity deleteMedicalEvent(@PathVariable Integer eventId) {
+        medicalEventService.deleteMedicalEvent(eventId);
+        return ResponseEntity.ok().build();
+    }
 }

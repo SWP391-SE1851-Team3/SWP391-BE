@@ -31,7 +31,7 @@ public class ManagerRepo implements ManagerInterFace {
     }
     @Override
     public boolean existsByUserName(String userName) {
-        return  entityManager.createQuery(" FROM Manager m WHERE m.UserName = :userName", Long.class)
+        return  entityManager.createQuery(" FROM Manager m WHERE m.UserName = :userName", int.class)
                 .setParameter("userName", userName)
                 .getSingleResult() > 0;
 
@@ -40,7 +40,7 @@ public class ManagerRepo implements ManagerInterFace {
     @Override
     public boolean existsByEmail(String email) {
 
-        return entityManager.createQuery(" FROM Manager m WHERE m.Email = :email", Long.class)
+        return entityManager.createQuery(" FROM Manager m WHERE m.Email = :email", int.class)
                 .setParameter("email", email)
                 .getSingleResult() > 0;
     }

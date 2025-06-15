@@ -1,13 +1,14 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
-import lombok.Data;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Transactional
-@Data
-public class MedicalEventUpdateDTO {
+@Getter
+@Setter
+public class MedicalEventDetailsDTO {
     private Integer eventId;
     private String usageMethod;
     private Boolean isEmergency;
@@ -16,13 +17,19 @@ public class MedicalEventUpdateDTO {
     private String heartRate;
     private LocalDateTime eventDateTime;
     //  private Integer parentId;
-    private Integer studentId;
+   // private Integer studentId;
     private String note;
     private String result;
     private String processingStatus;
 
 
-    public MedicalEventUpdateDTO(Integer eventId, String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer studentId, String note, String result, String processingStatus) {
+    private Integer studentId;
+    private String fullName;
+private int gender;
+    private String className;
+    private List<String> eventTypeNames;
+
+    public MedicalEventDetailsDTO(Integer eventId, String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, String note, String result, String processingStatus, Integer studentId, String fullName, int gender, String className, List<String> eventTypeNames) {
         this.eventId = eventId;
         this.usageMethod = usageMethod;
         this.isEmergency = isEmergency;
@@ -30,12 +37,16 @@ public class MedicalEventUpdateDTO {
         this.temperature = temperature;
         this.heartRate = heartRate;
         this.eventDateTime = eventDateTime;
-        this.studentId = studentId;
         this.note = note;
         this.result = result;
         this.processingStatus = processingStatus;
+        this.studentId = studentId;
+        this.fullName = fullName;
+        this.gender = gender;
+        this.className = className;
+        this.eventTypeNames = eventTypeNames;
     }
 
-    public MedicalEventUpdateDTO() {
+    public MedicalEventDetailsDTO() {
     }
 }

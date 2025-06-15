@@ -10,8 +10,8 @@ public class UserDTO {
     private String phone;
     private String email;
     private int  isActive;
-    private Integer roleID;
-    private String roleName;
+  private Integer roleID;
+ ///  private String roleName;
     private String occupation; // Chỉ cho Parent
     private String relationship; // Chỉ cho Parent
     private String certification; // Chỉ cho SchoolNurse
