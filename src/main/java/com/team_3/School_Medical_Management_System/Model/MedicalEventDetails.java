@@ -23,6 +23,8 @@ public class MedicalEventDetails {
     @JoinColumn(name = "EventID")
     private MedicalEvent medicalEvent;
 
+
+
     @Column(columnDefinition = "nvarchar(MAX)", nullable = false)
     private String note; // Ghi chú (ví dụ: "Đã cho uống paracetamol")
 

@@ -60,12 +60,6 @@ private StudentService studentService;
         return ResponseEntity.ok(r);
     }
 
-    @GetMapping("/parent/{parentId}/emergency")
-    @Operation(summary = "Xem các sự kiện y tế đột xuất của con")
-    public ResponseEntity<List<MedicalEventDTO>> getEmergencyEventsByParent(@PathVariable int parentId, @PathVariable int studentId) {
-        List<MedicalEventDTO> events = medicalEventService.getAllMedicalEventsByParent(parentId, studentId);
-        return ResponseEntity.ok(events);
-    }
 
     @GetMapping("/all")
     public ResponseEntity<List<String>> getAllEventTypes() {

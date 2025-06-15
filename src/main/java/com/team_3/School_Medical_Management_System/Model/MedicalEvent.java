@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -35,6 +36,11 @@ public class MedicalEvent {
     @JoinColumn(name = "ParentID")
     private Parent parent;
 
+
+
+    @OneToMany(mappedBy = "medicalEvent")
+
+   private List<MedicalEvent_EventType> medicalEventEventTypes;
     public MedicalEvent() {
     }
 

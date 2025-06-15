@@ -164,9 +164,6 @@ private StudentRepository studentRepo;
         }
     }
 
-
-    // Cập nhật sự kiện y tế
-  //  @Transactional
     public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto,Integer eventTypeId ) {
         try {
             // Tìm sự kiện
@@ -259,48 +256,6 @@ private StudentRepository studentRepo;
         }
     }
 
-
-    // Lấy danh sách sự kiện y tế đột xuất của phụ huynh
-    public List<MedicalEventDTO> getAllMedicalEventsByParent(int parentId, int studentId) {
-        // Bước 1: Kiểm tra xem phụ huynh có tồn tại trong cơ sở dữ liệu không
-        boolean parentExists = parentRepository.existsById(parentId);
-        if (!parentExists) {
-            throw new RuntimeException("Không tìm thấy phụ huynh với ID: " + parentId);
-        }
-        List<MedicalEvent> medicalEvents = new ArrayList<>();
-        // Bước 2: Tìm tất cả sự kiện y tế của phụ huynh dựa trên ParentID
-        List<MedicalEvent> listEvents = medicalEventRepository.findAll();
-        for (MedicalEvent l : listEvents) {
-            if (l.getParent().getParentID() == parentId) {
-                medicalEvents.add(l);
-            }
-        }
-
-
-        // Bước 3: Tạo danh sách DTO để lưu trữ kết quả
-        List<MedicalEventDTO> eventDTOs = new ArrayList<>();
-
-        // Bước 4: Duyệt qua từng sự kiện và chuyển đổi thành DTO
-        for (MedicalEvent event : medicalEvents) {
-            MedicalEventDTO dto = new MedicalEventDTO();
-            dto.setEventId(event.getEventID()); // Gán ID sự kiện
-            dto.setUsageMethod(event.getUsageMethod()); // Gán phương pháp sử dụng
-            dto.setEmergency(event.getIsEmergency()); // Gán trạng thái khẩn cấp
-            dto.setHasParentBeenInformed(event.getHasParentBeenInformed()); // Gán trạng thái thông báo phụ huynh
-            dto.setTemperature(event.getTemperature()); // Gán nhiệt độ
-            dto.setHeartRate(event.getHeartRate()); // Gán nhịp tim
-            dto.setEventDateTime(event.getEventDateTime()); // Gán thời gian sự kiện
-            dto.setParentId(event.getParent().getParentID());
-            dto.setStudentId(studentId);
-
-
-            // Thêm DTO vào danh sách
-            eventDTOs.add(dto);
-        }
-
-        // Bước 5: Trả về danh sách DTO
-        return eventDTOs;
-    }
 
 }
 
