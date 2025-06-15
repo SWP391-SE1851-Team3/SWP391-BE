@@ -9,5 +9,6 @@ public interface Vaccination_scheduleInterFace {
     public List<Vaccination_schedule> vaccination_schedules();
     public Vaccination_schedule addVaccination_schedule(Vaccination_schedule vaccination_schedule);
     public Vaccination_schedule updateVaccination_schedule(Vaccination_schedule vaccination_schedule);
+
 }
 

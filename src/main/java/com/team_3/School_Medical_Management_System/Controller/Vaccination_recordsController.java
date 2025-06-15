@@ -6,7 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/vaccination_records")
@@ -40,7 +43,7 @@ public class Vaccination_recordsController {
             @RequestBody Vaccination_recordsDTO vaccination_records) {
         vaccination_records.setVaccinationRecordID(id); // Gán id từ URL vào DTO
         Vaccination_recordsDTO updatedRecord = vaccination_recordsServiceInterFace.updateVaccination_records(vaccination_records);
-        return ResponseEntity.ok(updatedRecord);
+        return ok(updatedRecord);
     }
 
     @GetMapping("/{id}")
@@ -58,6 +61,23 @@ public class Vaccination_recordsController {
         vaccination_recordsServiceInterFace.deleteVaccination_records(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/byStudentId/{studentId}")
+    public ResponseEntity<?>  findByStudentId(@PathVariable int studentId) {
+        List<Vaccination_recordsDTO> studentRecordById = vaccination_recordsServiceInterFace.getVaccination_recordsByStudentId(studentId);
+        if(studentRecordById == null || studentRecordById.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Không tìm thấy bản ghi tiêm chủng cho sinh viên có id: " + studentId);
+        }else {
+            return ResponseEntity.ok(studentRecordById);
+        }
+    }
+
+
+
+
+
+
 
 
 
