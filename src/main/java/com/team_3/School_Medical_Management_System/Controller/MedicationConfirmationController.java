@@ -25,8 +25,8 @@ public class MedicationConfirmationController {
         return new ResponseEntity<>(createdConfirmation, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{confirmId}/status/approved")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> approvedConfirmationStatus(
+    @PutMapping("/{confirmId}/medication-taken")
+    public ResponseEntity<ConfirmMedicationSubmissionDTO> updateMedicationTaken(
             @PathVariable int confirmId,
             @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus APPROVED) {
         ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, APPROVED);
