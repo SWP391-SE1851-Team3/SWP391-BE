@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsRequestDTO;
+import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
@@ -48,34 +49,30 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public Consent_formsDTO addConsent_forms(Consent_formsRequestDTO dto) {
-        Student student = studentRepo.getStudent(dto.getStudent_ID());
+    public Consent_formsDTO addConsent_forms(Consent_formsDTO dto) {
+        Student student = studentRepo.GetStudentByFullName(dto.getFullNameOfStudent());
         if (student == null) {
             throw new RuntimeException("Student not found");
         }
-
-        Vaccines vaccine = vaccinesRepo.GetVaccineByVaccineId(dto.getVaccine_ID());
+        Vaccines vaccine = vaccinesRepo.GetVaccineByVaccineName(dto.getName());
         if (vaccine == null) {
             throw new RuntimeException("Vaccine not found");
         }
 
-        Parent parent = parentRepo.GetParentById(dto.getPatient_ID());
-        if (parent == null) {
-            throw new RuntimeException("Parent not found");
-        }
+        Parent parent = student.getParent();
+        if (parent == null) throw new RuntimeException("Parent not found");
 
-        Vaccination_schedule schedule = vaccination_scheduleRepo.vaccination_scheduleById(dto.getScheduleId());
+
+        Vaccination_schedule schedule = vaccination_scheduleRepo.vaccination_scheduleById(dto.getScheduled_id());
         if (schedule == null) {
             throw new RuntimeException("Schedule not found");
         }
+
         Consent_forms entity = new Consent_forms();
         entity.setStudent(student);
         entity.setParent(parent);
         entity.setVaccine(vaccine);
         entity.setSchedule(schedule);
-        entity.setIsAgree(dto.getIsAgree());
-        entity.setHasAllergy(dto.getHasAllergy());
-        entity.setReason(dto.getReason());
         entity.setConsent_date(new Date());
         consent_formsRepo.addConsent_forms(entity);
         return null;
@@ -88,42 +85,13 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         return consent_formsName.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
     }
 
-
     @Override
-    public Consent_formsDTO getConsent_formsByInfor(int studentId, int scheduleId) {
-        // 1. Lấy student và parent
-        Student student = studentRepo.getStudent(studentId);
-        if (student == null) throw new RuntimeException("Student not found");
-
-        Parent parent = student.getParent();
-        if (parent == null) throw new RuntimeException("Parent not found");
-
-        // 2. Lấy schedule và vaccine
-        Vaccination_schedule schedule = vaccination_scheduleRepo.vaccination_scheduleById(scheduleId);
-        if (schedule == null) throw new RuntimeException("Schedule not found");
-
-        Vaccines vaccines = schedule.getVaccine();
-        if (vaccines == null) throw new RuntimeException("Vaccine not found");
-
-        // 3. Tạo DTO cơ bản
-        Consent_formsDTO dto = new Consent_formsDTO();
-        dto.setFullNameOfStudent(student.getFullName());
-        dto.setFullnameOfParent(parent.getFullName());
-        dto.setClassName(student.getClassName());
-        dto.setScheduled_date(schedule.getScheduled_date());
-        dto.setNotes(schedule.getNotes());
-        dto.setName(vaccines.getName());
-
-        // 4. Lấy consent gần nhất nếu có
-        consent_forms_repo
-                .findLatestByStudentAndSchedule(studentId, scheduleId)
-                .ifPresent(cf -> {
-                    dto.setHasAllergy(cf.getHasAllergy());
-                    dto.setReason(cf.getReason());
-                    dto.setIsAgree(cf.getIsAgree());
-                });
-
-        return dto;
+    public Consent_formsRequestDTO getConsentFormForParent(int consentFormId) {
+        Consent_forms entity = consent_formsRepo.getConsent_formsById(consentFormId);
+        if (entity == null) {
+            throw new RuntimeException("Consent Form not found");
+        }
+        return TransferModelsDTO.convertToParentViewDTO(entity);
     }
 
     @Override
@@ -141,6 +109,43 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         return dtoList;
     }
 
+    @Override
+    public List<Consent_formsDTO> getConsent_formsClass(String class_name) {
+        var className = consent_formsRepo.getConsent_formsClass(class_name);
+        if (className == null) throw new RuntimeException("Class not found");
+        return className.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
 
+    @Override
+    public void parentConfirm(ParentConfirmDTO dto) {
+        Consent_forms entity = consent_formsRepo.getConsent_formsById(dto.getConsentFormId());
+        if (entity == null) {
+            throw new RuntimeException("Consent Form not found");
+        }
+        entity.setIsAgree(dto.getIsAgree());
+        entity.setReason(dto.getReason());
+        entity.setHasAllergy(dto.getHasAllergy());
+        entity.setConsent_date(new Date()); // cập nhật lại ngày phụ huynh xác nhận
+        consent_formsRepo.updateConsent_forms(entity);
+    }
 
+    @Override
+    public Long countConsentFormsIsAgreeByBatch(int batch_id) {
+        return consent_formsRepo.countConsentFormsIsAgreeByBatch(batch_id);
+    }
+
+    @Override
+    public Long countConsentFormsDisAgreeByBatch(int batch_id) {
+        return consent_formsRepo.countConsentFormsDisAgreeByBatch(batch_id);
+    }
+
+    @Override
+    public Long countConsentFormsPendingByBatch(int batch_id) {
+        return consent_formsRepo.countConsentFormsPendingByBatch(batch_id);
+    }
+
+    @Override
+    public Consent_formsDTO getConsentByStudentId(int studentId) {
+        return TransferModelsDTO.MappingConsent(consent_formsRepo.getConsentByStudentId(studentId));
+    }
 }

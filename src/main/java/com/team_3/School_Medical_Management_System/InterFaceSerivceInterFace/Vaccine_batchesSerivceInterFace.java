@@ -9,7 +9,7 @@ public interface Vaccine_batchesSerivceInterFace {
     public Vaccine_batchesDTO getById(int id);
     public void add(Vaccine_batchesDTO batch);
     public void update(Vaccine_batchesDTO batch);
-
+    public Long countTotalBatch();
 
 }
 

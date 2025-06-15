@@ -10,4 +10,5 @@ public interface Vaccination_recordsServiceInterFace {
     public void deleteVaccination_records(int id);
     public Vaccination_recordsDTO getVaccination_records_by_id(int id);
     public Vaccination_recordsDTO updateVaccination_records(Vaccination_recordsDTO vaccinationRecordsDTO);
+    List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId);
 }

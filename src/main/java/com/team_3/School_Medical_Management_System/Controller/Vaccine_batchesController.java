@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vaccine_batches")
+@CrossOrigin(origins = "http://localhost:5173")
 public class Vaccine_batchesController {
 
     private Vaccine_batchesSerivceInterFace vaccine_batchesSerivce;
@@ -44,13 +45,10 @@ public class Vaccine_batchesController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/approved/{id}")
-//    public List<Vaccine_batchesDTO> getParentIsAgree(@PathVariable int id) {
-//        var listArgee = vaccine_batchesSerivce.(id);
-//        if (listArgee == null) {
-//            return null;
-//        }else {
-//            return listArgee;
-//        }
-//    }
+    @GetMapping("/totalvaccine_batches")
+    public ResponseEntity<Long> totalVaccineBatches() {
+        var count = vaccine_batchesSerivce.countTotalBatch();
+        return ResponseEntity.ok(count);
+    }
+
 }
