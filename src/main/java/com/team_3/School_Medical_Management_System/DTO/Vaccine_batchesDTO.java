@@ -1,26 +1,22 @@
-package com.team_3.School_Medical_Management_System.Model;
+package com.team_3.School_Medical_Management_System.DTO;
 
+
+import com.team_3.School_Medical_Management_System.Model.Vaccines;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
 import java.time.OffsetDateTime;
 
-@Entity
-@Table
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
-public class Vaccine_batches {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+public class Vaccine_batchesDTO {
     private int batch_id;
     private String batch_number;
     private int quantity_received;
     private OffsetDateTime received_date;
-    @ManyToOne
-    @JoinColumn(name = "Vaccine_id")
-    private Vaccines vaccine;
+    private int Vaccine_id;
 }

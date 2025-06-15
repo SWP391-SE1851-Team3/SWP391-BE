@@ -126,5 +126,6 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         String sql = "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :studentId";
         return entityManager.createQuery(sql, StudentHealthProfile.class).getSingleResult();
     }
+
 }
 

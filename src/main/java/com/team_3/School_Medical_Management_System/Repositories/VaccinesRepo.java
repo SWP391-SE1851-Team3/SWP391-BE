@@ -45,23 +45,19 @@ public class VaccinesRepo implements VaccinesInterFace {
     @Override
     public Vaccines UpdateVaccine(Vaccines vaccineDetails) {
         // Tìm vaccine theo tên
-        var existingVaccine = entityManager.createQuery("SELECT v FROM Vaccines v WHERE v.Name = :name", Vaccines.class)
-                .setParameter("name", vaccineDetails.getName()) // Set tên vaccine cần tìm
-                .getResultList()
-                .stream()
-                .findFirst()
-                .orElse(null);
+        var existingVaccine = GetVaccineByVaccineId(vaccineDetails.getVaccine_id());
 
         if (existingVaccine == null) {
             return null; // Nếu không tìm thấy vaccine theo tên
         }
-
-        // Cập nhật thông tin vaccine
+        existingVaccine.setVaccine_id(vaccineDetails.getVaccine_id());
         existingVaccine.setName(vaccineDetails.getName());
         existingVaccine.setManufacturer(vaccineDetails.getManufacturer());
         existingVaccine.setDescription(vaccineDetails.getDescription());
         existingVaccine.setRecommended_ages(vaccineDetails.getRecommended_ages());
         existingVaccine.setDoses_required(vaccineDetails.getDoses_required());
+        existingVaccine.setCreated_at(vaccineDetails.getCreated_at());
+        existingVaccine.setUpdated_at(vaccineDetails.getUpdated_at());
 
         return entityManager.merge(existingVaccine);
     }

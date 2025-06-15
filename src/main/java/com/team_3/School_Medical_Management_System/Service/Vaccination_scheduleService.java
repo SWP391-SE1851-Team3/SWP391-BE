@@ -64,12 +64,10 @@ public class Vaccination_scheduleService implements Vaccination_scheduleServiceI
             throw new RuntimeException("School nurse not found");
         }
         // 2. Chuyển dữ liệu từ DTO vào Entity
-        entity.setBatch_number(vaccination_scheduleDTO.getBatch_number());
         entity.setLocation(vaccination_scheduleDTO.getLocation());
         entity.setStatus(vaccination_scheduleDTO.getStatus());
         entity.setNotes(vaccination_scheduleDTO.getNotes());
         entity.setScheduled_date(vaccination_scheduleDTO.getScheduled_date());
-        entity.setReceived_date(vaccination_scheduleDTO.getReceived_date());
         entity.setVaccine(vaccine);
         entity.setNurse(schoolNurse);
         vaccination_schedule.addVaccination_schedule(entity);
@@ -93,12 +91,10 @@ public class Vaccination_scheduleService implements Vaccination_scheduleServiceI
         if(vaccine == null) {
             throw new RuntimeException("Vaccine not found");
         }else {
-            vaccine.setBatch_number(vaccination_scheduleDTO.getBatch_number());
             vaccine.setLocation(vaccination_scheduleDTO.getLocation());
             vaccine.setStatus(vaccination_scheduleDTO.getStatus());
             vaccine.setNotes(vaccination_scheduleDTO.getNotes());
             vaccine.setScheduled_date(vaccination_scheduleDTO.getScheduled_date());
-            vaccine.setReceived_date(vaccination_scheduleDTO.getReceived_date());
             vaccine.setNurse(schoolNurse);
             vaccine.setVaccine(vaccinev1);
             vaccination_schedule.updateVaccination_schedule(vaccine);

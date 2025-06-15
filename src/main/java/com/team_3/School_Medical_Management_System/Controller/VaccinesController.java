@@ -40,9 +40,8 @@ public class VaccinesController {
 
     }
 
-    @PutMapping("/{editByVaccineName}")
+    @PutMapping("/{editbyId}")
     public ResponseEntity<VaccinesDTO> updateVaccine(@RequestBody Vaccines vaccines) {
-        // Cập nhật vaccine theo name
         var updatedVaccine = vaccinesServiceInterFace.UpdateVaccine(vaccines);
         if (updatedVaccine != null) {
             return new ResponseEntity<>(updatedVaccine, HttpStatus.OK); // Nếu cập nhật thành công

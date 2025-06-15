@@ -14,7 +14,6 @@ import lombok.*;
 public class Vaccines {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private int Vaccine_id;
     private String Name;
     private String Manufacturer;
@@ -23,5 +22,4 @@ public class Vaccines {
     private int Doses_required;
     private String Created_at;
     private String Updated_at;
-
 }

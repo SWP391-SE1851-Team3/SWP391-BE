@@ -4,6 +4,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_scheduleDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccine_batchesDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,11 +53,18 @@ public class Consent_formsController {
         return dto;
     }
 
-    @GetMapping("/consents/approved")
-    public List<Consent_formsDTO> getParentIsAgree() {
-        var consent_forms = consent_formsServiceInterFace.getConsent_formsIsAgree();
-        return consent_forms;
+    @GetMapping("/approved/{id}")
+    public List<Consent_formsDTO> getParentIsAgree(@PathVariable int id) {
+        var listArgee = consent_formsServiceInterFace.getConsent_formsIsAgree(id);
+        if (listArgee == null) {
+            return null;
+        }else {
+            return listArgee;
+        }
     }
+
+
+
 
 
 

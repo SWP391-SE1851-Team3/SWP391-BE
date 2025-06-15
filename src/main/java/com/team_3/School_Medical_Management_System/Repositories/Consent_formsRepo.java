@@ -40,12 +40,14 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     }
 
     @Override
-    public List<Consent_forms> getConsent_formsIsAgree() {
-        String JPQL = "SELECT DISTINCT c FROM Consent_forms c " +
-                "JOIN c.schedule s " +
+    public List<Consent_forms> getConsent_formsIsAgree(int batch_id) {
+        String jpql = "SELECT DISTINCT c FROM Consent_forms c " +
                 "JOIN c.vaccine v " +
-                "WHERE c.IsAgree = 1 ";
-        return entityManager.createQuery(JPQL, Consent_forms.class).getResultList();
+                "JOIN Vaccine_batches vb ON vb.vaccine = v " +
+                "JOIN Vaccination_schedule vs ON vs.Vaccine = v " +
+                "WHERE c.IsAgree = 1 AND vb.batch_id = :batch_id";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("batch_id", batch_id)
+                .getResultList();
     }
-
 }

@@ -15,13 +15,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class Vaccination_scheduleDTO {
     private int schedule_id;
-//    private int Vaccination_ID;
     private String Name;
-    private String batch_number;
     private Date scheduled_date;
     private String location;
     private String FullName;
-    private  Date received_date;
     private String status;
     private String notes;
 }

@@ -1,13 +1,7 @@
 package com.team_3.School_Medical_Management_System.TransferModelsDTO;
 
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
-import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_scheduleDTO;
-import com.team_3.School_Medical_Management_System.DTO.VaccinesDTO;
-import com.team_3.School_Medical_Management_System.Model.Consent_forms;
-import com.team_3.School_Medical_Management_System.Model.Student;
-import com.team_3.School_Medical_Management_System.Model.Vaccination_schedule;
-import com.team_3.School_Medical_Management_System.Model.Vaccines;
+import com.team_3.School_Medical_Management_System.DTO.*;
+import com.team_3.School_Medical_Management_System.Model.*;
 
 public class TransferModelsDTO {
 
@@ -51,25 +45,48 @@ public class TransferModelsDTO {
 
     public static Vaccination_scheduleDTO MappingVaccinationSchedule(Vaccination_schedule vaccination_schedule) {
         Vaccination_scheduleDTO entity = new Vaccination_scheduleDTO();
-        entity.setBatch_number(vaccination_schedule.getBatch_number());
         entity.setLocation(vaccination_schedule.getLocation());
         entity.setStatus(vaccination_schedule.getStatus());
         entity.setNotes(vaccination_schedule.getNotes());
         entity.setScheduled_date(vaccination_schedule.getScheduled_date());
-        entity.setReceived_date(vaccination_schedule.getReceived_date());
         entity.setFullName(vaccination_schedule.getNurse().getFullName());
         entity.setName(vaccination_schedule.getVaccine().getName());
         entity.setSchedule_id(vaccination_schedule.getSchedule_id());
         return entity;
     }
 
+    public static Vaccine_batchesDTO MappingVaccineBatchDTO(Vaccine_batches vaccine_batches) {
+        Vaccine_batchesDTO entity = new Vaccine_batchesDTO();
+        entity.setBatch_id(vaccine_batches.getBatch_id());
+        entity.setBatch_number(vaccine_batches.getBatch_number());
+        entity.setVaccine_id(vaccine_batches.getVaccine().getVaccine_id());
+        entity.setQuantity_received(vaccine_batches.getQuantity_received());
+        entity.setReceived_date(vaccine_batches.getReceived_date());
+        return entity;
+    }
 
+    public static Vaccine_batches MappingVaccineBatch(Vaccine_batchesDTO vaccine_batchesDTO) {
+        Vaccine_batches entity = new Vaccine_batches();
+        Vaccines vaccines = new Vaccines();
+        entity.setBatch_id(vaccine_batchesDTO.getBatch_id());
+        entity.setBatch_number(vaccine_batchesDTO.getBatch_number());
+        vaccines.setVaccine_id(vaccine_batchesDTO.getVaccine_id());
+        entity.setVaccine(vaccines);
+        entity.setQuantity_received(vaccine_batchesDTO.getQuantity_received());
+        entity.setReceived_date(vaccine_batchesDTO.getReceived_date());
+        return entity;
 
+    }
 
-
-
-
-
-
+    public static Vaccination_recordsDTO MappingVaccinationRecordsDTO(Vaccination_records vaccination_records) {
+        Vaccination_recordsDTO entity = new Vaccination_recordsDTO();
+        entity.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
+        entity.setStudent_Name(vaccination_records.getStudent().getFullName());
+        entity.setBatch_id(vaccination_records.getBatch().getBatch_id());
+        entity.setVaccine_Name(vaccination_records.getVaccines().getName());
+        entity.setNotes(vaccination_records.getNotes());
+        entity.setSchedule_id(vaccination_records.getSchedule().getSchedule_id());
+        return entity;
+    }
 
 }

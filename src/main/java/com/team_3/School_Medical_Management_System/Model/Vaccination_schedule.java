@@ -19,13 +19,11 @@ public class Vaccination_schedule {
     @ManyToOne
     @JoinColumn(name = "Vaccine_id")
     private Vaccines Vaccine;
-    private String batch_number;
     private Date scheduled_date;
     private String location;
     @ManyToOne
     @JoinColumn(name = "NurseID")
     private SchoolNurse Nurse;
-    private  Date received_date;
     private String status;
     private String notes;
 

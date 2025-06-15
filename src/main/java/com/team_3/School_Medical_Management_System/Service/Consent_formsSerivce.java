@@ -127,10 +127,20 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public List<Consent_formsDTO> getConsent_formsIsAgree() {
-        var consent_forms = consent_formsRepo.getConsent_formsIsAgree();
-        return consent_forms.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    public List<Consent_formsDTO> getConsent_formsIsAgree(int batch_id) {
+        var listArrgee = consent_formsRepo.getConsent_formsIsAgree(batch_id);
+
+        if (listArrgee.isEmpty()) {
+            throw new RuntimeException("List of consent_forms is empty");
+        }
+
+        List<Consent_formsDTO> dtoList = listArrgee.stream()
+                .map(TransferModelsDTO::MappingConsent)
+                .collect(Collectors.toList());
+
+        return dtoList;
     }
+
 
 
 }

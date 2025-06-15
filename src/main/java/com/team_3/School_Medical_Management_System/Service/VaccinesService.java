@@ -51,6 +51,5 @@ public class VaccinesService implements VaccinesServiceInterFace {
             return TransferModelsDTO.MappingVaccines(updatedVaccine);
         }
         return null;
-
     }
 }
