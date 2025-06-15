@@ -13,9 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table
 @Setter
 @Getter
+@Table(name = "MedicationSubmission")
+
 public class MedicationSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
