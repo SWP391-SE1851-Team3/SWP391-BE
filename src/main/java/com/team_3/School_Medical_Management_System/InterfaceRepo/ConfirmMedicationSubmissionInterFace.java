@@ -12,5 +12,5 @@ public interface ConfirmMedicationSubmissionInterFace extends JpaRepository<Conf
     Optional<ConfirmMedicationSubmission> findByMedicationSubmissionId(int medicationSubmissionId);
     List<ConfirmMedicationSubmission> findByNurseId(int nurseId);
     List<ConfirmMedicationSubmission> findByStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status);
-    List<ConfirmMedicationSubmission> findByReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine);
+
 }
