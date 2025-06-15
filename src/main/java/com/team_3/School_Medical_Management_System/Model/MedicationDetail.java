@@ -7,9 +7,10 @@ import lombok.ToString;
 
 @ToString
 @Entity
-@Table
+@Table(name = "MedicationDetail")
 @Setter
 @Getter
+
 public class MedicationDetail {
 
 

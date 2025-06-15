@@ -16,4 +16,5 @@ public interface MedicationSubmissionServiceInterface {
 //    MedicationSubmission confirmMedicationAdministered(int submissionId, String administrationNotes);
     List<MedicationSubmission> findAllSubmissions();
     public List<MedicationDetail> getDetailsBySubmissionId(int submissionId);
+    void cancelMedicationSubmission(int submissionId);
 }

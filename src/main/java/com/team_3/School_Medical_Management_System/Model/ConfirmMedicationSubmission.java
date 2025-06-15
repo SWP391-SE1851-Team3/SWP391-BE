@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table
+@Table(name = "Confirm_MedicationSubmission")
 @Setter
 @Getter
 public class ConfirmMedicationSubmission {
