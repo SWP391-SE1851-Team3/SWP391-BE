@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface ConsentFormsRepository extends JpaRepository<Consent_forms, Integer> {
-
     @Query(value = "SELECT TOP 1 * FROM consent_forms " +
             "WHERE StudentID = :studentId AND schedule_id = :scheduleId " +
             "ORDER BY consent_date DESC",
@@ -20,3 +19,5 @@ public interface ConsentFormsRepository extends JpaRepository<Consent_forms, Int
             @Param("scheduleId") int scheduleId
     );
 }
+
+

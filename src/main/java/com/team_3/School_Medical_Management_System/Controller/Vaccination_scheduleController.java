@@ -40,6 +40,4 @@ public class Vaccination_scheduleController {
         return vaccination_scheduleDTO;
     }
 
-
-
 }
