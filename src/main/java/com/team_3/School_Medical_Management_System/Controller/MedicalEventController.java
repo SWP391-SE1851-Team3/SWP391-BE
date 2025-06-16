@@ -72,7 +72,7 @@ private StudentService studentService;
     }
 
 
-    @GetMapping("/api/viewDetails/{eventId}")
+    @GetMapping("/viewDetails/{eventId}")
     @Operation(summary = "Xem chi tiết sự kiện y tế")
     public ResponseEntity<MedicalEventDetailsDTO> getMedicalEventDetails(@PathVariable Integer eventId) {
         MedicalEventDetailsDTO response = medicalEventService.getMedicalEventDetails(eventId);
@@ -80,7 +80,7 @@ private StudentService studentService;
     }
 
 
-    @DeleteMapping("api/deleteEvent/{eventId}")
+    @DeleteMapping("/deleteEvent/{eventId}")
     public ResponseEntity deleteMedicalEvent(@PathVariable Integer eventId) {
         medicalEventService.deleteMedicalEvent(eventId);
         return ResponseEntity.ok().build();

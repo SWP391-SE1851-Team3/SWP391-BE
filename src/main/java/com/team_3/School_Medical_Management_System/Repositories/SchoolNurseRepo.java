@@ -82,7 +82,7 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
 
     @Override
     public boolean existsByUserName(String userName) {
-        return entityManager.createQuery("FROM SchoolNurse s WHERE s.userName = :userName", int.class)
+        return entityManager.createQuery("SELECT COUNT(s) FROM SchoolNurse s WHERE s.userName = :userName", Long.class)
                 .setParameter("userName", userName)
                 .getSingleResult() > 0;
     }

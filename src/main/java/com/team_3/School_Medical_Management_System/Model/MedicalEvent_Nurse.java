@@ -15,7 +15,7 @@ public class MedicalEvent_Nurse {
     @ManyToOne
     @JoinColumn(name = "EventID")
     private MedicalEvent medicalEvent;
-@Id
+    @Id
     @ManyToOne
     @JoinColumn(name = "NurseID")
     private SchoolNurse schoolNurse;
@@ -23,6 +23,7 @@ public class MedicalEvent_Nurse {
 
     public MedicalEvent_Nurse() {
     }
+
     public MedicalEvent_Nurse(MedicalEvent medicalEvent, SchoolNurse schoolNurse) {
         this.medicalEvent = medicalEvent;
         this.schoolNurse = schoolNurse;

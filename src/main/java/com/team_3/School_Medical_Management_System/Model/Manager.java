@@ -15,7 +15,7 @@ import lombok.ToString;
 @Table
 @Setter
 @Getter
-public class Manager extends User {
+public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore

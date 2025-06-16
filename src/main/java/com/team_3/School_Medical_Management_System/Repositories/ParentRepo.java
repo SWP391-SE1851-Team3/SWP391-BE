@@ -102,7 +102,7 @@ public class ParentRepo implements ParentInterFace  {
     @Override
     public boolean existsByUserName(String userName) {
 
-        return entityManager.createQuery(" SELECT COUNT(p) FROM Parent p WHERE p.UserName like :userName", Long.class)
+        return entityManager.createQuery(" SELECT COUNT(p) FROM Parent p WHERE p.UserName = :userName", Long.class)
                 .setParameter("userName", userName)
                 .getSingleResult() > 0;
 
@@ -110,7 +110,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public boolean existsByEmail(String userName) {
-        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.Email like :Email", Integer.class)
+        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.Email = :Email", Long.class)
                 .setParameter("Email", userName)
                 .getSingleResult() > 0;
     }
