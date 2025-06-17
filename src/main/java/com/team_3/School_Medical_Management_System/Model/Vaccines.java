@@ -1,8 +1,7 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -14,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Vaccines {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Vaccine_id;
     private String Name;
     private String Manufacturer;
@@ -22,5 +22,4 @@ public class Vaccines {
     private int Doses_required;
     private String Created_at;
     private String Updated_at;
-
 }

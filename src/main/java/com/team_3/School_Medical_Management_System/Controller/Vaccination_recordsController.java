@@ -1,0 +1,66 @@
+package com.team_3.School_Medical_Management_System.Controller;
+import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/vaccination_records")
+public class Vaccination_recordsController {
+
+    private Vaccination_recordsServiceInterFace vaccination_recordsServiceInterFace;
+    @Autowired
+    public Vaccination_recordsController(Vaccination_recordsServiceInterFace vaccination_recordsServiceInterFace) {
+        this.vaccination_recordsServiceInterFace = vaccination_recordsServiceInterFace;
+    }
+
+    @GetMapping
+    public List<Vaccination_recordsDTO> getVaccination_records() {
+        return vaccination_recordsServiceInterFace.getVaccination_records();
+    }
+
+
+    @PostMapping
+    public ResponseEntity<Vaccination_recordsDTO> addVaccination_records(@RequestBody Vaccination_recordsDTO vaccination_records) {
+        var addVaccination_Record = vaccination_recordsServiceInterFace.addVaccination_records(vaccination_records);
+        if(addVaccination_Record != null) {
+            return new ResponseEntity<>(addVaccination_Record, HttpStatus.CREATED);
+        }else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/vaccinationRecord/{id}")
+    public ResponseEntity<Vaccination_recordsDTO> updateVaccination_records(
+            @PathVariable int id,
+            @RequestBody Vaccination_recordsDTO vaccination_records) {
+        vaccination_records.setVaccinationRecordID(id); // Gán id từ URL vào DTO
+        Vaccination_recordsDTO updatedRecord = vaccination_recordsServiceInterFace.updateVaccination_records(vaccination_records);
+        return ResponseEntity.ok(updatedRecord);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Vaccination_recordsDTO> getVaccination_records(@PathVariable int id) {
+        var vaccinationRecordById = vaccination_recordsServiceInterFace.getVaccination_records_by_id(id);
+        if(vaccinationRecordById != null) {
+            return new ResponseEntity<>(vaccinationRecordById, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteVaccination_records(@PathVariable int id) {
+        vaccination_recordsServiceInterFace.deleteVaccination_records(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+
+
+
+}
