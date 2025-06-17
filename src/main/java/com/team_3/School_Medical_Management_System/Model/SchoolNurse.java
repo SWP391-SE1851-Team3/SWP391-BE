@@ -39,8 +39,10 @@ public class SchoolNurse {
     private String Certification;
     @NotBlank(message = "Specialisation Not allow empty")
     private String Specialisation;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleID", insertable = false, updatable = false)
-    private Role role;
+
+
+//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "roleID")
+//    private Role role;
 
 }

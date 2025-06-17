@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
+
 @Service
 public class MedicalEventService {
     @Autowired
@@ -35,24 +35,26 @@ public class MedicalEventService {
     private ParentRepository parentRepository; // Repository cho Parent
     @Autowired
     private StudentRepository studentRepository;
-// Repository cho Student
+    // Repository cho Student
     @Autowired
     private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository;
     @Autowired
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
     @Autowired
     private JavaMailSender mailSender;
-@Autowired
-private StudentRepository studentRepo;
+    @Autowired
+    private StudentRepository studentRepo;
 
-@Autowired
-private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repository cho MedicalEvent_EventType
+    @Autowired
+    private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repository cho MedicalEvent_EventType
     @Autowired
     private MedicalEvent_NurseRepo medicalEventNurseRepo; // Repository cho MedicalEvent_Nurse
+
     // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
     // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
     //===============================================================================================
-    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus, Integer eventTypeId ) {
+    @Transactional
+    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto) {
         // Tạo mới một MedicalEvent
 
 
@@ -65,17 +67,17 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
         event.setEventDateTime(dto.getEventDateTime());
 
 
-        Optional<MedicalEventType> me = medicalEventTypeRepo.findById(eventTypeId);
+        Optional<MedicalEventType> me = medicalEventTypeRepo.findById(dto.getEventTypeId());
         if (me.isEmpty()) {
-            throw new RuntimeException("Loại sự kiện không tồn tại với ID: " + eventTypeId);
+            throw new RuntimeException("Loại sự kiện không tồn tại với ID: " + dto.getEventTypeId());
         }
         // Kiểm tra xem học sinh có tồn tại trong cơ sở dữ liệu không
-        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        Optional<Student> studentOptional = studentRepository.findById(dto.getStudentId());
         if (studentOptional.isEmpty()) {
-            throw new RuntimeException("Học sinh không tồn tại với ID: " + studentId);
+            throw new RuntimeException("Học sinh không tồn tại với ID: " + dto.getStudentId());
         }
         // Kiểm tra phụ huynh
-        Optional<Parent> parent = parentRepository.findById(dto.getParentId());
+        Optional<Parent> parent = parentRepository.findById(dto.getParentID());
         if (parent.isEmpty()) {
             throw new RuntimeException("Phụ huynh không tồn tại trong hệ thống.");
         }
@@ -87,19 +89,16 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
 
         MedicalEvent_EventType m = new MedicalEvent_EventType();
         m.setEventId(savedEvent.getEventID());
-        m.setEventTypeId(eventTypeId);
+        m.setEventTypeId(dto.getEventTypeId());
         medicalEventType.save(m);
         // Tạo chi tiết sự kiện
-        Optional<Student> student = studentRepository.findById(studentId);
-        if (student.isEmpty()) {
-            throw new RuntimeException("Học sinh không tồn tại");
-        }
+
         MedicalEventDetails details = new MedicalEventDetails();
-        details.setStudent(student.get());
+        details.setStudent(studentOptional.get());
         details.setMedicalEvent(savedEvent);
-        details.setNote(note);
-        details.setResult(result);
-        details.setProcessingStatus(processingStatus);
+        details.setNote(dto.getNote());
+        details.setResult(dto.getResult());
+        details.setProcessingStatus(dto.getProcessingStatus());
         medicalEventDetailsRepository.save(details);
 
         if (savedEvent.getHasParentBeenInformed()) {
@@ -110,7 +109,7 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
                     parent.get().getFullName(),
                     savedEvent.getEventDateTime(),
                     parent.get().getFullName(),
-                    student.get().getFullName(),
+                    studentOptional.get().getFullName(),
                     me.get().getTypeName()
             );
 
@@ -122,7 +121,7 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
             notificationsParentRepository.save(notification);
             // Gửi email thông báo cho phụ huynh
 
-            NotificationsMedicalEventDetails detailsNotification = new NotificationsMedicalEventDetails();
+            Notifications_MedicalEventDetails detailsNotification = new Notifications_MedicalEventDetails();
             detailsNotification.setParentId(savedEvent.getParent().getParentID());
             detailsNotification.setEventId(savedEvent.getEventID());
             detailsNotification.setTitle(title);
@@ -146,10 +145,15 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
         r.setTemperature(savedEvent.getTemperature());
         r.setHeartRate(savedEvent.getHeartRate());
         r.setEventDateTime(savedEvent.getEventDateTime());
-        r.setParentId(savedEvent.getParent().getParentID());
-        r.setTpyeName(me.get().getTypeName());
-        r.setStudentId(studentId);
-      //  r.setStudent(sameClassName);
+        r.setParentID(savedEvent.getParent().getParentID());
+        r.setTypeName(me.get().getTypeName());
+        r.setStudentId(dto.getStudentId());
+        r.setNote(details.getNote());
+
+        r.setResult(details.getResult());
+        r.setProcessingStatus(details.getProcessingStatus());
+        r.setEventTypeId(dto.getEventTypeId());
+        //  r.setStudent(sameClassName);
         return r;
 
     }
@@ -169,8 +173,8 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
             notificationsParentRepository.save(notification);
         }
     }
-
-    public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto,Integer eventTypeId ) {
+    @Transactional
+    public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto, Integer eventTypeId) {
         try {
             // Tìm sự kiện
             Optional<MedicalEvent> optionalEvent = medicalEventRepository.findById(eventId);
@@ -243,7 +247,7 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
             result.setTemperature(updatedEvent.getTemperature());
             result.setHeartRate(updatedEvent.getHeartRate());
             result.setEventDateTime(updatedEvent.getEventDateTime());
-         //   result.setParentId(updatedEvent.getParent().getParentID());
+            //   result.setParentId(updatedEvent.getParent().getParentID());
             result.setStudentId(studentId);
             result.setNote(details.getNote());
             result.setResult(details.getResult());
@@ -257,9 +261,7 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
         }
     }
 
-
-
-
+    @Transactional
     public MedicalEventDetailsDTO getMedicalEventDetails(Integer eventId) {
         // Tìm MedicalEvent với EventTypes
         MedicalEvent medicalEvent = medicalEventRepository.findById(eventId)
@@ -308,11 +310,18 @@ private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repositor
         return dto;
     }
 
-
+    @Transactional
     public void deleteMedicalEvent(Integer eventId) {
         // Kiểm tra xem sự kiện có tồn tại không
         MedicalEvent medicalEvent = medicalEventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện y tế với ID: " + eventId));
+
+        // Xóa NotificationsMedicalEventDetails liên quan
+        Notifications_MedicalEventDetailsId notificationsId = new Notifications_MedicalEventDetailsId();
+        notificationsId.setEventId(eventId);
+        notificationsId.setParentId(medicalEvent.getParent().getParentID());
+
+        notificationsMedicalEventDetailsRepository.deleteById(notificationsId);
         medicalEventNurseRepo.deleteByMedicalEvent_EventID(eventId);
         medicalEventType.deleteByMedicalEvent_EventID(eventId);
         // Xóa MedicalEventDetails liên quan

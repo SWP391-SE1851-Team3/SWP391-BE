@@ -19,8 +19,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class StudentService implements StudentServiceInterFace {
     private StudentInterFace studentInterFace;
-    @Autowired
-    private StudentRepository studentRepo;
+   @Autowired
+   private StudentRepository studentRepository;
+
+
+
+
     @Autowired
    public StudentService(StudentInterFace studentInterFace) {
         this.studentInterFace = studentInterFace;
@@ -92,7 +96,7 @@ public class StudentService implements StudentServiceInterFace {
     @Override
     public List<StudentsDTO> getAllStudentsByClassName(String className) {
 
-        List<Student> clasName = studentRepo.findAll();
+        List<Student> clasName = studentRepository.findAll();
         List<StudentsDTO> sameClassName = new ArrayList<>();
         for (Student m : clasName) {
             if(m.getClassName().equalsIgnoreCase(className)){

@@ -1,5 +1,7 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
+import com.team_3.School_Medical_Management_System.DTO.UserDTO;
+import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 
 import java.util.List;
@@ -13,4 +15,6 @@ public interface SchoolNurseServiceInterFace {
     public SchoolNurse LoginByAccount(String Phone, String Password);
     public SchoolNurse GetSchoolNursesById(int id);
     public boolean changePassword(String email, String oldPassword, String newPassword);
+   public UserDTO convertSchoolNurseToUserDTO(SchoolNurse nurse);
+    public SchoolNurse convertToSchoolNurseEntity(UserDTO dto);
 }

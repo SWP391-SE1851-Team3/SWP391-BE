@@ -22,8 +22,7 @@ public class StudentRepo implements StudentInterFace {
         this.entityManager = entityManager;
     }
 
-    @Autowired
-    private StudentRepository studentRepo;
+
     @Override
     public void addStudent(Student student) {
         entityManager.persist(student);
@@ -71,21 +70,7 @@ public class StudentRepo implements StudentInterFace {
         return students;
     }
 
-    @Override
-    public List<Student> findByClassNameContainingIgnoreCase(String className) {
-        String sql = " from Student s where lower(s.ClassName) like lower(concat('%', :className, '%'))";
-        return entityManager.createQuery(sql, Student.class)
-                .setParameter("className", className)
-                .getResultList();
-    }
 
-    @Override
-    public List<Student> findByFullNameContainingIgnoreCase(String fullName) {
-        String sql = "from Student s where lower(s.FullName) like lower(concat('%', :fullName, '%'))";
-        return entityManager.createQuery(sql, Student.class)
-                .setParameter("fullName", fullName)
-                .getResultList();
-    }
 
 
 }

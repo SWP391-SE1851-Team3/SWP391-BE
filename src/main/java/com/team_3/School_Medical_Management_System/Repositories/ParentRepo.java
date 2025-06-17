@@ -36,6 +36,7 @@ public class ParentRepo implements ParentInterFace  {
     @Override
     public void AddNewParent(Parent parent) {
          entityManager.persist(parent);
+       entityManager.flush();
     }
 
     @Override
@@ -109,9 +110,9 @@ public class ParentRepo implements ParentInterFace  {
     }
 
     @Override
-    public boolean existsByEmail(String userName) {
+    public boolean existsByEmail(String mail) {
         return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.Email = :Email", Long.class)
-                .setParameter("Email", userName)
+                .setParameter("Email", mail)
                 .getSingleResult() > 0;
     }
 }

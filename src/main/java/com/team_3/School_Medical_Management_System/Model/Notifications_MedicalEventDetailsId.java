@@ -7,14 +7,14 @@ import java.io.Serializable;
 @Getter
 @Setter
 
-public class NotificationsMedicalEventDetailsId implements Serializable {
+public class Notifications_MedicalEventDetailsId implements Serializable {
     private Integer parentId;
     private Integer eventId;
 
-    public NotificationsMedicalEventDetailsId(Integer parentId, Integer eventId) {
+    public Notifications_MedicalEventDetailsId(Integer parentId, Integer eventId) {
         this.parentId = parentId;
         this.eventId = eventId;
     }
-    public NotificationsMedicalEventDetailsId() {
+    public Notifications_MedicalEventDetailsId() {
     }
 }

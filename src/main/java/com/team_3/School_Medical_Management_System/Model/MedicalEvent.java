@@ -24,10 +24,10 @@ public class MedicalEvent {
     private Boolean isEmergency;
     @NotNull(message = "Thông báo phụ huynh không được để trống")
     private Boolean hasParentBeenInformed;
-    @Pattern(regexp = "^(3[5-9]|[4-4][0-9]|50)(\\.\\d)?°C$", message = "Giá trị không hợp lệ. Vui lòng nhập giá trị từ 35 đến 50 độ C.")
+   // @Pattern(regexp = "^(3[5-9]|[4-4][0-9]|50)(\\.\\d)?°C$", message = "Giá trị không hợp lệ. Vui lòng nhập giá trị từ 35 đến 50 độ C.")
 
     private String temperature;
-   @Pattern(regexp = "^\\d{2,3}(\\s*(?:bpm|BPM))?$", message = "Nhịp tim không hợp lệ (ví dụ: 60, 75 bpm, 80BPM). Cho phép từ 60 đến 999 bpm.")
+   //@Pattern(regexp = "^\\d{2,3}(\\s*(?:bpm|BPM))?$", message = "Nhịp tim không hợp lệ (ví dụ: 60, 75 bpm, 80BPM). Cho phép từ 60 đến 999 bpm.")
     private String heartRate;
     private LocalDateTime eventDateTime;
     //private Integer parentID;

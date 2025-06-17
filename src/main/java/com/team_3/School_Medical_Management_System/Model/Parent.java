@@ -39,9 +39,9 @@ public class Parent {
 
     // @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleID", insertable = false, updatable = false)
-    private Role role;
+//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "roleID", insertable = false, updatable = false)
+//    private Role role;
 
 
 }

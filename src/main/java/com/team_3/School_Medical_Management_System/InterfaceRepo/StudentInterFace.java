@@ -21,8 +21,8 @@ public interface StudentInterFace {
     public List<Student> getStudentsByParentID(int parentID);
 
 
-    public List<Student> findByClassNameContainingIgnoreCase(String className);
+   // public List<Student> findStudentByParentId(int parentId);
 
-    public List<Student> findByFullNameContainingIgnoreCase(String fullName);
+
 
 }

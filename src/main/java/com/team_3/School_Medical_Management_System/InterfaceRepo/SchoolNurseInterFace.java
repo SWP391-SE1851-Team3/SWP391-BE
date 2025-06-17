@@ -14,8 +14,6 @@ public interface SchoolNurseInterFace {
     public SchoolNurse LoginByAccount(String Email, String Password);
     public SchoolNurse GetSchoolNursesById(int id);
     public boolean changePassword(String email, String oldPassword, String newPassword);
-
-
-    public boolean existsByUserName(String userName);
-    public boolean existsByEmail(String email);
+    public boolean  existsByUserName(String userName);
+    public boolean  existsByEmail(String userName);
 }

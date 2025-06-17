@@ -82,17 +82,17 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
 
     @Override
     public boolean existsByUserName(String userName) {
-        return entityManager.createQuery("SELECT COUNT(s) FROM SchoolNurse s WHERE s.userName = :userName", Long.class)
+        return entityManager.createQuery(" SELECT COUNT(s) FROM SchoolNurse s WHERE s.UserName = :userName", Long.class)
                 .setParameter("userName", userName)
                 .getSingleResult() > 0;
     }
 
     @Override
-
-    public boolean existsByEmail(String email) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(s) FROM SchoolNurse s WHERE s.email = :email", Long.class);
-        query.setParameter("email", email);
-        return query.getSingleResult() > 0;
+    public boolean existsByEmail(String mail) {
+        return entityManager.createQuery("SELECT COUNT(s) FROM SchoolNurse s WHERE s.Email = :Email", Long.class)
+                .setParameter("Email", mail)
+                .getSingleResult() > 0;
     }
+
 
 }

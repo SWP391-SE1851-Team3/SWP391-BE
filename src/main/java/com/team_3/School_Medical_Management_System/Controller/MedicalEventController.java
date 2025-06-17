@@ -26,19 +26,14 @@ public class MedicalEventController {
     private MedicalEventService medicalEventService; // Service cho MedicalEvent
     @Autowired
     private MedicalEventTypeRepo medicalEventTypeRepo;
-@Autowired
-private StudentService studentService;
+    @Autowired
+    private StudentService studentService;
+
     @PostMapping("/emergency")
     @Operation(summary = "Tạo sự kiện y tế đột xuất và chi tiết liên quan")
     public ResponseEntity<MedicalEventDTO> createEmergencyEvent(
-            @RequestBody MedicalEventDTO dto,
-            @RequestParam int studentId,
-            @RequestParam String note,
-            @RequestParam String result,
-            @RequestParam String processingStatus,
-            @RequestParam Integer eventTypeId
-    ) {
-        MedicalEventDTO r = medicalEventService.createEmergencyEvent(dto, studentId, note, result, processingStatus, eventTypeId);
+            @RequestBody MedicalEventDTO dto) {
+        MedicalEventDTO r = medicalEventService.createEmergencyEvent(dto);
         return ResponseEntity.ok(r);
     }
 
@@ -55,20 +50,17 @@ private StudentService studentService;
     public ResponseEntity<MedicalEventUpdateDTO> updateMedicalEvent(
             @PathVariable int eventId,
             @RequestBody MedicalEventUpdateDTO dto,
-            @RequestParam int eventTypeId){
-        MedicalEventUpdateDTO r = medicalEventService.updateMedicalEvent(eventId, dto,eventTypeId);
+            @RequestParam int eventTypeId) {
+        MedicalEventUpdateDTO r = medicalEventService.updateMedicalEvent(eventId, dto, eventTypeId);
         return ResponseEntity.ok(r);
     }
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<String>> getAllEventTypes() {
+    public ResponseEntity<List<MedicalEventType>> getAllEventTypes() {
         List<MedicalEventType> eventTypes = medicalEventTypeRepo.findAll();
-        List<String> typeNames = new ArrayList<>();
-        for (MedicalEventType eventType : eventTypes) {
-            typeNames.add(eventType.getTypeName());
-        }
-        return ResponseEntity.ok(typeNames);
+
+        return ResponseEntity.ok(eventTypes);
     }
 
 

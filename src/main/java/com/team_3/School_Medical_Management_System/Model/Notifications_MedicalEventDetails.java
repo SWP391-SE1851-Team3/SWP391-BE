@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@IdClass(NotificationsMedicalEventDetailsId.class)
-public class NotificationsMedicalEventDetails {
+@IdClass(Notifications_MedicalEventDetailsId.class)
+public class Notifications_MedicalEventDetails {
     @Id
     @Column(name = "ParentID")
     private Integer parentId;
