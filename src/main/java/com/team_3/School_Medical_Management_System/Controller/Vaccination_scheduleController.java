@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/vaccination_scheduleControllers")
+@CrossOrigin(origins = "http://localhost:5173")
 public class Vaccination_scheduleController {
     private Vaccination_scheduleServiceInterFace vaccination_scheduleServiceInterFace;
 

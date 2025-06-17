@@ -37,8 +37,4 @@ public class Parent {
     @NotBlank(message = "Relationship Not allow empty")
     private String Relationship;
 
-
-
-
-
 }
