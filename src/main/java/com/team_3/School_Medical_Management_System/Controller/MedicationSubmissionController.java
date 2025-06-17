@@ -77,15 +77,14 @@ public class MedicationSubmissionController {
             @RequestParam int medicationSubmissionId,
             @RequestParam int nurseId,
             @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status,
-            @RequestParam String evidence,
+            @RequestParam String reason,
             RedirectAttributes redirectAttributes) {
 
         ConfirmMedicationSubmissionDTO confirmDTO = new ConfirmMedicationSubmissionDTO();
         confirmDTO.setMedicationSubmissionId(medicationSubmissionId);
         confirmDTO.setNurseId(nurseId);
         confirmDTO.setStatus(status);
-        confirmDTO.setEvidence(evidence);
-        confirmDTO.setConfirmedAt(LocalDateTime.now());
+        confirmDTO.setReason(reason);
 
         confirmService.createConfirmation(confirmDTO);
 

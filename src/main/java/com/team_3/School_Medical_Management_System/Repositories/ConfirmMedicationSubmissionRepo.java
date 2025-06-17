@@ -65,7 +65,6 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     public <S extends ConfirmMedicationSubmission> S save(S entity) {
         if (entity.getConfirmId() == 0) {
-            entity.setConfirmedAt(LocalDateTime.now());
             entityManager.persist(entity);
             return entity;
         } else {

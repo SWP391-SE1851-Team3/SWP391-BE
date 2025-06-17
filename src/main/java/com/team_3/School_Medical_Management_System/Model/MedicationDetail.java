@@ -21,8 +21,8 @@ public class MedicationDetail {
     @JoinColumn(name = "medicationSubmissionId")
     private MedicationSubmission medicationSubmission;
 
-    private String medicationName;
+    private String medicineName;
     private String dosage;
-    private String timesToUse;
-    private String notes;
+    private String timeToUse;
+    private String note;
 }

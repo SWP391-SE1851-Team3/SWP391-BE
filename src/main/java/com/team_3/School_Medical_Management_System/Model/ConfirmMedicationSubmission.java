@@ -20,10 +20,9 @@ public class ConfirmMedicationSubmission {
     private int confirmId;
     private int medicationSubmissionId;
     private int nurseId;
-    private String evidence;
+    private String reason;
 
-    private LocalDateTime confirmedAt;
-    private LocalDateTime medicationTakenAt;
+    private String evidence;
 
     @Enumerated(EnumType.STRING)
     private confirmMedicationSubmissionStatus status;

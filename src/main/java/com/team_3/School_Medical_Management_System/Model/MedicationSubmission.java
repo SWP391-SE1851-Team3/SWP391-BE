@@ -29,17 +29,11 @@ public class MedicationSubmission {
 //    @Enumerated(EnumType.STRING)
 //    private SubmissionStatus status;
 
-    private LocalDateTime submissionDate;
-    private LocalDateTime processedDate;
-    private LocalDateTime administeredDate;
-    private String rejectionReason;
-    private String administrationNotes;
-
     @OneToMany(mappedBy = "medicationSubmission", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MedicationDetail> medicationDetails;
 
     @PrePersist
     public void prePersist() {
-        this.submissionDate = LocalDateTime.now();
+
     }
 }

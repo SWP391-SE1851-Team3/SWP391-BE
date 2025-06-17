@@ -19,12 +19,6 @@ public class MedicationConfirmationController {
     @Autowired
     private ConfirmMedicationSubmissionServiceInterface confirmService;
 
-    @PostMapping("/create")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> createConfirmation(@RequestBody ConfirmMedicationSubmissionDTO confirmDTO) {
-        ConfirmMedicationSubmissionDTO createdConfirmation = confirmService.createConfirmation(confirmDTO);
-        return new ResponseEntity<>(createdConfirmation, HttpStatus.CREATED);
-    }
-
     @PutMapping("/{confirmId}/status/approved")
     public ResponseEntity<ConfirmMedicationSubmissionDTO> approvedConfirmationStatus(
             @PathVariable int confirmId,
@@ -39,8 +33,17 @@ public class MedicationConfirmationController {
     @PutMapping("/{confirmId}/status/rejected")
     public ResponseEntity<ConfirmMedicationSubmissionDTO> rejectedConfirmationStatus(
             @PathVariable int confirmId,
+            @RequestParam(required = true) String reason,
             @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus REJECTED) {
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, REJECTED);
+        // First validate that reason isn't empty
+        if (reason == null || reason.trim().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Now update the confirmation status with the reason
+        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatusWithReason(
+                confirmId, REJECTED, reason);
+
         if (updatedConfirmation != null) {
             return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
         }

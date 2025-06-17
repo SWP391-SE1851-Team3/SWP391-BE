@@ -31,17 +31,17 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         submission.setParentId(medicationSubmissionDTO.getParentId());
         submission.setStudentId(medicationSubmissionDTO.getStudentId());
         submission.setMedicineImage(medicationSubmissionDTO.getMedicineImage());
-        submission.setSubmissionDate(LocalDateTime.now());
+
 
         // Convert MedicationDetailDTO list to MedicationDetail
         if (medicationSubmissionDTO.getMedicationDetails() != null && !medicationSubmissionDTO.getMedicationDetails().isEmpty()) {
             List<MedicationDetail> medicationDetails = medicationSubmissionDTO.getMedicationDetails().stream()
                     .map(detailDTO -> {
                         MedicationDetail detail = new MedicationDetail();
-                        detail.setMedicationName(detailDTO.getMedicationName());
+                        detail.setMedicineName(detailDTO.getMedicineName());
                         detail.setDosage(detailDTO.getDosage());
-                        detail.setTimesToUse(detailDTO.getTimesToUse());
-                        detail.setNotes(detailDTO.getNotes());
+                        detail.setTimeToUse(detailDTO.getTimeToUse());
+                        detail.setNote(detailDTO.getNote());
                         detail.setMedicationSubmission(submission);
                         return detail;
                     })
@@ -57,7 +57,6 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         ConfirmMedicationSubmission confirmation = new ConfirmMedicationSubmission();
         confirmation.setMedicationSubmissionId(savedSubmission.getMedicationSubmissionId());
         confirmation.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.PENDING);
-        confirmation.setConfirmedAt(LocalDateTime.now());
         // Note: nurseId and evidence will be updated later when a nurse processes this
 
         confirmMedicationSubmissionInterFace.save(confirmation);

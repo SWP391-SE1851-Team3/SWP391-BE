@@ -12,5 +12,6 @@ public interface ConfirmMedicationSubmissionServiceInterface {
     ConfirmMedicationSubmissionDTO getConfirmationBySubmissionId(int medicationSubmissionId);
     List<ConfirmMedicationSubmissionDTO> getConfirmationsByNurse(int nurseId);
     List<ConfirmMedicationSubmissionDTO> getAllConfirmations();
-
+    ConfirmMedicationSubmissionDTO updateConfirmationStatusWithReason(int confirmId,
+                                                                      ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status, String reason);
 }
