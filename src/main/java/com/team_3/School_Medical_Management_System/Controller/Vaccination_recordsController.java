@@ -42,11 +42,9 @@ public class Vaccination_recordsController {
     public ResponseEntity<Vaccination_recordsDTO> updateVaccinationRecord(
             @PathVariable int id,
             @RequestBody Vaccination_recordsDTO dto) {
-
-        dto.setVaccinationRecordID(id);  // set id lấy từ path param vào DTO
-
-        Vaccination_recordsDTO updatedRecord = vaccination_recordsServiceInterFace.updateVaccination_records(dto);
-        return ResponseEntity.ok(updatedRecord);
+        vaccination_records.setVaccinationRecordID(id); // Gán id từ URL vào DTO
+        Vaccination_recordsDTO updatedRecord = vaccination_recordsServiceInterFace.updateVaccination_records(vaccination_records);
+        return ok(updatedRecord);
     }
 
     @GetMapping("/{id}")

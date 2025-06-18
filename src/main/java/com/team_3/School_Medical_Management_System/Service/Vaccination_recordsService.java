@@ -158,4 +158,14 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
            return vaccination_recordsByStudentId.stream().map(TransferModelsDTO::MappingVaccinationRecordsDTO).collect(Collectors.toList());
        }
     }
+
+    @Override
+    public List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId) {
+       var vaccination_recordsByStudentId = vaccination_recordsInterFace.getVaccination_recordsByStudentId(studentId);
+       if(vaccination_recordsByStudentId == null || vaccination_recordsByStudentId.isEmpty()){
+           throw  new RuntimeException("vaccination_records_student is null");
+       }else {
+           return vaccination_recordsByStudentId.stream().map(TransferModelsDTO::MappingVaccinationRecordsDTO).collect(Collectors.toList());
+       }
+    }
 }
