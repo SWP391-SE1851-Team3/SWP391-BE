@@ -71,6 +71,18 @@ public class MedicationSubmissionController {
         }
     }
 
+    @DeleteMapping("/cancel/{submissionId}")
+    public ResponseEntity<?> cancelMedicationSubmission(@PathVariable int submissionId) {
+        try {
+            medicationSubmissionService.cancelMedicationSubmission(submissionId);
+            return new ResponseEntity<>("Medication submission cancelled successfully", HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error cancelling medication submission", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/submissions/{submissionId}/details")
     public ResponseEntity<List<MedicationDetail>> getSubmissionDetails(@PathVariable int submissionId) {
         List<MedicationDetail> details = medicationSubmissionService.getDetailsBySubmissionId(submissionId);
