@@ -18,17 +18,17 @@ public class StudentMedicalEventDto {
     @JsonProperty("time")
     @JsonFormat(pattern = "HH:mm, dd/MM/yyyy")// Loại sự kiện (usageMethod từ MedicalEvent)
     private LocalDateTime time;
-    @JsonProperty("status")// Thời gian (eventDateTime từ MedicalEvent)
-    private String status;
+    @JsonProperty("processingStatus")// Thời gian (eventDateTime từ MedicalEvent)
+    private String processingStatus;
     @JsonProperty("actions")// Trạng thái (processingStatus từ MedicalEventDetails)
     private String actions; // Hành động (chuỗi rỗng hoặc tùy chỉnh)
     private  Integer eventId;
 
-    public StudentMedicalEventDto(String studentNameAndClassName, String eventType, LocalDateTime time, String status, String actions, Integer eventId) {
+    public StudentMedicalEventDto(String studentNameAndClassName, String eventType, LocalDateTime time, String processingStatus, String actions, Integer eventId) {
         this.studentNameAndClassName = studentNameAndClassName;
         this.eventType = eventType;
         this.time = time;
-        this.status = status;
+        this.processingStatus = processingStatus;
         this.actions = actions;
         this.eventId = eventId;
     }

@@ -20,6 +20,8 @@ import java.util.Optional;
 @Service
 public class MedicalEventService {
     @Autowired
+    private EmailService emailService;
+    @Autowired
     private MedicalEvent_EventTypeRepo medicalEventType;
 
     @Autowired
@@ -102,10 +104,14 @@ public class MedicalEventService {
         medicalEventDetailsRepository.save(details);
 
         if (savedEvent.getHasParentBeenInformed()) {
-            String title = "Thông báo sự kiện y tế khẩn cấp tại trường >>>>>";
+
+           // String currentUser = "Y tá trường cấp 1 ...."; // Thay thế bằng tên người dùng hiện tại
+            String title = "Thông báo sự kiện y tế khẩn cấp tại trường";
             String content = String.format(
-                    "Kính gửi phụ huynh %s,\n\nCó sự kiện y tế khẩn cấp xảy ra vào %s tại trường học ...... " +
-                            "Thông tin: Con anh/chị %s là: %s.Em đã bị %s tại trường học . Vui lòng liên hệ số điện thoại trường (\"19001818\") để biết thêm chi tiết.\n\nTrân trọng, Ban y tế trường học.",
+                    "Kính gửi phụ huynh %s,\n\n" +
+                            "Có sự kiện y tế khẩn cấp xảy ra vào %s tại trường học. " +
+                            "Thông tin: Con anh/chị %s là: %s. Em đã bị %s tại trường học. " +
+                            "Vui lòng liên hệ số điện thoại trường (\"19001818\") để biết thêm chi tiết.",
                     parent.get().getFullName(),
                     savedEvent.getEventDateTime(),
                     parent.get().getFullName(),
@@ -118,21 +124,15 @@ public class MedicalEventService {
             notification.setTitle(title);
             notification.setContent(content);
             notification.setCreateAt(savedEvent.getEventDateTime());
+          //  notification.setCreatedBy(currentUser); // Thêm thông tin người tạo
             notificationsParentRepository.save(notification);
-            // Gửi email thông báo cho phụ huynh
-
-            Notifications_MedicalEventDetails detailsNotification = new Notifications_MedicalEventDetails();
-            detailsNotification.setParentId(savedEvent.getParent().getParentID());
-            detailsNotification.setEventId(savedEvent.getEventID());
-            detailsNotification.setTitle(title);
-            detailsNotification.setContent(content);
-
             try {
-                sendNotificationEmail(parent.get(), title, content, notification.getNotificationId());
+                // Gửi email với thông tin người dùng và thời gian
+                emailService.sendHtmlNotificationEmail(parent.get(), title, content, notification.getNotificationId());
+                emailService.testEmailConfig("ytruongtieuhoc@example.com");
             } catch (Exception e) {
                 throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
             }
-
         }
 
 
@@ -159,20 +159,22 @@ public class MedicalEventService {
     }
 
     private void sendNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(parent.getEmail());
-        message.setSubject(title);
-        message.setText(content);
-        mailSender.send(message);
-        // Cập nhật trạng thái thông báo thành true sau khi gửi thành công
-        NotificationsParent notification = notificationsParentRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Notification not found with ID: " + notificationId));
-        // Kiểm tra xem notification có tồn tại không
-        if (notification != null) {
-            notification.setStatus(true);
-            notificationsParentRepository.save(notification);
+        try {
+            // Sử dụng emailService để gửi email thay vì cài đặt trực tiếp tại đây
+            emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
         }
     }
+
+//    private void sendNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
+//        try {
+//            // Sử dụng email service để gửi email văn bản đơn giản
+//            emailService.sendSimpleNotificationEmail(parent, title, content, notificationId);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+//        }
+//    }
     @Transactional
     public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto, Integer eventTypeId) {
         try {

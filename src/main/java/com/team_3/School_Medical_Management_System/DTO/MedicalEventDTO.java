@@ -22,10 +22,7 @@ public class MedicalEventDTO {
     private Integer parentID;
     private Integer studentId;
     private String typeName;
-    //private List<Student> student;
-    //@RequestParam
-
-    //@RequestParam
+    
     private
     String note;
     // @RequestParam

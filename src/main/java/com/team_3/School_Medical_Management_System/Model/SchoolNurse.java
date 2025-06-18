@@ -41,8 +41,4 @@ public class SchoolNurse {
     private String Specialisation;
 
 
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "roleID")
-//    private Role role;
-
 }
