@@ -33,7 +33,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     public Optional<ConfirmMedicationSubmission> findByMedicationSubmissionId(int medicationSubmissionId) {
         try {
-            String jpql = "SELECT c FROM Confirm_MedicationSubmission c WHERE c.medicationSubmissionId = :medicationSubmissionId";
+            String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.medicationSubmissionId = :medicationSubmissionId";
             ConfirmMedicationSubmission result = entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
                     .setParameter("medicationSubmissionId", medicationSubmissionId)
                     .getSingleResult();
@@ -45,27 +45,25 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
     @Override
     public List<ConfirmMedicationSubmission> findByNurseId(int nurseId) {
-        String jpql = "SELECT c FROM Confirm_MedicationSubmission c WHERE c.nurseId = :nurseId";
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.nurseId = :nurseId";
         return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
                 .setParameter("nurseId", nurseId)
                 .getResultList();
     }
 
     @Override
-    public List<ConfirmMedicationSubmission> findByStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status) {
-        String jpql = "SELECT c FROM Confirm_MedicationSubmission c WHERE c.status = :status";
+    public List<ConfirmMedicationSubmission> findByStatus(String status) {
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.status = :status";
         return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
                 .setParameter("status", status)
                 .getResultList();
     }
-
 
     // Required methods from JpaRepository interface
 
     @Override
     public <S extends ConfirmMedicationSubmission> S save(S entity) {
         if (entity.getConfirmId() == 0) {
-            entity.setConfirmedAt(LocalDateTime.now());
             entityManager.persist(entity);
             return entity;
         } else {
@@ -86,7 +84,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
     @Override
     public List<ConfirmMedicationSubmission> findAll() {
-        return entityManager.createQuery("SELECT c FROM Confirm_MedicationSubmission c", ConfirmMedicationSubmission.class).getResultList();
+        return entityManager.createQuery("SELECT c FROM ConfirmMedicationSubmission c", ConfirmMedicationSubmission.class).getResultList();
     }
 
     @Override
@@ -106,7 +104,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
     @Override
     public long count() {
-        return entityManager.createQuery("SELECT COUNT(c) FROM Confirm_MedicationSubmission c", Long.class).getSingleResult();
+        return entityManager.createQuery("SELECT COUNT(c) FROM ConfirmMedicationSubmission c", Long.class).getSingleResult();
     }
 
     @Override
@@ -147,7 +145,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     @Transactional
     public void deleteAll() {
-        entityManager.createQuery("DELETE FROM Confirm_MedicationSubmission").executeUpdate();
+        entityManager.createQuery("DELETE FROM ConfirmMedicationSubmission").executeUpdate();
     }
 
     @Override
@@ -185,7 +183,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     @Transactional
     public void deleteAllInBatch(Iterable<ConfirmMedicationSubmission> entities) {
-        StringBuilder queryBuilder = new StringBuilder("DELETE FROM Confirm_MedicationSubmission c WHERE c.confirmId IN (");
+        StringBuilder queryBuilder = new StringBuilder("DELETE FROM ConfirmMedicationSubmission c WHERE c.confirmId IN (");
         boolean first = true;
         for (ConfirmMedicationSubmission entity : entities) {
             if (!first) {
@@ -203,7 +201,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     @Transactional
     public void deleteAllByIdInBatch(Iterable<Integer> ids) {
-        StringBuilder queryBuilder = new StringBuilder("DELETE FROM Confirm_MedicationSubmission c WHERE c.confirmId IN (");
+        StringBuilder queryBuilder = new StringBuilder("DELETE FROM ConfirmMedicationSubmission c WHERE c.confirmId IN (");
         boolean first = true;
         for (Integer id : ids) {
             if (!first) {
@@ -221,7 +219,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     @Transactional
     public void deleteAllInBatch() {
-        entityManager.createQuery("DELETE FROM Confirm_MedicationSubmission").executeUpdate();
+        entityManager.createQuery("DELETE FROM ConfirmMedicationSubmission").executeUpdate();
     }
 
     @Override
@@ -243,7 +241,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     public <S extends ConfirmMedicationSubmission> Optional<S> findOne(Example<S> example) {
         // Basic implementation - this could be enhanced for more complex examples
         try {
-            String jpql = "SELECT c FROM Confirm_MedicationSubmission c WHERE 1=1";
+            String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE 1=1";
             // Add conditions based on the example (this is a simplified approach)
             if (example.getProbe().getConfirmId() != 0) {
                 jpql += " AND c.confirmId = :id";
@@ -296,7 +294,7 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
     @Override
     public List<ConfirmMedicationSubmission> findAll(Sort sort) {
-        String jpql = "SELECT c FROM Confirm_MedicationSubmission c";
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c";
         // Add ordering based on Sort object
         if (sort != null && sort.isSorted()) {
             jpql += " ORDER BY";
@@ -314,10 +312,10 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
     @Override
     public Page<ConfirmMedicationSubmission> findAll(Pageable pageable) {
-        String countQuery = "SELECT COUNT(c) FROM Confirm_MedicationSubmission c";
+        String countQuery = "SELECT COUNT(c) FROM ConfirmMedicationSubmission c";
         long total = entityManager.createQuery(countQuery, Long.class).getSingleResult();
 
-        String jpql = "SELECT c FROM Confirm_MedicationSubmission c";
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c";
         // Add ordering based on Sort object
         if (pageable.getSort().isSorted()) {
             jpql += " ORDER BY";
@@ -338,5 +336,4 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
         return new org.springframework.data.domain.PageImpl<>(content, pageable, total);
     }
-
 }

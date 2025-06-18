@@ -19,21 +19,16 @@ public class ConfirmMedicationSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int confirmId;
     private int medicationSubmissionId;
-    private int nurseId;
+    private Integer nurseId;
+    private String reason;
+
     private String evidence;
 
-    private LocalDateTime confirmedAt;
-    private LocalDateTime medicationTakenAt;
+    private String status;
 
-    @Enumerated(EnumType.STRING)
-    private confirmMedicationSubmissionStatus status;
-
-    public enum confirmMedicationSubmissionStatus {
-        PENDING,
-        APPROVED,
-        REJECTED,
-        ADMINISTERED
-    }
-
-
+    // Constants để sử dụng thay thế enum
+    public static final String STATUS_PENDING = "PENDING";
+    public static final String STATUS_APPROVED = "APPROVED";
+    public static final String STATUS_REJECTED = "REJECTED";
+    public static final String STATUS_ADMINISTERED = "ADMINISTERED";
 }

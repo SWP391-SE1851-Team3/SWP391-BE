@@ -42,9 +42,33 @@ public class MedicationSubmissionController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<MedicationSubmission> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
-        MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
-        return new ResponseEntity<>(submission, HttpStatus.CREATED);
+    public ResponseEntity<?> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
+        try {
+            // Kiểm tra xem studentId có tồn tại không
+            Student student = studentService.getStudent(medicationSubmissionDTO.getStudentId());
+            if (student == null) {
+                return new ResponseEntity<>("Student with ID " + medicationSubmissionDTO.getStudentId() + " does not exist",
+                                           HttpStatus.BAD_REQUEST);
+            }
+
+            MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
+            return new ResponseEntity<>(submission, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error submitting medication: " + e.getMessage(),
+                                       HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/cancel/{submissionId}")
+    public ResponseEntity<?> cancelMedicationSubmission(@PathVariable int submissionId) {
+        try {
+            medicationSubmissionService.cancelMedicationSubmission(submissionId);
+            return new ResponseEntity<>("Medication submission cancelled successfully", HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error cancelling medication submission", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/cancel/{submissionId}")
@@ -76,21 +100,19 @@ public class MedicationSubmissionController {
     public String confirmMedication(
             @RequestParam int medicationSubmissionId,
             @RequestParam int nurseId,
-            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status,
-            @RequestParam String evidence,
+            @RequestParam String status,
+            @RequestParam String reason,
             RedirectAttributes redirectAttributes) {
 
         ConfirmMedicationSubmissionDTO confirmDTO = new ConfirmMedicationSubmissionDTO();
         confirmDTO.setMedicationSubmissionId(medicationSubmissionId);
         confirmDTO.setNurseId(nurseId);
         confirmDTO.setStatus(status);
-        confirmDTO.setEvidence(evidence);
-        confirmDTO.setConfirmedAt(LocalDateTime.now());
+        confirmDTO.setReason(reason);
 
         confirmService.createConfirmation(confirmDTO);
 
         return "redirect:/medication-submission/medication-dashboard";
     }
 }
-
 
