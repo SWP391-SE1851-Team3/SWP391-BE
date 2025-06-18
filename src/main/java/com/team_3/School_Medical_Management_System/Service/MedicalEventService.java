@@ -68,6 +68,9 @@ public class MedicalEventService {
         event.setHeartRate(dto.getHeartRate());
         event.setEventDateTime(dto.getEventDateTime());
 
+        MedicalEvent_Nurse medicalEventNurse = new MedicalEvent_Nurse();
+        //medicalEventNurse.setMedicalEvent(event.getEventID());
+        //medicalEventNurse.setNurseId(dto.getNurseId());
 
         Optional<MedicalEventType> me = medicalEventTypeRepo.findById(dto.getEventTypeId());
         if (me.isEmpty()) {

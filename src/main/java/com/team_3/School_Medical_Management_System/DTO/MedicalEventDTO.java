@@ -22,7 +22,7 @@ public class MedicalEventDTO {
     private Integer parentID;
     private Integer studentId;
     private String typeName;
-    
+    private Integer nurseId;
     private
     String note;
     // @RequestParam
@@ -35,7 +35,7 @@ public class MedicalEventDTO {
     private
     Integer eventTypeId;
 
-    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, int studentId1, String note, String result, String processingStatus, Integer eventTypeId) {
+    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, Integer nurseId, String note, String result, String processingStatus, Integer eventTypeId) {
         this.eventId = eventId;
         this.usageMethod = usageMethod;
         this.isEmergency = isEmergency;
@@ -46,7 +46,7 @@ public class MedicalEventDTO {
         this.parentID = parentID;
         this.studentId = studentId;
         this.typeName = typeName;
-        this.studentId = studentId1;
+        this.nurseId = nurseId;
         this.note = note;
         this.result = result;
         this.processingStatus = processingStatus;
