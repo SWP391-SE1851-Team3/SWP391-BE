@@ -51,7 +51,7 @@ public class Consent_formsController {
     }
 
     @GetMapping("/approved/{id}")
-    public List<Consent_formsDTO> getParentIsAgree(@PathVariable int id) {
+    public List<Consent_formsRequestDTO> getParentIsAgree(@PathVariable int id) {
         var listArgee = consent_formsServiceInterFace.getConsent_formsIsAgree(id);
         if (listArgee == null) {
             return null;
@@ -61,7 +61,7 @@ public class Consent_formsController {
     }
 
     @GetMapping("/Consent_forms/{class_name}")
-    public List<Consent_formsDTO> getConsent_formsByClass(@PathVariable String class_name) {
+    public List<Consent_formsRequestDTO> getConsent_formsByClass(@PathVariable String class_name) {
         return consent_formsServiceInterFace.getConsent_formsClass(class_name);
     }
 
@@ -90,32 +90,8 @@ public class Consent_formsController {
     }
 
     @GetMapping("/byStudentId/{studentId}")
-    public Consent_formsDTO getConsent_formsByStudentId(@PathVariable int studentId) {
+    public Consent_formsRequestDTO getConsent_formsByStudentId(@PathVariable int studentId) {
         return consent_formsServiceInterFace.getConsentByStudentId(studentId);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 }
