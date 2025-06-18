@@ -14,15 +14,16 @@ import java.util.Date;
 @Table
 @Setter
 @Getter
-public class HealthConsentForm {
+public class HealthCheck_Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int formID;
-    private Date consentDate;
-    private String consentLocation;
-    private boolean isAgreed;
-    private String notes;
-    private String parentID;
-    private String studentID;
     private int health_scheduleID;
+    private Date schedule_date;
+    private String name;
+    private String Location;
+    private String notes;
+
+    public static final String STATUS_PENDING = "PENDING";
+    public static final String STATUS_APPROVED = "APPROVED";
+    public static final String STATUS_REJECTED = "REJECTED";
 }

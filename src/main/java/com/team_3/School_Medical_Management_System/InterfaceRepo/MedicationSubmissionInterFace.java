@@ -11,6 +11,7 @@ import java.util.List;
 public interface MedicationSubmissionInterFace extends JpaRepository<MedicationSubmission, Integer> {
     // Các phương thức tìm kiếm tùy chỉnh
     List<MedicationSubmission> findByParentId(int parentId);
+    List<MedicationSubmission> findByStudentIdIn(List<Integer> studentIds);
 
     @Query("SELECT m FROM MedicationSubmission m")
     List<MedicationSubmission> findAllSubmissions();

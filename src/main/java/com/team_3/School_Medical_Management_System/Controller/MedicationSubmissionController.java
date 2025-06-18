@@ -6,11 +6,13 @@ import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,6 +39,9 @@ public class MedicationSubmissionController {
 
     @Autowired
     private StudentServiceInterFace studentService;
+
+    @Autowired
+    private SchoolNurseServiceInterFace nurseService;
 
     @GetMapping("/children/{parentID}")
     public ResponseEntity<List<StudentMappingParent>> getChildrenByParentId(@PathVariable int parentID) {
@@ -86,22 +93,65 @@ public class MedicationSubmissionController {
 
 
     @PostMapping("/confirm-medication")
-    public String confirmMedication(
+    @Operation(summary = "thêm nurse")
+    public ResponseEntity<?> confirmMedication(
             @RequestParam int medicationSubmissionId,
-            @RequestParam int nurseId,
-            @RequestParam String status,
-            @RequestParam String reason,
             RedirectAttributes redirectAttributes) {
+        // Lấy thông tin xác nhận từ confirmMedicationSubmissionService
+        ConfirmMedicationSubmissionDTO confirmDTO = confirmService.getConfirmationBySubmissionId(medicationSubmissionId);
+        if (confirmDTO == null) {
+            return ResponseEntity.badRequest().body("No confirmation found for this medication submission id.");
+        }
 
-        ConfirmMedicationSubmissionDTO confirmDTO = new ConfirmMedicationSubmissionDTO();
-        confirmDTO.setMedicationSubmissionId(medicationSubmissionId);
-        confirmDTO.setNurseId(nurseId);
+        // Lấy status và nurseId từ confirmDTO
+        String status = confirmDTO.getStatus();
+        Integer nurseId = confirmDTO.getNurseId();
+        String reason = confirmDTO.getReason();
+        Integer confirmId = confirmDTO.getConfirmId();
+        String evidence = confirmDTO.getEvidence();
+
+        // Lấy thông tin submission
+        MedicationSubmission submission = medicationSubmissionService.getMedicationSubmissionById(medicationSubmissionId);
+        String submissionDate = null;
+        if (submission != null && submission.getSubmissionDate() != null) {
+            submissionDate = submission.getSubmissionDate().toString();
+        }
+
+        // Kiểm tra logic như cũ
+        if (status == null || status.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Status is required.");
+        }
+        if ("reject".equalsIgnoreCase(status) && (reason == null || reason.trim().isEmpty())) {
+            return ResponseEntity.badRequest().body("Reason is required when status is 'reject'.");
+        }
+        if ("ADMINISTERED".equalsIgnoreCase(status) && nurseId == null) {
+            return ResponseEntity.badRequest().body("NurseId is required when status is 'ADMINISTERED'.");
+        }
+
         confirmDTO.setStatus(status);
-        confirmDTO.setReason(reason);
+        if (reason != null) {
+            confirmDTO.setReason(reason);
+        }
 
         confirmService.createConfirmation(confirmDTO);
 
-        return "redirect:/medication-submission/medication-dashboard";
+        // Lấy tên nurse nếu có nurseId
+        String nurseName = null;
+        if (nurseId != null) {
+            nurseName = nurseService.getNurseNameById(nurseId);
+        }
+
+        // Tạo response object chứa đầy đủ thông tin
+        Map<String, Object> response = new HashMap<>();
+        response.put("confirmationId", confirmId);
+        response.put("status", status);
+        response.put("nurseName", nurseName);
+        response.put("reason", reason);
+        response.put("evidence", evidence);
+        response.put("submissionId", medicationSubmissionId);
+        response.put("submissionDate", submissionDate);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/submissions-info")

@@ -113,4 +113,10 @@ public class SchoolNurseService implements SchoolNurseServiceInterFace {
         }
     }
 
+    @Override
+    public String getNurseNameById(int id) {
+        SchoolNurse nurse = GetSchoolNursesById(id);
+        return nurse != null ? nurse.getFullName() : null;
+    }
+
 }

@@ -44,6 +44,12 @@ public class MedicationConfirmationController {
         return new ResponseEntity<>(confirmations, HttpStatus.OK);
     }
 
+    @GetMapping("/by-student-name")
+    public ResponseEntity<List<ConfirmMedicationSubmissionDTO>> getConfirmationsByStudentName(@RequestParam String name) {
+        List<ConfirmMedicationSubmissionDTO> confirmations = confirmService.getConfirmationsByStudentName(name);
+        return new ResponseEntity<>(confirmations, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<ConfirmMedicationSubmissionDTO>> getAllConfirmations() {
         List<ConfirmMedicationSubmissionDTO> confirmations = confirmService.getAllConfirmations();

@@ -346,4 +346,13 @@ public class MedicationSubmissionRepo implements MedicationSubmissionInterFace {
 
         return new org.springframework.data.domain.PageImpl<>(content, pageable, total);
     }
+
+    @Override
+    public List<MedicationSubmission> findByStudentIdIn(List<Integer> studentIds) {
+        if (studentIds == null || studentIds.isEmpty()) return List.of();
+        String jpql = "SELECT m FROM MedicationSubmission m WHERE m.studentId IN :ids";
+        return entityManager.createQuery(jpql, MedicationSubmission.class)
+                .setParameter("ids", studentIds)
+                .getResultList();
+    }
 }
