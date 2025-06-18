@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
 import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface MedicationSubmissionServiceInterface {
     MedicationSubmission submitMedication(MedicationSubmissionDTO medicationSubmissionDTO);
     List<MedicationSubmission> getAllMedicationSubmissionsByParentId(int parentId);
-//    List<MedicationSubmission> getAllPendingMedicationSubmissions();
+    //    List<MedicationSubmission> getAllPendingMedicationSubmissions();
 //    List<MedicationSubmission> getAllSubmissionsByStatus(MedicationSubmission.SubmissionStatus submissionStatus);
 //    MedicationSubmission approveMedicationSubmission(int submissionId);
 //    MedicationSubmission rejectMedicationSubmission(int submissionId, String reason);
@@ -17,4 +18,6 @@ public interface MedicationSubmissionServiceInterface {
     List<MedicationSubmission> findAllSubmissions();
     public List<MedicationDetail> getDetailsBySubmissionId(int submissionId);
     void cancelMedicationSubmission(int submissionId);
+    List<MedicationSubmissionInfoDTO> getAllMedicationSubmissionInfo();
+    List<MedicationSubmissionInfoDTO> getMedicationSubmissionInfoByParentId(int parentId);
 }

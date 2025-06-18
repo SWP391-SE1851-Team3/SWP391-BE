@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -34,8 +32,12 @@ public class MedicationSubmission {
     @JsonManagedReference
     private List<MedicationDetail> medicationDetails;
 
-    @PrePersist
-    public void prePersist() {
-
+    private java.time.LocalDateTime submissionDate;
+    public java.time.LocalDateTime getSubmissionDate() {
+        return submissionDate;
     }
+    public void setSubmissionDate(java.time.LocalDateTime submissionDate) {
+        this.submissionDate = submissionDate;
+    }
+
 }
