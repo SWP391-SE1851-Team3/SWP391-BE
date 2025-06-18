@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.engine.jdbc.batch.spi.Batch;
 import org.jetbrains.annotations.Async;
 
+import java.time.OffsetDateTime;
+
 @Entity
 @Table
 @Getter
@@ -30,5 +32,12 @@ public class Vaccination_records {
     @ManyToOne
     @JoinColumn(name = "batch_id")
     private Vaccine_batches batch;
+    private OffsetDateTime observation_time;
+    private String symptoms;
+    private String severity;
+    private String observation_notes;
+    @ManyToOne
+    @JoinColumn(name = "NurseID")
+    private SchoolNurse nurse;
 
 }

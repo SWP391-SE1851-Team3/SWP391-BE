@@ -72,8 +72,6 @@ public class MedicationSubmissionController {
         }
     }
 
-
-
     @GetMapping("/submissions/{submissionId}/details")
     public ResponseEntity<List<MedicationDetail>> getSubmissionDetails(@PathVariable int submissionId) {
         List<MedicationDetail> details = medicationSubmissionService.getDetailsBySubmissionId(submissionId);

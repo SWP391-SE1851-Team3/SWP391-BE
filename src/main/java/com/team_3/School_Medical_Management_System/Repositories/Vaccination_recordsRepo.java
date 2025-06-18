@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccination_recordsInterFace;
+import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,4 +59,14 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
        entityManager.merge(vaccination_records);
        return vaccination_records;
     }
+
+    @Override
+    public List<Vaccination_records> getVaccination_recordsByStudentId(int studentId) {
+        String sql = "SELECT s FROM Vaccination_records s WHERE s.student.StudentID = :studentId";
+        return entityManager.createQuery(sql, Vaccination_records.class)
+                .setParameter("studentId", studentId)
+                .getResultList();
+    }
+
+
 }

@@ -31,6 +31,7 @@ public class TransferModelsDTO {
 
     public static Consent_formsDTO MappingConsent(Consent_forms consent_forms) {
         Consent_formsDTO consent_formsDTO = new Consent_formsDTO();
+        consent_formsDTO.setConsent_form_id(consent_forms.getConsent_id());
         consent_formsDTO.setFullNameOfStudent(consent_forms.getStudent().getFullName());
         consent_formsDTO.setClassName(consent_forms.getStudent().getClassName());
         consent_formsDTO.setReason(consent_forms.getReason());
@@ -39,7 +40,6 @@ public class TransferModelsDTO {
         consent_formsDTO.setIsAgree(consent_forms.getIsAgree());
         consent_formsDTO.setNotes(consent_forms.getSchedule().getNotes());
         consent_formsDTO.setFullnameOfParent(consent_forms.getParent().getFullName());
-        consent_formsDTO.setScheduled_date(consent_forms.getSchedule().getScheduled_date());
         return consent_formsDTO;
     }
 
@@ -86,7 +86,27 @@ public class TransferModelsDTO {
         entity.setVaccine_Name(vaccination_records.getVaccines().getName());
         entity.setNotes(vaccination_records.getNotes());
         entity.setSchedule_id(vaccination_records.getSchedule().getSchedule_id());
+        entity.setNurse_Name(vaccination_records.getNurse().getFullName());
+        entity.setObservation_notes(vaccination_records.getObservation_notes());
+        entity.setObservation_time(vaccination_records.getObservation_time());
+        entity.setSeverity(vaccination_records.getSeverity());
+        entity.setSymptoms(vaccination_records.getSymptoms());
         return entity;
     }
+
+    public static Consent_formsRequestDTO  convertToParentViewDTO(Consent_forms entity) {
+        Consent_formsRequestDTO dto = new Consent_formsRequestDTO();
+
+        dto.setFullNameOfParent(entity.getParent().getFullName());
+        dto.setFullNameOfStudent(entity.getStudent().getFullName());
+        dto.setClassName(entity.getStudent().getClassName());
+        dto.setScheduledDate(entity.getSchedule().getScheduled_date());
+        dto.setVaccineName(entity.getVaccine().getName());
+        dto.setHasAllergy(entity.getHasAllergy());
+        dto.setReason(entity.getReason());
+        dto.setIsAgree(entity.getIsAgree());
+        return dto;
+    }
+
 
 }
