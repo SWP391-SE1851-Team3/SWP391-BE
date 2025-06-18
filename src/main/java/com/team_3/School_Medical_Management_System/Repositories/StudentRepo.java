@@ -63,8 +63,6 @@ public class StudentRepo implements StudentInterFace {
         List<Student> students = entityManager.createQuery(sql, Student.class)
                 .setParameter("ParentID", parentID)
                 .getResultList();
-
-
         return students;
     }
 

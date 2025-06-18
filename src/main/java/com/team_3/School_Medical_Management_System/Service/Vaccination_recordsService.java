@@ -30,6 +30,9 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
     @Autowired
     private Vaccination_scheduleRepo vaccination_scheduleRepo;
 
+    @Autowired
+    private SchoolNurseRepo schoolNurseRepo;
+
 
     @Autowired
     public Vaccination_recordsService(Vaccination_recordsInterFace vaccination_recordsInterFace) {
@@ -54,6 +57,11 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
             throw new RuntimeException("vaccine_Name doesn't exist");
         }
 
+        var nurseName = schoolNurseRepo.getSchoolNursesByName(vaccinationRecordsDTO.getNurse_Name());
+        if(nurseName == null){
+            throw new RuntimeException("nurse_Name doesn't exist");
+        }
+
         var bacth_Id = vaccineBatchesRepo.getById(vaccinationRecordsDTO.getBatch_id());
         if(bacth_Id == null){
             throw new RuntimeException("batch_id doesn't exist");
@@ -68,10 +76,13 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         var vaccinationRecord = new Vaccination_records();
         vaccinationRecord.setStudent(student);
         vaccinationRecord.setVaccines(vaccinesName);
+        vaccinationRecord.setNurse(nurseName);
         vaccinationRecord.setBatch(bacth_Id);
         vaccinationRecord.setSchedule(scheduleId);
         vaccinationRecord.setNotes(vaccinationRecordsDTO.getNotes());
-
+        vaccinationRecord.setSymptoms(vaccinationRecordsDTO.getSymptoms());
+        vaccinationRecord.setObservation_notes(vaccinationRecordsDTO.getObservation_notes());
+        vaccinationRecord.setSeverity(vaccinationRecordsDTO.getSeverity());
         vaccination_recordsInterFace.addVaccination_records(vaccinationRecord);
 
         return TransferModelsDTO.MappingVaccinationRecordsDTO(vaccinationRecord);
@@ -103,6 +114,11 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         if(vaccinesName == null){
             throw  new RuntimeException("vaccine_Name doesn't exist");
         }
+
+        var nurseName = schoolNurseRepo.getSchoolNursesByName(vaccinationRecordsDTO.getNurse_Name());
+        if(nurseName == null){
+            throw new RuntimeException("nurse_Name doesn't exist");
+        }
         var bacth_Id = vaccineBatchesRepo.getById(vaccinationRecordsDTO.getBatch_id());
         if(bacth_Id == null){
             throw  new RuntimeException("batch_id doesn't exist");
@@ -118,17 +134,38 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
             throw new RuntimeException("Vaccination record not found");
         }
         var vaccinationRecord = vaccinationRecordOptional;
-
         // Thực hiện cập nhật các trường
         vaccinationRecord.setStudent(student);
         vaccinationRecord.setVaccines(vaccinesName);
+        vaccinationRecord.setNurse(nurseName);
         vaccinationRecord.setBatch(bacth_Id);
         vaccinationRecord.setSchedule(scheduleId);
         vaccinationRecord.setNotes(vaccinationRecordsDTO.getNotes());
+        vaccinationRecord.setSymptoms(vaccinationRecordsDTO.getSymptoms());
+        vaccinationRecord.setObservation_notes(vaccinationRecordsDTO.getObservation_notes());
+        vaccinationRecord.setSeverity(vaccinationRecordsDTO.getSeverity());
         vaccination_recordsInterFace.updateVaccination_records(vaccinationRecord);
         return TransferModelsDTO.MappingVaccinationRecordsDTO(vaccinationRecord);
+    }
 
 
+    @Override
+    public List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId) {
+       var vaccination_recordsByStudentId = vaccination_recordsInterFace.getVaccination_recordsByStudentId(studentId);
+       if(vaccination_recordsByStudentId == null || vaccination_recordsByStudentId.isEmpty()){
+           throw  new RuntimeException("vaccination_records_student is null");
+       }else {
+           return vaccination_recordsByStudentId.stream().map(TransferModelsDTO::MappingVaccinationRecordsDTO).collect(Collectors.toList());
+       }
+    }
 
+    @Override
+    public List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId) {
+       var vaccination_recordsByStudentId = vaccination_recordsInterFace.getVaccination_recordsByStudentId(studentId);
+       if(vaccination_recordsByStudentId == null || vaccination_recordsByStudentId.isEmpty()){
+           throw  new RuntimeException("vaccination_records_student is null");
+       }else {
+           return vaccination_recordsByStudentId.stream().map(TransferModelsDTO::MappingVaccinationRecordsDTO).collect(Collectors.toList());
+       }
     }
 }

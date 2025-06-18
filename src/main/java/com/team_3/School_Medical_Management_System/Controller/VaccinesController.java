@@ -1,18 +1,16 @@
 package com.team_3.School_Medical_Management_System.Controller;
-
 import com.team_3.School_Medical_Management_System.DTO.VaccinesDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.VaccinesServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Vaccines;
-import com.team_3.School_Medical_Management_System.Service.VaccinesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/vaccines")
+@CrossOrigin(origins = "http://localhost:5173")
 public class VaccinesController {
     private VaccinesServiceInterFace vaccinesServiceInterFace;
     @Autowired
@@ -37,7 +35,6 @@ public class VaccinesController {
         }else {
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         }
-
     }
 
     @PutMapping("/{editbyId}")
@@ -49,7 +46,4 @@ public class VaccinesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Nếu không tìm thấy vaccine để cập nhật
         }
     }
-
-
-
 }

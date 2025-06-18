@@ -57,6 +57,10 @@ public class Vaccine_batchesService implements Vaccine_batchesSerivceInterFace {
         vaccine_batchesService.update(TransferModelsDTO.MappingVaccineBatch(batch));
     }
 
+    @Override
+    public Long countTotalBatch() {
+        return vaccine_batchesService.countTotalBatch();
+    }
 
 
 }

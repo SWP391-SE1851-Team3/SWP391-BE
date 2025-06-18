@@ -51,5 +51,11 @@ public class Vaccine_batchesRepo implements Vaccine_batchesInterFace {
         }
     }
 
+    @Override
+    public Long countTotalBatch() {
+        String jqpl = "SELECT COUNT(*) FROM Vaccine_batches";
+        return entityManager.createQuery(jqpl, Long.class).getSingleResult();
+    }
+
 
 }
