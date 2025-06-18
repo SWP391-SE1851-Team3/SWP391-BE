@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public class ConfirmMedicationSubmissionDTO {
     private int confirmId;
     private int medicationSubmissionId;
-    private ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status;
-    private int nurseId;
+    private String status;
+    private Integer nurseId;
     private String reason;
     private String evidence;
 }

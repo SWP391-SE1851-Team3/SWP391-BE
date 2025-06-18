@@ -6,22 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @ToString
 @Entity
 @Table
 @Setter
 @Getter
-public class HealthCheckStudent {
+public class HealthConsentForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int checkID;
-    private int studentID;
-    private float height;
-    private float weight;
-    private String visionLeft;
-    private String visionRight;
-    private String hearing;
-    private String dentalCheck;
-
+    private int formID;
+    private Date consentDate;
+    private String consentLocation;
 }

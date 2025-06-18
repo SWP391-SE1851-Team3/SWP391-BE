@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class MedicationSubmission {
 //    private SubmissionStatus status;
 
     @OneToMany(mappedBy = "medicationSubmission", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<MedicationDetail> medicationDetails;
 
     @PrePersist

@@ -56,7 +56,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         // Create and save a confirmation record with PENDING status
         ConfirmMedicationSubmission confirmation = new ConfirmMedicationSubmission();
         confirmation.setMedicationSubmissionId(savedSubmission.getMedicationSubmissionId());
-        confirmation.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.PENDING);
+        confirmation.setStatus(ConfirmMedicationSubmission.STATUS_PENDING);
         // Note: nurseId and evidence will be updated later when a nurse processes this
 
         confirmMedicationSubmissionInterFace.save(confirmation);
@@ -76,7 +76,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
 
         // Check if confirmation exists and has PENDING status
         if (!confirmationOptional.isPresent() ||
-                confirmationOptional.get().getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.PENDING) {
+                confirmationOptional.get().getStatus().equals(ConfirmMedicationSubmission.STATUS_PENDING)) {
 
             // If confirmation exists, delete it first
             confirmationOptional.ifPresent(confirmation ->

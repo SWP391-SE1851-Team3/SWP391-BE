@@ -42,9 +42,21 @@ public class MedicationSubmissionController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<MedicationSubmission> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
-        MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
-        return new ResponseEntity<>(submission, HttpStatus.CREATED);
+    public ResponseEntity<?> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
+        try {
+            // Kiểm tra xem studentId có tồn tại không
+            Student student = studentService.getStudent(medicationSubmissionDTO.getStudentId());
+            if (student == null) {
+                return new ResponseEntity<>("Student with ID " + medicationSubmissionDTO.getStudentId() + " does not exist",
+                                           HttpStatus.BAD_REQUEST);
+            }
+
+            MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
+            return new ResponseEntity<>(submission, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error submitting medication: " + e.getMessage(),
+                                       HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/cancel/{submissionId}")
@@ -76,7 +88,7 @@ public class MedicationSubmissionController {
     public String confirmMedication(
             @RequestParam int medicationSubmissionId,
             @RequestParam int nurseId,
-            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status,
+            @RequestParam String status,
             @RequestParam String reason,
             RedirectAttributes redirectAttributes) {
 
@@ -91,5 +103,4 @@ public class MedicationSubmissionController {
         return "redirect:/medication-submission/medication-dashboard";
     }
 }
-
 
