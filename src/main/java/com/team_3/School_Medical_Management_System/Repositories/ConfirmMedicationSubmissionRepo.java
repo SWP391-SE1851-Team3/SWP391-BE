@@ -336,4 +336,13 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
 
         return new org.springframework.data.domain.PageImpl<>(content, pageable, total);
     }
+
+    @Override
+    public List<ConfirmMedicationSubmission> findByMedicationSubmissionIdIn(List<Integer> submissionIds) {
+        if (submissionIds == null || submissionIds.isEmpty()) return List.of();
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.medicationSubmissionId IN :ids";
+        return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
+                .setParameter("ids", submissionIds)
+                .getResultList();
+    }
 }

@@ -182,6 +182,11 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         }).collect(java.util.stream.Collectors.toList());
     }
 
+    @Override
+    public MedicationSubmission getMedicationSubmissionById(int submissionId) {
+        return medicationSubmissionInterFace.findById(submissionId).orElse(null);
+    }
+
 //    @Override
 //    public List<MedicationSubmission> getAllPendingMedicationSubmissions() {
 //        return medicationSubmissionInterFace.findByStatus(MedicationSubmission.SubmissionStatus.PENDING);

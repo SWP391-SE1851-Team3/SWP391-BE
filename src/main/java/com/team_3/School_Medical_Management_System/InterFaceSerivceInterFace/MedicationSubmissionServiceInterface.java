@@ -20,4 +20,5 @@ public interface MedicationSubmissionServiceInterface {
     void cancelMedicationSubmission(int submissionId);
     List<MedicationSubmissionInfoDTO> getAllMedicationSubmissionInfo();
     List<MedicationSubmissionInfoDTO> getMedicationSubmissionInfoByParentId(int parentId);
+    MedicationSubmission getMedicationSubmissionById(int submissionId);
 }
