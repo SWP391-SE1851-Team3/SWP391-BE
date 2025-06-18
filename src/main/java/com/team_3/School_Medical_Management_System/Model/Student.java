@@ -23,10 +23,10 @@ public class Student {
     @NotBlank(message = "ClassName Not allow empty")
     private String ClassName;
     private int IsActive;
-//    private int ParentID;
     @ManyToOne
     @JoinColumn(name = "ParentID")
     private Parent parent;
+
 
 
 }
