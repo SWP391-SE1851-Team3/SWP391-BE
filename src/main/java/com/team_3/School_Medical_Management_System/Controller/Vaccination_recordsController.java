@@ -38,14 +38,7 @@ public class Vaccination_recordsController {
         }
     }
 
-    @PutMapping("/vaccination-records/{id}")
-    public ResponseEntity<Vaccination_recordsDTO> updateVaccinationRecord(
-            @PathVariable int id,
-            @RequestBody Vaccination_recordsDTO dto) {
-        vaccination_records.setVaccinationRecordID(id); // Gán id từ URL vào DTO
-        Vaccination_recordsDTO updatedRecord = vaccination_recordsServiceInterFace.updateVaccination_records(vaccination_records);
-        return ok(updatedRecord);
-    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Vaccination_recordsDTO> getVaccination_records(@PathVariable int id) {
