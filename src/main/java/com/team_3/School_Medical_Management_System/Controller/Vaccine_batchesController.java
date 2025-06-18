@@ -1,9 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
-
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_batchesDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccine_batchesSerivceInterFace;
-import com.team_3.School_Medical_Management_System.Model.Vaccine_batches;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +22,6 @@ public class Vaccine_batchesController {
     @GetMapping
     public List<Vaccine_batchesDTO> getAllVaccineBatches() {
         return vaccine_batchesSerivce.getAll();
-
     }
 
     @GetMapping("/{id}")

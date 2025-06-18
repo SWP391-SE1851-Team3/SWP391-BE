@@ -17,12 +17,12 @@ import java.util.Date;
 @AllArgsConstructor
 
 public class Consent_formsDTO {
+    @JsonIgnore
     private int consent_form_id;
     @NotBlank(message = "FullName Not allow empty")
     private String FullNameOfStudent ;
     @NotBlank(message = "ClassName Not allow empty")
     private String ClassName ;
-    @JsonIgnore
     private int scheduled_id;
     @NotBlank(message = "VaccineName Not allow empty")
     private String Name;

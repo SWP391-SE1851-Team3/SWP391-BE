@@ -40,6 +40,8 @@ public class TransferModelsDTO {
         consent_formsDTO.setIsAgree(consent_forms.getIsAgree());
         consent_formsDTO.setNotes(consent_forms.getSchedule().getNotes());
         consent_formsDTO.setFullnameOfParent(consent_forms.getParent().getFullName());
+//        consent_formsDTO.setLocation(consent_formsDTO.getLocation());
+//        consent_formsDTO.setScheduledDate(consent_formsDTO.getScheduledDate());
         return consent_formsDTO;
     }
 
@@ -96,7 +98,7 @@ public class TransferModelsDTO {
 
     public static Consent_formsRequestDTO  convertToParentViewDTO(Consent_forms entity) {
         Consent_formsRequestDTO dto = new Consent_formsRequestDTO();
-
+        dto.setScheduledDate(entity.getSchedule().getScheduled_date());
         dto.setFullNameOfParent(entity.getParent().getFullName());
         dto.setFullNameOfStudent(entity.getStudent().getFullName());
         dto.setClassName(entity.getStudent().getClassName());
@@ -105,8 +107,7 @@ public class TransferModelsDTO {
         dto.setHasAllergy(entity.getHasAllergy());
         dto.setReason(entity.getReason());
         dto.setIsAgree(entity.getIsAgree());
+        dto.setLocation(entity.getSchedule().getLocation());
         return dto;
     }
-
-
 }
