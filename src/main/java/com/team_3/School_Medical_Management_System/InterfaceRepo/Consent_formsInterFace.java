@@ -17,6 +17,4 @@ public interface Consent_formsInterFace {
     public Long countConsentFormsDisAgreeByBatch(int batch_id);
     public Long countConsentFormsPendingByBatch(int batch_id);
     Consent_forms getConsentByStudentId(int studentId);
-
-
 }

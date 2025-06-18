@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
-
 @NoArgsConstructor
 @ToString
 @Entity

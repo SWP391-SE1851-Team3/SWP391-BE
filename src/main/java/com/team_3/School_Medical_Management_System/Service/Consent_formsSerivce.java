@@ -68,6 +68,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
             throw new RuntimeException("Schedule not found");
         }
 
+
         Consent_forms entity = new Consent_forms();
         entity.setStudent(student);
         entity.setParent(parent);
@@ -95,25 +96,24 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public List<Consent_formsDTO> getConsent_formsIsAgree(int batch_id) {
+    public List<Consent_formsRequestDTO> getConsent_formsIsAgree(int batch_id) {
         var listArrgee = consent_formsRepo.getConsent_formsIsAgree(batch_id);
 
         if (listArrgee.isEmpty()) {
             throw new RuntimeException("List of consent_forms is empty");
         }
 
-        List<Consent_formsDTO> dtoList = listArrgee.stream()
-                .map(TransferModelsDTO::MappingConsent)
+        List<Consent_formsRequestDTO> dtoList = listArrgee.stream()
+                .map(TransferModelsDTO::convertToParentViewDTO)
                 .collect(Collectors.toList());
-
         return dtoList;
     }
 
     @Override
-    public List<Consent_formsDTO> getConsent_formsClass(String class_name) {
+    public List<Consent_formsRequestDTO> getConsent_formsClass(String class_name) {
         var className = consent_formsRepo.getConsent_formsClass(class_name);
         if (className == null) throw new RuntimeException("Class not found");
-        return className.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+        return className.stream().map(TransferModelsDTO::convertToParentViewDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -139,13 +139,14 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         return consent_formsRepo.countConsentFormsDisAgreeByBatch(batch_id);
     }
 
+
     @Override
     public Long countConsentFormsPendingByBatch(int batch_id) {
         return consent_formsRepo.countConsentFormsPendingByBatch(batch_id);
     }
 
     @Override
-    public Consent_formsDTO getConsentByStudentId(int studentId) {
-        return TransferModelsDTO.MappingConsent(consent_formsRepo.getConsentByStudentId(studentId));
+    public Consent_formsRequestDTO getConsentByStudentId(int studentId) {
+        return TransferModelsDTO.convertToParentViewDTO(consent_formsRepo.getConsentByStudentId(studentId));
     }
 }

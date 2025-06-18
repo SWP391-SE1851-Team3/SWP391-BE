@@ -18,5 +18,6 @@ public class Consent_formsRequestDTO {
     private String hasAllergy;
     private String reason;
     private int isAgree;
+    private String location;
 }
 
