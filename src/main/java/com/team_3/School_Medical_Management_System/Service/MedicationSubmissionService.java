@@ -1,12 +1,16 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationDetailDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
 import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
+import com.team_3.School_Medical_Management_System.Model.Student;
+import com.team_3.School_Medical_Management_System.Service.StudentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,8 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
     private MedicationSubmissionInterFace medicationSubmissionInterFace;
     @Autowired
     private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionInterFace;
+    @Autowired
+    private StudentService studentService;
 
     @Override
     public MedicationSubmission submitMedication(MedicationSubmissionDTO medicationSubmissionDTO) {
@@ -48,6 +54,9 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
 
             submission.setMedicationDetails(medicationDetails);
         }
+
+        // Set submissionDate khi submit đơn
+        submission.setSubmissionDate(java.time.LocalDateTime.now());
 
         // Save the medication submission
         MedicationSubmission savedSubmission = medicationSubmissionInterFace.save(submission);
@@ -108,11 +117,76 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         return medicationSubmissionInterFace.findAllSubmissions();
     }
 
+    @Override
+    public List<MedicationSubmissionInfoDTO> getAllMedicationSubmissionInfo() {
+        List<MedicationSubmission> submissions = medicationSubmissionInterFace.findAll();
+        return submissions.stream().map(submission -> {
+            Student student = studentService.getStudent(submission.getStudentId());
+            String studentName = student != null ? student.getFullName() : "Unknown";
+            List<MedicationDetailDTO> detailDTOs = submission.getMedicationDetails().stream().map(detail -> {
+                MedicationDetailDTO dto = new MedicationDetailDTO();
+                dto.setMedicineName(detail.getMedicineName());
+                dto.setDosage(detail.getDosage());
+                dto.setTimeToUse(detail.getTimeToUse());
+                dto.setNote(detail.getNote());
+                return dto;
+            }).collect(java.util.stream.Collectors.toList());
+            // Lấy status từ ConfirmMedicationSubmission
+            String status = "PENDING";
+            Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
+            if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
+                status = confirmOpt.get().getStatus();
+            }
+            java.util.Date submissionDate = null;
+            if (submission.getSubmissionDate() != null) {
+                submissionDate = java.sql.Timestamp.valueOf(submission.getSubmissionDate());
+            }
+            return new MedicationSubmissionInfoDTO(
+                    studentName,
+                    submissionDate,
+                    status,
+                    detailDTOs
+            );
+        }).collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<MedicationSubmissionInfoDTO> getMedicationSubmissionInfoByParentId(int parentId) {
+        List<MedicationSubmission> submissions = medicationSubmissionInterFace.findByParentId(parentId);
+        return submissions.stream().map(submission -> {
+            Student student = studentService.getStudent(submission.getStudentId());
+            String studentName = student != null ? student.getFullName() : "Unknown";
+            List<MedicationDetailDTO> detailDTOs = submission.getMedicationDetails().stream().map(detail -> {
+                MedicationDetailDTO dto = new MedicationDetailDTO();
+                dto.setMedicineName(detail.getMedicineName());
+                dto.setDosage(detail.getDosage());
+                dto.setTimeToUse(detail.getTimeToUse());
+                dto.setNote(detail.getNote());
+                return dto;
+            }).collect(java.util.stream.Collectors.toList());
+            // Lấy status từ ConfirmMedicationSubmission
+            String status = "PENDING";
+            Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
+            if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
+                status = confirmOpt.get().getStatus();
+            }
+            java.util.Date submissionDate = null;
+            if (submission.getSubmissionDate() != null) {
+                submissionDate = java.sql.Timestamp.valueOf(submission.getSubmissionDate());
+            }
+            return new MedicationSubmissionInfoDTO(
+                    studentName,
+                    submissionDate,
+                    status,
+                    detailDTOs
+            );
+        }).collect(java.util.stream.Collectors.toList());
+    }
+
 //    @Override
 //    public List<MedicationSubmission> getAllPendingMedicationSubmissions() {
 //        return medicationSubmissionInterFace.findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
 //    }
-
+//
 //    @Override
 //    public MedicationSubmission approveMedicationSubmission(int submissionId) {
 //        MedicationSubmission submission = medicationSubmissionInterFace.findById(submissionId)

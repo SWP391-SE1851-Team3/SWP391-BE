@@ -3,6 +3,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
@@ -48,14 +49,14 @@ public class MedicationSubmissionController {
             Student student = studentService.getStudent(medicationSubmissionDTO.getStudentId());
             if (student == null) {
                 return new ResponseEntity<>("Student with ID " + medicationSubmissionDTO.getStudentId() + " does not exist",
-                                           HttpStatus.BAD_REQUEST);
+                        HttpStatus.BAD_REQUEST);
             }
 
             MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
             return new ResponseEntity<>(submission, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error submitting medication: " + e.getMessage(),
-                                       HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -102,5 +103,16 @@ public class MedicationSubmissionController {
 
         return "redirect:/medication-submission/medication-dashboard";
     }
-}
 
+    @GetMapping("/submissions-info")
+    public ResponseEntity<List<MedicationSubmissionInfoDTO>> getAllMedicationSubmissionInfo() {
+        List<MedicationSubmissionInfoDTO> infoList = medicationSubmissionService.getAllMedicationSubmissionInfo();
+        return new ResponseEntity<>(infoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/submissions-info/parent/{parentId}")
+    public ResponseEntity<List<MedicationSubmissionInfoDTO>> getMedicationSubmissionInfoByParentId(@PathVariable int parentId) {
+        List<MedicationSubmissionInfoDTO> infoList = medicationSubmissionService.getMedicationSubmissionInfoByParentId(parentId);
+        return new ResponseEntity<>(infoList, HttpStatus.OK);
+    }
+}
