@@ -1,8 +1,10 @@
 package com.team_3.School_Medical_Management_System.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,7 +21,7 @@ public class Vaccination_schedule {
     @ManyToOne
     @JoinColumn(name = "Vaccine_id")
     private Vaccines Vaccine;
-    private Date scheduled_date;
+    private LocalDateTime scheduled_date;
     private String location;
     @ManyToOne
     @JoinColumn(name = "NurseID")

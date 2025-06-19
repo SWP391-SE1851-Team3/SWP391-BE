@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
+import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
@@ -11,7 +12,7 @@ public interface Consent_formsServiceInterFace {
     public List<Consent_formsDTO> getConsent_forms();
     public Consent_formsDTO addConsent_forms(Consent_formsDTO dto);
     public List<Consent_formsDTO>  getConsent_formsByParentName(String fullName);
-    public Consent_formsRequestDTO getConsentFormForParent(int consentFormId);
+    public Consent_formsRequestDTO getConsentFormForParent(Integer consentFormId);
     public List<Consent_formsRequestDTO>  getConsent_formsIsAgree(int batch_id);
     public List<Consent_formsRequestDTO>  getConsent_formsClass(String class_name);
     public void parentConfirm(ParentConfirmDTO dto);
@@ -19,5 +20,7 @@ public interface Consent_formsServiceInterFace {
     public Long countConsentFormsDisAgreeByBatch(int batch_id);
     public Long countConsentFormsPendingByBatch(int batch_id);
     Consent_formsRequestDTO getConsentByStudentId(int studentId);
+    public List<Consent_formsDTO> findPendingForParent();
+    public void processParentResponse(ConsentFormParentResponseDTO dto);
 }
 

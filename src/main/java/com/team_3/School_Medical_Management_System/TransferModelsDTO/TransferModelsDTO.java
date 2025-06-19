@@ -31,7 +31,6 @@ public class TransferModelsDTO {
 
     public static Consent_formsDTO MappingConsent(Consent_forms consent_forms) {
         Consent_formsDTO consent_formsDTO = new Consent_formsDTO();
-        consent_formsDTO.setConsent_form_id(consent_forms.getConsent_id());
         consent_formsDTO.setFullNameOfStudent(consent_forms.getStudent().getFullName());
         consent_formsDTO.setClassName(consent_forms.getStudent().getClassName());
         consent_formsDTO.setReason(consent_forms.getReason());
@@ -40,8 +39,12 @@ public class TransferModelsDTO {
         consent_formsDTO.setIsAgree(consent_forms.getIsAgree());
         consent_formsDTO.setNotes(consent_forms.getSchedule().getNotes());
         consent_formsDTO.setFullnameOfParent(consent_forms.getParent().getFullName());
-//        consent_formsDTO.setLocation(consent_formsDTO.getLocation());
-//        consent_formsDTO.setScheduledDate(consent_formsDTO.getScheduledDate());
+        consent_formsDTO.setScheduled_id(consent_forms.getSchedule().getSchedule_id());
+        consent_formsDTO.setLocation(consent_forms.getSchedule().getLocation());
+        consent_formsDTO.setScheduledDate(consent_forms.getSchedule().getScheduled_date());
+        consent_formsDTO.setSend_date(consent_forms.getSend_date());
+        consent_formsDTO.setExpire_date(consent_forms.getExpire_date());
+        consent_formsDTO.setConsent_forms_id(consent_forms.getConsent_id());
         return consent_formsDTO;
     }
 
@@ -102,12 +105,14 @@ public class TransferModelsDTO {
         dto.setFullNameOfParent(entity.getParent().getFullName());
         dto.setFullNameOfStudent(entity.getStudent().getFullName());
         dto.setClassName(entity.getStudent().getClassName());
-        dto.setScheduledDate(entity.getSchedule().getScheduled_date());
+        dto.setConsent_forms_id(entity.getConsent_id());
         dto.setVaccineName(entity.getVaccine().getName());
         dto.setHasAllergy(entity.getHasAllergy());
         dto.setReason(entity.getReason());
         dto.setIsAgree(entity.getIsAgree());
         dto.setLocation(entity.getSchedule().getLocation());
+        dto.setExpire_date(entity.getExpire_date());
+        dto.setSend_date(entity.getSend_date());
         return dto;
     }
 }

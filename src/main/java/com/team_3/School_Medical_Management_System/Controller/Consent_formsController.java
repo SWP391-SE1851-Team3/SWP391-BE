@@ -1,16 +1,23 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 
+import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
+import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
+import com.team_3.School_Medical_Management_System.Model.Consent_forms;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/Consent_forms")
@@ -93,5 +100,53 @@ public class Consent_formsController {
     public Consent_formsRequestDTO getConsent_formsByStudentId(@PathVariable int studentId) {
         return consent_formsServiceInterFace.getConsentByStudentId(studentId);
     }
-    
+
+    @GetMapping("/Consent_forms/parent-pending")
+    public ResponseEntity<?> getFormsPendingForParent(){
+        List<Consent_formsDTO> forms = consent_formsServiceInterFace.findPendingForParent();
+        List<Map<String, Object>> result = forms.stream().map(form -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("consent_forms_id", form.getConsent_forms_id());// Trả về dữ liệu tự do , và tự định nghĩa field
+            map.put("fullNameOfStudent", form.getFullNameOfStudent());
+            map.put("className", form.getClassName());
+            map.put("vaccineName", form.getName());
+            map.put("notes", form.getNotes());
+            map.put("fullnameOfParent", form.getFullnameOfParent());
+            map.put("location", form.getLocation());
+            map.put("scheduledDate", form.getScheduledDate());
+            map.put("send_date", form.getSend_date());
+            map.put("expire_date", form.getExpire_date());
+            // Các trường phụ huynh cần điền → để trống
+            map.put("isAgree", null);
+            map.put("reason", "");
+            map.put("hasAllergy", "");
+            return map;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/Consent_forms/parent-response")
+    public ResponseEntity<?> updateByParent(@RequestBody @Valid ConsentFormParentResponseDTO dto) {
+        try {
+            consent_formsServiceInterFace.processParentResponse(dto);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Phản hồi thành công"
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "success", false,
+                    "message", "Lỗi máy chủ: " + e.getMessage()
+            ));
+        }
+    }
+
+
+
+
 }

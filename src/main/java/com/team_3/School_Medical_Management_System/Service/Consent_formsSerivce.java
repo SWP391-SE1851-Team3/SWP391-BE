@@ -1,8 +1,11 @@
 package com.team_3.School_Medical_Management_System.Service;
 
+import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
+import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
@@ -36,6 +39,9 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     @Autowired
     private ConsentFormsRepository consent_forms_repo;
 
+    @Autowired
+    private ConsentFormsRepos consent_formsRepos;
+
 
     @Autowired
     public Consent_formsSerivce(Consent_formsInterFace consent_formsRepo) {
@@ -48,6 +54,11 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         return consent_forms.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
     }
 
+
+
+
+
+
     @Override
     public Consent_formsDTO addConsent_forms(Consent_formsDTO dto) {
         Student student = studentRepo.GetStudentByFullName(dto.getFullNameOfStudent());
@@ -58,25 +69,26 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         if (vaccine == null) {
             throw new RuntimeException("Vaccine not found");
         }
-
         Parent parent = student.getParent();
         if (parent == null) throw new RuntimeException("Parent not found");
-
 
         Vaccination_schedule schedule = vaccination_scheduleRepo.vaccination_scheduleById(dto.getScheduled_id());
         if (schedule == null) {
             throw new RuntimeException("Schedule not found");
         }
-
-
         Consent_forms entity = new Consent_forms();
         entity.setStudent(student);
         entity.setParent(parent);
         entity.setVaccine(vaccine);
         entity.setSchedule(schedule);
-        entity.setConsent_date(new Date());
+        entity.setIsAgree(null);
+        entity.setReason("");
+        entity.setHasAllergy("");
+        entity.setExpire_date(dto.getExpire_date());
+        entity.setSend_date(dto.getSend_date());
+        entity.setStatus(ConsentFormStatus.CREATED);
         consent_formsRepo.addConsent_forms(entity);
-        return null;
+        return TransferModelsDTO.MappingConsent(entity);
     }
 
 
@@ -87,7 +99,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public Consent_formsRequestDTO getConsentFormForParent(int consentFormId) {
+    public Consent_formsRequestDTO getConsentFormForParent(Integer consentFormId) {
         Consent_forms entity = consent_formsRepo.getConsent_formsById(consentFormId);
         if (entity == null) {
             throw new RuntimeException("Consent Form not found");
@@ -125,7 +137,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         entity.setIsAgree(dto.getIsAgree());
         entity.setReason(dto.getReason());
         entity.setHasAllergy(dto.getHasAllergy());
-        entity.setConsent_date(new Date()); // cập nhật lại ngày phụ huynh xác nhận
+         // cập nhật lại ngày phụ huynh xác nhận
         consent_formsRepo.updateConsent_forms(entity);
     }
 
@@ -149,4 +161,34 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     public Consent_formsRequestDTO getConsentByStudentId(int studentId) {
         return TransferModelsDTO.convertToParentViewDTO(consent_formsRepo.getConsentByStudentId(studentId));
     }
+
+    @Override
+    public List<Consent_formsDTO> findPendingForParent() {
+        var consent_forms = consent_formsRepo.findPendingForParent();
+        return consent_forms.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public void processParentResponse(ConsentFormParentResponseDTO dto) {
+        Consent_forms form = consent_formsRepos.findById(dto.getConsentFormId()).orElse(null);
+        if (form == null) {
+            throw new IllegalArgumentException("Không tìm thấy phiếu");
+        }
+
+        // Validate nếu từ chối mà không ghi lý do
+        if (Integer.valueOf(0).equals(dto.getIsAgree()) &&
+                (dto.getReason() == null || dto.getReason().trim().isEmpty())) {
+            throw new IllegalArgumentException("Vui lòng ghi rõ lý do từ chối");
+        }
+
+        // Cập nhật từ phụ huynh
+        form.setIsAgree(dto.getIsAgree());
+        form.setReason(dto.getReason());
+        form.setHasAllergy(dto.getHasAllergy());
+        form.setStatus(ConsentFormStatus.RESPONDED);
+        consent_formsRepos.save(form);
+    }
+
+
+
 }

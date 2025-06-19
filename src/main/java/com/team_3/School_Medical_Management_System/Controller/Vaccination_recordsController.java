@@ -27,7 +27,7 @@ public class Vaccination_recordsController {
         return vaccination_recordsServiceInterFace.getVaccination_records();
     }
 
-
+    
     @PostMapping
     public ResponseEntity<Vaccination_recordsDTO> addVaccination_records(@RequestBody Vaccination_recordsDTO vaccination_records) {
         var addVaccination_Record = vaccination_recordsServiceInterFace.addVaccination_records(vaccination_records);
@@ -75,8 +75,5 @@ public class Vaccination_recordsController {
             return ResponseEntity.ok(studentRecordById);
         }
     }
-
-
-
 
 }
