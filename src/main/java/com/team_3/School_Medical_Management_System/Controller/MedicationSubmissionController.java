@@ -93,7 +93,6 @@ public class MedicationSubmissionController {
 
 
     @PostMapping("/confirm-medication")
-    @Operation(summary = "thêm nurse")
     public ResponseEntity<?> confirmMedication(
             @RequestParam int medicationSubmissionId,
             RedirectAttributes redirectAttributes) {
