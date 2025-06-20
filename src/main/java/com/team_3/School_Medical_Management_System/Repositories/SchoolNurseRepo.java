@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseInte
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -78,5 +79,20 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
         entityManager.merge(p);
         return true;
     }
+
+    @Override
+    public boolean existsByUserName(String userName) {
+        return entityManager.createQuery(" SELECT COUNT(s) FROM SchoolNurse s WHERE s.UserName = :userName", Long.class)
+                .setParameter("userName", userName)
+                .getSingleResult() > 0;
+    }
+
+    @Override
+    public boolean existsByEmail(String mail) {
+        return entityManager.createQuery("SELECT COUNT(s) FROM SchoolNurse s WHERE s.Email = :Email", Long.class)
+                .setParameter("Email", mail)
+                .getSingleResult() > 0;
+    }
+
 
 }

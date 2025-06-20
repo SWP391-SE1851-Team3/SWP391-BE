@@ -21,11 +21,13 @@ public class Student {
     @NotBlank(message = "FullName Not allow empty")
     private String fullName;
     @NotBlank(message = "ClassName Not allow empty")
-    private String className;
-    private int isActive;
-    @ManyToOne
-    @JoinColumn(name = "ParentID")
-    private Parent parent;
+
+    private String ClassName;
+    private int IsActive;
+    private int ParentID;
+
+}
+
 
 
 

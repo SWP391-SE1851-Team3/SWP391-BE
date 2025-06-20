@@ -10,10 +10,15 @@ import java.time.LocalDateTime;
 @Table(name = "Notifications_Parent")
 @Getter
 @Setter
+
+
 public class NotificationsParent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int notificationId; // Khóa chính, tự động tăng
+
+
+
 
     @ManyToOne
     @JoinColumn(name = "ParentID")
