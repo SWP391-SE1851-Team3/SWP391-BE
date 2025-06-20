@@ -21,42 +21,59 @@ import java.util.Optional;
 
 @Service
 public class MedicalEventService {
-    @Autowired
+
     private MedicalEvent_NurseRepository medicalNurseRepo; // Repository cho MedicalEvent_Nurse
-    @Autowired
+
     private EmailService emailService;
-    @Autowired
+
     private MedicalEvent_EventTypeRepo medicalEventType;
-    @Autowired
+
     private SchoolNurseRepository schoolNurseRepository; // Repository cho SchoolNurse
-    @Autowired
+
     private NotificationsParentRepository notificationsParentRepository; // Repository cho NotificationsParen
-    @Autowired
+
     private MedicalEvent_NurseRepo medicalEventNurseRepository; // Repository cho MedicalEvent_Nurse
-    @Autowired
+
     private MedicalEventTypeRepo medicalEventTypeRepo; // Repository cho MedicalEventType
 
-    @Autowired
+
     private MedicalEventRepo medicalEventRepository; // Repository cho MedicalEvent
 
-    @Autowired
+
     private ParentRepository parentRepository; // Repository cho Parent
-    @Autowired
+
     private StudentRepository studentRepository;
     // Repository cho Student
-    @Autowired
+
     private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository;
-    @Autowired
+
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private StudentRepository studentRepo;
+
+
+    private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repository cho MedicalEvent_EventType
+
+    private MedicalEvent_NurseRepo medicalEventNurseRepo; // Repository cho MedicalEvent_Nurse
 
     @Autowired
-    private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repository cho MedicalEvent_EventType
-    @Autowired
-    private MedicalEvent_NurseRepo medicalEventNurseRepo; // Repository cho MedicalEvent_Nurse
+    public MedicalEventService(MedicalEvent_NurseRepository medicalNurseRepo, EmailService emailService, MedicalEvent_EventTypeRepo medicalEventType, SchoolNurseRepository schoolNurseRepository, NotificationsParentRepository notificationsParentRepository, MedicalEvent_NurseRepo medicalEventNurseRepository, MedicalEventTypeRepo medicalEventTypeRepo, MedicalEventRepo medicalEventRepository, ParentRepository parentRepository, StudentRepository studentRepository, NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository, MedicalEventDetailsRepository medicalEventDetailsRepository, JavaMailSender mailSender, StudentRepository studentRepo, MedicalEvent_EventTypeRepo medicalEventEventTypeRepository, MedicalEvent_NurseRepo medicalEventNurseRepo) {
+        this.medicalNurseRepo = medicalNurseRepo;
+        this.emailService = emailService;
+        this.medicalEventType = medicalEventType;
+        this.schoolNurseRepository = schoolNurseRepository;
+        this.notificationsParentRepository = notificationsParentRepository;
+        this.medicalEventNurseRepository = medicalEventNurseRepository;
+        this.medicalEventTypeRepo = medicalEventTypeRepo;
+        this.medicalEventRepository = medicalEventRepository;
+        this.parentRepository = parentRepository;
+        this.studentRepository = studentRepository;
+        this.notificationsMedicalEventDetailsRepository = notificationsMedicalEventDetailsRepository;
+        this.medicalEventDetailsRepository = medicalEventDetailsRepository;
+
+        this.medicalEventEventTypeRepository = medicalEventEventTypeRepository;
+        this.medicalEventNurseRepo = medicalEventNurseRepo;
+    }
+
+
 
     // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
     // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
