@@ -33,7 +33,13 @@ public class MedicalEventDetails {
 
     @Column(columnDefinition = "nvarchar(255)", nullable = false)
     private String processingStatus;
+    @ManyToOne
+    @JoinColumn(name = "CreatedByNurseID")
+    private SchoolNurse createdByNurse;
 
+    @ManyToOne
+    @JoinColumn(name = "UpdatedByNurseID")
+    private SchoolNurse updatedByNurse;
     public MedicalEventDetails() {
     }
 

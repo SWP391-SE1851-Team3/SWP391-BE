@@ -15,26 +15,14 @@ public class MedicalEventUpdateDTO {
     private String temperature;
     private String heartRate;
     private LocalDateTime eventDateTime;
-    //  private Integer parentId;
+     private Integer nurseId;
     private Integer studentId;
     private String note;
     private String result;
     private String processingStatus;
-
-
-    public MedicalEventUpdateDTO(Integer eventId, String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer studentId, String note, String result, String processingStatus) {
-        this.eventId = eventId;
-        this.usageMethod = usageMethod;
-        this.isEmergency = isEmergency;
-        this.hasParentBeenInformed = hasParentBeenInformed;
-        this.temperature = temperature;
-        this.heartRate = heartRate;
-        this.eventDateTime = eventDateTime;
-        this.studentId = studentId;
-        this.note = note;
-        this.result = result;
-        this.processingStatus = processingStatus;
-    }
+     // Y tá cập nhật sự kiện
+    private String nurseName;
+    //public MedicalEventUpdateDTO(Integer eventId, String usageMethod, Boolean isEmergency, Boolean
 
     public MedicalEventUpdateDTO() {
     }

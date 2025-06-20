@@ -35,7 +35,13 @@ public class MedicalEvent {
     @ManyToOne
     @JoinColumn(name = "ParentID")
     private Parent parent;
+    @ManyToOne
+    @JoinColumn(name = "CreatedByNurseID")
+    private SchoolNurse createdByNurse;
 
+    @ManyToOne
+    @JoinColumn(name = "UpdatedByNurseID")
+    private SchoolNurse updatedByNurse;
 
 
     @OneToMany(mappedBy = "medicalEvent")

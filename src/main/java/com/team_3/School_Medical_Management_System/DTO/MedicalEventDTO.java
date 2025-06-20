@@ -22,9 +22,11 @@ public class MedicalEventDTO {
     private Integer parentID;
     private Integer studentId;
     private String typeName;
-    private Integer nurseId;
-    private
-    String note;
+    private Integer nurseId;// Y tá tạo sự kiện
+    private String nurseName; // Tên y tá tạo sự kiện
+    private Integer updatedByNurseId; // Y tá cập nhật sự kiện
+    private String updatedByNurseName;
+    private String note;
     // @RequestParam
     private
     String result;

@@ -14,4 +14,5 @@ public class MedicalEventNurseId  {
         this.medicalEvent = medicalEvent;
         this.schoolNurse = schoolNurse;
     }
+
 }

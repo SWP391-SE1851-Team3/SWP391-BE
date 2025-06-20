@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -24,8 +26,15 @@ public class MedicalEvent_Nurse {
     public MedicalEvent_Nurse() {
     }
 
-    public MedicalEvent_Nurse(MedicalEvent medicalEvent, SchoolNurse schoolNurse) {
+    public MedicalEvent_Nurse(MedicalEvent medicalEvent, SchoolNurse schoolNurse, String actionType, LocalDateTime actionDateTime, Boolean isLatestAction) {
         this.medicalEvent = medicalEvent;
         this.schoolNurse = schoolNurse;
+
     }
+
+    public String getNurseName() {
+        return schoolNurse != null ? schoolNurse.getFullName() : "Không tồn tại";
+    }
+
+
 }

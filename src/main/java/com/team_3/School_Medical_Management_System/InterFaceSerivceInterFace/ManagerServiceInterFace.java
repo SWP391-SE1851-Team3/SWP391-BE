@@ -16,4 +16,5 @@ public interface ManagerServiceInterFace {
     public ResponseEntity<?> updateUser(int id, int roleId,UserDTO userDTO);
 
     public ResponseEntity<String> deleteUser(int id,  int roleId);
+
 }
