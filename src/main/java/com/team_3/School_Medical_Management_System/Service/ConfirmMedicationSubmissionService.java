@@ -109,6 +109,11 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
                 confirmation.setNurseId(nurseId);
             }
 
+            // Set evidence if provided
+            if (evidence != null) {
+                confirmation.setEvidence(evidence);
+            }
+
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
             return convertToDTO(savedConfirmation);
         }
@@ -181,4 +186,3 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         return dto;
     }
 }
-

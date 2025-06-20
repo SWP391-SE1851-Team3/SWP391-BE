@@ -7,15 +7,17 @@ public class MedicationSubmissionInfoDTO {
     private String studentName;
     private Date submissionDate;
     private String status;
+    private String className;
     private List<MedicationDetailDTO> medicationDetails;
 
     // Constructors
     public MedicationSubmissionInfoDTO() {}
 
-    public MedicationSubmissionInfoDTO(String studentName, Date submissionDate, String status, List<MedicationDetailDTO> medicationDetails) {
+    public MedicationSubmissionInfoDTO(String studentName, Date submissionDate, String status,String className, List<MedicationDetailDTO> medicationDetails) {
         this.studentName = studentName;
         this.submissionDate = submissionDate;
         this.status = status;
+        this.className = className;
         this.medicationDetails = medicationDetails;
     }
 
@@ -44,6 +46,13 @@ public class MedicationSubmissionInfoDTO {
         this.status = status;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
     public List<MedicationDetailDTO> getMedicationDetails() {
         return medicationDetails;
     }

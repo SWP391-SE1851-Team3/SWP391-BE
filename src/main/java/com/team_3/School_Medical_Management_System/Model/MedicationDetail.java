@@ -22,7 +22,6 @@ public class MedicationDetail {
     @JoinColumn(name = "medicationSubmissionId")
     @JsonBackReference
     private MedicationSubmission medicationSubmission;
-
     private String medicineName;
     private String dosage;
     private String timeToUse;

@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationDetailsExtendedDTO;
 import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 
@@ -21,4 +22,5 @@ public interface MedicationSubmissionServiceInterface {
     List<MedicationSubmissionInfoDTO> getAllMedicationSubmissionInfo();
     List<MedicationSubmissionInfoDTO> getMedicationSubmissionInfoByParentId(int parentId);
     MedicationSubmission getMedicationSubmissionById(int submissionId);
+    MedicationDetailsExtendedDTO getDetailsBySubmissionIdExtended(int submissionId);
 }
