@@ -25,8 +25,5 @@ public class Student {
     private int IsActive;
     private int ParentID;
 
-//    @ManyToOne
-//    @JoinColumn(name = "ParentID", insertable = false, updatable = false)
-//    private Parent parent;
 }
 
