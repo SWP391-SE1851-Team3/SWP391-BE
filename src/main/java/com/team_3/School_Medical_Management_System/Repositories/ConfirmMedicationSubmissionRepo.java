@@ -52,18 +52,10 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     }
 
     @Override
-    public List<ConfirmMedicationSubmission> findByStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status) {
-        String jpql = "SELECT c FROM Confirm_MedicationSubmission c WHERE c.status = :status";
+    public List<ConfirmMedicationSubmission> findByStatus(String status) {
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.status = :status";
         return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
                 .setParameter("status", status)
-                .getResultList();
-    }
-
-    @Override
-    public List<ConfirmMedicationSubmission> findByReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine) {
-        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.receivedMedicine = :receivedMedicine";
-        return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
-                .setParameter("receivedMedicine", receivedMedicine)
                 .getResultList();
     }
 
@@ -72,7 +64,6 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
     @Override
     public <S extends ConfirmMedicationSubmission> S save(S entity) {
         if (entity.getConfirmId() == 0) {
-            entity.setConfirmedAt(LocalDateTime.now());
             entityManager.persist(entity);
             return entity;
         } else {
@@ -346,4 +337,12 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
         return new org.springframework.data.domain.PageImpl<>(content, pageable, total);
     }
 
+    @Override
+    public List<ConfirmMedicationSubmission> findByMedicationSubmissionIdIn(List<Integer> submissionIds) {
+        if (submissionIds == null || submissionIds.isEmpty()) return List.of();
+        String jpql = "SELECT c FROM ConfirmMedicationSubmission c WHERE c.medicationSubmissionId IN :ids";
+        return entityManager.createQuery(jpql, ConfirmMedicationSubmission.class)
+                .setParameter("ids", submissionIds)
+                .getResultList();
+    }
 }

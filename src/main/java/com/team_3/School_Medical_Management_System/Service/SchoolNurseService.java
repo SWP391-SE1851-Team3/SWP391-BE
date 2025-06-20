@@ -120,6 +120,7 @@ public class SchoolNurseService implements SchoolNurseServiceInterFace {
     }
 
     @Override
+
     public UserDTO convertSchoolNurseToUserDTO(SchoolNurse nurse) {
 
         UserDTO dto = new UserDTO();
@@ -153,6 +154,7 @@ public class SchoolNurseService implements SchoolNurseServiceInterFace {
         nurse.setSpecialisation(dto.getSpecialisation());
         nurse.setRoleID(dto.getRoleId());
         return nurse;
+
 
     }
 

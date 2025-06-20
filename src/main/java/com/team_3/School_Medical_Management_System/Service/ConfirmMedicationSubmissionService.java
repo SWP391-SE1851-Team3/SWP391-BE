@@ -25,11 +25,12 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     private MedicationSubmissionInterFace medicationSubmissionInterFace;
     @Autowired
     private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionInterFace;
+    @Autowired
+    private com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository studentRepository;
 
     @Override
     public ConfirmMedicationSubmissionDTO createConfirmation(ConfirmMedicationSubmissionDTO confirmDTO) {
         ConfirmMedicationSubmission confirmation = convertToEntity(confirmDTO);
-        confirmation.setConfirmedAt(LocalDateTime.now());
 
         // Update the MedicationSubmission status based on nurse confirmation
         Optional<ConfirmMedicationSubmission> confirmMedicationSubmissionOpt =
@@ -37,10 +38,10 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
         if (confirmMedicationSubmissionOpt.isPresent()) {
             ConfirmMedicationSubmission confirmMedicationSubmission = confirmMedicationSubmissionOpt.get();
-            if (confirmDTO.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED) {
-                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
+            if (confirmDTO.getStatus().equals(ConfirmMedicationSubmission.STATUS_APPROVED)) {
+                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.STATUS_APPROVED);
             } else {
-                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);
+                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.STATUS_REJECTED);
             }
             confirmMedicationSubmissionInterFace.save(confirmMedicationSubmission);
         }
@@ -50,11 +51,11 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     @Override
-    public ConfirmMedicationSubmissionDTO updateConfirmationStatus(int confirmId, boolean status) {
+    public ConfirmMedicationSubmissionDTO updateConfirmationStatus(int confirmId, String status) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
-            confirmation.setConfirmedAt(LocalDateTime.now());
+            confirmation.setStatus(status);
 
             // Update the MedicationSubmission status
             Optional<MedicationSubmission> medicationSubmissionOpt =
@@ -62,12 +63,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
             if (medicationSubmissionOpt.isPresent()) {
                 ConfirmMedicationSubmission confirmMedicationSubmission = confirmationOpt.get();
-                if (status) {
-                    confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
-                } else {
-                    confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);;
-                }
-                confirmMedicationSubmission.setConfirmedAt(LocalDateTime.now());
+                confirmMedicationSubmission.setStatus(status);
                 confirmMedicationSubmissionInterFace.save(confirmMedicationSubmission);
             }
 
@@ -78,12 +74,42 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     @Override
-    public ConfirmMedicationSubmissionDTO updateMedicationTaken(int confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine) {
+    public ConfirmMedicationSubmissionDTO updateConfirmationStatusWithReason(int confirmId,
+                                                                             String status, String reason) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
-            confirmation.setReceivedMedicine(receivedMedicine);
-            confirmation.setMedicationTakenAt(LocalDateTime.now());
+            confirmation.setStatus(status);
+            confirmation.setReason(reason);
+
+            // Update the MedicationSubmission status
+            Optional<MedicationSubmission> medicationSubmissionOpt =
+                    medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
+
+            if (medicationSubmissionOpt.isPresent()) {
+                ConfirmMedicationSubmission confirmMedicationSubmission = confirmationOpt.get();
+                confirmMedicationSubmission.setStatus(status);
+                confirmMedicationSubmission.setReason(reason);
+                confirmMedicationSubmissionInterFace.save(confirmMedicationSubmission);
+            }
+
+            ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
+            return convertToDTO(savedConfirmation);
+        }
+        return null;
+    }
+
+    // Thêm hàm này để cập nhật status và nurseId khi cần
+    public ConfirmMedicationSubmissionDTO updateStatusAndNurse(int confirmId, String status, String reason, Integer nurseId) {
+        Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
+        if (confirmationOpt.isPresent()) {
+            ConfirmMedicationSubmission confirmation = confirmationOpt.get();
+            confirmation.setStatus(status);
+            if (reason != null) confirmation.setReason(reason);
+            // Nếu status là ADMINISTERED và nurseId khác null thì set nurseId
+            if (ConfirmMedicationSubmission.STATUS_ADMINISTERED.equalsIgnoreCase(status) && nurseId != null) {
+                confirmation.setNurseId(nurseId);
+            }
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
             return convertToDTO(savedConfirmation);
         }
@@ -119,30 +145,29 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ConfirmMedicationSubmissionDTO> getConfirmationsByStudentName(String studentName) {
+        // Tìm tất cả học sinh có tên giống hoặc gần giống
+        List<Integer> studentIds = studentRepository.findByFullNameContainingIgnoreCase(studentName)
+            .stream().map(s -> s.getStudentId()).collect(Collectors.toList());
+        if (studentIds.isEmpty()) return List.of();
+        // Tìm tất cả MedicationSubmission liên quan đến các studentId này
+        List<Integer> submissionIds = medicationSubmissionInterFace.findByStudentIdIn(studentIds)
+            .stream().map(ms -> ms.getMedicationSubmissionId()).collect(Collectors.toList());
+        if (submissionIds.isEmpty()) return List.of();
+        // Tìm tất cả ConfirmMedicationSubmission liên quan
+        List<ConfirmMedicationSubmission> confirmations = confirmRepository.findByMedicationSubmissionIdIn(submissionIds);
+        return confirmations.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     private ConfirmMedicationSubmission convertToEntity(ConfirmMedicationSubmissionDTO dto) {
         ConfirmMedicationSubmission entity = new ConfirmMedicationSubmission();
         entity.setConfirmId(dto.getConfirmId());
         entity.setMedicationSubmissionId(dto.getMedicationSubmissionId());
-
-        // Convert boolean status to enum
-        if (dto.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED) {
-            entity.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED);
-        } else {
-            entity.setStatus(ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED);
-        }
-
+        entity.setStatus(dto.getStatus());
         entity.setNurseId(dto.getNurseId());
+        entity.setReason(dto.getReason());
         entity.setEvidence(dto.getEvidence());
-
-        // Convert boolean receivedMedicine to enum
-        if (dto.getReceivedMedicine() == ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES) {
-            entity.setReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES);
-        } else {
-            entity.setReceivedMedicine(ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.NO);
-        }
-
-        entity.setConfirmedAt(dto.getConfirmedAt());
-        entity.setMedicationTakenAt(dto.getMedicationTakenAt());
         return entity;
     }
 
@@ -150,18 +175,10 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         ConfirmMedicationSubmissionDTO dto = new ConfirmMedicationSubmissionDTO();
         dto.setConfirmId(entity.getConfirmId());
         dto.setMedicationSubmissionId(entity.getMedicationSubmissionId());
-
-        // Set the status enum directly
         dto.setStatus(entity.getStatus());
-
         dto.setNurseId(entity.getNurseId());
+        dto.setReason(entity.getReason());
         dto.setEvidence(entity.getEvidence());
-
-        // Set the receivedMedicine enum directly
-        dto.setReceivedMedicine(entity.getReceivedMedicine());
-
-        dto.setConfirmedAt(entity.getConfirmedAt());
-        dto.setMedicationTakenAt(entity.getMedicationTakenAt());
         return dto;
     }
 }

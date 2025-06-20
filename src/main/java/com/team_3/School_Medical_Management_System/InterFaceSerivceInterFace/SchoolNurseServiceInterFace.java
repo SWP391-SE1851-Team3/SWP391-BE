@@ -16,4 +16,6 @@ public interface SchoolNurseServiceInterFace {
     public SchoolNurse GetSchoolNursesById(int id);
     public boolean changePassword(String email, String oldPassword, String newPassword);
 
+
 }
+

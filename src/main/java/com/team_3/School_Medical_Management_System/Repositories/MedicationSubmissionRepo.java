@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
+import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -48,13 +49,6 @@ public class MedicationSubmissionRepo implements MedicationSubmissionInterFace {
 
     public List<MedicationSubmission> findAllSubmissions() {
         return entityManager.createQuery("SELECT m FROM MedicationSubmission m", MedicationSubmission.class).getResultList();
-    }
-
-    @Transactional
-    public MedicationSubmission createSubmission(MedicationSubmission submission) {
-        submission.setMedicationSubmissionDate(LocalDateTime.now());
-        entityManager.persist(submission);
-        return submission;
     }
 
 //    public List<MedicationSubmission> findPendingSubmissions() {
@@ -351,5 +345,14 @@ public class MedicationSubmissionRepo implements MedicationSubmissionInterFace {
                 .getResultList();
 
         return new org.springframework.data.domain.PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public List<MedicationSubmission> findByStudentIdIn(List<Integer> studentIds) {
+        if (studentIds == null || studentIds.isEmpty()) return List.of();
+        String jpql = "SELECT m FROM MedicationSubmission m WHERE m.studentId IN :ids";
+        return entityManager.createQuery(jpql, MedicationSubmission.class)
+                .setParameter("ids", studentIds)
+                .getResultList();
     }
 }

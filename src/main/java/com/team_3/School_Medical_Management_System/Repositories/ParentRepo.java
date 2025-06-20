@@ -100,6 +100,7 @@ public class ParentRepo implements ParentInterFace  {
                 .getSingleResult();
     }
 
+
     @Override
     public boolean existsByUserName(String userName) {
 
@@ -115,4 +116,5 @@ public class ParentRepo implements ParentInterFace  {
                 .setParameter("Email", mail)
                 .getSingleResult() > 0;
     }
+
 }

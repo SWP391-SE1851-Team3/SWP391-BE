@@ -19,6 +19,7 @@ public interface StudentInterFace {
     public Student GetStudentByName(String FullName, String ClassName);
 
     public List<Student> getStudentsByParentID(int parentID);
+    public Student GetStudentByFullName(String FullName);
 
 
    // public List<Student> findStudentByParentId(int parentId);

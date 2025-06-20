@@ -9,6 +9,7 @@ import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
+
 @NoArgsConstructor
 @ToString
 @Entity
@@ -37,11 +38,7 @@ public class Parent {
     @NotBlank(message = "Relationship Not allow empty")
     private String Relationship;
 
-    // @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "roleID", insertable = false, updatable = false)
-//    private Role role;
 
 
 }

@@ -33,7 +33,7 @@ public class StudentService implements StudentServiceInterFace {
 
     @Override
     public void addStudent(Student student) {
-        var p = getStudent(student.getStudentID());
+        var p = getStudent(student.getStudentId());
         if (p == null) {
             studentInterFace.addStudent(student);
         } else {
@@ -63,7 +63,7 @@ public class StudentService implements StudentServiceInterFace {
 
     @Override
     public Student UpdateStudent(Student student) {
-        var p = getStudent(student.getStudentID());
+        var p = getStudent(student.getStudentId());
         if (p == null) {
             throw new RuntimeException("Student not found");
         } else {

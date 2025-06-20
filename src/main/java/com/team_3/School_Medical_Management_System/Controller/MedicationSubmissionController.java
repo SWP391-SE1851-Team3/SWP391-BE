@@ -3,12 +3,16 @@ package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
+import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,6 +40,9 @@ public class MedicationSubmissionController {
     @Autowired
     private StudentServiceInterFace studentService;
 
+    @Autowired
+    private SchoolNurseServiceInterFace nurseService;
+
     @GetMapping("/children/{parentID}")
     public ResponseEntity<List<StudentMappingParent>> getChildrenByParentId(@PathVariable int parentID) {
         List<StudentMappingParent> children = studentService.getStudentsByParentID(parentID);
@@ -41,9 +50,39 @@ public class MedicationSubmissionController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<MedicationSubmission> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
-        MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
-        return new ResponseEntity<>(submission, HttpStatus.CREATED);
+    public ResponseEntity<?> submitMedication(@Valid @RequestBody MedicationSubmissionDTO medicationSubmissionDTO) {
+        try {
+            // Kiểm tra xem studentId có tồn tại không
+            Student student = studentService.getStudent(medicationSubmissionDTO.getStudentId());
+            if (student == null) {
+                return new ResponseEntity<>("Student with ID " + medicationSubmissionDTO.getStudentId() + " does not exist",
+                        HttpStatus.BAD_REQUEST);
+            }
+
+            MedicationSubmission submission = medicationSubmissionService.submitMedication(medicationSubmissionDTO);
+            return new ResponseEntity<>(submission, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error submitting medication: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/cancel/{submissionId}")
+    public ResponseEntity<?> cancelMedicationSubmission(@PathVariable int submissionId) {
+        try {
+            medicationSubmissionService.cancelMedicationSubmission(submissionId);
+            return new ResponseEntity<>("Medication submission cancelled successfully", HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error cancelling medication submission", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/submissions/{submissionId}/details")
+    public ResponseEntity<List<MedicationDetail>> getSubmissionDetails(@PathVariable int submissionId) {
+        List<MedicationDetail> details = medicationSubmissionService.getDetailsBySubmissionId(submissionId);
+        return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
     @GetMapping("/submissions/{parentId}")
@@ -51,72 +90,79 @@ public class MedicationSubmissionController {
         List<MedicationSubmission> submissions = medicationSubmissionService.getAllMedicationSubmissionsByParentId(parentId);
         return new ResponseEntity<>(submissions, HttpStatus.OK);
     }
-    @GetMapping("/medication-dashboard")
-    public String medicationDashboard(Model model, @RequestParam(required = false) Integer nurseId) {
-        if (nurseId == null) {
-            // In a real app, get this from the session or authentication context
-            nurseId = 1; // Default for testing
-        }
 
-        // Get pending medication submissions
-
-        // Get approved confirmations (where status=true but not yet administered)
-        List<ConfirmMedicationSubmissionDTO> approvedConfirmations = confirmService.getAllConfirmations().stream()
-                .filter(c -> c.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED &&
-                        c.getReceivedMedicine() == ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES)
-                .collect(Collectors.toList());
-        model.addAttribute("approvedConfirmations", approvedConfirmations);
-
-        // Get administered confirmations
-        List<ConfirmMedicationSubmissionDTO> administeredConfirmations = confirmService.getAllConfirmations().stream()
-                .filter(c -> c.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.ADMINISTERED &&
-                        c.getReceivedMedicine() == ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES)
-                .collect(Collectors.toList());
-        model.addAttribute("administeredConfirmations", administeredConfirmations);
-
-        model.addAttribute("nurseId", nurseId);
-
-        return "medication-submission--confirmation";
-    }
 
     @PostMapping("/confirm-medication")
-    public String confirmMedication(
+    @Operation(summary = "thêm nurse")
+    public ResponseEntity<?> confirmMedication(
             @RequestParam int medicationSubmissionId,
-            @RequestParam int nurseId,
-            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus status,
-            @RequestParam String evidence,
-            RedirectAttributes redirectAttributes,
-            @RequestParam
-            ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine receivedMedicine) {
+            RedirectAttributes redirectAttributes) {
+        // Lấy thông tin xác nhận từ confirmMedicationSubmissionService
+        ConfirmMedicationSubmissionDTO confirmDTO = confirmService.getConfirmationBySubmissionId(medicationSubmissionId);
+        if (confirmDTO == null) {
+            return ResponseEntity.badRequest().body("No confirmation found for this medication submission id.");
+        }
 
-        ConfirmMedicationSubmissionDTO confirmDTO = new ConfirmMedicationSubmissionDTO();
-        confirmDTO.setMedicationSubmissionId(medicationSubmissionId);
-        confirmDTO.setNurseId(nurseId);
+        // Lấy status và nurseId từ confirmDTO
+        String status = confirmDTO.getStatus();
+        Integer nurseId = confirmDTO.getNurseId();
+        String reason = confirmDTO.getReason();
+        Integer confirmId = confirmDTO.getConfirmId();
+        String evidence = confirmDTO.getEvidence();
+
+        // Lấy thông tin submission
+        MedicationSubmission submission = medicationSubmissionService.getMedicationSubmissionById(medicationSubmissionId);
+        String submissionDate = null;
+        if (submission != null && submission.getSubmissionDate() != null) {
+            submissionDate = submission.getSubmissionDate().toString();
+        }
+
+        // Kiểm tra logic như cũ
+        if (status == null || status.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Status is required.");
+        }
+        if ("reject".equalsIgnoreCase(status) && (reason == null || reason.trim().isEmpty())) {
+            return ResponseEntity.badRequest().body("Reason is required when status is 'reject'.");
+        }
+        if ("ADMINISTERED".equalsIgnoreCase(status) && nurseId == null) {
+            return ResponseEntity.badRequest().body("NurseId is required when status is 'ADMINISTERED'.");
+        }
+
         confirmDTO.setStatus(status);
-        confirmDTO.setEvidence(evidence);
-        confirmDTO.setReceivedMedicine(receivedMedicine);
-        confirmDTO.setConfirmedAt(LocalDateTime.now());
+        if (reason != null) {
+            confirmDTO.setReason(reason);
+        }
 
         confirmService.createConfirmation(confirmDTO);
 
-        return "redirect:/medication-submission/medication-dashboard";
-    }
-
-    @PostMapping("/medication-taken")
-    public String medicationTaken(
-            @RequestParam int confirmId,
-            RedirectAttributes redirectAttributes) {
-
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateMedicationTaken(confirmId, ConfirmMedicationSubmission.confirmMedicationSubmissionReceivedMedicine.YES);
-
-        if (updatedConfirmation != null) {
-            redirectAttributes.addFlashAttribute("message", "Medication marked as administered successfully");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to update medication status");
+        // Lấy tên nurse nếu có nurseId
+        String nurseName = null;
+        if (nurseId != null) {
+            nurseName = nurseService.getNurseNameById(nurseId);
         }
 
-        return "redirect:/medication-submission/medication-dashboard";
+        // Tạo response object chứa đầy đủ thông tin
+        Map<String, Object> response = new HashMap<>();
+        response.put("confirmationId", confirmId);
+        response.put("status", status);
+        response.put("nurseName", nurseName);
+        response.put("reason", reason);
+        response.put("evidence", evidence);
+        response.put("submissionId", medicationSubmissionId);
+        response.put("submissionDate", submissionDate);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/submissions-info")
+    public ResponseEntity<List<MedicationSubmissionInfoDTO>> getAllMedicationSubmissionInfo() {
+        List<MedicationSubmissionInfoDTO> infoList = medicationSubmissionService.getAllMedicationSubmissionInfo();
+        return new ResponseEntity<>(infoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/submissions-info/parent/{parentId}")
+    public ResponseEntity<List<MedicationSubmissionInfoDTO>> getMedicationSubmissionInfoByParentId(@PathVariable int parentId) {
+        List<MedicationSubmissionInfoDTO> infoList = medicationSubmissionService.getMedicationSubmissionInfoByParentId(parentId);
+        return new ResponseEntity<>(infoList, HttpStatus.OK);
     }
 }
-
-
