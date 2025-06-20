@@ -28,7 +28,6 @@ public class Consent_formsDTO {
     private String FullNameOfStudent ;
     @NotBlank(message = "ClassName Not allow empty")
     private String ClassName ;
-    private int scheduled_id;
     @NotBlank(message = "VaccineName Not allow empty")
     private String Name;
     private Integer IsAgree;
@@ -41,10 +40,7 @@ public class Consent_formsDTO {
     @NotBlank(message = "fullnameOfParent Not allow empty")
     private String fullnameOfParent;
     private String Location;
-
     private LocalDateTime scheduledDate;
-
-
     private LocalDateTime send_date;
     private LocalDateTime expire_date;
 }

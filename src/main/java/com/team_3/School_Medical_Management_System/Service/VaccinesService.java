@@ -28,6 +28,7 @@ public class VaccinesService implements VaccinesServiceInterFace {
         return vaccinesList.stream().map(TransferModelsDTO::MappingVaccines).collect(Collectors.toList());
     }
 
+
     @Override
     public VaccinesDTO GetVaccineByVaccineName(String vaccineName) {
         var vaccinesList = vaccinesInterFace.GetVaccineByVaccineName(vaccineName);
@@ -39,17 +40,19 @@ public class VaccinesService implements VaccinesServiceInterFace {
     }
 
     @Override
-    public VaccinesDTO AddVaccine(Vaccines vaccines) {
-        var vaccinesAdd = vaccinesInterFace.AddVaccine(vaccines);
-        return TransferModelsDTO.MappingVaccines(vaccinesAdd);
+    public VaccinesDTO AddVaccine(VaccinesDTO vaccinesDTO) {
+        var vaccine = vaccinesInterFace.AddVaccine(TransferModelsDTO.MappingVaccineDTO(vaccinesDTO));
+        return TransferModelsDTO.MappingVaccines(vaccine);
     }
 
     @Override
-    public VaccinesDTO UpdateVaccine(Vaccines vaccines) {
-       var updatedVaccine = vaccinesInterFace.UpdateVaccine(vaccines);
+    public VaccinesDTO UpdateVaccine(VaccinesDTO vaccinesDTO) {
+        var updatedVaccine = vaccinesInterFace.UpdateVaccine(TransferModelsDTO.MappingVaccineDTO(vaccinesDTO));
         if (updatedVaccine != null) {
             return TransferModelsDTO.MappingVaccines(updatedVaccine);
         }
         return null;
     }
 }
+
+

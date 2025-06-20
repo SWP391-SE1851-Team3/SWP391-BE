@@ -3,8 +3,11 @@ package com.team_3.School_Medical_Management_System.DTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -23,10 +26,13 @@ public class VaccinesDTO {
     private String Description;
     @NotBlank(message = "Recommended_ages Not allow empty")
     private String Recommended_ages;
-    private int Doses_required;
-    @NotBlank(message = "Created_at Not allow empty")
-    private String Created_at;
-    @NotBlank(message = "Updated_at Not allow empty")
-    private String Updated_at;
-
+    private LocalDateTime Vaccine_created_at;
+    private LocalDateTime Vaccine_updated_at;
+    private Integer nurse_id;
+    private String dot;
+    private Integer quantity_received;
+    private LocalDateTime scheduled_date;
+    private String location;
+    private String status;
+    private String notes;
 }

@@ -10,14 +10,10 @@ import lombok.*;
 @Setter
 @ToString
 public class ConsentFormParentResponseDTO {
-
     private Integer consentFormId;
-
     private Integer isAgree;
-
     @NotBlank
     private String reason;
-
     @NotBlank
     private String hasAllergy;
 }

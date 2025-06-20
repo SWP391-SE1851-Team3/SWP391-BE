@@ -31,9 +31,6 @@ public class Consent_forms {
     private String Reason;
     private String HasAllergy;
     @ManyToOne
-    @JoinColumn(name = "schedule_id")
-    private Vaccination_schedule schedule;
-    @ManyToOne
     @JoinColumn(name = "Vaccine_id")
     private Vaccines vaccine;
     @Enumerated(EnumType.STRING)

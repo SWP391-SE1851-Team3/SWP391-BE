@@ -1,16 +1,21 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
+import com.team_3.School_Medical_Management_System.DTO.VaccinesDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccinesInterFace;
 import com.team_3.School_Medical_Management_System.Model.Vaccines;
+import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public class VaccinesRepo implements VaccinesInterFace {
     private EntityManager entityManager;
+    @Autowired
+    private SchoolNurseRepo schoolNurseRepo;
 
     @Autowired
     public VaccinesRepo(EntityManager entityManager) {
@@ -44,9 +49,7 @@ public class VaccinesRepo implements VaccinesInterFace {
 
     @Override
     public Vaccines UpdateVaccine(Vaccines vaccineDetails) {
-        // Tìm vaccine theo tên
         var existingVaccine = GetVaccineByVaccineId(vaccineDetails.getVaccine_id());
-
         if (existingVaccine == null) {
             return null; // Nếu không tìm thấy vaccine theo tên
         }
@@ -55,11 +58,14 @@ public class VaccinesRepo implements VaccinesInterFace {
         existingVaccine.setManufacturer(vaccineDetails.getManufacturer());
         existingVaccine.setDescription(vaccineDetails.getDescription());
         existingVaccine.setRecommended_ages(vaccineDetails.getRecommended_ages());
-        existingVaccine.setDoses_required(vaccineDetails.getDoses_required());
-        existingVaccine.setCreated_at(vaccineDetails.getCreated_at());
-        existingVaccine.setUpdated_at(vaccineDetails.getUpdated_at());
-
+        existingVaccine.setVaccine_updated_at(vaccineDetails.getVaccine_updated_at());
+        existingVaccine.setVaccine_created_at(vaccineDetails.getVaccine_created_at());
+        existingVaccine.setScheduled_date(vaccineDetails.getScheduled_date());
+        existingVaccine.setQuantity_received(vaccineDetails.getQuantity_received());
+        existingVaccine.setNurse(vaccineDetails.getNurse());
+        existingVaccine.setLocation(vaccineDetails.getLocation());
+        existingVaccine.setNotes(vaccineDetails.getNotes());
+        existingVaccine.setStatus(vaccineDetails.getStatus());
         return entityManager.merge(existingVaccine);
     }
-
 }

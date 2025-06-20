@@ -23,7 +23,6 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     @Override
     public List<Consent_forms> getConsent_forms() {
         String JPQL = "SELECT c FROM Consent_forms c " +
-                "JOIN c.schedule s " +
                 "JOIN c.vaccine v";
         return entityManager.createQuery(JPQL, Consent_forms.class).getResultList();
     }
@@ -43,16 +42,15 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     }
 
     @Override
-    public List<Consent_forms> getConsent_formsIsAgree(int batch_id) {
+    public List<Consent_forms> getConsent_formsIsAgree(String dot) {
         String jpql = "SELECT DISTINCT c FROM Consent_forms c " +
                 "JOIN c.vaccine v " +
-                "JOIN Vaccine_batches vb ON vb.vaccine = v " +
-                "JOIN Vaccination_schedule vs ON vs.Vaccine = v " +
-                "WHERE c.IsAgree = 1 AND vb.batch_id = :batch_id";
+                "WHERE c.IsAgree = 1 AND v.dot = :dot";
         return entityManager.createQuery(jpql, Consent_forms.class)
-                .setParameter("batch_id", batch_id)
+                .setParameter("dot", dot)
                 .getResultList();
     }
+
 
     @Override
     public List<Consent_forms> getConsent_formsClass(String class_name) {
@@ -72,38 +70,32 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     }
 
     @Override
-    public Long countConsentFormsIsAgreeByBatch(int batch_id) {
+    public Long countConsentFormsIsAgreeByBatch(String dot) {
         String jpql = "SELECT  COUNT(c) FROM Consent_forms c " +
                 "JOIN c.vaccine v " +
-                "JOIN Vaccine_batches vb ON vb.vaccine = v " +
-                "JOIN Vaccination_schedule vs ON vs.Vaccine = v " +
-                "WHERE c.IsAgree = 1 AND vb.batch_id = :batch_id";
+                "WHERE c.IsAgree = 1 AND v.dot = :dot";
         return entityManager.createQuery(jpql, Long.class)
-                .setParameter("batch_id", batch_id)
+                .setParameter("dot", dot)
                 .getSingleResult();
     }
 
     @Override
-    public Long countConsentFormsDisAgreeByBatch(int batch_id) {
+    public Long countConsentFormsDisAgreeByBatch(String dot) {
         String jpql = "SELECT  COUNT(c) FROM Consent_forms c " +
                 "JOIN c.vaccine v " +
-                "JOIN Vaccine_batches vb ON vb.vaccine = v " +
-                "JOIN Vaccination_schedule vs ON vs.Vaccine = v " +
-                "WHERE c.IsAgree = 0 AND vb.batch_id = :batch_id";
+                "WHERE c.IsAgree = 0 AND v.dot = :dot";
         return entityManager.createQuery(jpql, Long.class)
-                .setParameter("batch_id", batch_id)
+                .setParameter("dot", dot)
                 .getSingleResult();
     }
 
     @Override
-    public Long countConsentFormsPendingByBatch(int batch_id) {
+    public Long countConsentFormsPendingByBatch(String dot) {
         String jpql = "SELECT  COUNT(c) FROM Consent_forms c " +
                 "JOIN c.vaccine v " +
-                "JOIN Vaccine_batches vb ON vb.vaccine = v " +
-                "JOIN Vaccination_schedule vs ON vs.Vaccine = v " +
-                "WHERE c.IsAgree IS NULL AND vb.batch_id = :batch_id";
+                "WHERE c.IsAgree IS NULL AND v.dot = :dot";
         return entityManager.createQuery(jpql, Long.class)
-                .setParameter("batch_id", batch_id)
+                .setParameter("dot", dot)
                 .getSingleResult();
     }
 

@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.engine.jdbc.batch.spi.Batch;
 import org.jetbrains.annotations.Async;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -26,13 +27,7 @@ public class Vaccination_records {
     @ManyToOne
     @JoinColumn(name = "StudentID")
     private Student student;
-    @ManyToOne
-    @JoinColumn(name = "schedule_id")
-    private Vaccination_schedule schedule;
-    @ManyToOne
-    @JoinColumn(name = "batch_id")
-    private Vaccine_batches batch;
-    private OffsetDateTime observation_time;
+    private LocalDateTime observation_time;
     private String symptoms;
     private String severity;
     private String observation_notes;

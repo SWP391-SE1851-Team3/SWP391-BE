@@ -2,7 +2,6 @@ package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
 import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
@@ -16,7 +15,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,9 +27,6 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Autowired
     private VaccinesRepo vaccinesRepo;
-
-    @Autowired
-    private Vaccination_scheduleRepo vaccination_scheduleRepo;
 
     @Autowired
     private ParentRepo parentRepo;
@@ -54,11 +49,6 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         return consent_forms.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
     }
 
-
-
-
-
-
     @Override
     public Consent_formsDTO addConsent_forms(Consent_formsDTO dto) {
         Student student = studentRepo.GetStudentByFullName(dto.getFullNameOfStudent());
@@ -71,16 +61,13 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         }
         Parent parent = student.getParent();
         if (parent == null) throw new RuntimeException("Parent not found");
-
-        Vaccination_schedule schedule = vaccination_scheduleRepo.vaccination_scheduleById(dto.getScheduled_id());
-        if (schedule == null) {
-            throw new RuntimeException("Schedule not found");
-        }
+        Vaccines vaccines = new Vaccines();
         Consent_forms entity = new Consent_forms();
         entity.setStudent(student);
         entity.setParent(parent);
         entity.setVaccine(vaccine);
-        entity.setSchedule(schedule);
+        vaccines.setScheduled_date(dto.getScheduledDate());
+        entity.setVaccine(vaccine);
         entity.setIsAgree(null);
         entity.setReason("");
         entity.setHasAllergy("");
@@ -99,33 +86,32 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public Consent_formsRequestDTO getConsentFormForParent(Integer consentFormId) {
+    public Consent_formsDTO getConsentFormForParent(Integer consentFormId) {
         Consent_forms entity = consent_formsRepo.getConsent_formsById(consentFormId);
         if (entity == null) {
             throw new RuntimeException("Consent Form not found");
         }
-        return TransferModelsDTO.convertToParentViewDTO(entity);
+        return TransferModelsDTO.MappingConsent(entity);
     }
 
     @Override
-    public List<Consent_formsRequestDTO> getConsent_formsIsAgree(int batch_id) {
-        var listArrgee = consent_formsRepo.getConsent_formsIsAgree(batch_id);
+    public List<Consent_formsDTO> getConsent_formsIsAgree(String dot) {
+        var listArrgee = consent_formsRepo.getConsent_formsIsAgree(dot);
 
         if (listArrgee.isEmpty()) {
             throw new RuntimeException("List of consent_forms is empty");
         }
-
-        List<Consent_formsRequestDTO> dtoList = listArrgee.stream()
-                .map(TransferModelsDTO::convertToParentViewDTO)
+        List<Consent_formsDTO> dtoList = listArrgee.stream()
+                .map(TransferModelsDTO::MappingConsent)
                 .collect(Collectors.toList());
         return dtoList;
     }
 
     @Override
-    public List<Consent_formsRequestDTO> getConsent_formsClass(String class_name) {
+    public List<Consent_formsDTO> getConsent_formsClass(String class_name) {
         var className = consent_formsRepo.getConsent_formsClass(class_name);
         if (className == null) throw new RuntimeException("Class not found");
-        return className.stream().map(TransferModelsDTO::convertToParentViewDTO).collect(Collectors.toList());
+        return className.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
     }
 
     @Override
@@ -137,29 +123,28 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         entity.setIsAgree(dto.getIsAgree());
         entity.setReason(dto.getReason());
         entity.setHasAllergy(dto.getHasAllergy());
-         // cập nhật lại ngày phụ huynh xác nhận
         consent_formsRepo.updateConsent_forms(entity);
     }
 
     @Override
-    public Long countConsentFormsIsAgreeByBatch(int batch_id) {
-        return consent_formsRepo.countConsentFormsIsAgreeByBatch(batch_id);
+    public Long countConsentFormsIsAgreeByBatch(String dot) {
+        return consent_formsRepo.countConsentFormsIsAgreeByBatch(dot);
     }
 
     @Override
-    public Long countConsentFormsDisAgreeByBatch(int batch_id) {
-        return consent_formsRepo.countConsentFormsDisAgreeByBatch(batch_id);
+    public Long countConsentFormsDisAgreeByBatch(String dot)  {
+        return consent_formsRepo.countConsentFormsDisAgreeByBatch(dot);
     }
 
 
     @Override
-    public Long countConsentFormsPendingByBatch(int batch_id) {
-        return consent_formsRepo.countConsentFormsPendingByBatch(batch_id);
+    public Long countConsentFormsPendingByBatch(String dot) {
+        return consent_formsRepo.countConsentFormsPendingByBatch(dot);
     }
 
     @Override
-    public Consent_formsRequestDTO getConsentByStudentId(int studentId) {
-        return TransferModelsDTO.convertToParentViewDTO(consent_formsRepo.getConsentByStudentId(studentId));
+    public Consent_formsDTO getConsentByStudentId(int studentId) {
+        return TransferModelsDTO.MappingConsent(consent_formsRepo.getConsentByStudentId(studentId));
     }
 
     @Override
@@ -185,7 +170,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         form.setIsAgree(dto.getIsAgree());
         form.setReason(dto.getReason());
         form.setHasAllergy(dto.getHasAllergy());
-        form.setStatus(ConsentFormStatus.RESPONDED);
+        form.setStatus(ConsentFormStatus.APPROVED);
         consent_formsRepos.save(form);
     }
 

@@ -28,7 +28,7 @@ public class VaccinesController {
     }
 
     @PostMapping
-    public ResponseEntity<VaccinesDTO> addVaccine(@RequestBody Vaccines vaccines) {
+    public ResponseEntity<VaccinesDTO> addVaccine(@RequestBody VaccinesDTO vaccines) {
         var p = vaccinesServiceInterFace.AddVaccine(vaccines);
         if(p != null) {
             return new ResponseEntity<>(p, HttpStatus.CREATED);
@@ -38,12 +38,13 @@ public class VaccinesController {
     }
 
     @PutMapping("/{editbyId}")
-    public ResponseEntity<VaccinesDTO> updateVaccine(@RequestBody Vaccines vaccines) {
-        var updatedVaccine = vaccinesServiceInterFace.UpdateVaccine(vaccines);
+    public ResponseEntity<VaccinesDTO> updateVaccine(@RequestBody VaccinesDTO vaccinesDTO) {
+        var updatedVaccine = vaccinesServiceInterFace.UpdateVaccine(vaccinesDTO);
         if (updatedVaccine != null) {
             return new ResponseEntity<>(updatedVaccine, HttpStatus.OK); // Nếu cập nhật thành công
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Nếu không tìm thấy vaccine để cập nhật
         }
     }
+
 }

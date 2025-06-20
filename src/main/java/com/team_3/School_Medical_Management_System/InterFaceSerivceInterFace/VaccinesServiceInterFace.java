@@ -8,9 +8,8 @@ import java.util.List;
 public interface VaccinesServiceInterFace {
     public List<VaccinesDTO> GetAllVaccines();
     public VaccinesDTO GetVaccineByVaccineName(String vaccineName);
-    public VaccinesDTO AddVaccine(Vaccines vaccines);
-    public VaccinesDTO UpdateVaccine(Vaccines Vaccines);
-
+    public VaccinesDTO AddVaccine(VaccinesDTO vaccinesDTO);
+    public VaccinesDTO UpdateVaccine(VaccinesDTO vaccinesDTO);
 
 
 }
