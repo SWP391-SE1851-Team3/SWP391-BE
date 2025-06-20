@@ -2,11 +2,9 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
-import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -46,7 +44,4 @@ public class Vaccination_recordsController {
         var p = vaccination_recordsServiceInterFace.updateVaccination_records(records);
         return ResponseEntity.ok().body(p);
     }
-
-
-
 }

@@ -121,8 +121,6 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         return TransferModelsDTO.MappingVaccinationRecords(vaccinationRecord);
 
     }
-
-
     @Override
     public List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId) {
         var vaccination_recordsByStudentId = vaccination_recordsInterFace.getVaccination_recordsByStudentId(studentId);
