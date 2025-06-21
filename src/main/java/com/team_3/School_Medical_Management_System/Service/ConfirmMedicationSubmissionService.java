@@ -38,11 +38,8 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
         if (confirmMedicationSubmissionOpt.isPresent()) {
             ConfirmMedicationSubmission confirmMedicationSubmission = confirmMedicationSubmissionOpt.get();
-            if (confirmDTO.getStatus().equals(ConfirmMedicationSubmission.STATUS_APPROVED)) {
-                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.STATUS_APPROVED);
-            } else {
-                confirmMedicationSubmission.setStatus(ConfirmMedicationSubmission.STATUS_REJECTED);
-            }
+            // Allows any status value to be set directly from the DTO
+            confirmMedicationSubmission.setStatus(confirmDTO.getStatus());
             confirmMedicationSubmissionInterFace.save(confirmMedicationSubmission);
         }
 
@@ -100,16 +97,23 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     // Thêm hàm này để cập nhật status và nurseId khi cần
-    public ConfirmMedicationSubmissionDTO updateStatusAndNurse(int confirmId, String status, String reason, Integer nurseId) {
+    public ConfirmMedicationSubmissionDTO updateStatusAndNurse(int confirmId, String status, String reason, Integer nurseId, String evidence) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
-            confirmation.setStatus(status);
+            confirmation.setStatus(status); // Set any status directly
             if (reason != null) confirmation.setReason(reason);
-            // Nếu status là ADMINISTERED và nurseId khác null thì set nurseId
-            if (ConfirmMedicationSubmission.STATUS_ADMINISTERED.equalsIgnoreCase(status) && nurseId != null) {
+
+            // Set nurseId if provided, without requiring specific status
+            if (nurseId != null) {
                 confirmation.setNurseId(nurseId);
             }
+
+            // Set evidence if provided
+            if (evidence != null) {
+                confirmation.setEvidence(evidence);
+            }
+
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
             return convertToDTO(savedConfirmation);
         }
