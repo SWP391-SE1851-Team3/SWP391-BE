@@ -77,8 +77,6 @@ public class StudentHealthProfileController {
         }else {
             return ResponseEntity.ok(profile);
         }
-
-
     }
 
 

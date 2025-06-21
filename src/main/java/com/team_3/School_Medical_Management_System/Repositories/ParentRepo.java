@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public class ParentRepo implements ParentInterFace {
+public class ParentRepo implements ParentInterFace  {
     private EntityManager entityManager;
     @Autowired
     public ParentRepo(EntityManager entityManager) {
@@ -36,6 +36,7 @@ public class ParentRepo implements ParentInterFace {
     @Override
     public void AddNewParent(Parent parent) {
          entityManager.persist(parent);
+       entityManager.flush();
     }
 
     @Override
@@ -98,4 +99,22 @@ public class ParentRepo implements ParentInterFace {
                 .setParameter("Email", Email)
                 .getSingleResult();
     }
+
+
+    @Override
+    public boolean existsByUserName(String userName) {
+
+        return entityManager.createQuery(" SELECT COUNT(p) FROM Parent p WHERE p.UserName = :userName", Long.class)
+                .setParameter("userName", userName)
+                .getSingleResult() > 0;
+
+    }
+
+    @Override
+    public boolean existsByEmail(String mail) {
+        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.Email = :Email", Long.class)
+                .setParameter("Email", mail)
+                .getSingleResult() > 0;
+    }
+
 }

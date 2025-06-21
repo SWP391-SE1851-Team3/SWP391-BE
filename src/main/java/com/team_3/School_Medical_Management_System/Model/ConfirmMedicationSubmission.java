@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table
+@Table(name = "Confirm_MedicationSubmission")
 @Setter
 @Getter
 public class ConfirmMedicationSubmission {
@@ -19,21 +19,11 @@ public class ConfirmMedicationSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int confirmId;
     private int medicationSubmissionId;
-    private int nurseId;
+    private Integer nurseId;
+    private String reason;
+
     private String evidence;
 
-    private LocalDateTime confirmedAt;
-    private LocalDateTime medicationTakenAt;
-
-    @Enumerated(EnumType.STRING)
-    private confirmMedicationSubmissionStatus status;
-
-    public enum confirmMedicationSubmissionStatus {
-        PENDING,
-        APPROVED,
-        REJECTED,
-        ADMINISTERED
-    }
-
-
+    private String status;
 }
+

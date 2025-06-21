@@ -17,4 +17,5 @@ public class StudentMappingParent {
     private String ClassName;
     private int IsActive;
     private int ParentID;
+
 }

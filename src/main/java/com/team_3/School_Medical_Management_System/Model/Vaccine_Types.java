@@ -1,10 +1,9 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 @Entity
 @Table
 @Getter
@@ -12,15 +11,16 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Vaccines {
+
+public class Vaccine_Types {
     @Id
-    private int Vaccine_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer VaccineTypeID;
     private String Name;
     private String Manufacturer;
     private String Description;
     private String Recommended_ages;
-    private int Doses_required;
-    private String Created_at;
-    private String Updated_at;
+    private LocalDate Created_at;
+    private LocalDate Updated_at;
 
 }

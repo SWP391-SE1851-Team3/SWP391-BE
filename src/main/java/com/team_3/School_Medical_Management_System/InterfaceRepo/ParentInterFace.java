@@ -15,4 +15,10 @@ public interface ParentInterFace {
     public boolean changePassword(String email, String oldPassword, String newPassword);
     public Parent getParentByEmail(String Email);
 
+
+
+
+    public boolean  existsByUserName(String userName);
+    public boolean  existsByEmail(String userName);
+
 }

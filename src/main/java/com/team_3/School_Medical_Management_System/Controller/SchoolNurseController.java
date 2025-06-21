@@ -65,7 +65,7 @@ public class SchoolNurseController {
         SchoolNurse nurse = schoolNurseService.LoginByAccount(loginRequest.getEmail(), loginRequest.getPassword());
         if (nurse != null) {
             // Trả về dữ liệu an toàn, không chứa mật khẩu, giu bao mat
-            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), 2, nurse.getNurseID()));
+            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), 2, nurse.getNurseID(), nurse.getFullName()));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }
@@ -92,6 +92,4 @@ public class SchoolNurseController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is incorrect");
         }
     }
-
-
 }

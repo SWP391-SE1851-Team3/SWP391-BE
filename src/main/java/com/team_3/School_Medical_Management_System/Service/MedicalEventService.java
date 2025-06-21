@@ -1,40 +1,88 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicalEventDetailsDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventUpdateDTO;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalEventDetailsRepository;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalEventRepo;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentRepository;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
+import com.team_3.School_Medical_Management_System.Repositories.MedicalEvent_NurseRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
+
 @Service
 public class MedicalEventService {
 
-    @Autowired
+    private MedicalEvent_NurseRepository medicalNurseRepo; // Repository cho MedicalEvent_Nurse
+
+    private EmailService emailService;
+
+    private MedicalEvent_EventTypeRepo medicalEventType;
+
+    private SchoolNurseRepository schoolNurseRepository; // Repository cho SchoolNurse
+
+    private NotificationsParentRepository notificationsParentRepository; // Repository cho NotificationsParen
+
+    private MedicalEvent_NurseRepo medicalEventNurseRepository; // Repository cho MedicalEvent_Nurse
+
+    private MedicalEventTypeRepo medicalEventTypeRepo; // Repository cho MedicalEventType
+
+
     private MedicalEventRepo medicalEventRepository; // Repository cho MedicalEvent
 
-    @Autowired
+
     private ParentRepository parentRepository; // Repository cho Parent
 
-    @Autowired
-    private StudentRepository studentRepository; // Repository cho Student
+    private StudentRepository studentRepository;
+    // Repository cho Student
 
-    @Autowired
+    private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository;
+
     private MedicalEventDetailsRepository medicalEventDetailsRepository;
 
+
+    private MedicalEvent_EventTypeRepo medicalEventEventTypeRepository; // Repository cho MedicalEvent_EventType
+
+    private MedicalEvent_NurseRepo medicalEventNurseRepo; // Repository cho MedicalEvent_Nurse
+
+    @Autowired
+    public MedicalEventService(MedicalEvent_NurseRepository medicalNurseRepo, EmailService emailService, MedicalEvent_EventTypeRepo medicalEventType, SchoolNurseRepository schoolNurseRepository, NotificationsParentRepository notificationsParentRepository, MedicalEvent_NurseRepo medicalEventNurseRepository, MedicalEventTypeRepo medicalEventTypeRepo, MedicalEventRepo medicalEventRepository, ParentRepository parentRepository, StudentRepository studentRepository, NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository, MedicalEventDetailsRepository medicalEventDetailsRepository, JavaMailSender mailSender, StudentRepository studentRepo, MedicalEvent_EventTypeRepo medicalEventEventTypeRepository, MedicalEvent_NurseRepo medicalEventNurseRepo) {
+        this.medicalNurseRepo = medicalNurseRepo;
+        this.emailService = emailService;
+        this.medicalEventType = medicalEventType;
+        this.schoolNurseRepository = schoolNurseRepository;
+        this.notificationsParentRepository = notificationsParentRepository;
+        this.medicalEventNurseRepository = medicalEventNurseRepository;
+        this.medicalEventTypeRepo = medicalEventTypeRepo;
+        this.medicalEventRepository = medicalEventRepository;
+        this.parentRepository = parentRepository;
+        this.studentRepository = studentRepository;
+        this.notificationsMedicalEventDetailsRepository = notificationsMedicalEventDetailsRepository;
+        this.medicalEventDetailsRepository = medicalEventDetailsRepository;
+
+        this.medicalEventEventTypeRepository = medicalEventEventTypeRepository;
+        this.medicalEventNurseRepo = medicalEventNurseRepo;
+    }
+
+
+
+    // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
+    // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
     //===============================================================================================
-    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto, int studentId, String note, String result, String processingStatus) {
+    @Transactional
+    public MedicalEventDTO createEmergencyEvent(MedicalEventDTO dto) {
         // Tạo mới một MedicalEvent
+
+
         MedicalEvent event = new MedicalEvent();
         event.setUsageMethod(dto.getUsageMethod());
         event.setIsEmergency(true); // Đặt là sự kiện khẩn cấp
@@ -42,30 +90,90 @@ public class MedicalEventService {
         event.setTemperature(dto.getTemperature());
         event.setHeartRate(dto.getHeartRate());
         event.setEventDateTime(dto.getEventDateTime());
-        //  event.setParent();
 
+
+        Optional<MedicalEventType> me = medicalEventTypeRepo.findById(dto.getEventTypeId());
+        if (me.isEmpty()) {
+            throw new RuntimeException("Loại sự kiện không tồn tại với ID: " + dto.getEventTypeId());
+        }
+
+        // Kiểm tra xem học sinh có tồn tại trong cơ sở dữ liệu không
+        Optional<Student> studentOptional = studentRepository.findById(dto.getStudentId());
+        if (studentOptional.isEmpty()) {
+            throw new RuntimeException("Học sinh không tồn tại với ID: " + dto.getStudentId());
+        }
         // Kiểm tra phụ huynh
-        Optional<Parent> parent = parentRepository.findById(dto.getParentId());
+        Optional<Parent> parent = parentRepository.findById(dto.getParentID());
         if (parent.isEmpty()) {
-            throw new RuntimeException("Phụ huynh không tồn tại trong hệ thống");
+            throw new RuntimeException("Phụ huynh không tồn tại trong hệ thống.");
         }
         event.setParent(parent.get());
-
         // Lưu sự kiện
-        MedicalEvent savedEvent = medicalEventRepository.save(event);
-
-        // Tạo chi tiết sự kiện
-        Optional<Student> student = studentRepository.findById(studentId);
-        if (student.isEmpty()) {
-            throw new RuntimeException("Học sinh không tồn tại");
+        Optional<SchoolNurse> nurseOptional = schoolNurseRepository.findById(dto.getNurseId());
+        if (nurseOptional.isEmpty()) {
+            throw new RuntimeException("Y tá không tồn tại với ID: " + dto.getNurseId());
         }
+
+        event.setCreatedByNurse(nurseOptional.get());
+        event.setUpdatedByNurse(nurseOptional.get());   // vif đầu tiên cũng là người y tá này luônn
+        MedicalEvent savedEvent = medicalEventRepository.save(event);
+        //========================================================================================
+
+        MedicalEvent_Nurse medicalEventNurse = new MedicalEvent_Nurse();
+        medicalEventNurse.setMedicalEvent(event);
+        medicalEventNurse.setSchoolNurse(nurseOptional.get());
+        medicalEventNurseRepository.save(medicalEventNurse);
+
+
+        MedicalEvent_EventType m = new MedicalEvent_EventType();
+        m.setEventId(savedEvent.getEventID());
+        m.setEventTypeId(dto.getEventTypeId());
+        medicalEventType.save(m);
+        // Tạo chi tiết sự kiện
+
         MedicalEventDetails details = new MedicalEventDetails();
-        details.setStudent(student.get());
+        details.setStudent(studentOptional.get());
         details.setMedicalEvent(savedEvent);
-        details.setNote(note);
-        details.setResult(result);
-        details.setProcessingStatus(processingStatus);
+        details.setNote(dto.getNote());
+        details.setResult(dto.getResult());
+        details.setProcessingStatus(dto.getProcessingStatus());
+        details.setCreatedByNurse(nurseOptional.get());
+        details.setUpdatedByNurse(nurseOptional.get());  /// y tas ddầu cũng là người update
+
         medicalEventDetailsRepository.save(details);
+
+        if (savedEvent.getHasParentBeenInformed()) {
+
+            // String currentUser = "Y tá trường cấp 1 ...."; // Thay thế bằng tên người dùng hiện tại
+            String title = "Thông báo sự kiện y tế khẩn cấp tại trường";
+            String content = String.format(
+                    "Kính gửi phụ huynh %s,\n\n" +
+                            "Có sự kiện y tế khẩn cấp xảy ra vào %s tại trường học. " +
+                            "Thông tin: Con anh/chị %s là: %s. Em đã bị %s tại trường học. " +
+                            "Vui lòng liên hệ số điện thoại trường (\"19001818\") để biết thêm chi tiết.",
+                    parent.get().getFullName(),
+                    savedEvent.getEventDateTime(),
+                    parent.get().getFullName(),
+                    studentOptional.get().getFullName(),
+                    me.get().getTypeName()
+            );
+
+            NotificationsParent notification = new NotificationsParent();
+            notification.setParent(parent.get());
+            notification.setTitle(title);
+            notification.setContent(content);
+            notification.setCreateAt(savedEvent.getEventDateTime());
+            //  notification.setCreatedBy(currentUser); // Thêm thông tin người tạo
+            notificationsParentRepository.save(notification);
+            try {
+                // Gửi email với thông tin người dùng và thời gian
+                emailService.sendHtmlNotificationEmail(parent.get(), title, content, notification.getNotificationId());
+                // emailService.testEmailConfig("ytruongtieuhoc@example.com");
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+            }
+        }
+
 
         // Tạo DTO để trả về
         MedicalEventDTO r = new MedicalEventDTO();
@@ -76,20 +184,40 @@ public class MedicalEventService {
         r.setTemperature(savedEvent.getTemperature());
         r.setHeartRate(savedEvent.getHeartRate());
         r.setEventDateTime(savedEvent.getEventDateTime());
-        r.setParentId(savedEvent.getParent().getParentID());
-
+        r.setParentID(savedEvent.getParent().getParentID());
+        r.setTypeName(me.get().getTypeName());
+        r.setStudentId(dto.getStudentId());
+        r.setNote(details.getNote());
+        r.setNurseId(nurseOptional.get().getNurseID());
+        r.setNurseName(nurseOptional.get().getFullName());
+        r.setUpdatedByNurseId(nurseOptional.get().getNurseID());
+        r.setUpdatedByNurseName(nurseOptional.get().getFullName());
+        r.setResult(details.getResult());
+        r.setProcessingStatus(details.getProcessingStatus());
+        r.setEventTypeId(dto.getEventTypeId());
         return r;
+
     }
 
-    // Cập nhật sự kiện y tế
     @Transactional
-    public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto) {
+    public MedicalEventUpdateDTO updateMedicalEvent(int eventId, MedicalEventUpdateDTO dto, Integer eventTypeId) {
         try {
             // Tìm sự kiện
             Optional<MedicalEvent> optionalEvent = medicalEventRepository.findById(eventId);
             if (optionalEvent.isEmpty()) {
                 throw new RuntimeException("Sự kiện y tế không tồn tại với ID: " + eventId);
             }
+
+            Optional<MedicalEventType> me = medicalEventTypeRepo.findById(eventTypeId);
+            if (me.isEmpty()) {
+                throw new RuntimeException("Loại sự kiện không tồn tại với ID: " + eventTypeId);
+            }
+
+            Optional<SchoolNurse> nurseOptional = schoolNurseRepository.findById(dto.getNurseId());
+            if (nurseOptional.isEmpty()) {
+                throw new RuntimeException("Y tá không tồn tại với ID: " + dto.getNurseId());
+            }
+
 
             MedicalEvent event = optionalEvent.get();
             // Cập nhật thông tin cơ bản
@@ -99,16 +227,18 @@ public class MedicalEventService {
             event.setTemperature(dto.getTemperature());
             event.setHeartRate(dto.getHeartRate());
             event.setEventDateTime(dto.getEventDateTime());
-
-            // Kiểm tra và cập nhật phụ huynh
-            Optional<Parent> parent = parentRepository.findById(dto.getParentId());
-            if (parent.isEmpty()) {
-                throw new RuntimeException("Phụ huynh không tồn tại với ID: " + dto.getParentId());
-            }
-            event.setParent(parent.get());
+            event.setParent(event.getParent());
+            event.setUpdatedByNurse(nurseOptional.get()); // Cập nhật người y tá đã cập nhật sự kiện
 
             // Lưu sự kiện đã cập nhật
             MedicalEvent updatedEvent = medicalEventRepository.save(event);
+
+
+            MedicalEvent_EventType m = new MedicalEvent_EventType();
+            m.setEventId(optionalEvent.get().getEventID());
+            m.setEventTypeId(eventTypeId);
+            medicalEventType.save(m);
+
 
             // Xử lý MedicalEventDetails
             Integer studentId = dto.getStudentId();
@@ -120,7 +250,7 @@ public class MedicalEventService {
             if (optionalStudent.isEmpty()) {
                 throw new RuntimeException("Học sinh không tồn tại với ID: " + studentId);
             }
-            Student student = optionalStudent.get();
+
 
             // Tạo MedicalEventDetailsId
             MedicalEventDetailsId detailsId = new MedicalEventDetailsId(studentId, eventId);
@@ -131,7 +261,6 @@ public class MedicalEventService {
             if (optionalDetails.isPresent()) {
                 details = optionalDetails.get();
             } else {
-                // Nếu không tồn tại và bạn không muốn tạo mới, ném ngoại lệ
                 throw new RuntimeException("MedicalEventDetails không tồn tại cho StudentID: " + studentId + " và EventID: " + eventId);
             }
 
@@ -139,11 +268,22 @@ public class MedicalEventService {
             details.setNote(dto.getNote());
             details.setResult(dto.getResult());
             details.setProcessingStatus(dto.getProcessingStatus());
-
+            details.setUpdatedByNurse(nurseOptional.get()); // Cập nhật người y tá đã cập nhật
             // Lưu MedicalEventDetails
             medicalEventDetailsRepository.save(details);
 
-            // Tạo DTO để trả về
+
+            MedicalEvent_Nurse existingNurseRelation = medicalNurseRepo.findByMedicalEvent_EventIDAndSchoolNurse_NurseID(eventId, dto.getNurseId());
+
+
+            if (existingNurseRelation == null) {
+                MedicalEvent_Nurse medicalEventNurse = new MedicalEvent_Nurse();
+                medicalEventNurse.setMedicalEvent(updatedEvent);
+                medicalEventNurse.setSchoolNurse(nurseOptional.get());
+                medicalEventNurseRepository.save(medicalEventNurse);
+            }
+
+
             MedicalEventUpdateDTO result = new MedicalEventUpdateDTO();
             result.setEventId(updatedEvent.getEventID());
             result.setUsageMethod(updatedEvent.getUsageMethod());
@@ -152,12 +292,12 @@ public class MedicalEventService {
             result.setTemperature(updatedEvent.getTemperature());
             result.setHeartRate(updatedEvent.getHeartRate());
             result.setEventDateTime(updatedEvent.getEventDateTime());
-            result.setParentId(updatedEvent.getParent().getParentID());
             result.setStudentId(studentId);
             result.setNote(details.getNote());
             result.setResult(details.getResult());
             result.setProcessingStatus(details.getProcessingStatus());
-
+            result.setNurseId(nurseOptional.get().getNurseID());
+            result.setNurseName(nurseOptional.get().getFullName());
             return result;
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Lỗi ràng buộc dữ liệu: " + e.getMessage(), e);
@@ -166,48 +306,89 @@ public class MedicalEventService {
         }
     }
 
+    @Transactional
+    public MedicalEventDetailsDTO getMedicalEventDetails(Integer eventId) {
+        // Tìm MedicalEvent với EventTypes
+        MedicalEvent medicalEvent = medicalEventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy MedicalEvent với ID: " + eventId));
 
-    // Lấy danh sách sự kiện y tế đột xuất của phụ huynh
-    public List<MedicalEventDTO> getAllMedicalEventsByParent(int parentId) {
-        // Bước 1: Kiểm tra xem phụ huynh có tồn tại trong cơ sở dữ liệu không
-        boolean parentExists = parentRepository.existsById(parentId);
-        if (!parentExists) {
-            throw new RuntimeException("Không tìm thấy phụ huynh với ID: " + parentId);
-        }
-        List<MedicalEvent> medicalEvents = new ArrayList<>();
-        // Bước 2: Tìm tất cả sự kiện y tế của phụ huynh dựa trên ParentID
-        List<MedicalEvent> listEvents = medicalEventRepository.findAll();
-        for (MedicalEvent l : listEvents) {
-            if (l.getParent().getParentID() == parentId) {
-                medicalEvents.add(l);
+        // Tìm MedicalEventDetails theo EventID
+        MedicalEventDetails medicalEventDetails = medicalEventDetailsRepository.findByMedicalEvent_EventID(eventId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy MedicalEventDetails cho EventID: " + eventId));
+
+        // Tìm danh sách MedicalEvent_EventType theo EventID
+        List<MedicalEvent_EventType> eventTypeRelations = medicalEventEventTypeRepository.findByMedicalEvent_EventID(eventId);
+
+        // Tạo DTO phản hồi
+        MedicalEventDetailsDTO dto = new MedicalEventDetailsDTO();
+        dto.setEventId(medicalEvent.getEventID());
+        dto.setUsageMethod(medicalEvent.getUsageMethod());
+        dto.setIsEmergency(medicalEvent.getIsEmergency());
+        dto.setHasParentBeenInformed(medicalEvent.getHasParentBeenInformed());
+        dto.setTemperature(medicalEvent.getTemperature());
+        dto.setHeartRate(medicalEvent.getHeartRate());
+        dto.setEventDateTime(medicalEvent.getEventDateTime());
+        dto.setNote(medicalEventDetails.getNote());
+        dto.setResult(medicalEventDetails.getResult());
+        dto.setProcessingStatus(medicalEventDetails.getProcessingStatus());
+
+        // Ánh xạ Student
+        Student student = medicalEventDetails.getStudent();
+        dto.setStudentId(student.getStudentID());
+        dto.setFullName(student.getFullName());
+        dto.setGender(student.getGender());
+        dto.setClassName(student.getClassName());
+
+        // Lấy danh sách EventTypeName bằng vòng lặp for
+        List<String> eventTypeNames = new ArrayList<>();
+        for (MedicalEvent_EventType eventTypeRelation : eventTypeRelations) {
+            MedicalEventType eventType = eventTypeRelation.getEventType();
+            if (eventType != null) {
+                eventTypeNames.add(eventType.getTypeName());
+                break; // Thoát vòng lặp sau khi lấy EventTypeName đầu tiên
             }
         }
+        dto.setEventTypeNames(eventTypeNames);
 
-
-        // Bước 3: Tạo danh sách DTO để lưu trữ kết quả
-        List<MedicalEventDTO> eventDTOs = new ArrayList<>();
-
-        // Bước 4: Duyệt qua từng sự kiện và chuyển đổi thành DTO
-        for (MedicalEvent event : medicalEvents) {
-            MedicalEventDTO dto = new MedicalEventDTO();
-            dto.setEventId(event.getEventID()); // Gán ID sự kiện
-            dto.setUsageMethod(event.getUsageMethod()); // Gán phương pháp sử dụng
-            dto.setEmergency(event.getIsEmergency()); // Gán trạng thái khẩn cấp
-            dto.setHasParentBeenInformed(event.getHasParentBeenInformed()); // Gán trạng thái thông báo phụ huynh
-            dto.setTemperature(event.getTemperature()); // Gán nhiệt độ
-            dto.setHeartRate(event.getHeartRate()); // Gán nhịp tim
-            dto.setEventDateTime(event.getEventDateTime()); // Gán thời gian sự kiện
-            dto.setParentId(event.getParent().getParentID()); // Gán ID phụ huynh trực tiếp từ parentID
-
-            // Thêm DTO vào danh sách
-            eventDTOs.add(dto);
+        if (medicalEvent.getCreatedByNurse() != null) {
+            dto.setCreatedByNurseId(medicalEvent.getCreatedByNurse().getNurseID());
+            dto.setCreatedByNurseName(medicalEvent.getCreatedByNurse().getFullName());
         }
-
-        // Bước 5: Trả về danh sách DTO
-        return eventDTOs;
+        if (medicalEvent.getUpdatedByNurse() != null) {
+            dto.setUpdatedByNurseId(medicalEvent.getUpdatedByNurse().getNurseID());
+            dto.setUpdatedByNurseName(medicalEvent.getUpdatedByNurse().getFullName());
+        }
+        return dto;
     }
 
+    @Transactional
+    public void deleteMedicalEvent(Integer eventId) {
+        // Kiểm tra xem sự kiện có tồn tại không
+        MedicalEvent medicalEvent = medicalEventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện y tế với ID: " + eventId));
+
+        // Xóa NotificationsMedicalEventDetails liên quan
+        Notifications_MedicalEventDetailsId notificationsId = new Notifications_MedicalEventDetailsId();
+        notificationsId.setEventId(eventId);
+        notificationsId.setParentId(medicalEvent.getParent().getParentID());
+
+        notificationsMedicalEventDetailsRepository.deleteById(notificationsId);
+        medicalEventNurseRepo.deleteByMedicalEvent_EventID(eventId);
+        medicalEventType.deleteByMedicalEvent_EventID(eventId);
+        // Xóa MedicalEventDetails liên quan
+        medicalEventDetailsRepository.deleteByMedicalEvent_EventID(eventId);
+
+        // Xóa MedicalEvent_EventType liên quan
+        //medicalEventType.deleteByMedicalEvent_EventID(eventId);
+
+        // Xóa MedicalEvent
+        medicalEventRepository.delete(medicalEvent);
+
+    }
 }
+
+
+
 
 
 

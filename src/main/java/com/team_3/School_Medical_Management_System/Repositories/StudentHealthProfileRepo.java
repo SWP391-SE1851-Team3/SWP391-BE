@@ -38,18 +38,19 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         String sql = "SELECT s FROM Student s WHERE s.FullName = :name";
         List<Student> listStudent = entityManager.createQuery(sql, Student.class).setParameter("name", dto.getFullName()).getResultList();
 
+
         if(listStudent.isEmpty()){
             throw new RuntimeException("Student not found");
         }
         Student student = listStudent.get(0); // lấy ra 1tk student
         List<StudentHealthProfile> existing = entityManager.createQuery(
                         "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :id", StudentHealthProfile.class)
-                .setParameter("id", student.getStudentID())
+                .setParameter("id", student.getStudentId())
                 .getResultList();
         if(!existing.isEmpty()){
             StudentHealthProfile profile = existing.get(0); //lấy tk  vừa tìm thấy
-            profile.setStudentID(student.getStudentID());
-            profile.setParentID(student.getParentID());
+            profile.setStudentID(student.getStudentId());
+            profile.setParentID(student.getParent().getParentID());
             profile.setAllergyDetails(dto.getAllergyDetails());
             profile.setChronicDiseases(dto.getChronicDiseases());
             profile.setTreatmentHistory(dto.getTreatmentHistory());
@@ -84,14 +85,14 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         Student student = students.get(0);// lấy tk student đầu tiên ra
         List<StudentHealthProfile> existing = entityManager.createQuery(
                         "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :id", StudentHealthProfile.class)
-                .setParameter("id", student.getStudentID())
+                .setParameter("id", student.getStudentId())
                 .getResultList();
         if (!existing.isEmpty()) {
             throw new RuntimeException("StudentHealthProfile already exists .");
         } else {
             StudentHealthProfile profile = new StudentHealthProfile();
-            profile.setStudentID(student.getStudentID());
-            profile.setParentID(student.getParentID());
+            profile.setStudentID(student.getStudentId());
+            profile.setParentID(student.getParent().getParentID());
             profile.setAllergyDetails(dto.getAllergyDetails());
             profile.setChronicDiseases(dto.getChronicDiseases());
             profile.setTreatmentHistory(dto.getTreatmentHistory());
@@ -126,5 +127,6 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         String sql = "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :studentId";
         return entityManager.createQuery(sql, StudentHealthProfile.class).getSingleResult();
     }
+
 }
 
