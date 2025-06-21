@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
+import com.team_3.School_Medical_Management_System.DTO.UserDTO;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 
 import java.util.List;
@@ -13,5 +14,6 @@ public interface ParentSerivceInterFace {
     public Parent LoginByAccount(String Phone, String Password);
     public Parent GetParentById(int id);
     public boolean changePassword(String email, String oldPassword, String newPassword);
-
+    public UserDTO convertParentToUserDTO(Parent parent);
+   public Parent convertToParentEntity(UserDTO dto);
 }

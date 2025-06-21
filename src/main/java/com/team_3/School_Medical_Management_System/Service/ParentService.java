@@ -1,6 +1,9 @@
 package com.team_3.School_Medical_Management_System.Service;
+import com.team_3.School_Medical_Management_System.DTO.UserDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ParentSerivceInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.RoleRepo;
 import com.team_3.School_Medical_Management_System.Model.Parent;
+import com.team_3.School_Medical_Management_System.Model.Role;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import java.util.List;
 public class ParentService implements ParentSerivceInterFace {
     private ParentRepo parentRepo;
 
+
+    @Autowired
+    private RoleRepo roleRepo;
     @Autowired
     public ParentService(ParentRepo parentRepo) {
         this.parentRepo = parentRepo;
@@ -99,6 +105,40 @@ public class ParentService implements ParentSerivceInterFace {
        }else {
            return p;
        }
+    }
+
+    @Override
+    public UserDTO convertParentToUserDTO(Parent parent) {
+        UserDTO dto = new UserDTO();
+        //dto.setId(parent.getParentID());
+        dto.setUserType("Parent");
+        dto.setUserName(parent.getUserName());
+        dto.setPassword(parent.getPassword());
+        dto.setFullName(parent.getFullName());
+        dto.setPhone(parent.getPhone());
+        dto.setEmail(parent.getEmail());
+        dto.setIsActive(parent.getIsActive());
+        dto.setOccupation(parent.getOccupation());
+        dto.setRelationship(parent.getRelationship());
+        dto.setRoleId(parent.getRoleID());
+        return dto;
+
+    }
+
+    @Override
+    public Parent convertToParentEntity(UserDTO dto) {
+
+        Parent parent = new Parent();
+        parent.setUserName(dto.getUserName());
+        parent.setPassword(dto.getPassword());
+        parent.setFullName(dto.getFullName());
+        parent.setPhone(dto.getPhone());
+        parent.setEmail(dto.getEmail());
+        parent.setIsActive(dto.getIsActive());
+        parent.setOccupation(dto.getOccupation());
+        parent.setRelationship(dto.getRelationship());
+        parent.setRoleID(dto.getRoleId());
+        return parent;
     }
 
 

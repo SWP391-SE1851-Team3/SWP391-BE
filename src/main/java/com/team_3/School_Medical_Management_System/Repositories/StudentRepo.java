@@ -2,12 +2,14 @@ package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,10 +68,9 @@ public class StudentRepo implements StudentInterFace {
         return students;
     }
 
-    @Override
-    public Student GetStudentByFullName(String FullName) {
-        String sql = "select s from Student s where s.FullName = :FullName";
-        return entityManager.createQuery(sql, Student.class).
-                setParameter("FullName", FullName).getSingleResult();
-    }
+
+
+
+
+
 }

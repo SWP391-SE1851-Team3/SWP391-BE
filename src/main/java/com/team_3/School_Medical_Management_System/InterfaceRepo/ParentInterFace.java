@@ -16,4 +16,9 @@ public interface ParentInterFace {
     public Parent getParentByEmail(String Email);
 
 
+
+
+    public boolean  existsByUserName(String userName);
+    public boolean  existsByEmail(String userName);
+
 }
