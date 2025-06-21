@@ -16,19 +16,18 @@ public class Student {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int studentId;
-    private int gender;
+    private Integer StudentID;
+    private int Gender;
     @NotBlank(message = "FullName Not allow empty")
-    private String fullName;
+    private String FullName;
     @NotBlank(message = "ClassName Not allow empty")
-
     private String ClassName;
     private int IsActive;
-    private int ParentID;
+//    private int ParentID;
+    @ManyToOne
+    @JoinColumn(name = "ParentID")
+    private Parent parent;
+
 
 }
 
-
-
-
-}

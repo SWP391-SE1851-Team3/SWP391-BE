@@ -1,9 +1,10 @@
 package com.team_3.School_Medical_Management_System.Model;
 
+import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -16,21 +17,22 @@ import java.util.Date;
 public class Consent_forms {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int consent_id ;
+    private Integer consent_id ;
     @ManyToOne
     @JoinColumn(name = "StudentID")
     private Student student;
     @ManyToOne
     @JoinColumn(name = "ParentID")
     private Parent parent;
-    private Date consent_date;
-    private int IsAgree;
+    private String IsAgree;
     private String Reason;
     private String HasAllergy;
     @ManyToOne
-    @JoinColumn(name = "schedule_id")
-    private Vaccination_schedule schedule;
-    @ManyToOne
-    @JoinColumn(name = "Vaccine_id")
-    private Vaccines vaccine;
+    @JoinColumn(name = "BatchID")
+    private Vaccine_Batches vaccineBatches;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ConsentFormStatus status;
+    private LocalDateTime send_date;
+    private LocalDateTime expire_date;
 }

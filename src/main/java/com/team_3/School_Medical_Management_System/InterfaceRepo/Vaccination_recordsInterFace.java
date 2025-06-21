@@ -12,5 +12,4 @@ public interface Vaccination_recordsInterFace {
     public Vaccination_records getVaccination_records_by_id(int id);
     public Vaccination_records updateVaccination_records(Vaccination_records vaccination_records);
     List<Vaccination_records> getVaccination_recordsByStudentId(int studentId);
-
 }

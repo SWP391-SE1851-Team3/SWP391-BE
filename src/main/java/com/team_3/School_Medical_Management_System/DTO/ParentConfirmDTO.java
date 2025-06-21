@@ -9,8 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 public class ParentConfirmDTO {
     private int consentFormId;
-    private int isAgree;
+    private String isAgree;
     private String reason;
     private String HasAllergy;
 }
+
 
