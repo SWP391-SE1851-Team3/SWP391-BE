@@ -1,9 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
-import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
-import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
-import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
-import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
@@ -80,8 +77,8 @@ public class MedicationSubmissionController {
     }
 
     @GetMapping("/submissions/{submissionId}/details")
-    public ResponseEntity<List<MedicationDetail>> getSubmissionDetails(@PathVariable int submissionId) {
-        List<MedicationDetail> details = medicationSubmissionService.getDetailsBySubmissionId(submissionId);
+    public ResponseEntity<MedicationDetailsExtendedDTO> getSubmissionDetails(@PathVariable int submissionId) {
+        MedicationDetailsExtendedDTO details = medicationSubmissionService.getDetailsBySubmissionIdExtended(submissionId);
         return new ResponseEntity<>(details, HttpStatus.OK);
     }
 
@@ -93,7 +90,6 @@ public class MedicationSubmissionController {
 
 
     @PostMapping("/confirm-medication")
-    @Operation(summary = "thêm nurse")
     public ResponseEntity<?> confirmMedication(
             @RequestParam int medicationSubmissionId,
             RedirectAttributes redirectAttributes) {
