@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class Vaccine_Batches_EditDTO {
     private String status;
     private String notes;
     private Integer VaccineTypeID;
+    @JsonIgnore
     private Integer BatchID;
     private String edit_nurse_name;
     private Integer created_by_nurse_id;

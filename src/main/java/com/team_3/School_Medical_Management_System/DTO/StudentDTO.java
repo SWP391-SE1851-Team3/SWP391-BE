@@ -11,8 +11,4 @@ import lombok.*;
 public class StudentDTO {
     @NotBlank(message = "ClassName Not allow empty")
     private String ClassName;
-
-
-
-
 }

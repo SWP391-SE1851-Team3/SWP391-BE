@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -16,4 +17,6 @@ public class ConsentFormParentResponseDTO {
     private String reason;
     @NotBlank
     private String hasAllergy;
+    @JsonIgnore
+    private String status;
 }

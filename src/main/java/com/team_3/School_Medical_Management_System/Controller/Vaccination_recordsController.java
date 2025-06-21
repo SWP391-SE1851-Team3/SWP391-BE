@@ -6,6 +6,7 @@ import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vac
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -31,19 +32,32 @@ public class Vaccination_recordsController {
 
     @PostMapping
     public ResponseEntity<Vaccination_recordsDTO> addVaccination_records(@RequestBody Vaccination_recordsDTO records) {
-        var p =  vaccination_recordsServiceInterFace.addVaccination_records(records);
+        var p = vaccination_recordsServiceInterFace.addVaccination_records(records);
         return ResponseEntity.ok().body(p);
     }
 
     @GetMapping("/vaccination_records/by-student/{studentId}")
-    public List<Vaccination_recordsDTO> getVaccination_records_by_studendId(@PathVariable int studentId){
+    public List<Vaccination_recordsDTO> getVaccination_records_by_studendId(@PathVariable int studentId) {
         return vaccination_recordsServiceInterFace.getVaccination_recordsByStudentId(studentId);
     }
 
-    @PutMapping("/editVaccineRecord")
-    public ResponseEntity<Vaccination_records_edit_DTO> editVaccination_records(@RequestBody Vaccination_records_edit_DTO vaccinationRecordsEditDto) {
-        var p = vaccination_recordsServiceInterFace.updateVaccination_records(vaccinationRecordsEditDto);
-        return ResponseEntity.ok().body(p);
+    @PutMapping("/editVaccineRecord/{id}")
+    public ResponseEntity<Vaccination_records_edit_DTO> editVaccination_records(
+            @PathVariable("id") int id,
+            @RequestBody Vaccination_records_edit_DTO vaccinationRecordsEditDto) {
+        vaccinationRecordsEditDto.setVaccinationRecordID(id);
+        var getID = vaccination_recordsServiceInterFace.getVaccination_records_by_id(id);
+        if (getID == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            var p = vaccination_recordsServiceInterFace.updateVaccination_records(vaccinationRecordsEditDto);
+            if (p == null) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok().body(p);
+            }
+        }
+
     }
 
 }

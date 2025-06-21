@@ -1,6 +1,5 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,9 +29,7 @@ public class Consent_forms {
     @ManyToOne
     @JoinColumn(name = "BatchID")
     private Vaccine_Batches vaccineBatches;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private ConsentFormStatus status;
+    private String status;
     private LocalDateTime send_date;
     private LocalDateTime expire_date;
 }

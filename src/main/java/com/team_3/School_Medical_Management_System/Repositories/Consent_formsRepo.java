@@ -1,16 +1,13 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
-import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
+
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
 import com.team_3.School_Medical_Management_System.Model.Consent_forms;
-import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 
-import java.text.Normalizer;
 import java.util.List;
 
 @Repository
@@ -133,7 +130,7 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     public List<Consent_forms> findPendingForParent() {
         String jpql = "SELECT c FROM Consent_forms c WHERE c.status = :status";
         return entityManager.createQuery(jpql, Consent_forms.class)
-                .setParameter("status", ConsentFormStatus.CREATED)
+                .setParameter("status", "Ðang Ch? Phê Duy?t")
                 .getResultList();
     }
 }

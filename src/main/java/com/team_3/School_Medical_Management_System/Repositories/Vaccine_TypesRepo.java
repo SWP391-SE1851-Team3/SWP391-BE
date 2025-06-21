@@ -32,7 +32,7 @@ public class Vaccine_TypesRepo implements Vaccine_TypesInterFace {
 
     @Override
     public Vaccine_Types updateVaccine_Types(Vaccine_Types vaccine_Types) {
-        var p = entityManager.find(Vaccine_Types.class, vaccine_Types.getVaccineTypeID());
+        var p = getVaccine_TypeByID(vaccine_Types.getVaccineTypeID());
         if(p != null) {
             p.setName(vaccine_Types.getName());
             p.setDescription(vaccine_Types.getDescription());
@@ -40,11 +40,10 @@ public class Vaccine_TypesRepo implements Vaccine_TypesInterFace {
             p.setCreated_at(vaccine_Types.getCreated_at());
             p.setUpdated_at(vaccine_Types.getUpdated_at());
             p.setRecommended_ages(vaccine_Types.getRecommended_ages());
-            entityManager.merge(p);
+            return entityManager.merge(p);
         }else {
             return null;
         }
-        return vaccine_Types;
     }
 
     @Override
@@ -69,5 +68,10 @@ public class Vaccine_TypesRepo implements Vaccine_TypesInterFace {
         String jpql = "SELECT new com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO(v.id, v.Name) FROM Vaccine_Types v";
         Query query = entityManager.createQuery(jpql);
         return (List<VaccineTypeShortDTO>) query.getResultList();
+    }
+
+    @Override
+    public Vaccine_Types getVaccine_TypeByID(Integer id) {
+        return entityManager.find(Vaccine_Types.class, id);
     }
 }

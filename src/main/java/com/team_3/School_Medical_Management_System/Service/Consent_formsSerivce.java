@@ -1,9 +1,9 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
+import com.team_3.School_Medical_Management_System.DTO.Consent_formViewDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
-import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
@@ -44,15 +44,54 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public List<Consent_formsDTO> getConsent_forms() {
+    public List<Consent_formViewDTO> getConsent_forms() {
         var consent_forms = consent_formsRepo.getConsent_forms();
-        return consent_forms.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+        return consent_forms.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
     public Consent_formsDTO addConsent_forms(Consent_formsDTO dto) {
-        Consent_forms  addConsent_add = consent_formsRepo.addConsent_forms(TransferModelsDTO.MappingConsentDTO(dto));
-        return TransferModelsDTO.MappingConsent(addConsent_add);
+        // 1. Kiểm tra tồn tại các entity liên kết
+        Student student = studentRepo.getStudent(dto.getStudentId());
+        if (student == null) {
+            throw new RuntimeException("Student not found");
+        }
+
+        Vaccine_Batches vaccineBatch = vaccinesRepo.GetVaccineByVaccineId(dto.getVaccineBatchId());
+        if (vaccineBatch == null) {
+            throw new RuntimeException("Vaccine batch not found");
+        }
+
+        Parent parent = parentRepo.GetParentById(dto.getParentID());
+        if (parent == null) {
+            throw new RuntimeException("Parent not found");
+        }
+
+        // 2. Tạo entity mới từ DTO
+        Consent_forms consent = new Consent_forms();
+
+        // Đảm bảo đây là tạo mới
+        consent.setConsent_id(null);
+
+        // Gán các quan hệ (student, parent, vaccine) đã tồn tại
+        consent.setStudent(student);
+        consent.setParent(parent);
+        consent.setVaccineBatches(vaccineBatch);
+
+        // Gán thông tin còn lại từ DTO
+        consent.setSend_date(dto.getSend_date());
+        consent.setExpire_date(dto.getExpire_date());
+        consent.setIsAgree(dto.getIsAgree());
+        consent.setHasAllergy(dto.getHasAllergy());
+        consent.setReason(dto.getReason());
+        consent.setStatus(dto.getStatus());
+
+
+        // 3. Lưu vào database
+        Consent_forms saved = consent_formsRepo.addConsent_forms(consent);
+
+        // 4. Trả lại DTO
+        return TransferModelsDTO.MappingConsent(saved);
     }
 
 
@@ -125,27 +164,25 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public List<Consent_formsDTO> findPendingForParent() {
+    public List<Consent_formViewDTO> findPendingForParent() {
         var consent_forms = consent_formsRepo.findPendingForParent();
-        return consent_forms.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+        return consent_forms.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
     public void processParentResponse(ConsentFormParentResponseDTO dto) {
-        Consent_forms form = consent_formsRepos.findById(dto.getConsentFormId()).orElse(null);
-        if (form == null) {
-            throw new IllegalArgumentException("Không tìm thấy phiếu");
-        }
-
-        // Validate nếu từ chối mà không ghi lý do
-        if (Integer.valueOf(0).equals(dto.getIsAgree()) &&
-                (dto.getReason() == null || dto.getReason().trim().isEmpty())) {
+        Consent_forms form = consent_formsRepos.findById(dto.getConsentFormId())
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phiếu"));
+        boolean isDisagree = dto.getIsAgree() != null && dto.getIsAgree() == null;
+        boolean hasNoReason = dto.getReason() == null || dto.getReason().trim().isEmpty();
+        if (isDisagree && hasNoReason) {
             throw new IllegalArgumentException("Vui lòng ghi rõ lý do từ chối");
         }
         form.setIsAgree(dto.getIsAgree());
         form.setReason(dto.getReason());
         form.setHasAllergy(dto.getHasAllergy());
-        form.setStatus(ConsentFormStatus.APPROVED);
+        form.setStatus("ĐÃ PHÊ DUYỆT");
         consent_formsRepos.save(form);
     }
+
 }

@@ -35,7 +35,7 @@ public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
     }
 
     @Override
-    public Vaccine_Batches GetVaccineByVaccineId(int VaccineId) {
+    public Vaccine_Batches GetVaccineByVaccineId(Integer VaccineId) {
         return entityManager.find(Vaccine_Batches.class, VaccineId);
     }
 
@@ -61,6 +61,7 @@ public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
         existingVaccine.setLocation(vaccineDetails.getLocation());
         existingVaccine.setNotes(vaccineDetails.getNotes());
         existingVaccine.setStatus(vaccineDetails.getStatus());
+        existingVaccine.setDot(vaccineDetails.getDot());
         return entityManager.merge(existingVaccine);
     }
 }
