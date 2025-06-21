@@ -1,8 +1,10 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccination_recordsInterFace;
+import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
+import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,7 +48,6 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
         }else{
             System.out.println("Vaccination_records not found");
         }
-
     }
 
     @Override
@@ -56,7 +57,24 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
 
     @Override
     public Vaccination_records updateVaccination_records(Vaccination_records vaccination_records) {
-       entityManager.merge(vaccination_records);
+        var searchid = getVaccination_records_by_id(vaccination_records.getVaccinationRecordID());
+        if(searchid != null) {
+            searchid.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
+            searchid.setObservation_notes(vaccination_records.getObservation_notes());
+            searchid.setNotes(vaccination_records.getNotes());
+            searchid.setObservation_time(vaccination_records.getObservation_time());
+            searchid.setSeverity(vaccination_records.getSeverity());
+            SchoolNurse schoolNurse = new SchoolNurse();
+            schoolNurse.setNurseID(vaccination_records.getNurse().getNurseID());
+            schoolNurse.setFullName(vaccination_records.getNurse().getFullName());
+            searchid.setNurse(schoolNurse);
+            Vaccine_Batches vaccine_Batches = new Vaccine_Batches();
+            vaccine_Batches.setBatchID(vaccination_records.getVaccineBatches().getBatchID());
+            searchid.setVaccineBatches(vaccine_Batches);
+            entityManager.merge(vaccination_records);
+        }else {
+            throw new RuntimeException("Vaccination_records not found");
+        }
        return vaccination_records;
     }
 
@@ -67,6 +85,4 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
                 .setParameter("studentId", studentId)
                 .getResultList();
     }
-
-
 }

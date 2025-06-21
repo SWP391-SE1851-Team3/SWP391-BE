@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +41,9 @@ public class Vaccination_recordsController {
     }
 
     @PutMapping("/editVaccineRecord")
-    public ResponseEntity<Vaccination_recordsDTO> editVaccination_records(@RequestBody Vaccination_recordsDTO records) {
-        var p = vaccination_recordsServiceInterFace.updateVaccination_records(records);
+    public ResponseEntity<Vaccination_records_edit_DTO> editVaccination_records(@RequestBody Vaccination_records_edit_DTO vaccinationRecordsEditDto) {
+        var p = vaccination_recordsServiceInterFace.updateVaccination_records(vaccinationRecordsEditDto);
         return ResponseEntity.ok().body(p);
     }
+
 }

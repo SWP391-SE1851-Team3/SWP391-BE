@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
 
 import java.util.List;
 
@@ -9,6 +10,6 @@ public interface Vaccination_recordsServiceInterFace {
     public Vaccination_recordsDTO addVaccination_records(Vaccination_recordsDTO vaccinationRecordsDTO);
     public void deleteVaccination_records(int id);
     public Vaccination_recordsDTO getVaccination_records_by_id(int id);
-    public Vaccination_recordsDTO updateVaccination_records(Vaccination_recordsDTO vaccinationRecordsDTO);
+    public Vaccination_records_edit_DTO updateVaccination_records(Vaccination_records_edit_DTO vaccination_records_edit_DTO);
     List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId);
 }

@@ -26,7 +26,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     private StudentRepo studentRepo;
 
     @Autowired
-    private VaccinesRepo vaccinesRepo;
+    private Vaccine_BatchesRepo vaccinesRepo;
 
     @Autowired
     private ParentRepo parentRepo;
@@ -51,31 +51,8 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Override
     public Consent_formsDTO addConsent_forms(Consent_formsDTO dto) {
-        Student student = studentRepo.GetStudentByFullName(dto.getFullNameOfStudent());
-        if (student == null) {
-            throw new RuntimeException("Student not found");
-        }
-        Vaccines vaccine = vaccinesRepo.GetVaccineByVaccineName(dto.getName());
-        if (vaccine == null) {
-            throw new RuntimeException("Vaccine not found");
-        }
-        Parent parent = student.getParent();
-        if (parent == null) throw new RuntimeException("Parent not found");
-        Vaccines vaccines = new Vaccines();
-        Consent_forms entity = new Consent_forms();
-        entity.setStudent(student);
-        entity.setParent(parent);
-        entity.setVaccine(vaccine);
-        vaccines.setScheduled_date(dto.getScheduledDate());
-        entity.setVaccine(vaccine);
-        entity.setIsAgree(null);
-        entity.setReason("");
-        entity.setHasAllergy("");
-        entity.setExpire_date(dto.getExpire_date());
-        entity.setSend_date(dto.getSend_date());
-        entity.setStatus(ConsentFormStatus.CREATED);
-        consent_formsRepo.addConsent_forms(entity);
-        return TransferModelsDTO.MappingConsent(entity);
+        Consent_forms  addConsent_add = consent_formsRepo.addConsent_forms(TransferModelsDTO.MappingConsentDTO(dto));
+        return TransferModelsDTO.MappingConsent(addConsent_add);
     }
 
 
@@ -165,15 +142,10 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
                 (dto.getReason() == null || dto.getReason().trim().isEmpty())) {
             throw new IllegalArgumentException("Vui lòng ghi rõ lý do từ chối");
         }
-
-        // Cập nhật từ phụ huynh
         form.setIsAgree(dto.getIsAgree());
         form.setReason(dto.getReason());
         form.setHasAllergy(dto.getHasAllergy());
         form.setStatus(ConsentFormStatus.APPROVED);
         consent_formsRepos.save(form);
     }
-
-
-
 }

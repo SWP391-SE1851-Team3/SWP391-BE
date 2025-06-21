@@ -11,7 +11,7 @@ import lombok.*;
 @ToString
 public class ConsentFormParentResponseDTO {
     private Integer consentFormId;
-    private Integer isAgree;
+    private String isAgree;
     @NotBlank
     private String reason;
     @NotBlank

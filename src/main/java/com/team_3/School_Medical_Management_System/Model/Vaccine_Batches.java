@@ -1,11 +1,9 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table
@@ -14,16 +12,10 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Vaccines {
+public class Vaccine_Batches {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Vaccine_id;
-    private String Name;
-    private String Manufacturer;
-    private String Description;
-    private String Recommended_ages;
-    private LocalDateTime Vaccine_created_at;
-    private LocalDateTime Vaccine_updated_at;
+    private Integer BatchID;
     private String dot;
     private Integer quantity_received;
     private LocalDateTime scheduled_date;
@@ -33,6 +25,9 @@ public class Vaccines {
     @ManyToOne
     @JoinColumn(name = "NurseID")
     private SchoolNurse nurse;
-
-
+    @ManyToOne
+    @JoinColumn(name = "VaccineTypeID")
+    private Vaccine_Types vaccineType;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 }

@@ -87,7 +87,8 @@ public class Consent_formsController {
 
     @GetMapping("/ConsentFormsPending/{dot}")
     public ResponseEntity<Long> countConsentFormsPendingByBatch(@PathVariable String dot) {
-        Long count = consent_formsServiceInterFace.countConsentFormsDisAgreeByBatch(dot);
+        System.out.println("Received dot: '" + dot + "'");
+        Long count = consent_formsServiceInterFace.countConsentFormsPendingByBatch(dot);
         return ResponseEntity.ok(count);
     }
 

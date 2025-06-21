@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccination_recordsInterFace;
 import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
@@ -16,15 +17,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class Vaccination_recordsService implements Vaccination_recordsServiceInterFace {
     private Vaccination_recordsInterFace vaccination_recordsInterFace;
-    @Autowired
-    private StudentRepo studentRepo;
-
-    @Autowired
-    private VaccinesRepo vaccinesRepo;
-
-    @Autowired
-    private SchoolNurseRepo schoolNurseRepo;
-
 
     @Autowired
     public Vaccination_recordsService(Vaccination_recordsInterFace vaccination_recordsInterFace) {
@@ -39,36 +31,8 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
 
     @Override
     public Vaccination_recordsDTO addVaccination_records(Vaccination_recordsDTO vaccinationRecordsDTO) {
-        var student = studentRepo.GetStudentByFullName(vaccinationRecordsDTO.getStudent_Name());
-        if (student == null) {
-            throw new RuntimeException("student doesn't exist");
-        }
-
-        var vaccinesName = vaccinesRepo.GetVaccineByVaccineName(vaccinationRecordsDTO.getVaccine_Name());
-        if (vaccinesName == null) {
-            throw new RuntimeException("vaccine_Name doesn't exist");
-        }
-
-        var nurseName = schoolNurseRepo.getSchoolNursesByName(vaccinationRecordsDTO.getNurse_Name());
-        if (nurseName == null) {
-            throw new RuntimeException("nurse_Name doesn't exist");
-        }
-
-        // Không kiểm tra vaccinationRecordID nữa
-        var vaccinationRecord = new Vaccination_records();
-        vaccinationRecord.setStudent(student);
-        vaccinationRecord.setVaccines(vaccinesName);
-        vaccinationRecord.setNurse(nurseName);
-        vaccinationRecord.setNotes(vaccinationRecordsDTO.getNotes());
-        vaccinationRecord.setSymptoms(vaccinationRecordsDTO.getSymptoms());
-        vaccinationRecord.setObservation_notes(vaccinationRecordsDTO.getObservation_notes());
-        vaccinationRecord.setSeverity(vaccinationRecordsDTO.getSeverity());
-        vaccinationRecord.setObservation_time(vaccinationRecordsDTO.getObservation_time());
-        vaccination_recordsInterFace.addVaccination_records(vaccinationRecord);
-
-
-        return TransferModelsDTO.MappingVaccinationRecords(vaccinationRecord);
-
+        Vaccination_records p  = vaccination_recordsInterFace.addVaccination_records(TransferModelsDTO.MappingVaccinationRecordsDTO(vaccinationRecordsDTO));
+        return TransferModelsDTO.MappingVaccinationRecords(p);
     }
 
     @Override
@@ -87,39 +51,9 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
     }
 
     @Override
-    public Vaccination_recordsDTO updateVaccination_records(Vaccination_recordsDTO vaccinationRecordsDTO) {
-        var student = studentRepo.GetStudentByFullName(vaccinationRecordsDTO.getStudent_Name());
-        if (student == null) {
-            throw new RuntimeException("student doesn't exist");
-        }
-        var vaccinesName = vaccinesRepo.GetVaccineByVaccineName(vaccinationRecordsDTO.getVaccine_Name());
-        if (vaccinesName == null) {
-            throw new RuntimeException("vaccine_Name doesn't exist");
-        }
-
-        var nurseName = schoolNurseRepo.getSchoolNursesByName(vaccinationRecordsDTO.getNurse_Name());
-        if (nurseName == null) {
-            throw new RuntimeException("nurse_Name doesn't exist");
-        }
-
-
-        var vaccinationRecordOptional = vaccination_recordsInterFace.getVaccination_records_by_id(vaccinationRecordsDTO.getVaccinationRecordID());
-        if (vaccinationRecordOptional == null) {
-            throw new RuntimeException("Vaccination record not found");
-        }
-        var vaccinationRecord = vaccinationRecordOptional;
-        // Thực hiện cập nhật các trường
-        vaccinationRecord.setStudent(student);
-        vaccinationRecord.setVaccines(vaccinesName);
-        vaccinationRecord.setNurse(nurseName);
-        vaccinationRecord.setNotes(vaccinationRecordsDTO.getNotes());
-        vaccinationRecord.setSymptoms(vaccinationRecordsDTO.getSymptoms());
-        vaccinationRecord.setObservation_notes(vaccinationRecordsDTO.getObservation_notes());
-        vaccinationRecord.setSeverity(vaccinationRecordsDTO.getSeverity());
-        vaccinationRecord.setObservation_time(vaccinationRecordsDTO.getObservation_time());
-        vaccination_recordsInterFace.updateVaccination_records(vaccinationRecord);
-        return TransferModelsDTO.MappingVaccinationRecords(vaccinationRecord);
-
+    public Vaccination_records_edit_DTO updateVaccination_records(Vaccination_records_edit_DTO vaccination_records_edit_DTO) {
+        var updateReocord = vaccination_recordsInterFace.updateVaccination_records(TransferModelsDTO.MappingVaccinationRecordsEditDTO(vaccination_records_edit_DTO));
+        return TransferModelsDTO.MappingVaccinationRecordsEdit(updateReocord);
     }
     @Override
     public List<Vaccination_recordsDTO> getVaccination_recordsByStudentId(int studentId) {

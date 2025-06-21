@@ -1,13 +1,10 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.team_3.School_Medical_Management_System.Enum.ConsentFormStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.Date;
 
 @Entity
 @Table
@@ -27,12 +24,12 @@ public class Consent_forms {
     @ManyToOne
     @JoinColumn(name = "ParentID")
     private Parent parent;
-    private Integer IsAgree;
+    private String IsAgree;
     private String Reason;
     private String HasAllergy;
     @ManyToOne
-    @JoinColumn(name = "Vaccine_id")
-    private Vaccines vaccine;
+    @JoinColumn(name = "BatchID")
+    private Vaccine_Batches vaccineBatches;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ConsentFormStatus status;

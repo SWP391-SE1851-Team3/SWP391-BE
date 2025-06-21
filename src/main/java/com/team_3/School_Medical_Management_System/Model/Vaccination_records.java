@@ -3,11 +3,8 @@ package com.team_3.School_Medical_Management_System.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.engine.jdbc.batch.spi.Batch;
-import org.jetbrains.annotations.Async;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 @Entity
 @Table
@@ -22,8 +19,8 @@ public class Vaccination_records {
     private int VaccinationRecordID;
     private String notes;
     @ManyToOne
-    @JoinColumn(name = "Vaccine_id")
-    private Vaccines vaccines;
+    @JoinColumn(name = "BatchID")
+    private Vaccine_Batches vaccineBatches;
     @ManyToOne
     @JoinColumn(name = "StudentID")
     private Student student;
@@ -34,5 +31,6 @@ public class Vaccination_records {
     @ManyToOne
     @JoinColumn(name = "NurseID")
     private SchoolNurse nurse;
+    private String status;
 
 }

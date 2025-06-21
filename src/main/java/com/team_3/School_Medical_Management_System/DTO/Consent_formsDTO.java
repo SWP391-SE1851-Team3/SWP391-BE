@@ -30,7 +30,7 @@ public class Consent_formsDTO {
     private String ClassName ;
     @NotBlank(message = "VaccineName Not allow empty")
     private String Name;
-    private Integer IsAgree;
+    private String IsAgree;
     @NotBlank(message = "Reason Not allow empty")
     private String Reason;
     @NotBlank(message = "HasAllergy Not allow empty")

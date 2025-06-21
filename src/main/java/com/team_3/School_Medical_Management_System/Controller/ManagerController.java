@@ -26,7 +26,7 @@ public class ManagerController {
         var manager = managerServiceInterFace.LoginByAccount(loginRequest.getEmail(), loginRequest.getPassword());
         if (manager != null) {
             // Trả về dữ liệu an toàn, không chứa mật khẩu, giu bao mat
-            return ResponseEntity.ok(new LoginResponse(manager.getEmail(), 1, manager.getManagerID()));
+            return ResponseEntity.ok(new LoginResponse(manager.getEmail(), 3, manager.getManagerID(),manager.getFullName()));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }

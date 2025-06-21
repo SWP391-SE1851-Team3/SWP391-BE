@@ -16,7 +16,7 @@ public class Student {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int StudentID;
+    private Integer StudentID;
     private int Gender;
     @NotBlank(message = "FullName Not allow empty")
     private String FullName;

@@ -38,6 +38,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         String sql = "SELECT s FROM Student s WHERE s.FullName = :name";
         List<Student> listStudent = entityManager.createQuery(sql, Student.class).setParameter("name", dto.getFullName()).getResultList();
 
+
         if(listStudent.isEmpty()){
             throw new RuntimeException("Student not found");
         }
