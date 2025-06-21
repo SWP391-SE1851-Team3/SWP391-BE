@@ -8,7 +8,7 @@ public class TransferModelsDTO {
 
     public static StudentMappingParent MappingStudent(Student student) {
         StudentMappingParent studentMappingParent = new StudentMappingParent();
-        studentMappingParent.setStudentID(student.getStudentID());
+        studentMappingParent.setStudentID(student.getStudentId());
         studentMappingParent.setParentID(student.getParent().getParentID());
         studentMappingParent.setFullName(student.getFullName());
         studentMappingParent.setClassName(student.getClassName());
