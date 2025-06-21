@@ -11,16 +11,12 @@ import java.util.List;
 public interface MedicationSubmissionServiceInterface {
     MedicationSubmission submitMedication(MedicationSubmissionDTO medicationSubmissionDTO);
     List<MedicationSubmission> getAllMedicationSubmissionsByParentId(int parentId);
-    //    List<MedicationSubmission> getAllPendingMedicationSubmissions();
-//    List<MedicationSubmission> getAllSubmissionsByStatus(MedicationSubmission.SubmissionStatus submissionStatus);
-//    MedicationSubmission approveMedicationSubmission(int submissionId);
-//    MedicationSubmission rejectMedicationSubmission(int submissionId, String reason);
-//    MedicationSubmission confirmMedicationAdministered(int submissionId, String administrationNotes);
-    List<MedicationSubmission> findAllSubmissions();
     public List<MedicationDetail> getDetailsBySubmissionId(int submissionId);
     void cancelMedicationSubmission(int submissionId);
     List<MedicationSubmissionInfoDTO> getAllMedicationSubmissionInfo();
     List<MedicationSubmissionInfoDTO> getMedicationSubmissionInfoByParentId(int parentId);
     MedicationSubmission getMedicationSubmissionById(int submissionId);
     MedicationDetailsExtendedDTO getDetailsBySubmissionIdExtended(int submissionId);
+
+    List<MedicationSubmission> findAllSubmissions();
 }

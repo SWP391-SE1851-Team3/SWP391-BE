@@ -39,33 +39,13 @@ public class MedicationSubmissionRepo implements MedicationSubmissionInterFace {
                 .getResultList();
     }
 
-//    @Override
-//    public List<MedicationSubmission> findByStatus(MedicationSubmission.SubmissionStatus status) {
-//        String jpql = "SELECT m FROM MedicationSubmission m WHERE m.status = :status";
-//        return entityManager.createQuery(jpql, MedicationSubmission.class)
-//                .setParameter("status", status)
-//                .getResultList();
-//    }
+
 
     public List<MedicationSubmission> findAllSubmissions() {
         return entityManager.createQuery("SELECT m FROM MedicationSubmission m", MedicationSubmission.class).getResultList();
     }
 
-//    public List<MedicationSubmission> findPendingSubmissions() {
-//        return findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
-//    }
-//
-//    public List<MedicationSubmission> findApprovedSubmissions() {
-//        return findByStatus(MedicationSubmission.SubmissionStatus.APPROVED);
-//    }
-//
-//    public List<MedicationSubmission> findRejectedSubmissions() {
-//        return findByStatus(MedicationSubmission.SubmissionStatus.REJECTED);
-//    }
-//
-//    public List<MedicationSubmission> findAdministeredSubmissions() {
-//        return findByStatus(MedicationSubmission.SubmissionStatus.ADMINISTERED);
-//    }
+
 
 
 // Required methods from JpaRepository interface
