@@ -32,7 +32,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
     @Autowired
     private ParentRepository parentRepo;
     @Autowired
-    private EmailService emailService;
+    private EmailVaccinesService emailService;
 
     @Autowired
     private NotificationsParentService notificationsParentService;

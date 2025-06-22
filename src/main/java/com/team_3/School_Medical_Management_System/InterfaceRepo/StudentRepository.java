@@ -17,5 +17,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 //    @Query("SELECT s FROM Student s WHERE s.parent.ParentID = :parentId")
 //    List<Student> findByParentId(@Param("parentId") int parentId);
 
+
 }
 

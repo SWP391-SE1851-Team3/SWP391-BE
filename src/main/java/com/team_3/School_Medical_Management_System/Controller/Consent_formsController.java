@@ -3,6 +3,8 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
+import com.team_3.School_Medical_Management_System.Model.Consent_forms;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -169,6 +171,40 @@ public class Consent_formsController {
             ));
         }
     }
+
+    @PostMapping("/consent-forms/send-by-classname")
+    public ResponseEntity<?> sendByClass(@RequestBody SendConsentFormRequestDTO dto) {
+        try {
+            consent_formsServiceInterFace.sendConsentFormsByClassName(
+                    dto.getClassName(),
+                    dto.getBatchId(),
+                    dto.getSendDate(),
+                    dto.getExpireDate(),
+                    dto.getStatus()
+            );
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Đã gửi phiếu cho lớp " + dto.getClassName()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+    @GetMapping("/findDot")
+    @Operation(summary = "liên quan đến đợt")
+    public ResponseEntity<?> findDot() {
+        var dot = consent_formsServiceInterFace.findDot();
+        if(dot == null || dot.isEmpty()) {
+            return ResponseEntity.noContent().build(); // hoặc trả về 204
+        } else {
+            return ResponseEntity.ok(dot);
+        }
+    }
+
 
 
 }

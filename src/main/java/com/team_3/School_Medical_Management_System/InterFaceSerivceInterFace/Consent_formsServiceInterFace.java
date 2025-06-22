@@ -1,11 +1,9 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
-import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formViewDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
-import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.Model.Consent_forms;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface Consent_formsServiceInterFace {
@@ -24,5 +22,8 @@ public interface Consent_formsServiceInterFace {
     public void processParentResponse(ConsentFormParentResponseDTO dto);
     public List<Consent_formsDTO> getAllConsentForms();
     public Consent_formsDTO updateConsent(Consent_formsDTO consentFormsDTO);
+    public void sendConsentFormsByClassName(String className, Integer batchId,
+                                            LocalDateTime sendDate, LocalDateTime expireDate,String status);
+    public List<Consent_form_dot> findDot();
 }
 
