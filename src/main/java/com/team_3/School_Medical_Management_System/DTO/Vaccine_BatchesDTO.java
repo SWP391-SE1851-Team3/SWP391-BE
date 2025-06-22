@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 
 public class Vaccine_BatchesDTO {
+    private Integer BatchID;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
     private Integer nurse_id;

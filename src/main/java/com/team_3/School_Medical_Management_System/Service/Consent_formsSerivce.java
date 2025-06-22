@@ -159,13 +159,14 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public Consent_formsDTO getConsentByStudentId(int studentId) {
-        return TransferModelsDTO.MappingConsent(consent_formsRepo.getConsentByStudentId(studentId));
+    public List<Consent_formViewDTO>  getConsentByStudentId(int studentId) {
+        var  list = consent_formsRepo.getConsentByStudentId(studentId);
+        return list.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
-    public List<Consent_formViewDTO> findPendingForParent() {
-        var consent_forms = consent_formsRepo.findPendingForParent();
+    public List<Consent_formViewDTO> findPendingForParent(int parentId) {
+        var consent_forms = consent_formsRepo.findPendingForParent(parentId);
         return consent_forms.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
@@ -173,6 +174,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     public void processParentResponse(ConsentFormParentResponseDTO dto) {
         Consent_forms form = consent_formsRepos.findById(dto.getConsentFormId())
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phiếu"));
+
         boolean isDisagree = dto.getIsAgree() != null && dto.getIsAgree() == null;
         boolean hasNoReason = dto.getReason() == null || dto.getReason().trim().isEmpty();
         if (isDisagree && hasNoReason) {
@@ -184,5 +186,18 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         form.setStatus("ĐÃ PHÊ DUYỆT");
         consent_formsRepos.save(form);
     }
+
+    @Override
+    public List<Consent_formsDTO> getAllConsentForms() {
+       var listConsent = consent_formsRepo.getAllConsentForms();
+       return listConsent.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public Consent_formsDTO updateConsent(Consent_formsDTO consentFormsDTO) {
+       var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
+       return TransferModelsDTO.MappingConsent(updateConsent);
+    }
+
 
 }

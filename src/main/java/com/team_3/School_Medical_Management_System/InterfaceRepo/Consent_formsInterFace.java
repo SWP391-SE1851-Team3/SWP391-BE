@@ -17,8 +17,11 @@ public interface Consent_formsInterFace {
     public Long countConsentFormsIsAgreeByBatch(String dot);
     public Long countConsentFormsDisAgreeByBatch(String dot);
     public Long countConsentFormsPendingByBatch(String dot);
-    Consent_forms getConsentByStudentId(int studentId);
-    public List<Consent_forms> findPendingForParent();
+    List<Consent_forms>  getConsentByStudentId(int studentId);
+    public List<Consent_forms> findPendingForParent(int parentId);
+    public List<Consent_forms> getAllConsentForms();
+    public Consent_forms updateConsent(Consent_forms consent_forms);
+
 
 
 }

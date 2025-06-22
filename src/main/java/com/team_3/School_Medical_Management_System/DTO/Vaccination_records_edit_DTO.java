@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class Vaccination_records_edit_DTO {
-    @JsonIgnore
-    private int VaccinationRecordID;
+    private Integer VaccinationRecordID;
     private String notes;
     private Integer Student_id;;
     private LocalDateTime observation_time;

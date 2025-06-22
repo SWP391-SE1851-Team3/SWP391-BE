@@ -17,6 +17,5 @@ public class Vaccine_Types_Edit_DTO {
     private String Recommended_ages;
     private LocalDate Created_at;
     private LocalDate Updated_at;
-    @JsonIgnore
-    private Integer Vaccine_TypeId;
+    private Integer VaccineTypeID;
 }

@@ -10,5 +10,6 @@ public interface Vaccine_BatchesInterFace {
     public Vaccine_Batches GetVaccineByVaccineId(Integer VaccineId);
     public Vaccine_Batches AddVaccine_batch(Vaccine_Batches vaccine);
     public Vaccine_Batches UpdateVaccine_batch(Vaccine_Batches vaccine);
+    public boolean updateConsentFormStatus(int consentFormId, String status);
 }
 

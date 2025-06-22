@@ -1,10 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 
-import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formViewDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
-import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +24,15 @@ public class Consent_formsController {
         this.consent_formsServiceInterFace = consent_formsServiceInterFace;
     }
 
-    @GetMapping
+    @GetMapping("/viewParent")
     public List<Consent_formViewDTO>  getConsent_forms() {
         var consent_forms = consent_formsServiceInterFace.getConsent_forms();
         return consent_forms;
+    }
+    @GetMapping("/viewNurse")
+    public List<Consent_formsDTO>  getConsent_forms_nurse() {
+        var listConset = consent_formsServiceInterFace.getAllConsentForms();
+        return  listConset;
     }
 
     @GetMapping("/consent_formsParentName")
@@ -94,13 +96,13 @@ public class Consent_formsController {
     }
 
     @GetMapping("/byStudentId/{studentId}")
-    public Consent_formsDTO getConsent_formsByStudentId(@PathVariable int studentId) {
+    public List<Consent_formViewDTO>  getConsent_formsByStudentId(@PathVariable int studentId) {
         return consent_formsServiceInterFace.getConsentByStudentId(studentId);
     }
 
     @GetMapping("/Consent_forms/parent-pending")
-    public ResponseEntity<?> getFormsPendingForParent(){
-        List<Consent_formViewDTO> forms = consent_formsServiceInterFace.findPendingForParent();
+    public ResponseEntity<?> getFormsPendingForParent(int parentId){
+        List<Consent_formViewDTO> forms = consent_formsServiceInterFace.findPendingForParent(parentId);
         List<Map<String, Object>> result = forms.stream().map(form -> {
             Map<String, Object> map = new HashMap<>();
             map.put("FullNameOfStudent",form .getFullNameOfStudent());
@@ -118,10 +120,16 @@ public class Consent_formsController {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/Consent_forms/parent-response")
-    public ResponseEntity<?> updateByParent(@RequestBody @Valid ConsentFormParentResponseDTO dto) {
+    @PutMapping("/Consent_forms/parent-response/{id}")
+    public ResponseEntity<?> updateByParent(@PathVariable int id, @RequestBody @Valid ConsentFormParentResponseDTO dto) {
         try {
+           dto.setConsentFormId(id);
+           if(consent_formsServiceInterFace.getConsentFormForParent(id) == null) {
+               return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           }
+
             consent_formsServiceInterFace.processParentResponse(dto);
+
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "Phản hồi thành công"
@@ -138,4 +146,29 @@ public class Consent_formsController {
             ));
         }
     }
+
+    @PutMapping("/editConsent/nurse/{id}")
+    public ResponseEntity<?> updatebyNurse(@PathVariable int id, @RequestBody Consent_formsDTO form ) {
+        try {
+            form.setConsent_id(id);
+            if(consent_formsServiceInterFace.getConsentFormForParent(id) == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else {
+                consent_formsServiceInterFace.updateConsent(form);
+                return ResponseEntity.ok(Map.of(
+                        "success", true,
+                        "message", "Cập nhật thành công"
+                ));
+            }
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+
 }

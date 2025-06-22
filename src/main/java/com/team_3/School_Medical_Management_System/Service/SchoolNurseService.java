@@ -120,42 +120,12 @@ public class SchoolNurseService implements SchoolNurseServiceInterFace {
     }
 
     @Override
-
-    public UserDTO convertSchoolNurseToUserDTO(SchoolNurse nurse) {
-
-        UserDTO dto = new UserDTO();
-        //dto.setId(nurse.getNurseID());
-        dto.setUserType("SchoolNurse");
-        dto.setUserName(nurse.getUserName());
-        dto.setPassword(nurse.getPassword());
-        dto.setFullName(nurse.getFullName());
-        dto.setPhone(nurse.getPhone());
-        dto.setEmail(nurse.getEmail());
-        dto.setIsActive(nurse.getIsActive());
-        dto.setCertification(nurse.getCertification());
-        dto.setSpecialisation(nurse.getSpecialisation());
-        dto.setRoleId(dto.getRoleId());
-        return dto;
+    public String getNurseNameById(int id) {
+        SchoolNurse nurse = GetSchoolNursesById(id);
+        return nurse != null ? nurse.getFullName() : null;
     }
 
-    @Override
-    public SchoolNurse convertToSchoolNurseEntity(UserDTO dto) {
 
 
-
-        SchoolNurse nurse = new SchoolNurse();
-        nurse.setUserName(dto.getUserName());
-        nurse.setPassword(dto.getPassword());
-        nurse.setFullName(dto.getFullName());
-        nurse.setPhone(dto.getPhone());
-        nurse.setEmail(dto.getEmail());
-        nurse.setIsActive(dto.getIsActive());
-        nurse.setCertification(dto.getCertification());
-        nurse.setSpecialisation(dto.getSpecialisation());
-        nurse.setRoleID(dto.getRoleId());
-        return nurse;
-
-
-    }
 
 }

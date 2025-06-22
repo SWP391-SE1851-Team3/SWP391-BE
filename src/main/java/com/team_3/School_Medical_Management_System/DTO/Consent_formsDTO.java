@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class Consent_formsDTO {
-    @JsonIgnore
-    private int consent_forms_id;
+    private Integer consent_id;
     private Integer StudentId;
     private Integer VaccineBatchId;
     private String IsAgree;

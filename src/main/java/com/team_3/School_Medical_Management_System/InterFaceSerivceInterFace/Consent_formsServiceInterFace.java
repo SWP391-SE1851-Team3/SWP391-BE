@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponse
 import com.team_3.School_Medical_Management_System.DTO.Consent_formViewDTO;
 import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
 import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
+import com.team_3.School_Medical_Management_System.Model.Consent_forms;
 
 import java.util.List;
 
@@ -18,8 +19,10 @@ public interface Consent_formsServiceInterFace {
     public Long countConsentFormsIsAgreeByBatch(String dot);
     public Long countConsentFormsDisAgreeByBatch(String dot);
     public Long countConsentFormsPendingByBatch(String dot);
-    Consent_formsDTO getConsentByStudentId(int studentId);
-    public List<Consent_formViewDTO> findPendingForParent();
+    List<Consent_formViewDTO>  getConsentByStudentId(int studentId);
+    public List<Consent_formViewDTO> findPendingForParent(int parentId);
     public void processParentResponse(ConsentFormParentResponseDTO dto);
+    public List<Consent_formsDTO> getAllConsentForms();
+    public Consent_formsDTO updateConsent(Consent_formsDTO consentFormsDTO);
 }
 

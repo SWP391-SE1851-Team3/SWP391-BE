@@ -85,4 +85,6 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
                 .setParameter("studentId", studentId)
                 .getResultList();
     }
+
+
 }

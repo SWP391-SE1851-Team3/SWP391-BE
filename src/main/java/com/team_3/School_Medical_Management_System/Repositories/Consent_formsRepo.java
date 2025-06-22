@@ -3,6 +3,8 @@ package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
 import com.team_3.School_Medical_Management_System.Model.Consent_forms;
+import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
+import com.team_3.School_Medical_Management_System.Model.Vaccine_Types;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -118,19 +120,45 @@ public class Consent_formsRepo implements Consent_formsInterFace {
 
 
     @Override
-    public Consent_forms getConsentByStudentId(int studentId) {
+    public List<Consent_forms> getConsentByStudentId(int studentId) {
         String jpql = "SELECT C FROM Consent_forms C WHERE C.student.StudentID   = :studentId";
         List<Consent_forms> results = entityManager.createQuery(jpql, Consent_forms.class)
                 .setParameter("studentId", studentId)
                 .getResultList();
-        return results.stream().findFirst().orElse(null);
+        return results;
     }
 
     @Override
-    public List<Consent_forms> findPendingForParent() {
-        String jpql = "SELECT c FROM Consent_forms c WHERE c.status = :status";
+    public List<Consent_forms> findPendingForParent(int parentId) {
+        String jpql = "SELECT c FROM Consent_forms c " +
+                "JOIN FETCH c.student s " +
+                "WHERE c.status = :status AND c.parent.ParentID = :parentId";
         return entityManager.createQuery(jpql, Consent_forms.class)
-                .setParameter("status", "Ðang Ch? Phê Duy?t")
+                .setParameter("status", "Đang Chờ Phê Duyệt")
+                .setParameter("parentId", parentId)
                 .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getAllConsentForms() {
+        String sql = "SELECT c FROM Consent_forms c";
+        return entityManager.createQuery(sql, Consent_forms.class).getResultList();
+    }
+
+    @Override
+    public Consent_forms updateConsent(Consent_forms consent_forms) {
+        var updateConsent = getConsent_formsById(consent_forms.getConsent_id());
+        if(updateConsent != null) {
+            Vaccine_Types vaccineTypes = new Vaccine_Types();
+            vaccineTypes.setVaccineTypeID(consent_forms.getVaccineBatches().getVaccineType().getVaccineTypeID());
+            Vaccine_Batches vaccineBatches = new Vaccine_Batches();
+            vaccineBatches.setVaccineType(vaccineTypes);
+            updateConsent.setVaccineBatches(vaccineBatches);
+            updateConsent.setSend_date(consent_forms.getSend_date());
+            updateConsent.setExpire_date(consent_forms.getExpire_date());
+            return updateConsent;
+        }else {
+            return null;
+        }
     }
 }

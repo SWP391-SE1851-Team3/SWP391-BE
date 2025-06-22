@@ -1,8 +1,10 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_SentParent_DTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
+import com.team_3.School_Medical_Management_System.configuration.EmailConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/vaccination_records")
 public class Vaccination_recordsController {
+    @Autowired
+    private EmailConfig emailConfig;
 
     private Vaccination_recordsServiceInterFace vaccination_recordsServiceInterFace;
 
@@ -57,7 +61,20 @@ public class Vaccination_recordsController {
                 return ResponseEntity.ok().body(p);
             }
         }
-
     }
+
+    @PostMapping("/vaccination-records/send-email")
+    public ResponseEntity<Vaccination_records_SentParent_DTO> sendVaccinationEmail(
+            @RequestBody Vaccination_records_SentParent_DTO records) {
+        var result = vaccination_recordsServiceInterFace.createEmail(records);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/vaccination-records/resend/{recordId}")
+    public ResponseEntity<?> resend(@PathVariable Integer recordId, @RequestBody Vaccination_records_SentParent_DTO dto) {
+        var result = vaccination_recordsServiceInterFace.updateAndResendEmail(recordId, dto);
+        return ResponseEntity.ok(result);
+    }
+
 
 }

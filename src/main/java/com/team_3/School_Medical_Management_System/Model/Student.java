@@ -28,6 +28,5 @@ public class Student {
     @JoinColumn(name = "ParentID")
     private Parent parent;
 
-
 }
 

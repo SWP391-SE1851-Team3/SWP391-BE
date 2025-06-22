@@ -17,9 +17,6 @@ public class NotificationsParent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int notificationId; // Khóa chính, tự động tăng
 
-
-
-
     @ManyToOne
     @JoinColumn(name = "ParentID")
     private Parent parent; // Quan hệ với bảng Parent

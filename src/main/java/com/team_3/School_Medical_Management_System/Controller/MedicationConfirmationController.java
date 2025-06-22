@@ -1,3 +1,4 @@
+
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
@@ -41,12 +42,6 @@ public class MedicationConfirmationController {
     @GetMapping("/by-nurse/{nurseId}")
     public ResponseEntity<List<ConfirmMedicationSubmissionDTO>> getConfirmationsByNurse(@PathVariable int nurseId) {
         List<ConfirmMedicationSubmissionDTO> confirmations = confirmService.getConfirmationsByNurse(nurseId);
-        return new ResponseEntity<>(confirmations, HttpStatus.OK);
-    }
-
-    @GetMapping("/by-student-name")
-    public ResponseEntity<List<ConfirmMedicationSubmissionDTO>> getConfirmationsByStudentName(@RequestParam String name) {
-        List<ConfirmMedicationSubmissionDTO> confirmations = confirmService.getConfirmationsByStudentName(name);
         return new ResponseEntity<>(confirmations, HttpStatus.OK);
     }
 
@@ -96,7 +91,7 @@ public class MedicationConfirmationController {
 
             // Call service to update only the provided non-empty fields
             ConfirmMedicationSubmissionDTO updatedConfirmation =
-                confirmService.updateStatusAndNurse(confirmId, finalStatus, finalReason, finalNurseId, finalEvidence);
+                    confirmService.updateStatusAndNurse(confirmId, finalStatus, finalReason, finalNurseId, finalEvidence);
 
             if (updatedConfirmation != null) {
                 return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
@@ -113,7 +108,7 @@ public class MedicationConfirmationController {
             }
 
             return new ResponseEntity<>("An error occurred while updating the status: " + ex.getMessage(),
-                                       HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

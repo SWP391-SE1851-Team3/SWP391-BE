@@ -15,6 +15,7 @@ public interface SchoolNurseServiceInterFace {
     public SchoolNurse LoginByAccount(String Phone, String Password);
     public SchoolNurse GetSchoolNursesById(int id);
     public boolean changePassword(String email, String oldPassword, String newPassword);
+    public String getNurseNameById(int id);
 
 
 }

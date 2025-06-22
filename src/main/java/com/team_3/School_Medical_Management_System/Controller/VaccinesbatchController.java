@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccine_BatchesServiceInterFace;
@@ -58,4 +59,16 @@ public class VaccinesbatchController {
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @PutMapping("/admin/consent-forms/{id}/status")
+    public ResponseEntity<?> updateConsentFormStatus(
+            @PathVariable("id") int id,
+            @RequestBody StatusUpdateDTO statusDTO) {
+
+        boolean updated = vaccinesServiceInterFace.updateConsentFormStatus(id, statusDTO.getStatus());
+        if (updated) {
+            return ResponseEntity.ok("Status updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Consent form not found");
+        }
+    }
 }

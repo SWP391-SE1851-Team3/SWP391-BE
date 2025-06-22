@@ -11,6 +11,7 @@ import lombok.*;
 @Setter
 @ToString
 public class ConsentFormParentResponseDTO {
+    @JsonIgnore
     private Integer consentFormId;
     private String isAgree;
     @NotBlank

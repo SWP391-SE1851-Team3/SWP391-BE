@@ -63,6 +63,11 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
         return TransferModelsDTO.MappingVaccines(p);
     }
 
+    @Override
+    public boolean updateConsentFormStatus(int bacthId, String status) {
+        return vaccinesInterFace.updateConsentFormStatus(bacthId, status);
+    }
+
 }
 
 

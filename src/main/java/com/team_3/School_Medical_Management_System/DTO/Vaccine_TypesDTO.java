@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vaccine_TypesDTO {
+    private Integer VaccineTypeID;
     private String Name;
     private String Manufacturer;
     private String Description;

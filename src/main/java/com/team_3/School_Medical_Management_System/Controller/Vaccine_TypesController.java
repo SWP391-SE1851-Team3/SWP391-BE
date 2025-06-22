@@ -69,7 +69,7 @@ public class Vaccine_TypesController {
         if (id <= 0) {
             return ResponseEntity.badRequest().body("Invalid Vaccine Type ID: " + id);
         }
-        dto.setVaccine_TypeId(id);
+        dto.setVaccineTypeID(id);
         try {
             Vaccine_TypesDTO existing = vaccine_typesService.getVaccine_TypeByID(id);
             if (existing == null) {

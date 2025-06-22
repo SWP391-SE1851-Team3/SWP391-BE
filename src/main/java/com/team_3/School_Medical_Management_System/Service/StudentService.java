@@ -22,9 +22,6 @@ public class StudentService implements StudentServiceInterFace {
    @Autowired
    private StudentRepository studentRepository;
 
-
-
-
     @Autowired
    public StudentService(StudentInterFace studentInterFace) {
         this.studentInterFace = studentInterFace;
@@ -33,7 +30,7 @@ public class StudentService implements StudentServiceInterFace {
 
     @Override
     public void addStudent(Student student) {
-        var p = getStudent(student.getStudentId());
+        var p = getStudent(student.getStudentID());
         if (p == null) {
             studentInterFace.addStudent(student);
         } else {
@@ -63,7 +60,7 @@ public class StudentService implements StudentServiceInterFace {
 
     @Override
     public Student UpdateStudent(Student student) {
-        var p = getStudent(student.getStudentId());
+        var p = getStudent(student.getStudentID());
         if (p == null) {
             throw new RuntimeException("Student not found");
         } else {
@@ -107,7 +104,7 @@ public class StudentService implements StudentServiceInterFace {
                 studentsDTO.setFullName(m.getFullName());
                 studentsDTO.setClassName(m.getClassName());
                 studentsDTO.setIsActive(m.getIsActive());
-                studentsDTO.setParentID(m.getParentID());
+                studentsDTO.setParentID(m.getParent().getParentID());
                 sameClassName.add(studentsDTO);
             }
         }
