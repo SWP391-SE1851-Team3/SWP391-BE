@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class Vaccination_records_edit_DTO {
-    private int VaccinationRecordID;
+    private Integer VaccinationRecordID;
     private String notes;
     private Integer Student_id;;
     private LocalDateTime observation_time;

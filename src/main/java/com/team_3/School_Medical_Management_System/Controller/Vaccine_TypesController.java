@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_TypesDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccine_Types_Edit_DTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccine_TypesServiceInterFace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.Repository;
@@ -55,20 +56,38 @@ public class Vaccine_TypesController {
         try {
             Vaccine_TypesDTO deleteVaccineType = vaccine_typesService.deleteVaccine_Types(id);
             return deleteVaccineType != null ? ResponseEntity.ok(deleteVaccineType)
-                    :ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + deleteVaccineType);
+                    : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + deleteVaccineType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @PutMapping("/edit_vaccineType")
-    public ResponseEntity<?> editVaccineType(@RequestBody Vaccine_TypesDTO dto) {
+    @PutMapping("/edit_vaccineType/{id}")
+    public ResponseEntity<?> editVaccineType(
+            @PathVariable("id") int id,
+            @RequestBody Vaccine_Types_Edit_DTO dto) {
+        if (id <= 0) {
+            return ResponseEntity.badRequest().body("Invalid Vaccine Type ID: " + id);
+        }
+        dto.setVaccineTypeID(id);
         try {
-            Vaccine_TypesDTO updateVaccineTypesDTO = vaccine_typesService.updateVaccine_Types(dto);
-            return updateVaccineTypesDTO != null ? ResponseEntity.ok(dto)
-                    : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + dto);
+            Vaccine_TypesDTO existing = vaccine_typesService.getVaccine_TypeByID(id);
+            if (existing == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Vaccine type not found with ID: " + id);
+            }
+            Vaccine_Types_Edit_DTO updated = vaccine_typesService.updateVaccine_Types(dto);
+
+            if (updated != null) {
+                return ResponseEntity.ok(updated);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Failed to update vaccine type with ID: " + id);
+            }
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Exception occurred: " + e.getMessage());
         }
     }
 

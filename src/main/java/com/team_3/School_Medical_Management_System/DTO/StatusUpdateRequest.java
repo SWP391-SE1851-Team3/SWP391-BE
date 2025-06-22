@@ -30,4 +30,3 @@ public class StatusUpdateRequest {
         this.evidence = evidence;
     }
 }
-

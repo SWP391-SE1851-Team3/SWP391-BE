@@ -1,6 +1,5 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
-import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

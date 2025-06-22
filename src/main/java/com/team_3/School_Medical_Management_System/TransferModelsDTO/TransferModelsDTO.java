@@ -8,7 +8,7 @@ public class TransferModelsDTO {
 
     public static StudentMappingParent MappingStudent(Student student) {
         StudentMappingParent studentMappingParent = new StudentMappingParent();
-        studentMappingParent.setStudentID(student.getStudentId());
+        studentMappingParent.setStudentID(student.getStudentID());
         studentMappingParent.setParentID(student.getParent().getParentID());
         studentMappingParent.setFullName(student.getFullName());
         studentMappingParent.setClassName(student.getClassName());
@@ -30,6 +30,7 @@ public class TransferModelsDTO {
         vaccinesDTO.setCreated_at(vaccines.getCreated_at());
         vaccinesDTO.setUpdated_at(vaccines.getUpdated_at());
         vaccinesDTO.setNurse_name(vaccines.getNurse().getFullName());
+        vaccinesDTO.setBatchID(vaccines.getBatchID());
         return vaccinesDTO;
     }
 
@@ -53,6 +54,7 @@ public class TransferModelsDTO {
         vaccines.setNurse(nurse);
         vaccines.setScheduled_date(vaccinesDTO.getScheduled_date());
         vaccines.setQuantity_received(vaccinesDTO.getQuantity_received());
+        vaccines.setBatchID(vaccinesDTO.getBatchID());
 
 
 
@@ -61,48 +63,60 @@ public class TransferModelsDTO {
 
     public static Consent_formsDTO MappingConsent(Consent_forms consent_forms) {
         Consent_formsDTO consent_formsDTO = new Consent_formsDTO();
-        consent_formsDTO.setFullNameOfStudent(consent_forms.getStudent().getFullName());
-        consent_formsDTO.setClassName(consent_forms.getStudent().getClassName());
+        consent_formsDTO.setStudentId(consent_forms.getStudent().getStudentID());
         consent_formsDTO.setReason(consent_forms.getReason());
-        consent_formsDTO.setName(consent_forms.getVaccineBatches().getVaccineType().getName());
+        consent_formsDTO.setVaccineBatchId(consent_forms.getVaccineBatches().getBatchID());
         consent_formsDTO.setHasAllergy(consent_forms.getHasAllergy());
         consent_formsDTO.setIsAgree(consent_forms.getIsAgree());
-        consent_formsDTO.setFullnameOfParent(consent_forms.getParent().getFullName());
+        consent_formsDTO.setParentID(consent_forms.getParent().getParentID());
         consent_formsDTO.setSend_date(consent_forms.getSend_date());
         consent_formsDTO.setExpire_date(consent_forms.getExpire_date());
-        consent_formsDTO.setConsent_forms_id(consent_forms.getConsent_id());
-        consent_formsDTO.setScheduledDate(consent_forms.getVaccineBatches().getScheduled_date());
-        consent_formsDTO.setLocation(consent_forms.getVaccineBatches().getLocation());
+        consent_formsDTO.setConsent_id(consent_forms.getConsent_id());
+//        consent_formsDTO.setScheduledDate(consent_forms.getVaccineBatches().getScheduled_date());
+//        consent_formsDTO.setLocation(consent_forms.getVaccineBatches().getLocation());
+        consent_formsDTO.setStatus(consent_forms.getStatus());
         return consent_formsDTO;
     }
 
     public static Consent_forms MappingConsentDTO(Consent_formsDTO dto) {
         Consent_forms entity = new Consent_forms();
-        entity.setConsent_id(dto.getConsent_forms_id());
+
+        // Gán ID (nếu bạn cho phép update, nếu không thì set null để persist mới)
+        entity.setConsent_id(dto.getConsent_id());
+
+
+        // Gán các trường cơ bản
         entity.setReason(dto.getReason());
         entity.setExpire_date(dto.getExpire_date());
         entity.setSend_date(dto.getSend_date());
+        entity.setIsAgree(dto.getIsAgree());
+        entity.setHasAllergy(dto.getHasAllergy());
+        entity.setStatus(dto.getStatus());
+
+        // Mapping Student
+        Student student = new Student();
+        student.setStudentID(dto.getStudentId());
+        entity.setStudent(student);
 
         // Mapping Parent
         Parent parent = new Parent();
-        parent.setFullName(dto.getFullNameOfStudent());
+        parent.setParentID(dto.getParentID());
         entity.setParent(parent);
 
-        // Mapping Vaccine Type
-        Vaccine_Types vaccineType = new Vaccine_Types();
-        vaccineType.setName(dto.getName());
-
-        // Mapping Vaccine Batch
+        // Mapping Vaccine_Batches
         Vaccine_Batches vaccineBatches = new Vaccine_Batches();
-        vaccineBatches.setScheduled_date(dto.getScheduledDate()); // từ DTO
-        vaccineBatches.setVaccineType(vaccineType);
+        vaccineBatches.setBatchID(dto.getVaccineBatchId());
+//        vaccineBatches.setScheduled_date(dto.getScheduledDate());
+//        vaccineBatches.setLocation(dto.getLocation()); // nếu cần lưu Location ở entity
         entity.setVaccineBatches(vaccineBatches);
 
         return entity;
     }
 
+
     public static Vaccination_recordsDTO MappingVaccinationRecords(Vaccination_records vaccination_records) {
         Vaccination_recordsDTO dto = new Vaccination_recordsDTO();
+        dto.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
         dto.setSeverity(vaccination_records.getSeverity());
         dto.setObservation_notes(vaccination_records.getObservation_notes());
         dto.setObservation_time(vaccination_records.getObservation_time());
@@ -114,14 +128,14 @@ public class TransferModelsDTO {
             dto.setBatchID(null);
         }
         if (vaccination_records.getNurse() != null) {
-            dto.setNurse_id(vaccination_records.getNurse().getNurseID());
+            dto.setNurseID(vaccination_records.getNurse().getNurseID());
         } else {
-            dto.setNurse_id(null);
+            dto.setNurseID(null);
         }
         if (vaccination_records.getStudent() != null) {
-            dto.setStudent_id(vaccination_records.getStudent().getStudentID());
+            dto.setStudentID(vaccination_records.getStudent().getStudentID());
         } else {
-            dto.setStudent_id(null);
+            dto.setStudentID(null);
         }
         dto.setNurse_name(vaccination_records.getNurse().getFullName());
         dto.setStatus(vaccination_records.getStatus());
@@ -132,13 +146,14 @@ public class TransferModelsDTO {
 
     public static Vaccination_records MappingVaccinationRecordsDTO(Vaccination_recordsDTO dto) {
         Vaccination_records entity = new Vaccination_records();
+        entity.setVaccinationRecordID(dto.getVaccinationRecordID());
         entity.setSeverity(dto.getSeverity());
         entity.setObservation_time(dto.getObservation_time());
         entity.setSymptoms(dto.getSymptoms());
         entity.setObservation_notes(dto.getObservation_notes());
 
         Student student = new Student();
-        student.setStudentID(dto.getStudent_id());
+        student.setStudentID(dto.getStudentID());
         entity.setStudent(student);
 
         Vaccine_Batches batch = new Vaccine_Batches();
@@ -146,7 +161,7 @@ public class TransferModelsDTO {
         entity.setVaccineBatches(batch);
         // Map nurse
         SchoolNurse nurse = new SchoolNurse();
-        nurse.setNurseID(dto.getNurse_id());
+        nurse.setNurseID(dto.getNurseID());
         nurse.setFullName(dto.getNurse_name());
         entity.setNurse(nurse);
         entity.setNotes(dto.getNotes());
@@ -154,19 +169,21 @@ public class TransferModelsDTO {
         return entity;
     }
 
-    public static Vaccine_TypesDTO MappingVaccineTypes(Vaccine_Types dto) {
+    public static Vaccine_TypesDTO MappingVaccineTypes(Vaccine_Types vaccine_types) {
         Vaccine_TypesDTO entity = new Vaccine_TypesDTO();
-        entity.setManufacturer(dto.getManufacturer());
-        entity.setCreated_at(dto.getCreated_at());
-        entity.setUpdated_at(dto.getUpdated_at());
-        entity.setRecommended_ages(dto.getRecommended_ages());
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
+        entity.setVaccineTypeID(vaccine_types.getVaccineTypeID());
+        entity.setManufacturer(vaccine_types.getManufacturer());
+        entity.setCreated_at(vaccine_types.getCreated_at());
+        entity.setUpdated_at(vaccine_types.getUpdated_at());
+        entity.setRecommended_ages(vaccine_types.getRecommended_ages());
+        entity.setName(vaccine_types.getName());
+        entity.setDescription(vaccine_types.getDescription());
         return entity;
     }
 
     public static Vaccine_Types MappingVaccineTypesDTO(Vaccine_TypesDTO dto) {
         Vaccine_Types entity = new Vaccine_Types();
+        entity.setVaccineTypeID(dto.getVaccineTypeID());
         entity.setManufacturer(dto.getManufacturer());
         entity.setCreated_at(dto.getCreated_at());
         entity.setUpdated_at(dto.getUpdated_at());
@@ -313,6 +330,78 @@ public class TransferModelsDTO {
         return record;
     }
 
+    public static Vaccine_Types_Edit_DTO MappingVaccineTypesEdit(Vaccine_Types dto) {
+        Vaccine_Types_Edit_DTO editDTO = new Vaccine_Types_Edit_DTO();
+        editDTO.setDescription(dto.getDescription());
+        editDTO.setManufacturer(dto.getManufacturer());
+        editDTO.setRecommended_ages(dto.getRecommended_ages());
+        editDTO.setCreated_at(dto.getCreated_at());
+        editDTO.setCreated_at(dto.getCreated_at());
+        editDTO.setUpdated_at(dto.getUpdated_at());
+        editDTO.setVaccineTypeID(dto.getVaccineTypeID());
+        editDTO.setName(dto.getName());
+        return editDTO;
+    }
+
+    public static Vaccine_Types MappingVaccineTypesEditDTO(Vaccine_Types_Edit_DTO dto) {
+        Vaccine_Types vaccineType = new Vaccine_Types();
+        vaccineType.setDescription(dto.getDescription());
+        vaccineType.setManufacturer(dto.getManufacturer());
+        vaccineType.setRecommended_ages(dto.getRecommended_ages());
+        vaccineType.setCreated_at(dto.getCreated_at());
+        vaccineType.setUpdated_at(dto.getUpdated_at());
+        vaccineType.setVaccineTypeID(dto.getVaccineTypeID());
+        vaccineType.setName(dto.getName());
+        return vaccineType;
+    }
+
+    public static Consent_formViewDTO MappingConent_View(Consent_forms consent_forms) {
+        Consent_formViewDTO viewDTO = new Consent_formViewDTO();
+        viewDTO.setFullNameOfStudent(consent_forms.getStudent().getFullName());
+        viewDTO.setFullNameOfParent(consent_forms.getParent().getFullName());
+        viewDTO.setVaccineName(consent_forms.getVaccineBatches().getVaccineType().getName());
+        viewDTO.setExpire_date(consent_forms.getExpire_date());
+        viewDTO.setIsAgree(consent_forms.getIsAgree());
+        viewDTO.setReason(consent_forms.getReason());
+        viewDTO.setScheduledDate(consent_forms.getVaccineBatches().getScheduled_date());
+        viewDTO.setHasAllergy(consent_forms.getHasAllergy());
+        viewDTO.setSend_date(consent_forms.getSend_date());
+        viewDTO.setExpire_date(consent_forms.getExpire_date());
+        return viewDTO;
+    }
+
+    public static Vaccination_records_SentParent_DTO MappingVaccination_records_SentParent(Vaccination_records entity) {
+        Vaccination_records_SentParent_DTO dto = new Vaccination_records_SentParent_DTO();
+
+        dto.setNotes(entity.getNotes());
+        dto.setSymptoms(entity.getSymptoms());
+        dto.setSeverity(entity.getSeverity());
+        dto.setObservation_notes(entity.getObservation_notes());
+        dto.setObservation_time(entity.getObservation_time());
+        dto.setStatus(entity.getStatus());
+
+        if(entity.getNurse() != null) {
+            dto.setNurseID(entity.getNurse().getNurseID());
+        }
+
+        // Mapping Student
+        if (entity.getStudent() != null) {
+            dto.setStudentId(entity.getStudent().getStudentID());
+        }
+
+
+        if (entity.getVaccineBatches() != null) {
+            dto.setVaccineBatchId(entity.getVaccineBatches().getBatchID());
+        }
+
+        if (entity.getStudent() != null && entity.getStudent().getParent() != null) {
+            Parent parent = entity.getStudent().getParent();
+            dto.setParentName(parent.getFullName());
+            dto.setEmail(parent.getEmail());
+        }
+
+        return dto;
+    }
 
 
 

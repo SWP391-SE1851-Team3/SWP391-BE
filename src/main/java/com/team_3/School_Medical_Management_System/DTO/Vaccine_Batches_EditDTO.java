@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDateTime;

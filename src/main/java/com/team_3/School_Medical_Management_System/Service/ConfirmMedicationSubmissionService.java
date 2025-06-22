@@ -1,3 +1,4 @@
+
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
@@ -25,8 +26,6 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     private MedicationSubmissionInterFace medicationSubmissionInterFace;
     @Autowired
     private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionInterFace;
-    @Autowired
-    private com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository studentRepository;
 
     @Override
     public ConfirmMedicationSubmissionDTO createConfirmation(ConfirmMedicationSubmissionDTO confirmDTO) {
@@ -56,7 +55,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
 
             // Update the MedicationSubmission status
             Optional<MedicationSubmission> medicationSubmissionOpt =
-                medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
+                    medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
 
             if (medicationSubmissionOpt.isPresent()) {
                 ConfirmMedicationSubmission confirmMedicationSubmission = confirmationOpt.get();
@@ -129,7 +128,7 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     @Override
     public ConfirmMedicationSubmissionDTO getConfirmationBySubmissionId(int medicationSubmissionId) {
         Optional<ConfirmMedicationSubmission> confirmationOpt =
-            confirmRepository.findByMedicationSubmissionId(medicationSubmissionId);
+                confirmRepository.findByMedicationSubmissionId(medicationSubmissionId);
         return confirmationOpt.map(this::convertToDTO).orElse(null);
     }
 
@@ -149,20 +148,6 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ConfirmMedicationSubmissionDTO> getConfirmationsByStudentName(String studentName) {
-        // Tìm tất cả học sinh có tên giống hoặc gần giống
-        List<Integer> studentIds = studentRepository.findByFullNameContainingIgnoreCase(studentName)
-            .stream().map(s -> s.getStudentId()).collect(Collectors.toList());
-        if (studentIds.isEmpty()) return List.of();
-        // Tìm tất cả MedicationSubmission liên quan đến các studentId này
-        List<Integer> submissionIds = medicationSubmissionInterFace.findByStudentIdIn(studentIds)
-            .stream().map(ms -> ms.getMedicationSubmissionId()).collect(Collectors.toList());
-        if (submissionIds.isEmpty()) return List.of();
-        // Tìm tất cả ConfirmMedicationSubmission liên quan
-        List<ConfirmMedicationSubmission> confirmations = confirmRepository.findByMedicationSubmissionIdIn(submissionIds);
-        return confirmations.stream().map(this::convertToDTO).collect(Collectors.toList());
-    }
 
     private ConfirmMedicationSubmission convertToEntity(ConfirmMedicationSubmissionDTO dto) {
         ConfirmMedicationSubmission entity = new ConfirmMedicationSubmission();

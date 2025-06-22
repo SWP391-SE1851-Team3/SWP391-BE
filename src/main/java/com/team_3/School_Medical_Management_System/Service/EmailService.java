@@ -80,7 +80,7 @@ public class EmailService {
      */
     private String getCurrentUsername() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = "TuanFPT";
+        String name = "TRƯỜNG FPT";
         return  name;
     }
 
@@ -102,7 +102,7 @@ public class EmailService {
                         "    <meta charset=\"UTF-8\">" +
                         "    <style>" +
                         "        body { font-family: Arial, sans-serif; }" +
-                        "        .header { background-color: #d9534f; color: white; padding: 10px; text-align: center; }" +
+                        "        .header { background-color: #28a745; color: white; padding: 10px; text-align: center; }" +
                         "        .content { margin: 20px; line-height: 1.6; }" +
                         "        .footer { background-color: #f8f9fa; padding: 10px; font-size: smaller; }" +
                         "        .info { color: #6c757d; }" +
@@ -127,7 +127,6 @@ public class EmailService {
                 username
         );
     }
-
     /**
      * Chuyển đổi nội dung văn bản thành HTML
      */

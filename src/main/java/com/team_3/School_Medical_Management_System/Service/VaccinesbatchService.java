@@ -51,12 +51,21 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
         Vaccine_Batches entity = TransferModelsDTO.MappingVaccineBatchesDTO(dto);
         // Gọi cập nhật qua interface
         Vaccine_Batches updatedVaccine = vaccinesInterFace.UpdateVaccine_batch(entity);
-
         if (updatedVaccine != null) {
             return TransferModelsDTO.MappingVaccineBatches(updatedVaccine);
         }
-
         return null;
+    }
+
+    @Override
+    public Vaccine_BatchesDTO getVaccineByID(Integer vaccineID) {
+        var p = vaccinesInterFace.GetVaccineByVaccineId(vaccineID);
+        return TransferModelsDTO.MappingVaccines(p);
+    }
+
+    @Override
+    public boolean updateConsentFormStatus(int bacthId, String status) {
+        return vaccinesInterFace.updateConsentFormStatus(bacthId, status);
     }
 
 }

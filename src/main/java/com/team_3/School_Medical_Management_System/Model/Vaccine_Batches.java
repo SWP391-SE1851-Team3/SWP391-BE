@@ -6,9 +6,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
 @Getter
 @Setter
+@Table
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor

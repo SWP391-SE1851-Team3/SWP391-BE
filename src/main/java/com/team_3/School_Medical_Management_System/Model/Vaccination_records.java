@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Vaccination_records {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int VaccinationRecordID;
+    private Integer VaccinationRecordID;
     private String notes;
     @ManyToOne
     @JoinColumn(name = "BatchID")
