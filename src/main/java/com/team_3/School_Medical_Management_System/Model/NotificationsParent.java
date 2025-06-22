@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Table(name = "Notifications_Parent")
 @Getter
 @Setter
+
+
 public class NotificationsParent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

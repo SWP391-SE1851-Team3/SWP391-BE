@@ -16,17 +16,17 @@ public class Student {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int StudentID;
+    private Integer StudentID;
     private int Gender;
     @NotBlank(message = "FullName Not allow empty")
     private String FullName;
     @NotBlank(message = "ClassName Not allow empty")
     private String ClassName;
     private int IsActive;
-    private int ParentID;
-
+//    private int ParentID;
     @ManyToOne
-    @JoinColumn(name = "ParentID", insertable = false, updatable = false)
+    @JoinColumn(name = "ParentID")
     private Parent parent;
+
 }
 

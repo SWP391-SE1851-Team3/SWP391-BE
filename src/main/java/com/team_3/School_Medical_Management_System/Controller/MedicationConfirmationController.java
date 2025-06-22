@@ -1,9 +1,11 @@
+
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -18,45 +20,6 @@ public class MedicationConfirmationController {
 
     @Autowired
     private ConfirmMedicationSubmissionServiceInterface confirmService;
-
-    @PostMapping("/create")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> createConfirmation(@RequestBody ConfirmMedicationSubmissionDTO confirmDTO) {
-        ConfirmMedicationSubmissionDTO createdConfirmation = confirmService.createConfirmation(confirmDTO);
-        return new ResponseEntity<>(createdConfirmation, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{confirmId}/medication-taken")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> updateMedicationTaken(
-            @PathVariable int confirmId,
-            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus APPROVED) {
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, APPROVED);
-        if (updatedConfirmation != null) {
-            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping("/{confirmId}/status/rejected")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> rejectedConfirmationStatus(
-            @PathVariable int confirmId,
-            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus REJECTED) {
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, REJECTED);
-        if (updatedConfirmation != null) {
-            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping("/{confirmId}/status/administered")
-    public ResponseEntity<ConfirmMedicationSubmissionDTO> administeredConfirmationStatus(
-            @PathVariable int confirmId,
-            @RequestParam ConfirmMedicationSubmission.confirmMedicationSubmissionStatus ADMINISTERED) {
-        ConfirmMedicationSubmissionDTO updatedConfirmation = confirmService.updateConfirmationStatus(confirmId, ADMINISTERED);
-        if (updatedConfirmation != null) {
-            return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
     @GetMapping("/{confirmId}")
     public ResponseEntity<ConfirmMedicationSubmissionDTO> getConfirmationById(@PathVariable int confirmId) {
@@ -88,39 +51,66 @@ public class MedicationConfirmationController {
         return new ResponseEntity<>(confirmations, HttpStatus.OK);
     }
 
-    @GetMapping("/confirm-medication-dashboard")
-    public String medicationDashboard(Model model, @RequestParam(required = false) Integer nurseId) {
-        if (nurseId == null) {
-            // In a real app, get this from the session or authentication context
-            nurseId = 1; // Default for testing
+    @PutMapping("/{confirmId}/status")
+    public ResponseEntity<?> updateConfirmationStatus(
+            @PathVariable int confirmId,
+            @RequestBody(required = false) com.team_3.School_Medical_Management_System.DTO.StatusUpdateRequest request) {
+
+        // Validate status is provided for PUT
+        if (request == null || request.getStatus() == null) {
+            return new ResponseEntity<>("Status is required for updates", HttpStatus.BAD_REQUEST);
         }
 
-        // Get pending medication submissions
-        List<ConfirmMedicationSubmissionDTO> pedingConfirmations = confirmService.getAllConfirmations().stream()
-                .filter(c -> c.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.PENDING )
-                .collect(Collectors.toList());
-        model.addAttribute("pendingConfirmations", pedingConfirmations);
+        try {
+            // No validation for status value - accept any value provided by nurse
+            String status = request.getStatus();
 
-        //Get rejected confirmations
-        List<ConfirmMedicationSubmissionDTO> rejectedConfirmations = confirmService.getAllConfirmations().stream()
-                .filter(c -> c.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.REJECTED )
-                .collect(Collectors.toList());
-        model.addAttribute("rejectedConfirmations", rejectedConfirmations);
+            // Get optional reason, evidence, and nurseId if provided
+            String reason = request.getReason(); // Can be null
+            String evidence = request.getEvidence(); // Can be null
 
-        // Get approved confirmations
-        List<ConfirmMedicationSubmissionDTO> approvedConfirmations = confirmService.getAllConfirmations().stream()
-                .filter(c -> c.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.APPROVED )
-                .collect(Collectors.toList());
-        model.addAttribute("approvedConfirmations", approvedConfirmations);
+            Integer nurseId = null;
+            if (request.getNurseId() != null) {
+                nurseId = request.getNurseId();
+            }
 
-        // Get administered confirmations
-        List<ConfirmMedicationSubmissionDTO> administeredConfirmations = confirmService.getAllConfirmations().stream()
-                .filter(c -> c.getStatus() == ConfirmMedicationSubmission.confirmMedicationSubmissionStatus.ADMINISTERED )
-                .collect(Collectors.toList());
-        model.addAttribute("administeredConfirmations", administeredConfirmations);
+            // Get the existing confirmation data first
+            ConfirmMedicationSubmissionDTO existingConfirmation = confirmService.getConfirmationById(confirmId);
+            if (existingConfirmation == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
-        model.addAttribute("nurseId", nurseId);
+            // Only update fields that are provided in the request and are not empty strings
+            // If a field is empty string or null, keep the existing value
+            String finalStatus = (status != null && !status.isEmpty()) ? status : existingConfirmation.getStatus();
+            String finalReason = (reason != null && !reason.isEmpty()) ? reason : existingConfirmation.getReason();
+            String finalEvidence = (evidence != null && !evidence.isEmpty()) ? evidence : existingConfirmation.getEvidence();
 
-        return "medication-submission--confirmation";
+            // For nurseId, only update if a new value was explicitly provided
+            Integer finalNurseId = (nurseId != null) ? nurseId : existingConfirmation.getNurseId();
+
+            // Call service to update only the provided non-empty fields
+            ConfirmMedicationSubmissionDTO updatedConfirmation =
+                    confirmService.updateStatusAndNurse(confirmId, finalStatus, finalReason, finalNurseId, finalEvidence);
+
+            if (updatedConfirmation != null) {
+                return new ResponseEntity<>(updatedConfirmation, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            // Log the exception
+            System.err.println("Error updating confirmation status: " + ex.getMessage());
+
+            // Return a more descriptive error message
+            if (ex.getMessage() != null && ex.getMessage().contains("FOREIGN KEY constraint")) {
+                return new ResponseEntity<>("The provided nurse ID does not exist in the system", HttpStatus.BAD_REQUEST);
+            }
+
+            return new ResponseEntity<>("An error occurred while updating the status: " + ex.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
 }

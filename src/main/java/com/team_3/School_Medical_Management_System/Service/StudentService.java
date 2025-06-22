@@ -1,15 +1,17 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentHealthProfileServiceInterFace;
+import com.team_3.School_Medical_Management_System.DTO.StudentsDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class StudentService implements StudentServiceInterFace {
     private StudentInterFace studentInterFace;
+   @Autowired
+   private StudentRepository studentRepository;
 
     @Autowired
    public StudentService(StudentInterFace studentInterFace) {
@@ -84,5 +88,27 @@ public class StudentService implements StudentServiceInterFace {
         return students.stream()
                 .map(TransferModelsDTO::MappingStudent)
                 .collect(Collectors.toList()); // ✅ Trả về tất cả học sinh đã mapping
+    }
+
+    @Override
+    public List<StudentsDTO> getAllStudentsByClassName(String className) {
+
+        List<Student> clasName = studentRepository.findAll();
+        List<StudentsDTO> sameClassName = new ArrayList<>();
+        for (Student m : clasName) {
+            if(m.getClassName().equalsIgnoreCase(className)){
+                StudentsDTO studentsDTO = new StudentsDTO();
+                studentsDTO.setStudentID(m.getStudentID());
+
+                studentsDTO.setGender(m.getGender());
+                studentsDTO.setFullName(m.getFullName());
+                studentsDTO.setClassName(m.getClassName());
+                studentsDTO.setIsActive(m.getIsActive());
+                studentsDTO.setParentID(m.getParent().getParentID());
+                sameClassName.add(studentsDTO);
+            }
+        }
+
+        return sameClassName;
     }
 }

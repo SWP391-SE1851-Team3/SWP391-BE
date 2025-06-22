@@ -21,7 +21,7 @@ public class SchoolNurse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    private int NurseID;
+    private Integer NurseID;
     @NotBlank(message = "UserName Not allow empty")
     private String UserName;
     @NotBlank(message = "Password Not allow empty")
@@ -39,8 +39,6 @@ public class SchoolNurse {
     private String Certification;
     @NotBlank(message = "Specialisation Not allow empty")
     private String Specialisation;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleID", insertable = false, updatable = false)
-    private Role role;
+
 
 }

@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,9 +8,10 @@ import lombok.ToString;
 
 @ToString
 @Entity
-@Table
+@Table(name = "MedicationDetail")
 @Setter
 @Getter
+
 public class MedicationDetail {
 
 
@@ -18,10 +20,10 @@ public class MedicationDetail {
     private int medicationDetailId;
     @ManyToOne
     @JoinColumn(name = "medicationSubmissionId")
+    @JsonBackReference
     private MedicationSubmission medicationSubmission;
-
-    private String medicationName;
+    private String medicineName;
     private String dosage;
-    private String timesToUse;
-    private String notes;
+    private String timeToUse;
+    private String note;
 }

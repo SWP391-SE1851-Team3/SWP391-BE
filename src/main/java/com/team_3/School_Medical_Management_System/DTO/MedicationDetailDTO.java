@@ -13,13 +13,13 @@ import lombok.Setter;
 public class MedicationDetailDTO {
     private int medicationDetailId;
     @NotBlank(message = "Medication name cannot be empty")
-    private String medicationName;
+    private String medicineName;
 
     @NotBlank(message = "Dosage cannot be empty")
     private String dosage;
 
     @NotBlank(message = "Times to use cannot be empty")
-    private String timesToUse;
+    private String timeToUse;
 
-    private String notes;
+    private String note;
 }

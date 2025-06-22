@@ -1,8 +1,13 @@
 package com.team_3.School_Medical_Management_System.Service;
 
+import com.team_3.School_Medical_Management_System.DTO.UserDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.RoleRepo;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseRepository;
+import com.team_3.School_Medical_Management_System.Model.Role;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
+import com.team_3.School_Medical_Management_System.Repositories.SchoolNurseRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,9 +18,10 @@ import java.util.List;
 @Transactional
 
 public class SchoolNurseService implements SchoolNurseServiceInterFace {
-
+   @Autowired
+   private RoleRepo roleRepo;
     private SchoolNurseInterFace schoolNurseInterFace;
-
+ private SchoolNurseRepo schoolNurseRepo;
     @Autowired
     public SchoolNurseService(SchoolNurseInterFace schoolNurseInterFace) {
         this.schoolNurseInterFace = schoolNurseInterFace;
@@ -112,5 +118,14 @@ public class SchoolNurseService implements SchoolNurseServiceInterFace {
             return p;
         }
     }
+
+    @Override
+    public String getNurseNameById(int id) {
+        SchoolNurse nurse = GetSchoolNursesById(id);
+        return nurse != null ? nurse.getFullName() : null;
+    }
+
+
+
 
 }

@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
-
 @NoArgsConstructor
 @ToString
 @Entity
@@ -18,8 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Parent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private int ParentID;
+    private Integer ParentID;
     @NotBlank(message = "UserName Not allow empty")
     private String UserName;
     @NotBlank(message = "Password Not allow empty")
@@ -36,14 +32,4 @@ public class Parent {
     private String Occupation;
     @NotBlank(message = "Relationship Not allow empty")
     private String Relationship;
-
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleID", insertable = false, updatable = false)
-    private Role role;
-
-
-
-
 }
