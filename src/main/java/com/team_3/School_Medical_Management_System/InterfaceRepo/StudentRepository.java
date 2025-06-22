@@ -10,13 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 
-@Repository
-public interface StudentRepository extends JpaRepository<Student, Integer> {
-//    List<Student> findByFullNameContainingIgnoreCase(String fullName);
+import java.util.Collection;
+import java.util.List;
 
-//    @Query("SELECT s FROM Student s WHERE s.parent.ParentID = :parentId")
-//    List<Student> findByParentId(@Param("parentId") int parentId);
+public interface StudentRepository extends JpaRepository<Student, Integer> {
 
 
 }
-

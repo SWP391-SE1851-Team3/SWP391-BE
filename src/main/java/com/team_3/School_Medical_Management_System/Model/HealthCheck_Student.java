@@ -23,5 +23,10 @@ public class HealthCheck_Student {
     private String visionRight;
     private String hearing;
     private String dentalCheck;
+    private float temperature;
+    private float bmi;
 
+    @ManyToOne
+    @JoinColumn(name = "health_ScheduleID")
+    private HealthCheck_Schedule healthCheckSchedule;
 }
