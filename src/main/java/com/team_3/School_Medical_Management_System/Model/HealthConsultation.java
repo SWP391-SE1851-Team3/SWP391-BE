@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.util.Date;
 
 @NoArgsConstructor
 @ToString
@@ -12,20 +13,22 @@ import lombok.ToString;
 @Table
 @Setter
 @Getter
-public class HealthConsentForm {
+public class HealthConsultation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int formID;
+    private int consultationID;
 
     @ManyToOne
     @JoinColumn(name = "studentID")
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "health_ScheduleID")
-    private HealthCheck_Schedule healthCheckSchedule;
+    @JoinColumn(name = "checkID")
+    private HealthCheck_Student healthCheckStudent;
 
-    private Boolean isAgreed;
+    private String issue;
+    private String recommendation;
+    private Date scheduledDate;
+    private boolean status; // false = pending, true = completed
     private String notes;
-    private Boolean isProcessed;
 }
