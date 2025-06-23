@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -68,10 +69,9 @@ public class StudentRepo implements StudentInterFace {
         return students;
     }
 
-
-
-
-
-
-
+    @Override
+    public Optional<Student> findById(int studentId) {
+        Student student = entityManager.find(Student.class, studentId);
+        return Optional.ofNullable(student);
+    }
 }
