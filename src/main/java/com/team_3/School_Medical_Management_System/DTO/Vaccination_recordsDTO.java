@@ -18,11 +18,14 @@ public class Vaccination_recordsDTO {
     private String symptoms;
     private String severity;
     private String observation_notes;
-    private Integer NurseID;
+    private Integer EditNurseID;
     private Integer BatchID;
     private String VaccineName;
-    private String nurse_name;
     private String status;
     private String  className;
+    private String EditNurseName;
+    private Integer CreateNurseID;
+    private String CreateNurseName;
+
 }
 

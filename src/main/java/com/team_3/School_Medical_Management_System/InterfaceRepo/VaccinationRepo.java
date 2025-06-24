@@ -16,7 +16,8 @@ public interface VaccinationRepo extends JpaRepository<Vaccination_records, Inte
             "student",
             "student.parent",
             "vaccineBatches.vaccineType",
-            "Nurse"  // Với chữ N hoa
+            "createdByNurse",         // ✅ sửa đúng tên field
+            "updatedByNurse"          // ✅ nếu bạn muốn luôn fetch cả người cập nhật
     })
     @Query("SELECT v FROM Vaccination_records v WHERE v.VaccinationRecordID = :id")
     Optional<Vaccination_records> findFullRecordById(@Param("id") Integer id);

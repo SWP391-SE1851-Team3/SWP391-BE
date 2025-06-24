@@ -21,9 +21,11 @@ public class Vaccination_records_SentParent_DTO {
     private String observation_notes;
     private LocalDateTime observation_time;
     private String status;
-    private Integer NurseID;
+    private Integer CreateNurseID;
     private String className;
-    private String NurseName;
+    private String CreateNurseName;
+    private String editNurseName;
+    private Integer editnurseID;
 
     // Trả về cho phụ huynh
     private Integer parentID;

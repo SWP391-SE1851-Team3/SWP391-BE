@@ -33,11 +33,15 @@ public class Vaccination_records {
     private String severity;
     private String observation_notes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "NurseID")
-    private SchoolNurse Nurse; // có thể rename thành editNurse cho rõ ràng
+    @ManyToOne
+    @JoinColumn(name = "CreatedByNurseID")
+    private SchoolNurse createdByNurse;
 
-    ;
+    @ManyToOne
+    @JoinColumn(name = "UpdatedByNurseID")
+    private SchoolNurse updatedByNurse;
+
+
 
     private String status;
 }

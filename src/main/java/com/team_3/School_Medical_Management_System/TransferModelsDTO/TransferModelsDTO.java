@@ -21,7 +21,17 @@ public class TransferModelsDTO {
     public static Vaccine_BatchesDTO MappingVaccines(com.team_3.School_Medical_Management_System.Model.Vaccine_Batches vaccines) {
         Vaccine_BatchesDTO vaccinesDTO = new Vaccine_BatchesDTO();
         vaccinesDTO.setDot(vaccines.getDot());
-        vaccinesDTO.setNurse_id(vaccines.getNurse().getNurseID());
+        // Created
+        vaccinesDTO.setCreated_by_nurse_id(vaccines.getCreatedByNurse() != null ? vaccines.getCreatedByNurse().getNurseID() : null);
+        vaccinesDTO.setCreated_by_nurse_name(vaccines.getCreatedByNurse() != null ? vaccines.getCreatedByNurse().getFullName() : null);
+        // Updated
+        if (vaccines.getUpdatedByNurse() != null) {
+            vaccinesDTO.setEdit_nurse_id(vaccines.getUpdatedByNurse().getNurseID());
+            vaccinesDTO.setEdit_nurse_name(vaccines.getUpdatedByNurse().getFullName());
+        } else {
+            vaccinesDTO.setEdit_nurse_id(null);
+            vaccinesDTO.setEdit_nurse_name(null);
+        }
         vaccinesDTO.setLocation(vaccines.getLocation());
         vaccinesDTO.setStatus(vaccines.getStatus());
         vaccinesDTO.setNotes(vaccines.getNotes());
@@ -30,17 +40,41 @@ public class TransferModelsDTO {
         vaccinesDTO.setVaccineTypeID(vaccines.getVaccineType().getVaccineTypeID());
         vaccinesDTO.setCreated_at(vaccines.getCreated_at());
         vaccinesDTO.setUpdated_at(vaccines.getUpdated_at());
-        vaccinesDTO.setNurse_name(vaccines.getNurse().getFullName());
         vaccinesDTO.setBatchID(vaccines.getBatchID());
+
         return vaccinesDTO;
     }
 
 
     public static Vaccine_Batches MappingVaccineDTO(Vaccine_BatchesDTO vaccinesDTO) {
         Vaccine_Batches vaccines = new com.team_3.School_Medical_Management_System.Model.Vaccine_Batches();
+
+        // Map loại vaccine
         Vaccine_Types vaccineType = new Vaccine_Types();
         vaccineType.setVaccineTypeID(vaccinesDTO.getVaccineTypeID());
         vaccines.setVaccineType(vaccineType);
+
+        // Map CreatedByNurse
+        if (vaccinesDTO.getCreated_by_nurse_id() != null) {
+            SchoolNurse createdByNurse = new SchoolNurse();
+            createdByNurse.setNurseID(vaccinesDTO.getCreated_by_nurse_id());
+            createdByNurse.setFullName(vaccinesDTO.getCreated_by_nurse_name()); // nếu DTO có tên, gán luôn
+            vaccines.setCreatedByNurse(createdByNurse);
+        } else {
+            vaccines.setCreatedByNurse(null);
+        }
+
+        // Map UpdatedByNurse (Edit Nurse)
+        if (vaccinesDTO.getEdit_nurse_id() != null) {
+            SchoolNurse updatedByNurse = new SchoolNurse();
+            updatedByNurse.setNurseID(vaccinesDTO.getEdit_nurse_id());
+            updatedByNurse.setFullName(vaccinesDTO.getEdit_nurse_name()); // nếu DTO có tên, gán luôn
+            vaccines.setUpdatedByNurse(updatedByNurse);
+        } else {
+            vaccines.setUpdatedByNurse(null);
+        }
+
+        // Các thuộc tính còn lại
         vaccines.setCreated_at(vaccinesDTO.getCreated_at());
         vaccines.setUpdated_at(vaccinesDTO.getUpdated_at());
         vaccines.setDot(vaccinesDTO.getDot());
@@ -49,18 +83,10 @@ public class TransferModelsDTO {
         vaccines.setLocation(vaccinesDTO.getLocation());
         vaccines.setStatus(vaccinesDTO.getStatus());
         vaccines.setNotes(vaccinesDTO.getNotes());
-        SchoolNurse nurse = new SchoolNurse();
-        nurse.setNurseID(vaccinesDTO.getNurse_id());
-        nurse.setFullName(vaccinesDTO.getNurse_name());// <- Gán ID duy nhất
-        vaccines.setNurse(nurse);
-        vaccines.setScheduled_date(vaccinesDTO.getScheduled_date());
-        vaccines.setQuantity_received(vaccinesDTO.getQuantity_received());
         vaccines.setBatchID(vaccinesDTO.getBatchID());
-
 
         return vaccines;
     }
-
     public static Consent_formsDTO MappingConsent(Consent_forms consent_forms) {
         Consent_formsDTO consent_formsDTO = new Consent_formsDTO();
         consent_formsDTO.setStudentId(consent_forms.getStudent().getStudentID());
@@ -117,8 +143,9 @@ public class TransferModelsDTO {
     public static Vaccination_recordsDTO MappingVaccinationRecords(Vaccination_records vaccination_records) {
         Vaccination_recordsDTO dto = new Vaccination_recordsDTO();
 
-        if (vaccination_records.getVaccineBatches() != null
-                && vaccination_records.getVaccineBatches().getVaccineType() != null) {
+        // Vaccine info
+        if (vaccination_records.getVaccineBatches() != null &&
+                vaccination_records.getVaccineBatches().getVaccineType() != null) {
             dto.setVaccineName(vaccination_records.getVaccineBatches().getVaccineType().getName());
             dto.setBatchID(vaccination_records.getVaccineBatches().getBatchID());
         } else {
@@ -126,14 +153,18 @@ public class TransferModelsDTO {
             dto.setBatchID(null);
         }
 
+        // Student info
         if (vaccination_records.getStudent() != null) {
             dto.setStudentName(vaccination_records.getStudent().getFullName());
             dto.setStudentID(vaccination_records.getStudent().getStudentID());
+            dto.setClassName(vaccination_records.getStudent().getClassName());
         } else {
             dto.setStudentName(null);
             dto.setStudentID(null);
+            dto.setClassName(null);
         }
 
+        // Basic info
         dto.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
         dto.setSeverity(vaccination_records.getSeverity());
         dto.setObservation_notes(vaccination_records.getObservation_notes());
@@ -141,14 +172,22 @@ public class TransferModelsDTO {
         dto.setSymptoms(vaccination_records.getSymptoms());
         dto.setNotes(vaccination_records.getNotes());
         dto.setStatus(vaccination_records.getStatus());
-        dto.setClassName(vaccination_records.getStudent().getClassName());
 
-        if (vaccination_records.getNurse() != null) {
-            dto.setNurseID(vaccination_records.getNurse().getNurseID());
-            dto.setNurse_name(vaccination_records.getNurse().getFullName());
+        // Nurse info - mapping riêng từng trường
+        if (vaccination_records.getCreatedByNurse() != null) {
+            dto.setCreateNurseID(vaccination_records.getCreatedByNurse().getNurseID());
+            dto.setCreateNurseName(vaccination_records.getCreatedByNurse().getFullName());
         } else {
-            dto.setNurseID(null);
-            dto.setNurse_name(null);
+            dto.setCreateNurseID(null);
+            dto.setCreateNurseName(null);
+        }
+
+        if (vaccination_records.getUpdatedByNurse() != null) {
+            dto.setEditNurseID(vaccination_records.getUpdatedByNurse().getNurseID());
+            dto.setEditNurseName(vaccination_records.getUpdatedByNurse().getFullName());
+        } else {
+            dto.setEditNurseID(null);
+            dto.setEditNurseName(null);
         }
 
         return dto;
@@ -172,9 +211,9 @@ public class TransferModelsDTO {
         entity.setVaccineBatches(batch);
         // Map nurse
         SchoolNurse nurse = new SchoolNurse();
-        nurse.setNurseID(dto.getNurseID());
-        nurse.setFullName(dto.getNurse_name());
-        entity.setNurse(nurse);
+        nurse.setNurseID(dto.getCreateNurseID());
+        nurse.setFullName(dto.getCreateNurseName());
+        entity.setCreatedByNurse(nurse);
         entity.setNotes(dto.getNotes());
         entity.setStatus(dto.getStatus());
         return entity;
@@ -207,9 +246,14 @@ public class TransferModelsDTO {
     public static Vaccine_Batches_EditDTO MappingVaccineBatches(Vaccine_Batches vaccineBatches) {
         Vaccine_Batches_EditDTO entity = new Vaccine_Batches_EditDTO();
 
-        // Dữ liệu tạo bởi
-        entity.setCreated_by_nurse_id(vaccineBatches.getNurse().getNurseID());
-        entity.setCreated_by_nurse_name(vaccineBatches.getNurse().getFullName());
+        // Dữ liệu tạo bởi (CreatedByNurse)
+        if (vaccineBatches.getCreatedByNurse() != null) {
+            entity.setCreated_by_nurse_id(vaccineBatches.getCreatedByNurse().getNurseID());
+            entity.setCreated_by_nurse_name(vaccineBatches.getCreatedByNurse().getFullName());
+        } else {
+            entity.setCreated_by_nurse_id(null);
+            entity.setCreated_by_nurse_name(null);
+        }
 
         // Các trường chính
         entity.setCreated_at(vaccineBatches.getCreated_at());
@@ -221,26 +265,49 @@ public class TransferModelsDTO {
         entity.setScheduled_date(vaccineBatches.getScheduled_date());
         entity.setQuantity_received(vaccineBatches.getQuantity_received());
 
-        // Các ID liên quan
-        entity.setVaccineTypeID(vaccineBatches.getVaccineType().getVaccineTypeID());
+        // VaccineType
+        if (vaccineBatches.getVaccineType() != null) {
+            entity.setVaccineTypeID(vaccineBatches.getVaccineType().getVaccineTypeID());
+        } else {
+            entity.setVaccineTypeID(null);
+        }
+
         entity.setBatchID(vaccineBatches.getBatchID());
 
-        // Dữ liệu sửa gần nhất
-        entity.setEdit_nurse_id(vaccineBatches.getNurse().getNurseID());
-        entity.setEdit_nurse_name(vaccineBatches.getNurse().getFullName());
+        // Dữ liệu sửa gần nhất (UpdatedByNurse)
+        if (vaccineBatches.getUpdatedByNurse() != null) {
+            entity.setEdit_nurse_id(vaccineBatches.getUpdatedByNurse().getNurseID());
+            entity.setEdit_nurse_name(vaccineBatches.getUpdatedByNurse().getFullName());
+        } else {
+            entity.setEdit_nurse_id(null);
+            entity.setEdit_nurse_name(null);
+        }
 
         return entity;
     }
 
-
     public static Vaccine_Batches MappingVaccineBatchesDTO(Vaccine_Batches_EditDTO dto) {
         Vaccine_Batches entity = new Vaccine_Batches();
 
-        // Dữ liệu tạo bởi
-        SchoolNurse createdNurse = new SchoolNurse();
-        createdNurse.setNurseID(dto.getCreated_by_nurse_id());
-        createdNurse.setFullName(dto.getCreated_by_nurse_name());
-        entity.setNurse(createdNurse);
+        // Dữ liệu tạo bởi (CreatedByNurse)
+        if (dto.getCreated_by_nurse_id() != null) {
+            SchoolNurse createdNurse = new SchoolNurse();
+            createdNurse.setNurseID(dto.getCreated_by_nurse_id());
+            createdNurse.setFullName(dto.getCreated_by_nurse_name());
+            entity.setCreatedByNurse(createdNurse);
+        } else {
+            entity.setCreatedByNurse(null);
+        }
+
+        // Người chỉnh sửa cuối (UpdatedByNurse/EditNurse)
+        if (dto.getEdit_nurse_id() != null) {
+            SchoolNurse editNurse = new SchoolNurse();
+            editNurse.setNurseID(dto.getEdit_nurse_id());
+            editNurse.setFullName(dto.getEdit_nurse_name());
+            entity.setUpdatedByNurse(editNurse);
+        } else {
+            entity.setUpdatedByNurse(null);
+        }
 
         // Các trường chính
         entity.setCreated_at(dto.getCreated_at());
@@ -251,16 +318,16 @@ public class TransferModelsDTO {
         entity.setNotes(dto.getNotes());
         entity.setScheduled_date(dto.getScheduled_date());
         entity.setQuantity_received(dto.getQuantity_received());
-
-        // Các ID liên quan
-        Vaccine_Types vaccineType = new Vaccine_Types();
-        vaccineType.setVaccineTypeID(dto.getVaccineTypeID());
-        entity.setVaccineType(vaccineType);
         entity.setBatchID(dto.getBatchID());
-        SchoolNurse editNurse = new SchoolNurse();
-        editNurse.setNurseID(dto.getEdit_nurse_id());
-        editNurse.setFullName(dto.getEdit_nurse_name());
-        entity.setNurse(editNurse); // giả định có field editNurse
+
+        // Vaccine type
+        if (dto.getVaccineTypeID() != null) {
+            Vaccine_Types vaccineType = new Vaccine_Types();
+            vaccineType.setVaccineTypeID(dto.getVaccineTypeID());
+            entity.setVaccineType(vaccineType);
+        } else {
+            entity.setVaccineType(null);
+        }
 
         return entity;
     }
@@ -276,9 +343,9 @@ public class TransferModelsDTO {
         editDTO.setObservation_notes(vaccinationRecords.getObservation_notes());
 
         // Thông tin điều dưỡng sửa
-        if (vaccinationRecords.getNurse() != null) {
-            editDTO.setEdit_Nurse_id(vaccinationRecords.getNurse().getNurseID());
-            editDTO.setEdit_nurse_name(vaccinationRecords.getNurse().getFullName());
+        if (vaccinationRecords.getUpdatedByNurse() != null) {
+            editDTO.setEdit_Nurse_id(vaccinationRecords.getUpdatedByNurse().getNurseID());
+            editDTO.setEdit_nurse_name(vaccinationRecords.getUpdatedByNurse().getFullName());
         }
 
         // Thông tin lô vắc-xin
@@ -289,9 +356,9 @@ public class TransferModelsDTO {
         editDTO.setStatus(vaccinationRecords.getStatus());
 
         // Điều dưỡng tạo
-        if (vaccinationRecords.getNurse() != null) {
-            editDTO.setCreated_by_nurse_id(vaccinationRecords.getNurse().getNurseID());
-            editDTO.setCreated_by_nurse_name(vaccinationRecords.getNurse().getFullName()); // giả sử có getFullName()
+        if (vaccinationRecords.getCreatedByNurse() != null) {
+            editDTO.setCreated_by_nurse_id(vaccinationRecords.getCreatedByNurse().getNurseID());
+            editDTO.setCreated_by_nurse_name(vaccinationRecords.getCreatedByNurse().getFullName()); // giả sử có getFullName()
         }
 
         return editDTO;
@@ -321,7 +388,7 @@ public class TransferModelsDTO {
             SchoolNurse editNurse = new SchoolNurse();
             editNurse.setNurseID(dto.getEdit_Nurse_id());
             editNurse.setFullName(dto.getEdit_nurse_name());
-            record.setNurse(editNurse);
+            record.setUpdatedByNurse(editNurse);
         }
 
         // Điều dưỡng tạo
@@ -329,7 +396,7 @@ public class TransferModelsDTO {
             SchoolNurse creator = new SchoolNurse();
             creator.setNurseID(dto.getCreated_by_nurse_id());
             creator.setFullName(dto.getCreated_by_nurse_name());
-            record.setNurse(creator);
+            record.setCreatedByNurse(creator);
         }
 
         // Lô vaccine
@@ -410,10 +477,14 @@ public class TransferModelsDTO {
         }
 
         // Nurse mapping
-        if (entity.getNurse() != null) {
-            SchoolNurse editNurse = new SchoolNurse();
-            editNurse.setNurseID(entity.getNurse().getNurseID());
-            editNurse.setUserName(entity.getNurse().getUserName());
+        if (entity.getCreatedByNurse() != null) {
+            dto.setCreateNurseID(entity.getCreatedByNurse().getNurseID());
+            dto.setCreateNurseName(entity.getCreatedByNurse().getFullName());
+        }
+
+        if(entity.getUpdatedByNurse() != null) {
+            dto.setEditnurseID(entity.getUpdatedByNurse().getNurseID());
+            dto.setEditNurseName(entity.getUpdatedByNurse().getFullName());
         }
 
         // Vaccine batch & type mapping
@@ -429,12 +500,9 @@ public class TransferModelsDTO {
     }
 
     public static Vaccination_records_SentParent_Edit_DTO MappingVaccination_records_SentParent_Edit(
-            Vaccination_records record,
-            Integer createNurseID,
-            String createNurseName
+            Vaccination_records record
     ) {
         Vaccination_records_SentParent_Edit_DTO dto = new Vaccination_records_SentParent_Edit_DTO();
-
         dto.setNotes(record.getNotes());
         dto.setSymptoms(record.getSymptoms());
         dto.setSeverity(record.getSeverity());
@@ -455,15 +523,22 @@ public class TransferModelsDTO {
         }
 
         // Người chỉnh sửa hiện tại (edit nurse)
-        if (record.getNurse() != null) {
-            dto.setEditNurseID(record.getNurse().getNurseID());
-            dto.setEditNurseName(record.getNurse().getFullName());
+        if (record.getUpdatedByNurse() != null) {
+            dto.setEditNurseID(record.getUpdatedByNurse().getNurseID());
+            dto.setEditNurseName(record.getUpdatedByNurse().getFullName());
+        }else {
+            dto.setEditNurseID(null);
+            dto.setEditNurseName(null);
+
         }
+        if(record.getCreatedByNurse() != null) {
 
-        // Người tạo lúc đầu (create nurse) – được truyền từ nơi khác
-        dto.setCreateNurseID(createNurseID);
-        dto.setCreateNurseName(createNurseName);
-
+            dto.setCreateNurseID(record.getCreatedByNurse().getNurseID());
+            dto.setCreateNurseName(record.getCreatedByNurse().getFullName());
+        }else {
+            dto.setCreateNurseID(null);
+            dto.setCreateNurseName(null);
+        }
         if (record.getVaccineBatches() != null) {
             dto.setVaccineBatchId(record.getVaccineBatches().getBatchID());
 
@@ -476,7 +551,6 @@ public class TransferModelsDTO {
     }
 
 
-
     public static Post_vaccination_observationsDTO MappingVaccination_observations(Post_vaccination_observations entity) {
         Post_vaccination_observationsDTO postDTO = new Post_vaccination_observationsDTO();
         postDTO.setNotes(entity.getNotes());
@@ -486,11 +560,24 @@ public class TransferModelsDTO {
         postDTO.setObservation_time(entity.getObservation_time());
         postDTO.setStudentName(entity.getVaccination_records().getStudent().getFullName());
         postDTO.setVaccinationName(entity.getVaccination_records().getVaccineBatches().getVaccineType().getName());
-        postDTO.setNurseName(entity.getVaccination_records().getNurse().getFullName());
         postDTO.setStatus(entity.getStatus());
-        if (entity.getNurse() != null) {
-            postDTO.setNurseID(entity.getNurse().getNurseID());
+        if (entity.getCreatedByNurse()!= null) {
+            postDTO.setCreateNurseId(entity.getVaccination_records().getCreatedByNurse().getNurseID());
+            postDTO.setCreateNurseName(entity.getVaccination_records().getCreatedByNurse().getFullName());
+        }else {
+            postDTO.setCreateNurseId(null);
+            postDTO.setCreateNurseName(null);
         }
+
+        if(entity.getUpdatedByNurse()!= null) {
+            postDTO.setEditNurseID(entity.getUpdatedByNurse().getNurseID());
+            postDTO.setEditNurseName(entity.getUpdatedByNurse().getFullName());
+        }else {
+            postDTO.setEditNurseID(null);
+            postDTO.setEditNurseName(null);
+        }
+
+
         postDTO.setVaccinationRecordID(entity.getVaccination_records().getVaccinationRecordID());
         postDTO.setVaccinationName(entity.getVaccination_records().getVaccineBatches().getVaccineType().getName());
         postDTO.setVaccinationID(entity.getVaccination_records().getVaccineBatches().getBatchID());
@@ -498,6 +585,7 @@ public class TransferModelsDTO {
         postDTO.setStudentID(entity.getVaccination_records().getStudent().getStudentID());
         postDTO.setParentID(entity.getVaccination_records().getStudent().getParent().getParentID());
         postDTO.setClassName(entity.getVaccination_records().getStudent().getClassName());
+
         return postDTO;
     }
 
@@ -509,11 +597,7 @@ public class TransferModelsDTO {
 //        postDTO.setObservation_id(dto.getObservation_id());
         postDTO.setObservation_time(dto.getObservation_time());
         postDTO.setStatus(dto.getStatus());
-        if (dto.getNurseID() != null) {
-            SchoolNurse schoolNurse = new SchoolNurse();
-            schoolNurse.setNurseID(dto.getNurseID());
-            postDTO.setNurse(schoolNurse);
-        }
+
         if (dto.getObservation_id() != null) {
             postDTO.setObservation_id(dto.getObservation_id());
         }
@@ -537,11 +621,15 @@ public class TransferModelsDTO {
         if (entity.getVaccination_records() != null) {
             dto.setVaccinationRecordID(entity.getVaccination_records().getVaccinationRecordID());
         }
-        if (entity.getNurse() != null) {
-            dto.setEditNurseID(entity.getNurse().getNurseID());
-            dto.setEditNurseName(entity.getNurse().getFullName());
-            dto.setCreateNurseID(entity.getNurse().getNurseID());
-            dto.setCreateNurseName(entity.getNurse().getFullName());
+        if (entity.getUpdatedByNurse() != null) {
+            dto.setEditNurseID(entity.getUpdatedByNurse().getNurseID());
+            dto.setEditNurseName(entity.getUpdatedByNurse().getFullName());
+
+        }
+
+        if(entity.getCreatedByNurse()!= null) {
+            dto.setCreateNurseID(entity.getCreatedByNurse().getNurseID());
+            dto.setCreateNurseName(entity.getCreatedByNurse().getFullName());
         }
         return dto;
     }
@@ -563,12 +651,10 @@ public class TransferModelsDTO {
         if (editDTO.getEditNurseID() != null) {
             SchoolNurse nurse = new SchoolNurse();
             nurse.setNurseID(editDTO.getEditNurseID());
-            entity.setNurse(nurse);
+            entity.setUpdatedByNurse(nurse);
         }
         return entity;
     }
-
-
 
 
     public static Post_vaccination_observations_SendForParent_DTO MappingPost_vaccination_observations_SendForParent_DTO(Post_vaccination_observations entity) {
@@ -582,16 +668,11 @@ public class TransferModelsDTO {
         dto.setStatus(entity.getStatus());
 
 
-        // 2. Người ghi nhận phản ứng
-        if (entity.getNurse() != null) {
-            dto.setNurseID(entity.getNurse().getNurseID());
-        }
 
         // 3. Từ Vaccination Record
         Vaccination_records vr = entity.getVaccination_records();
         if (vr != null) {
             dto.setVaccinationRecordID(vr.getVaccinationRecordID());
-
 
 
             // Lấy vaccine info
@@ -603,72 +684,19 @@ public class TransferModelsDTO {
             }
 
             // Người tạo hồ sơ tiêm chủng
-            if (vr.getNurse() != null) {
-                dto.setNurseName(vr.getNurse().getFullName());
+            if (vr.getCreatedByNurse() != null) {
+                dto.setCreateNurseName(vr.getCreatedByNurse().getFullName());
+                dto.setCreateNurseID(vr.getCreatedByNurse().getNurseID());
+            }else {
+                dto.setCreateNurseID(null);
+                dto.setCreateNurseName(null);
             }
-
-            // Student + Parent
-            Student student = vr.getStudent();
-            if (student != null) {
-                dto.setStudentID(student.getStudentID());
-                dto.setStudentName(student.getFullName());
-                dto.setClassName(student.getClassName());
-
-                Parent parent = student.getParent();
-                if (parent != null) {
-                    dto.setParentID(parent.getParentID());
-                    dto.setEmail(parent.getEmail());
-                } else {
-                    dto.setEmail("Không có email phụ huynh");
-                }
-            } else {
-                dto.setStudentName("Không có học sinh");
-            }
-        } else  {
-            dto.setVaccitypeName("Không có hồ sơ tiêm chủng");
-        }
-
-        return dto;
-    }
-
-
-
-
-    public static Post_vaccination_observations_edit_Update_SendParent_DTO Post_vaccination_observations_edit_Update_SendParent_DTO(
-            Post_vaccination_observations entity, Integer createByNurseID, String createByNurseName ) {
-        Post_vaccination_observations_edit_Update_SendParent_DTO dto = new Post_vaccination_observations_edit_Update_SendParent_DTO();
-
-        // 1. Basic fields
-        dto.setObservation_time(entity.getObservation_time());
-        dto.setSymptoms(entity.getSymptoms());
-        dto.setSeverity(entity.getSeverity());
-        dto.setNotes(entity.getNotes());
-        dto.setStatus(entity.getStatus());
-
-
-        // 2. Người ghi nhận phản ứng
-        if (entity.getNurse() != null) {
-            dto.setCreateNurseID(entity.getNurse().getNurseID());
-        }
-
-
-        // 3. Từ Vaccination Record
-        Vaccination_records vr = entity.getVaccination_records();
-        if (vr != null) {
-            dto.setVaccinationRecordID(vr.getVaccinationRecordID());
-
-            // Lấy vaccine info
-            if (vr.getVaccineBatches() != null && vr.getVaccineBatches().getVaccineType() != null) {
-                dto.setVaccitypeID(vr.getVaccineBatches().getVaccineType().getVaccineTypeID());
-                dto.setVaccitypeName(vr.getVaccineBatches().getVaccineType().getName());
-            } else {
-                dto.setVaccitypeName("Không rõ loại vắc xin");
-            }
-
-            // Người tạo hồ sơ tiêm chủng
-            if (vr.getNurse() != null) {
-                dto.setEditNurseID(vr.getNurse().getNurseID());
-                dto.setEditNurseName(vr.getNurse().getFullName());
+            if (vr.getUpdatedByNurse() != null) {
+                dto.setEditNurseName(vr.getUpdatedByNurse().getFullName());
+                dto.setEditNurseID(vr.getUpdatedByNurse().getNurseID());
+            }else {
+                dto.setEditNurseID(null);
+                dto.setEditNurseName(null);
             }
 
             // Student + Parent
@@ -691,8 +719,77 @@ public class TransferModelsDTO {
         } else {
             dto.setVaccitypeName("Không có hồ sơ tiêm chủng");
         }
-        dto.setCreateNurseID(createByNurseID);
-        dto.setCreateNurseName(createByNurseName);
+
+        return dto;
+    }
+
+
+    public static Post_vaccination_observations_edit_Update_SendParent_DTO Post_vaccination_observations_edit_Update_SendParent_DTO(
+            Post_vaccination_observations entity) {
+        Post_vaccination_observations_edit_Update_SendParent_DTO dto = new Post_vaccination_observations_edit_Update_SendParent_DTO();
+
+        // 1. Basic fields
+        dto.setObservation_time(entity.getObservation_time());
+        dto.setSymptoms(entity.getSymptoms());
+        dto.setSeverity(entity.getSeverity());
+        dto.setNotes(entity.getNotes());
+        dto.setStatus(entity.getStatus());
+
+
+
+
+        // 3. Từ Vaccination Record
+        Vaccination_records vr = entity.getVaccination_records();
+        if (vr != null) {
+            dto.setVaccinationRecordID(vr.getVaccinationRecordID());
+
+            // Lấy vaccine info
+            if (vr.getVaccineBatches() != null && vr.getVaccineBatches().getVaccineType() != null) {
+                dto.setVaccitypeID(vr.getVaccineBatches().getVaccineType().getVaccineTypeID());
+                dto.setVaccitypeName(vr.getVaccineBatches().getVaccineType().getName());
+            } else {
+                dto.setVaccitypeName("Không rõ loại vắc xin");
+            }
+
+            // Người tạo hồ sơ tiêm chủng
+            if (vr.getCreatedByNurse() != null) {
+                dto.setCreateNurseID(vr.getCreatedByNurse().getNurseID());
+                dto.setCreateNurseName(vr.getCreatedByNurse().getFullName());
+            }else {
+                dto.setEditNurseID(null);
+                dto.setEditNurseName(null);
+            }
+
+            if (vr.getUpdatedByNurse() != null) {
+                dto.setEditNurseName(vr.getUpdatedByNurse().getFullName());
+                dto.setEditNurseID(vr.getUpdatedByNurse().getNurseID());
+            }else {
+                dto.setEditNurseName(null);
+                dto.setEditNurseID(null);
+            }
+
+
+            // Student + Parent
+            Student student = vr.getStudent();
+            if (student != null) {
+                dto.setStudentID(student.getStudentID());
+                dto.setStudentName(student.getFullName());
+                dto.setClassName(student.getClassName());
+
+                Parent parent = student.getParent();
+                if (parent != null) {
+                    dto.setParentID(parent.getParentID());
+                    dto.setEmail(parent.getEmail());
+                } else {
+                    dto.setEmail("Không có email phụ huynh");
+                }
+            } else {
+                dto.setStudentName("Không có học sinh");
+            }
+        } else {
+            dto.setVaccitypeName("Không có hồ sơ tiêm chủng");
+        }
+
         return dto;
     }
 

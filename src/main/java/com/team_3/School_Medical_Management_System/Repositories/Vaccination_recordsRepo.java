@@ -65,9 +65,9 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
             searchid.setObservation_time(vaccination_records.getObservation_time());
             searchid.setSeverity(vaccination_records.getSeverity());
             SchoolNurse schoolNurse = new SchoolNurse();
-            schoolNurse.setNurseID(vaccination_records.getNurse().getNurseID());
-            schoolNurse.setFullName(vaccination_records.getNurse().getFullName());
-            searchid.setNurse(schoolNurse);
+            schoolNurse.setNurseID(vaccination_records.getUpdatedByNurse().getNurseID());
+            schoolNurse.setFullName(vaccination_records.getUpdatedByNurse().getFullName());
+            searchid.setUpdatedByNurse(schoolNurse);
             Vaccine_Batches vaccine_Batches = new Vaccine_Batches();
             vaccine_Batches.setBatchID(vaccination_records.getVaccineBatches().getBatchID());
             searchid.setVaccineBatches(vaccine_Batches);
