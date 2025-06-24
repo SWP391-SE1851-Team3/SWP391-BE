@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_SentParent_DTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_SentParent_Edit_DTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
 import com.team_3.School_Medical_Management_System.configuration.EmailConfig;
@@ -71,7 +72,7 @@ public class Vaccination_recordsController {
     }
 
     @PutMapping("/vaccination-records/resend/{recordId}")
-    public ResponseEntity<?> resend(@PathVariable Integer recordId, @RequestBody Vaccination_records_SentParent_DTO dto) {
+    public ResponseEntity<?> resend(@PathVariable Integer recordId, @RequestBody Vaccination_records_SentParent_Edit_DTO dto) {
         var result = vaccination_recordsServiceInterFace.updateAndResendEmail(recordId, dto);
         return ResponseEntity.ok(result);
     }
