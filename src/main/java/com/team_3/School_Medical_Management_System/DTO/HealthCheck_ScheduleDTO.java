@@ -18,4 +18,5 @@ public class HealthCheck_ScheduleDTO {
     private String location;
     private String notes;
     private String status;
+    private int nurseID; // Added nurseID field
 }

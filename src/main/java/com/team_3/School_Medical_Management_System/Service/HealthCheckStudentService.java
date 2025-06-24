@@ -238,7 +238,7 @@ public class HealthCheckStudentService {
                 // Schedule consultation for 1 week after health check
                 Date scheduledDate = new Date();
                 scheduledDate.setTime(scheduledDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-                consultation.setStatus(false); // Pending consultation
+                consultation.setStatus("pending"); // Changed from boolean false to String "pending"
 
                 HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
 

@@ -10,6 +10,6 @@ public class HealthConsultationDTO {
     private String studentName;
     private int checkID;
     private Date scheduledDate;
-    private boolean status;
+    private String status;
     private String reason;
 }

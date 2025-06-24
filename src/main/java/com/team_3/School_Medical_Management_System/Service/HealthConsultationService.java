@@ -33,7 +33,7 @@ public class HealthConsultationService {
     }
 
     // Get consultations by status (pending/completed)
-    public List<HealthConsultation> getConsultationsByStatus(boolean status) {
+    public List<HealthConsultation> getConsultationsByStatus(String status) {
         return healthConsultationRepository.findByStatus(status);
     }
 
@@ -49,7 +49,7 @@ public class HealthConsultationService {
     }
 
     // Update consultation status
-    public HealthConsultation updateConsultationStatus(int consultationId, boolean status, String notes) {
+    public HealthConsultation updateConsultationStatus(int consultationId, String status, String notes) {
         Optional<HealthConsultation> optionalConsultation = healthConsultationRepository.findById(consultationId);
 
         if (optionalConsultation.isPresent()) {
@@ -59,7 +59,7 @@ public class HealthConsultationService {
             HealthConsultation updatedConsultation = healthConsultationRepository.save(consultation);
 
             // If consultation is completed, notify the parent
-            if (status) {
+            if (status.equals("completed")) {
                 notifyParentAboutCompletedConsultation(updatedConsultation);
             }
 
@@ -100,7 +100,7 @@ public class HealthConsultationService {
         if (consultation.getHealthCheckStudent() != null) {
             dto.setCheckID(consultation.getHealthCheckStudent().getCheckID());
         }
-        dto.setStatus(consultation.isStatus());
+        dto.setStatus(consultation.getStatus()); // Updated to use getStatus() instead of isStatus()
         dto.setReason(consultation.getReason());
         return dto;
     }

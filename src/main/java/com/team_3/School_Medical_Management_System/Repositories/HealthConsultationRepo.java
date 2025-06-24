@@ -37,7 +37,7 @@ public class HealthConsultationRepo implements HealthConsultationRepository {
     }
 
     @Override
-    public List<HealthConsultation> findByStatus(boolean status) {
+    public List<HealthConsultation> findByStatus(String status) {
         String jpql = "SELECT h FROM HealthConsultation h WHERE h.status = :status";
         return entityManager.createQuery(jpql, HealthConsultation.class)
                 .setParameter("status", status)

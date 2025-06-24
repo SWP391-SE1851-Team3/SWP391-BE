@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface HealthConsultationRepository extends JpaRepository<HealthConsultation, Integer> {
     List<HealthConsultation> findByStudent(Student student);
-    List<HealthConsultation> findByStatus(boolean status);
+    List<HealthConsultation> findByStatus(String status);
 }

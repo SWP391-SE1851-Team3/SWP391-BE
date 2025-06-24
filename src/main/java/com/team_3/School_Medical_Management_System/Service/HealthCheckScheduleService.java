@@ -41,6 +41,7 @@ public class HealthCheckScheduleService {
         healthCheckSchedule.setLocation(healthCheckScheduleDTO.getLocation());
         healthCheckSchedule.setNotes(healthCheckScheduleDTO.getNotes());
         healthCheckSchedule.setStatus(healthCheckScheduleDTO.getStatus());
+        healthCheckSchedule.setNurseID(healthCheckScheduleDTO.getNurseID()); // Set the nurse ID who created the schedule
 
         HealthCheck_Schedule savedSchedule = healthCheckScheduleRepository.save(healthCheckSchedule);
 
@@ -113,6 +114,10 @@ public class HealthCheckScheduleService {
             if (dto.getNotes() != null) schedule.setNotes(dto.getNotes());
             if (dto.getStatus() != null) schedule.setStatus(dto.getStatus());
             if (dto.getSchedule_Date() != null) schedule.setSchedule_Date(dto.getSchedule_Date());
+
+            // Update the nurseID with the ID of the nurse who is updating the schedule
+            schedule.setNurseID(dto.getNurseID());
+
             return healthCheckScheduleRepository.save(schedule);
         }
         return null;

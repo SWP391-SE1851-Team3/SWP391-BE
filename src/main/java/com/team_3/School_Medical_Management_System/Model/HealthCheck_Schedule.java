@@ -23,7 +23,7 @@ public class HealthCheck_Schedule {
     private String location;
     private String notes;
     private String status;
-
+    private int nurseID;
 
 }
 

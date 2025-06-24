@@ -30,7 +30,7 @@ public class HealthConsultationController {
 
     // Get consultations by status (pending/completed)
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<HealthConsultationDTO>> getConsultationsByStatus(@PathVariable boolean status) {
+    public ResponseEntity<List<HealthConsultationDTO>> getConsultationsByStatus(@PathVariable String status) {
         List<HealthConsultation> consultations = healthConsultationService.getConsultationsByStatus(status);
         List<HealthConsultationDTO> consultationDTOs = consultations.stream()
                 .map(healthConsultationService::convertToDTO)
@@ -52,7 +52,7 @@ public class HealthConsultationController {
     @PutMapping("/{consultationId}")
     public ResponseEntity<HealthConsultationDTO> updateConsultationStatus(
             @PathVariable int consultationId,
-            @RequestParam boolean status,
+            @RequestParam String  status,
             @RequestParam(required = false) String notes) {
 
         HealthConsultation updatedConsultation = healthConsultationService.updateConsultationStatus(consultationId, status, notes);

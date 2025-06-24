@@ -25,6 +25,6 @@ public class HealthConsultation {
     @ManyToOne
     @JoinColumn(name = "checkID")
     private HealthCheck_Student healthCheckStudent;
-    private boolean status; // false = pending, true = completed
+    private String status; // false = pending, true = completed
     private String reason;
 }
