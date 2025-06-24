@@ -14,8 +14,11 @@ import lombok.ToString;
 @Getter
 public class HealthCheck_Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int checkID;
+
+    @OneToOne
+    @JoinColumn(name = "checkID", referencedColumnName = "checkID", insertable = false, updatable = false)
+    private HealthCheck healthCheck;
 
     @ManyToOne
     @JoinColumn(name = "studentID", referencedColumnName = "StudentID")
