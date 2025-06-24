@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class Vaccination_records_SentParent_DTO {
+public class Vaccination_records_SentParent_Edit_DTO {
     private Integer studentId;
     private String StudentName;
     private Integer vaccineBatchId;
@@ -21,21 +20,13 @@ public class Vaccination_records_SentParent_DTO {
     private String observation_notes;
     private LocalDateTime observation_time;
     private String status;
-    private Integer NurseID;
+    private Integer EditNurseID;
     private String className;
-    private String NurseName;
-
+    private String EditNurseName;
+    private Integer CreateNurseID;
+    private String CreateNurseName;
     // Trả về cho phụ huynh
     private Integer parentID;
     @JsonIgnore
     private String email;
-
-
-
-
-
-
-
-
-
 }
