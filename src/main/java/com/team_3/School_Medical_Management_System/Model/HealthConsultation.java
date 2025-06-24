@@ -16,7 +16,7 @@ import java.util.Date;
 public class HealthConsultation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int consultationID;
+    private int consultID;
 
     @ManyToOne
     @JoinColumn(name = "studentID")
@@ -25,10 +25,6 @@ public class HealthConsultation {
     @ManyToOne
     @JoinColumn(name = "checkID")
     private HealthCheck_Student healthCheckStudent;
-
-    private String issue;
-    private String recommendation;
-    private Date scheduledDate;
     private boolean status; // false = pending, true = completed
-    private String notes;
+    private String reason;
 }

@@ -5,13 +5,11 @@ import java.util.Date;
 
 @Data
 public class HealthConsultationDTO {
-    private int consultationID;
+    private int consultID;
     private int studentID;
     private String studentName;
     private int checkID;
-    private String issue;
-    private String recommendation;
     private Date scheduledDate;
     private boolean status;
-    private String notes;
+    private String reason;
 }

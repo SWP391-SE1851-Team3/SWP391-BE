@@ -3,9 +3,11 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
-import com.team_3.School_Medical_Management_System.Repositories.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -14,6 +16,9 @@ import java.util.Optional;
 
 @Service
 public class HealthCheckStudentService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private HealthCheckStudentRepository healthCheckStudentRepository;
@@ -33,7 +38,15 @@ public class HealthCheckStudentService {
     // Record health check results for a student
     public HealthCheck_Student recordHealthCheckResults(HealthCheck_StudentDTO dto) {
         HealthCheck_Student healthCheckStudent = new HealthCheck_Student();
-        healthCheckStudent.setStudentID(dto.getStudentID());
+
+        // Fetch the Student object and set it instead of just the ID
+        Optional<Student> studentOpt = studentRepository.findById(dto.getStudentID());
+        if (studentOpt.isPresent()) {
+            healthCheckStudent.setStudent(studentOpt.get());
+        } else {
+            throw new RuntimeException("Student not found with ID: " + dto.getStudentID());
+        }
+
         healthCheckStudent.setHeight(dto.getHeight());
         healthCheckStudent.setWeight(dto.getWeight());
         healthCheckStudent.setVisionLeft(dto.getVisionLeft());
@@ -46,15 +59,7 @@ public class HealthCheckStudentService {
         float heightInMeters = dto.getHeight() / 100f;
         float bmi = dto.getWeight() / (heightInMeters * heightInMeters);
         healthCheckStudent.setBmi(bmi);
-
-        // Link to health check schedule
-        Optional<HealthCheck_Schedule> schedule = healthCheckScheduleRepository.findById(dto.getCheckID());
-        if (schedule.isPresent()) {
-            healthCheckStudent.setHealthCheckSchedule(schedule.get());
-        }
-
         HealthCheck_Student savedResult = healthCheckStudentRepository.save(healthCheckStudent);
-
         // Check for abnormal results and create consultations if needed
         checkForAbnormalResults(savedResult);
 
@@ -62,6 +67,46 @@ public class HealthCheckStudentService {
         sendHealthCheckResultNotification(savedResult);
 
         return savedResult;
+    }
+
+    // Create health check results using DTO without CheckID
+    @Transactional
+    public HealthCheck_Student createHealthCheckResults(com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentCreateDTO dto) {
+        HealthCheck_Student healthCheckStudent = new HealthCheck_Student();
+
+        // Fetch the Student object and set it
+        Optional<Student> studentOpt = studentRepository.findById(dto.getStudentID());
+        if (studentOpt.isPresent()) {
+            healthCheckStudent.setStudent(studentOpt.get());
+        } else {
+            throw new RuntimeException("Student not found with ID: " + dto.getStudentID());
+        }
+
+        // Set other properties
+        healthCheckStudent.setHeight(dto.getHeight());
+        healthCheckStudent.setWeight(dto.getWeight());
+        healthCheckStudent.setVisionLeft(dto.getVisionLeft());
+        healthCheckStudent.setVisionRight(dto.getVisionRight());
+        healthCheckStudent.setHearing(dto.getHearing());
+        healthCheckStudent.setDentalCheck(dto.getDentalCheck());
+        healthCheckStudent.setTemperature(dto.getTemperature());
+
+        // Calculate BMI
+        float heightInMeters = dto.getHeight() / 100f;
+        float bmi = dto.getWeight() / (heightInMeters * heightInMeters);
+        healthCheckStudent.setBmi(bmi);
+
+        // Use native JPA persist to ensure ID is properly generated
+        entityManager.persist(healthCheckStudent);
+        entityManager.flush();
+
+        // Check for abnormal results and create consultations if needed
+        checkForAbnormalResults(healthCheckStudent);
+
+        // Send notification to parent about health check results
+        sendHealthCheckResultNotification(healthCheckStudent);
+
+        return healthCheckStudent;
     }
 
     // Check for abnormal health check results and create consultation appointments
@@ -96,25 +141,17 @@ public class HealthCheckStudentService {
             }
         }
 
-        // Check temperature (above 37.5°C)
-        if (healthCheckResult.getTemperature() > 37.5) {
-            hasAbnormalResults = true;
-            issues.append("Nhiệt độ cao (").append(healthCheckResult.getTemperature()).append("°C). ");
-        }
 
         // Create consultation appointment if abnormal results detected
         if (hasAbnormalResults) {
-            Optional<Student> student = studentRepository.findById(healthCheckResult.getStudentID());
-            if (student.isPresent()) {
+            Student student = healthCheckResult.getStudent();
+            if (student != null) {
                 HealthConsultation consultation = new HealthConsultation();
-                consultation.setStudent(student.get());
+                consultation.setStudent(student);
                 consultation.setHealthCheckStudent(healthCheckResult);
-                consultation.setIssue(issues.toString());
-                consultation.setRecommendation("Cần tư vấn y tế về các vấn đề phát hiện");
                 // Schedule consultation for 1 week after health check
                 Date scheduledDate = new Date();
                 scheduledDate.setTime(scheduledDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-                consultation.setScheduledDate(scheduledDate);
                 consultation.setStatus(false); // Pending consultation
 
                 HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
@@ -145,16 +182,15 @@ public class HealthCheckStudentService {
 
     // Send notification to parent about health check results
     private void sendHealthCheckResultNotification(HealthCheck_Student healthCheckResult) {
-        Optional<Student> student = studentRepository.findById(healthCheckResult.getStudentID());
-
-        if (student.isPresent() && student.get().getParent() != null) {
+        Student student = healthCheckResult.getStudent();
+        if (student != null && student.getParent() != null) {
             NotificationsParent notification = new NotificationsParent();
-            notification.setParent(student.get().getParent());
+            notification.setParent(student.getParent());
             notification.setTitle("Kết quả kiểm tra sức khỏe");
 
             StringBuilder content = new StringBuilder();
             content.append("Kết quả kiểm tra sức khỏe của ")
-                    .append(student.get().getFullName())
+                    .append(student.getFullName())
                     .append(":\n")
                     .append("- Chiều cao: ").append(healthCheckResult.getHeight()).append(" cm\n")
                     .append("- Cân nặng: ").append(healthCheckResult.getWeight()).append(" kg\n")
@@ -181,9 +217,7 @@ public class HealthCheckStudentService {
             StringBuilder content = new StringBuilder();
             content.append("Phát hiện vấn đề sức khỏe cần tư vấn cho ")
                     .append(consultation.getStudent().getFullName())
-                    .append(":\n")
-                    .append("- Vấn đề: ").append(consultation.getIssue()).append("\n")
-                    .append("- Thời gian hẹn tư vấn: ").append(consultation.getScheduledDate());
+                    .append(":\n");
 
             notification.setContent(content.toString());
             notification.setCreateAt(LocalDateTime.now());
@@ -194,19 +228,9 @@ public class HealthCheckStudentService {
 
     // Get health check results for a student
     public List<HealthCheck_Student> getHealthCheckResultsByStudent(int studentId) {
-        return healthCheckStudentRepository.findByStudentID(studentId);
+        return healthCheckStudentRepository.findByStudent_StudentID(studentId);
     }
 
-    // Get health check results for a schedule
-    public List<HealthCheck_Student> getHealthCheckResultsBySchedule(int scheduleId) {
-        Optional<HealthCheck_Schedule> schedule = healthCheckScheduleRepository.findById(scheduleId);
-
-        if (schedule.isPresent()) {
-            return healthCheckStudentRepository.findByHealthCheckSchedule(schedule.get());
-        }
-
-        return List.of();
-    }
 
     // Update health check results
     public HealthCheck_Student updateHealthCheckResults(int id, HealthCheck_StudentDTO dto) {

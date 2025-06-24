@@ -29,18 +29,10 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public List<HealthCheck_Student> findByStudentID(int studentID) {
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.studentID = :studentID";
+    public List<HealthCheck_Student> findByStudent_StudentID(int studentID) {
+        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.student.StudentID = :studentID";
         return entityManager.createQuery(jpql, HealthCheck_Student.class)
                 .setParameter("studentID", studentID)
-                .getResultList();
-    }
-
-    @Override
-    public List<HealthCheck_Student> findByHealthCheckSchedule(HealthCheck_Schedule healthCheckSchedule) {
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.healthCheckSchedule = :schedule";
-        return entityManager.createQuery(jpql, HealthCheck_Student.class)
-                .setParameter("schedule", healthCheckSchedule)
                 .getResultList();
     }
 
@@ -199,7 +191,7 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
             return List.of();
         }
 
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.healthCheckStudentID IN (" + idString + ")";
+        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.checkID IN (" + idString + ")";
         return entityManager.createQuery(jpql, HealthCheck_Student.class).getResultList();
     }
 

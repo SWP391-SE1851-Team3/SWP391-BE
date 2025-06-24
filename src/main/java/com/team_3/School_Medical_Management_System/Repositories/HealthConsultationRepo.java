@@ -142,7 +142,7 @@ public class HealthConsultationRepo implements HealthConsultationRepository {
 
     @Override
     public <S extends HealthConsultation> S save(S entity) {
-        if (entity.getConsultationID() == 0) {
+        if (entity.getConsultID() == 0) {
             entityManager.persist(entity);
             return entity;
         } else {

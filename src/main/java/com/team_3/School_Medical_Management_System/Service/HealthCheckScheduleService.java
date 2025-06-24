@@ -60,7 +60,6 @@ public class HealthCheckScheduleService {
             consentForm.setStudent(student);
             consentForm.setHealthCheckSchedule(healthCheckSchedule);
             consentForm.setIsAgreed(null); // Not decided yet
-            consentForm.setIsProcessed(false);
             healthConsentFormRepository.save(consentForm);
 
             // Send notification to parent
@@ -99,6 +98,21 @@ public class HealthCheckScheduleService {
         if (optionalSchedule.isPresent()) {
             HealthCheck_Schedule schedule = optionalSchedule.get();
             schedule.setStatus(status);
+            return healthCheckScheduleRepository.save(schedule);
+        }
+        return null;
+    }
+
+    // Update health check schedule with partial fields
+    public HealthCheck_Schedule updateHealthCheckSchedule(int id, com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateDTO dto) {
+        Optional<HealthCheck_Schedule> optionalSchedule = healthCheckScheduleRepository.findById(id);
+        if (optionalSchedule.isPresent()) {
+            HealthCheck_Schedule schedule = optionalSchedule.get();
+            if (dto.getName() != null) schedule.setName(dto.getName());
+            if (dto.getLocation() != null) schedule.setLocation(dto.getLocation());
+            if (dto.getNotes() != null) schedule.setNotes(dto.getNotes());
+            if (dto.getStatus() != null) schedule.setStatus(dto.getStatus());
+            if (dto.getSchedule_Date() != null) schedule.setSchedule_Date(dto.getSchedule_Date());
             return healthCheckScheduleRepository.save(schedule);
         }
         return null;

@@ -18,15 +18,6 @@ public class HealthConsentFormController {
     @Autowired
     private HealthConsentFormService healthConsentFormService;
 
-    // Get pending consent forms for a parent
-    @GetMapping("/parent/{parentId}/pending")
-    public ResponseEntity<List<HealthConsentFormDTO>> getPendingConsentFormsByParent(@PathVariable int parentId) {
-        List<HealthConsentForm> forms = healthConsentFormService.getPendingConsentFormsByParent(parentId);
-        List<HealthConsentFormDTO> formDTOs = forms.stream()
-                .map(healthConsentFormService::convertToDTO)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(formDTOs, HttpStatus.OK);
-    }
 
     // Update consent form with parent's decision
     @PutMapping("/{formId}")
@@ -62,5 +53,15 @@ public class HealthConsentFormController {
                 .map(healthConsentFormService::convertToDTO)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(formDTOs, HttpStatus.OK);
+    }
+
+    // Get all consent forms by parentId
+    @GetMapping("/parent/{parentId}")
+    public ResponseEntity<List<HealthConsentFormDTO>> getConsentFormsByParentId(@PathVariable Integer parentId) {
+        List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByParentId(parentId);
+        List<HealthConsentFormDTO> dtos = forms.stream()
+                .map(healthConsentFormService::convertToDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 }

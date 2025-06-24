@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentCreateDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckStudentService;
@@ -24,17 +25,17 @@ public class HealthCheckStudentController {
         return new ResponseEntity<>(savedResult, HttpStatus.CREATED);
     }
 
+    // Record health check results using new DTO (without CheckID)
+    @PostMapping("/create")
+    public ResponseEntity<HealthCheck_Student> createHealthCheckResults(@RequestBody HealthCheck_StudentCreateDTO dto) {
+        HealthCheck_Student savedResult = healthCheckStudentService.createHealthCheckResults(dto);
+        return new ResponseEntity<>(savedResult, HttpStatus.CREATED);
+    }
+
     // Get health check results for a student
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<HealthCheck_Student>> getHealthCheckResultsByStudent(@PathVariable int studentId) {
         List<HealthCheck_Student> results = healthCheckStudentService.getHealthCheckResultsByStudent(studentId);
-        return new ResponseEntity<>(results, HttpStatus.OK);
-    }
-
-    // Get health check results for a schedule
-    @GetMapping("/schedule/{scheduleId}")
-    public ResponseEntity<List<HealthCheck_Student>> getHealthCheckResultsBySchedule(@PathVariable int scheduleId) {
-        List<HealthCheck_Student> results = healthCheckStudentService.getHealthCheckResultsBySchedule(scheduleId);
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 

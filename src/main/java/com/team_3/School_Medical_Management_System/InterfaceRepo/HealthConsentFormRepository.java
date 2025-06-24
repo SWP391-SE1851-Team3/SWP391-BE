@@ -13,5 +13,4 @@ public interface HealthConsentFormRepository extends JpaRepository<HealthConsent
     List<HealthConsentForm> findByStudent(Student student);
     List<HealthConsentForm> findByHealthCheckSchedule(HealthCheck_Schedule healthCheckSchedule);
     List<HealthConsentForm> findByHealthCheckScheduleAndIsAgreed(HealthCheck_Schedule healthCheckSchedule, Boolean isAgreed);
-    List<HealthConsentForm> findByStudentAndIsProcessed(Student student, Boolean isProcessed);
 }

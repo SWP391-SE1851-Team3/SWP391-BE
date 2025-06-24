@@ -26,14 +26,6 @@ public class HealthConsentFormService {
     @Autowired
     private HealthCheckScheduleRepository healthCheckScheduleRepository;
 
-    // Get all pending consent forms for a parent
-    public List<HealthConsentForm> getPendingConsentFormsByParent(int parentId) {
-        List<Student> studentsOfParent = studentRepository.getStudentsByParentID(parentId);
-
-        return studentsOfParent.stream()
-                .flatMap(student -> healthConsentFormRepository.findByStudentAndIsProcessed(student, false).stream())
-                .collect(Collectors.toList());
-    }
 
     // Update consent form with parent's decision
     public HealthConsentForm updateConsentForm(int formId, boolean isAgreed, String notes) {
@@ -71,6 +63,14 @@ public class HealthConsentFormService {
         return List.of();
     }
 
+    // Get all consent forms by parentId
+    public List<HealthConsentForm> getConsentFormsByParentId(Integer parentId) {
+        List<Student> students = studentRepository.getStudentsByParentID(parentId);
+        return students.stream()
+                .flatMap(student -> healthConsentFormRepository.findByStudent(student).stream())
+                .collect(Collectors.toList());
+    }
+
     // Convert Entity to DTO
     public HealthConsentFormDTO convertToDTO(HealthConsentForm form) {
         HealthConsentFormDTO dto = new HealthConsentFormDTO();
@@ -81,7 +81,6 @@ public class HealthConsentFormService {
         dto.setHealthScheduleName(form.getHealthCheckSchedule().getName());
         dto.setIsAgreed(form.getIsAgreed());
         dto.setNotes(form.getNotes());
-        dto.setIsProcessed(form.getIsProcessed());
         return dto;
     }
 }

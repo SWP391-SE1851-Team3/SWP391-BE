@@ -16,17 +16,18 @@ public class HealthCheck_Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int checkID;
-    private int studentID;
+
+    @ManyToOne
+    @JoinColumn(name = "studentID", referencedColumnName = "StudentID")
+    private Student student;
+
     private float height;
     private float weight;
     private String visionLeft;
     private String visionRight;
     private String hearing;
     private String dentalCheck;
-    private float temperature;
+    private String temperature;
     private float bmi;
 
-    @ManyToOne
-    @JoinColumn(name = "health_ScheduleID")
-    private HealthCheck_Schedule healthCheckSchedule;
 }

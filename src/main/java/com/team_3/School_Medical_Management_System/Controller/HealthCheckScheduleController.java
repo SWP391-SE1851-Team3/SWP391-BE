@@ -57,4 +57,15 @@ public class HealthCheckScheduleController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // Update health check schedule with any fields (partial update)
+    @PutMapping("/{id}")
+    public ResponseEntity<HealthCheck_Schedule> updateHealthCheckSchedule(@PathVariable int id, @RequestBody com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateDTO dto) {
+        HealthCheck_Schedule updatedSchedule = healthCheckScheduleService.updateHealthCheckSchedule(id, dto);
+        if (updatedSchedule != null) {
+            return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

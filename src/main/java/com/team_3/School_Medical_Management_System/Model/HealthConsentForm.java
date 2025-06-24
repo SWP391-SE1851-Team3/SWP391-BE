@@ -27,5 +27,4 @@ public class HealthConsentForm {
 
     private Boolean isAgreed;
     private String notes;
-    private Boolean isProcessed;
 }

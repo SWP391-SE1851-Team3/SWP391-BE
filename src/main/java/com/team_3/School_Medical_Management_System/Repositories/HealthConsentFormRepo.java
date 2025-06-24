@@ -63,17 +63,6 @@ public class HealthConsentFormRepo implements com.team_3.School_Medical_Manageme
         return query.getResultList();
     }
 
-    @Override
-    public List<HealthConsentForm> findByStudentAndIsProcessed(Student student, Boolean isProcessed) {
-        TypedQuery<HealthConsentForm> query = entityManager.createQuery(
-                "SELECT h FROM HealthConsentForm h WHERE h.student = :student AND h.isProcessed = :isProcessed",
-                HealthConsentForm.class
-        );
-        query.setParameter("student", student);
-        query.setParameter("isProcessed", isProcessed);
-        return query.getResultList();
-    }
-
     // Các phương thức CRUD cơ bản
     @Override
     public <S extends HealthConsentForm> S save(S entity) {
