@@ -23,6 +23,10 @@ public interface Consent_formsInterFace {
     public Consent_forms updateConsent(Consent_forms consent_forms);
     public List<Consent_forms> getStudentConsentForms(String class_name);
     public List<Consent_form_dot> findDot();
+    public List<Consent_forms> getIsAgree();
+    public List<Consent_forms> getDisAgree();
+    public List<Consent_forms> getStatus();
+    public List<Consent_forms> getDisStatus();
 
 
 

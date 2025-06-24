@@ -110,12 +110,12 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public Consent_formsDTO getConsentFormForParent(Integer consentFormId) {
+    public Consent_formViewDTO getConsentFormForParent(Integer consentFormId) {
         Consent_forms entity = consent_formsRepo.getConsent_formsById(consentFormId);
         if (entity == null) {
             throw new RuntimeException("Consent Form not found");
         }
-        return TransferModelsDTO.MappingConsent(entity);
+        return TransferModelsDTO.MappingConent_View(entity);
     }
 
     @Override
@@ -196,9 +196,9 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public List<Consent_formsDTO> getAllConsentForms() {
+    public List<Consent_formViewDTO> getAllConsentForms() {
        var listConsent = consent_formsRepo.getAllConsentForms();
-       return listConsent.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+        return listConsent.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
@@ -234,4 +234,27 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         return consent_formsRepo.findDot();
     }
 
+    @Override
+    public List<Consent_formsDTO> getIsAgree() {
+        var list = consent_formsRepo.getIsAgree();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Consent_formsDTO> getDisAgree() {
+        var list = consent_formsRepo.getDisAgree();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Consent_formsDTO> getStatus() {
+        var list = consent_formsRepo.getStatus();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Consent_formsDTO> getDisStatus() {
+        var list = consent_formsRepo.getDisStatus();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
 }

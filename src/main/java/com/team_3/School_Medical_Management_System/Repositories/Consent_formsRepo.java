@@ -137,7 +137,7 @@ public class Consent_formsRepo implements Consent_formsInterFace {
                 "JOIN FETCH c.student s " +
                 "WHERE c.status = :status AND c.parent.ParentID = :parentId";
         return entityManager.createQuery(jpql, Consent_forms.class)
-                .setParameter("status", "Đang Chờ Phê Duyệt")
+                .setParameter("status", "Ðang Chờ Phản Hồi")
                 .setParameter("parentId", parentId)
                 .getResultList();
     }
@@ -185,6 +185,36 @@ public class Consent_formsRepo implements Consent_formsInterFace {
         return entityManager.createQuery(jpql, Consent_form_dot.class).getResultList();
     }
 
+    public List<Consent_forms> getIsAgree() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.IsAgree = :isAgree";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("isAgree", "Đồng Ý")
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getDisAgree() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.IsAgree = :isAgree";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("isAgree", "Ko dong y")
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getStatus() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.status = :status";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("status", "ÐÃ PHÊ DUY?T")
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getDisStatus() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.status = :status";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("status", "Dang Cho Phan hoi")
+                .getResultList();
+    }
 
 
 }
