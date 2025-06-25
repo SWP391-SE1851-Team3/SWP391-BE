@@ -12,4 +12,7 @@ import java.util.List;
 public interface HealthCheckStudentRepository extends JpaRepository<HealthCheck_Student, Integer> {
     @Query("SELECT h FROM HealthCheck_Student h WHERE h.student.StudentID = :studentId")
     List<HealthCheck_Student> findByStudent_StudentID(@Param("studentId") int studentId);
+
+    @Query("SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.student.StudentID = :studentId")
+    Integer findMaxCheckIdByStudentId(@Param("studentId") int studentId);
 }

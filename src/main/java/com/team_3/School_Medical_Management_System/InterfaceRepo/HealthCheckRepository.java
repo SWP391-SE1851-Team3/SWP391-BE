@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HealthCheckRepository extends JpaRepository<HealthCheck, Integer> {
+    HealthCheck findByFormID(int formID);
 }

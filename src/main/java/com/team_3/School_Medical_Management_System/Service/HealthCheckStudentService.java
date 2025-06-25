@@ -42,82 +42,6 @@ public class HealthCheckStudentService {
     @Autowired
     private NotificationsParentRepository notificationsParentRepository;
 
-    // Record health check results for a student
-    @Transactional
-    public HealthCheck_Student recordHealthCheckResults(HealthCheck_StudentDTO dto) {
-        // Fetch the Student object first
-        Optional<Student> studentOpt = studentRepository.findById(dto.getStudentID());
-        if (!studentOpt.isPresent()) {
-            throw new RuntimeException("Student not found with ID: " + dto.getStudentID());
-        }
-        Student student = studentOpt.get();
-
-        // Find a consent form for this student
-        List<HealthConsentForm> consentForms = healthConsentFormRepository.findByStudent(student);
-        if (consentForms.isEmpty()) {
-            throw new RuntimeException("No health consent form found for student ID: " + dto.getStudentID());
-        }
-
-        // Use the first available consent form
-        HealthConsentForm consentForm = consentForms.get(0);
-
-        // Create a new HealthCheck with a valid formID or find existing one
-        HealthCheck healthCheck;
-
-        // Use native query to find existing HealthCheck with the formID
-        Integer existingCheckId = null;
-        try {
-            existingCheckId = (Integer) entityManager.createNativeQuery(
-                "SELECT TOP 1 checkID FROM HealthCheck WHERE formID = :formID")
-                .setParameter("formID", consentForm.getFormID())
-                .getSingleResult();
-        } catch (Exception e) {
-            // No result found, will create a new one
-        }
-
-        if (existingCheckId != null) {
-            // Use the existing HealthCheck
-            healthCheck = new HealthCheck();
-            healthCheck.setCheckID(existingCheckId);
-            healthCheck.setFormID(consentForm.getFormID());
-        } else {
-            // Create a new HealthCheck
-            healthCheck = new HealthCheck();
-            healthCheck.setFormID(consentForm.getFormID());
-            // Save HealthCheck to get auto-generated ID
-            healthCheck = healthCheckRepository.save(healthCheck);
-        }
-
-        // Create HealthCheck_Student with the checkID
-        HealthCheck_Student healthCheckStudent = new HealthCheck_Student();
-        healthCheckStudent.setCheckID(healthCheck.getCheckID());
-        healthCheckStudent.setStudent(student);
-
-        healthCheckStudent.setHeight(dto.getHeight());
-        healthCheckStudent.setWeight(dto.getWeight());
-        healthCheckStudent.setVisionLeft(dto.getVisionLeft());
-        healthCheckStudent.setVisionRight(dto.getVisionRight());
-        healthCheckStudent.setHearing(dto.getHearing());
-        healthCheckStudent.setDentalCheck(dto.getDentalCheck());
-        healthCheckStudent.setTemperature(dto.getTemperature());
-
-        // Calculate BMI: weight / (height/100)²
-        float heightInMeters = dto.getHeight() / 100f;
-        float bmi = dto.getWeight() / (heightInMeters * heightInMeters);
-        healthCheckStudent.setBmi(bmi);
-
-        // Save HealthCheck_Student
-        HealthCheck_Student savedResult = healthCheckStudentRepository.save(healthCheckStudent);
-
-        // Check for abnormal results and create consultations if needed
-        checkForAbnormalResults(savedResult);
-
-        // Send notification to parent about health check results
-        sendHealthCheckResultNotification(savedResult);
-
-        return savedResult;
-    }
-
     // Create health check results using DTO without CheckID
     @Transactional
     public HealthCheck_Student createHealthCheckResults(HealthCheck_StudentCreateDTO dto) {
@@ -128,43 +52,53 @@ public class HealthCheckStudentService {
         }
         Student student = studentOpt.get();
 
-        // Find a consent form for this student
+        // Find all consent forms for this student
         List<HealthConsentForm> consentForms = healthConsentFormRepository.findByStudent(student);
         if (consentForms.isEmpty()) {
             throw new RuntimeException("No health consent form found for student ID: " + dto.getStudentID());
         }
 
-        // Use the first available consent form
-        HealthConsentForm consentForm = consentForms.get(0);
+        // Find the consent form with the highest health_ScheduleID
+        HealthConsentForm consentForm = consentForms.stream()
+                .sorted((form1, form2) -> {
+                    // Compare by health_ScheduleID in descending order (highest first)
+                    if (form1.getHealthCheckSchedule() != null && form2.getHealthCheckSchedule() != null) {
+                        return Integer.compare(
+                            form2.getHealthCheckSchedule().getHealth_ScheduleID(),
+                            form1.getHealthCheckSchedule().getHealth_ScheduleID()
+                        );
+                    } else if (form1.getHealthCheckSchedule() != null) {
+                        return -1; // form1 has schedule, form2 doesn't
+                    } else if (form2.getHealthCheckSchedule() != null) {
+                        return 1;  // form2 has schedule, form1 doesn't
+                    } else {
+                        return 0;  // neither has schedule
+                    }
+                })
+                .findFirst()
+                .orElse(consentForms.get(0)); // Fallback to first one if sorting fails
 
-        // Create a new HealthCheck with a valid formID or find existing one
-        HealthCheck healthCheck;
+        // Check if a HealthCheck record already exists for this formID
+        HealthCheck healthCheck = healthCheckRepository.findByFormID(consentForm.getFormID());
 
-        // Use native query to find existing HealthCheck with the formID
-        Integer existingCheckId = null;
-        try {
-            existingCheckId = (Integer) entityManager.createNativeQuery(
-                "SELECT TOP 1 checkID FROM HealthCheck WHERE formID = :formID")
-                .setParameter("formID", consentForm.getFormID())
-                .getSingleResult();
-        } catch (Exception e) {
-            // No result found, will create a new one
-        }
-
-        if (existingCheckId != null) {
-            // Use the existing HealthCheck
+        if (healthCheck == null) {
+            // Create a new HealthCheck record only if it doesn't exist
             healthCheck = new HealthCheck();
-            healthCheck.setCheckID(existingCheckId);
             healthCheck.setFormID(consentForm.getFormID());
-        } else {
-            // Create a new HealthCheck
-            healthCheck = new HealthCheck();
-            healthCheck.setFormID(consentForm.getFormID());
-            // Save HealthCheck to get auto-generated ID
+            // Save to generate the CheckID
             healthCheck = healthCheckRepository.save(healthCheck);
         }
 
-        // Create HealthCheck_Student with the checkID
+        // Check if a HealthCheck_Student record already exists with this checkID
+        Optional<HealthCheck_Student> existingHealthCheckStudent =
+            healthCheckStudentRepository.findById(healthCheck.getCheckID());
+
+        if (existingHealthCheckStudent.isPresent()) {
+            throw new RuntimeException("A health check record already exists for this form ID: " +
+                consentForm.getFormID() + " with checkID: " + healthCheck.getCheckID());
+        }
+
+        // Create HealthCheck_Student with the checkID from HealthCheck
         HealthCheck_Student healthCheckStudent = new HealthCheck_Student();
         healthCheckStudent.setCheckID(healthCheck.getCheckID());
         healthCheckStudent.setStudent(student);

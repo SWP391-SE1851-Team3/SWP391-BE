@@ -17,14 +17,6 @@ public class HealthCheckStudentController {
 
     @Autowired
     private HealthCheckStudentService healthCheckStudentService;
-
-    // Record health check results for a student
-    @PostMapping
-    public ResponseEntity<HealthCheck_Student> recordHealthCheckResults(@RequestBody HealthCheck_StudentDTO dto) {
-        HealthCheck_Student savedResult = healthCheckStudentService.recordHealthCheckResults(dto);
-        return new ResponseEntity<>(savedResult, HttpStatus.CREATED);
-    }
-
     // Record health check results using new DTO (without CheckID)
     @PostMapping("/create")
     public ResponseEntity<HealthCheck_Student> createHealthCheckResults(@RequestBody HealthCheck_StudentCreateDTO dto) {

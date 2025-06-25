@@ -225,4 +225,17 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     public void deleteAll() {
         entityManager.createQuery("DELETE FROM HealthCheck_Student").executeUpdate();
     }
+
+    @Override
+    public Integer findMaxCheckIdByStudentId(int studentId) {
+        String jpql = "SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.student.StudentID = :studentId";
+        try {
+            return entityManager.createQuery(jpql, Integer.class)
+                    .setParameter("studentId", studentId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            // Return null if no results found or any other error
+            return null;
+        }
+    }
 }
