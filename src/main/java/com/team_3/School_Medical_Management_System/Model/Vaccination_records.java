@@ -6,31 +6,42 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table
+
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Vaccination_records {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer VaccinationRecordID;
+
     private String notes;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BatchID")
     private Vaccine_Batches vaccineBatches;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "StudentID")
     private Student student;
+
     private LocalDateTime observation_time;
     private String symptoms;
     private String severity;
     private String observation_notes;
-    @ManyToOne
-    @JoinColumn(name = "NurseID")
-    private SchoolNurse nurse;
-    private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "CreatedByNurseID")
+    private SchoolNurse createdByNurse;
+
+    @ManyToOne
+    @JoinColumn(name = "UpdatedByNurseID")
+    private SchoolNurse updatedByNurse;
+
+
+
+    private String status;
 }

@@ -1,8 +1,6 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_SentParent_DTO;
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
@@ -32,7 +30,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
     @Autowired
     private ParentRepository parentRepo;
     @Autowired
-    private EmailService emailService;
+    private EmailVaccinesService emailService;
 
     @Autowired
     private NotificationsParentService notificationsParentService;
@@ -46,20 +44,26 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
 
     private Vaccination_recordsInterFace vaccination_recordsInterFace;
 
+
+    @Autowired
+    private VaccineBatchRepository vaccineBatchRepo;
+
     @Autowired
     public Vaccination_recordsService(Vaccination_recordsInterFace vaccination_recordsInterFace) {
         this.vaccination_recordsInterFace = vaccination_recordsInterFace;
     }
 
-    @Override
     public List<Vaccination_recordsDTO> getVaccination_records() {
         var list = vaccination_recordsInterFace.getVaccination_records();
-        return list.stream().map(TransferModelsDTO::MappingVaccinationRecords).collect(Collectors.toList());
+        return list.stream()
+                .map(TransferModelsDTO :: MappingVaccinationRecords)
+                .collect(Collectors.toList());
     }
-
     @Override
     public Vaccination_recordsDTO addVaccination_records(Vaccination_recordsDTO vaccinationRecordsDTO) {
-        Vaccination_records p = vaccination_recordsInterFace.addVaccination_records(TransferModelsDTO.MappingVaccinationRecordsDTO(vaccinationRecordsDTO));
+        Vaccination_records p = vaccination_recordsInterFace.addVaccination_records(
+                TransferModelsDTO.MappingVaccinationRecordsDTO(vaccinationRecordsDTO)
+        );
         return TransferModelsDTO.MappingVaccinationRecords(p);
     }
 
@@ -75,6 +79,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
             throw new RuntimeException("Vaccination_records_by_id is null");
         } else {
             return TransferModelsDTO.MappingVaccinationRecords(vaccination_records_by_id);
+
         }
     }
 
@@ -90,7 +95,9 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         if (vaccination_recordsByStudentId == null || vaccination_recordsByStudentId.isEmpty()) {
             throw new RuntimeException("vaccination_records_student is null");
         } else {
-            return vaccination_recordsByStudentId.stream().map(TransferModelsDTO::MappingVaccinationRecords).collect(Collectors.toList());
+            return vaccination_recordsByStudentId.stream()
+                    .map(TransferModelsDTO :: MappingVaccinationRecords)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -105,92 +112,86 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         record.setObservation_time(dto.getObservation_time());
         record.setStatus(dto.getStatus());
 
-        // Mapping student entity
-        Student student = new Student();
-        student.setStudentID(dto.getStudentId());
+        // 2. Mapping các entity bằng fetch từ DB
+        Student student = studentRepo.findById(dto.getStudentId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy học sinh"));
         record.setStudent(student);
 
-        //Mapping SchoolNurse
-        SchoolNurse schoolNurse = new SchoolNurse();
-        schoolNurse.setNurseID(dto.getNurseID());
-        record.setNurse(schoolNurse);
+        SchoolNurse nurse = SchoolNurseRepository.findById(dto.getCreateNurseID())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
+        record.setCreatedByNurse(nurse);
 
+        if (dto.getEditnurseID() != null) {
+            SchoolNurse nurse1 = SchoolNurseRepository.findById(dto.getEditnurseID())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
+            record.setUpdatedByNurse(nurse1);
+        }
 
-        // Mapping vaccine batch entity
-        Vaccine_Batches batch = new Vaccine_Batches();
-        batch.setBatchID(dto.getVaccineBatchId());
+        Vaccine_Batches batch = vaccineBatchRepo.findById(dto.getVaccineBatchId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
         record.setVaccineBatches(batch);
 
-        // 2. Lưu hồ sơ tiêm chủng
+        // 3. Lưu hồ sơ tiêm chủng
         vaccinationRepo.save(record);
 
-        // 3. Tìm phụ huynh qua học sinh
+        // 4. Tìm phụ huynh qua học sinh
         Parent parent = parentRepo.GetParentByStudentId(dto.getStudentId());
         if (parent == null) {
             throw new RuntimeException("Không tìm thấy phụ huynh của học sinh ID: " + dto.getStudentId());
         }
-        SchoolNurse schoolNurse2 = SchoolNurseRepository.findById(dto.getNurseID()).
-                orElseThrow(() -> new RuntimeException("Không tìm thấy ý tế"));
 
-
-        // 4. Lấy tên học sinh đầy đủ
-        Student fullStudent = studentRepo.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy học sinh"));
-        String studentName = fullStudent.getFullName();
+        // 5. Lấy thông tin hiển thị
+        String studentName = student.getFullName();
         String parentName = parent.getFullName();
-        String nurseName = schoolNurse2.getFullName();
+        String nurseName = nurse.getFullName();
+        String className = student.getClassName();
 
-        // 5. Tạo nội dung email
-        String title = "Hồ sơ tiêm chủng của học sinh " + studentName + " đã được cập nhật";
-
+        // 6. Tạo nội dung email
+        String title = "Cập nhật hồ sơ tiêm chủng của học sinh " + studentName + " (" + className + ")";
         String content = String.format("""
-                        <p><strong>Kính gửi phụ huynh %s,</strong></p>
-                        
-                        <p>Nhà trường đã nhập thông tin hồ sơ tiêm chủng cho học sinh <b>%s</b>.</p>
-                        
-                        <ul>
-                            <li><strong>Triệu chứng:</strong> %s</li>
-                            <li><strong>Mức độ:</strong> %s</li>
-                            <li><strong>Ghi chú:</strong> %s</li>
-                            <li><strong>Thời gian theo dõi:</strong> %s</li>
-                            <li><strong>Trạng thái:</strong> %s</li>
-                            <li><strong>Ghi chú theo dõi:</strong> %s</li>
-                        </ul>
-                         <p>Thông tin được ghi nhận bởi nhân viên y tế: <strong>%s</strong></p>
-                        
-                        <p>Vui lòng đăng nhập hệ thống để xem chi tiết.</p>
-                        """,
+            <p><strong>Kính gửi phụ huynh %s,</strong></p>
+            <p>Nhà trường đã nhập thông tin hồ sơ tiêm chủng cho học sinh <b>%s (%s)</b>.</p>
+            <ul>
+                <li><strong>Triệu chứng:</strong> %s</li>
+                <li><strong>Mức độ:</strong> %s</li>
+                <li><strong>Ghi chú:</strong> %s</li>
+                <li><strong>Thời gian theo dõi:</strong> %s</li>
+                <li><strong>Trạng thái:</strong> %s</li>
+                <li><strong>Ghi chú theo dõi:</strong> %s</li>
+            </ul>
+            <p>Thông tin được ghi nhận bởi nhân viên y tế: <strong>%s</strong></p>
+            <p>Vui lòng đăng nhập hệ thống để xem chi tiết.</p>
+            """,
                 parentName,
-                studentName,
+                studentName, className,
                 dto.getSymptoms(),
                 dto.getSeverity(),
                 dto.getNotes(),
                 dto.getObservation_time() != null ? dto.getObservation_time().toString() : "Không có",
-                dto.getStatus() != null ? dto.getStatus() : "Đã tiêm",
+                dto.getStatus(),
                 dto.getObservation_notes() != null ? dto.getObservation_notes() : "Không có",
                 nurseName
         );
 
-        // 6. Gửi thông báo & email
+        // 7. Gửi thông báo & email
         Integer notificationId = notificationsParentService.createAutoNotification(
                 parent.getParentID(), title, content);
         emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
 
-        // 7. Trả về DTO
+        // 8. Trả về DTO
         Vaccination_records_SentParent_DTO result = TransferModelsDTO.MappingVaccination_records_SentParent(record);
-        result.setParentName(parentName);
+        result.setParentID(parent.getParentID());
         result.setEmail(parent.getEmail());
 
         return result;
     }
-
     @Override
-    public Vaccination_records_SentParent_DTO updateAndResendEmail(Integer recordId, Vaccination_records_SentParent_DTO dto) {
-        // 1. Tìm hồ sơ tiêm chủng
+    public Vaccination_records_SentParent_Edit_DTO updateAndResendEmail(
+            Integer recordId,
+            Vaccination_records_SentParent_Edit_DTO dto) {
         Vaccination_records record = vaccinationRepo.findById(recordId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ tiêm chủng ID: " + recordId));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ tiêm chủng"));
 
-        // 2. Cập nhật thông tin
         record.setNotes(dto.getNotes());
         record.setSymptoms(dto.getSymptoms());
         record.setSeverity(dto.getSeverity());
@@ -198,70 +199,83 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         record.setObservation_time(dto.getObservation_time());
         record.setStatus(dto.getStatus());
 
-        vaccinationRepo.save(record);
-
-        //Mapping SchoolNurse
-        SchoolNurse schoolNurse = new SchoolNurse();
-        schoolNurse.setNurseID(dto.getNurseID());
-        record.setNurse(schoolNurse);
-
-        // 3. Lấy thông tin nhân viên y tế
-        SchoolNurse nurse = SchoolNurseRepository.findById(dto.getNurseID())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
-        String nurseName = nurse.getFullName();
-
-        // 4. Lấy phụ huynh & học sinh
-        Parent parent = parentRepo.GetParentByStudentId(dto.getStudentId());
-        if (parent == null) {
-            throw new RuntimeException("Không tìm thấy phụ huynh");
-        }
-
+        // 2. Mapping các entity bằng fetch từ DB
         Student student = studentRepo.findById(dto.getStudentId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy học sinh"));
+        record.setStudent(student);
+
+
+            SchoolNurse nurse = SchoolNurseRepository.findById(dto.getEditNurseID())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
+            record.setUpdatedByNurse(nurse);
+
+
+        Vaccine_Batches batch = vaccineBatchRepo.findById(dto.getVaccineBatchId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
+        record.setVaccineBatches(batch);
+
+        // 3. Lưu hồ sơ tiêm chủng
+        vaccinationRepo.saveAndFlush(record);
+
+        // 4. Tìm phụ huynh qua học sinh
+        Parent parent = parentRepo.GetParentByStudentId(dto.getStudentId());
+        if (parent == null) {
+            throw new RuntimeException("Không tìm thấy phụ huynh của học sinh ID: " + dto.getStudentId());
+        }
+        // 5. Soạn nội dung email
         String studentName = student.getFullName();
         String parentName = parent.getFullName();
+        String nurseName = nurse.getFullName();
+        String className = student.getClassName();
+        Integer parentID = parent.getParentID();
 
-        // 5. Soạn email
-        String title = "Cập nhật hồ sơ tiêm chủng của học sinh " + studentName;
-
+        String title = "Cập nhật hồ sơ tiêm chủng của học sinh " + studentName + " (" + className + ")";
         String content = String.format("""
-        <p><strong>Kính gửi phụ huynh %s,</strong></p>
-        <p>Nhà trường chân thành xin lỗi vì sự thiếu sót trong thông tin hồ sơ tiêm chủng trước đó.</p>
-        <p>Chúng tôi đã <b>cập nhật</b> lại đầy đủ thông tin cho học sinh <b>%s</b> như sau:</p>
-
-        <ul>
-            <li><strong>Triệu chứng:</strong> %s</li>
-            <li><strong>Mức độ:</strong> %s</li>
-            <li><strong>Ghi chú:</strong> %s</li>
-            <li><strong>Thời gian theo dõi:</strong> %s</li>
-            <li><strong>Trạng thái:</strong> %s</li>
-            <li><strong>Ghi chú theo dõi:</strong> %s</li>
-        </ul>
-
-        <p>Thông tin được ghi nhận bởi nhân viên y tế: <strong>%s</strong></p>
-        <p>Vui lòng đăng nhập hệ thống để xem chi tiết.</p>
-        """,
+                <p><strong>Kính gửi phụ huynh %s,</strong></p>
+                <p>Nhà trường chân thành xin lỗi vì sự thiếu sót trong thông tin hồ sơ tiêm chủng trước đó.</p>
+                <p>Chúng tôi đã <b>cập nhật</b> lại đầy đủ thông tin cho học sinh <b>%s</b> như sau:</p>
+                <ul>
+                    <li><strong>Triệu chứng:</strong> %s</li>
+                    <li><strong>Mức độ:</strong> %s</li>
+                    <li><strong>Ghi chú:</strong> %s</li>
+                    <li><strong>Thời gian theo dõi:</strong> %s</li>
+                    <li><strong>Trạng thái:</strong> %s</li>
+                    <li><strong>Ghi chú theo dõi:</strong> %s</li>
+                </ul>
+                <p>Thông tin được ghi nhận bởi nhân viên y tế: <strong>%s</strong></p>
+                <p>Vui lòng đăng nhập hệ thống để xem chi tiết.</p>
+                """,
                 parentName,
                 studentName,
                 dto.getSymptoms(),
                 dto.getSeverity(),
                 dto.getNotes(),
                 dto.getObservation_time() != null ? dto.getObservation_time().toString() : "Không có",
-                dto.getStatus() != null ? dto.getStatus() : "Đã tiêm",
+                dto.getStatus(),
                 dto.getObservation_notes() != null ? dto.getObservation_notes() : "Không có",
                 nurseName
         );
 
         // 6. Gửi thông báo & email
-        Integer notificationId = notificationsParentService.createAutoNotification(parent.getParentID(), title, content);
+        Integer notificationId = notificationsParentService.createAutoNotification(parentID, title, content);
         emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
 
-        // 7. Trả về DTO
-        Vaccination_records_SentParent_DTO result = TransferModelsDTO.MappingVaccination_records_SentParent(record);
-        result.setParentName(parentName);
-        result.setEmail(parent.getEmail());
+        // 7. Trả về DTO (phân biệt rõ createNurse vs editNurse)
+        SchoolNurse createNurse = SchoolNurseRepository.findById(dto.getEditNurseID())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
 
+        Vaccination_records_SentParent_Edit_DTO result = TransferModelsDTO.MappingVaccination_records_SentParent_Edit(
+                record
+
+        );
+        result.setParentID(parentID);
+        result.setEmail(parent.getEmail());
         return result;
+    }
+
+    @Override
+    public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
+        return vaccination_recordsInterFace.getStudentFollowedbyNurse();
     }
 
 
