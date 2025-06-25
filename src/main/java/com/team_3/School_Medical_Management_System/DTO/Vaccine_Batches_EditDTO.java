@@ -22,6 +22,4 @@ public class Vaccine_Batches_EditDTO {
     private Integer VaccineTypeID;
     private Integer BatchID;
     private String edit_nurse_name;
-    private Integer created_by_nurse_id;
-    private String created_by_nurse_name;
 }

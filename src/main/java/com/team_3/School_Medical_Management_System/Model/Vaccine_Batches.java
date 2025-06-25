@@ -22,9 +22,14 @@ public class Vaccine_Batches {
     private String location;
     private String status;
     private String notes;
+
     @ManyToOne
-    @JoinColumn(name = "NurseID")
-    private SchoolNurse nurse;
+    @JoinColumn(name = "CreatedByNurseID")
+    private SchoolNurse createdByNurse;
+
+    @ManyToOne
+    @JoinColumn(name = "UpdatedByNurseID")
+    private SchoolNurse updatedByNurse;
     @ManyToOne
     @JoinColumn(name = "VaccineTypeID")
     private Vaccine_Types vaccineType;

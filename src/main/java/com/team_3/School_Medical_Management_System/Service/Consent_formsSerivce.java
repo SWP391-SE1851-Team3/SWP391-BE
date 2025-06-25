@@ -1,13 +1,13 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.ConsentFormParentResponseDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formViewDTO;
-import com.team_3.School_Medical_Management_System.DTO.Consent_formsDTO;
-import com.team_3.School_Medical_Management_System.DTO.ParentConfirmDTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepositories;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepository;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,12 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Autowired
     private ConsentFormsRepos consent_formsRepos;
+
+    @Autowired
+    private StudentRepositories studentRepository;
+
+    @Autowired
+    private VaccineBatchRepository vaccineBatchRepository;
 
 
     @Autowired
@@ -102,12 +110,12 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public Consent_formsDTO getConsentFormForParent(Integer consentFormId) {
+    public Consent_formViewDTO getConsentFormForParent(Integer consentFormId) {
         Consent_forms entity = consent_formsRepo.getConsent_formsById(consentFormId);
         if (entity == null) {
             throw new RuntimeException("Consent Form not found");
         }
-        return TransferModelsDTO.MappingConsent(entity);
+        return TransferModelsDTO.MappingConent_View(entity);
     }
 
     @Override
@@ -188,9 +196,9 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     }
 
     @Override
-    public List<Consent_formsDTO> getAllConsentForms() {
+    public List<Consent_formViewDTO> getAllConsentForms() {
        var listConsent = consent_formsRepo.getAllConsentForms();
-       return listConsent.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+        return listConsent.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
@@ -198,6 +206,55 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
        var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
        return TransferModelsDTO.MappingConsent(updateConsent);
     }
+    @Override
+    public void sendConsentFormsByClassName(String className, Integer batchId,
+                                            LocalDateTime sendDate, LocalDateTime expireDate,String status) {
+        List<Student> students = studentRepository.findByClassName(className);
 
+        Vaccine_Batches batch = vaccineBatchRepository.findById(batchId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
 
+        for (Student student : students) {
+            Parent parent = student.getParent();
+            if (parent == null) continue;
+
+            Consent_forms form = new Consent_forms();
+            form.setStudent(student);
+            form.setParent(parent);
+            form.setVaccineBatches(batch);
+            form.setSend_date(sendDate);
+            form.setExpire_date(expireDate);
+            form.setStatus(status);
+            consent_formsRepos.save(form);
+        }
+    }
+
+    @Override
+    public List<Consent_form_dot> findDot() {
+        return consent_formsRepo.findDot();
+    }
+
+    @Override
+    public List<Consent_formsDTO> getIsAgree() {
+        var list = consent_formsRepo.getIsAgree();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Consent_formsDTO> getDisAgree() {
+        var list = consent_formsRepo.getDisAgree();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Consent_formsDTO> getStatus() {
+        var list = consent_formsRepo.getStatus();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Consent_formsDTO> getDisStatus() {
+        var list = consent_formsRepo.getDisStatus();
+        return list.stream().map(TransferModelsDTO::MappingConsent).collect(Collectors.toList());
+    }
 }

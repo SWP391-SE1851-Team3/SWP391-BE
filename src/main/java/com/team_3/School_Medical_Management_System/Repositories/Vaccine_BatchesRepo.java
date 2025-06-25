@@ -1,7 +1,6 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccine_BatchesInterFace;
-import com.team_3.School_Medical_Management_System.Model.Consent_forms;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,9 @@ import java.util.List;
 
 @Repository
 public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
+
     private EntityManager entityManager;
+
     @Autowired
     private SchoolNurseRepo schoolNurseRepo;
 
@@ -58,7 +59,7 @@ public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
         existingVaccine.setUpdated_at(vaccineDetails.getUpdated_at());
         existingVaccine.setScheduled_date(vaccineDetails.getScheduled_date());
         existingVaccine.setQuantity_received(vaccineDetails.getQuantity_received());
-        existingVaccine.setNurse(vaccineDetails.getNurse());
+        existingVaccine.setUpdatedByNurse(vaccineDetails.getUpdatedByNurse());
         existingVaccine.setLocation(vaccineDetails.getLocation());
         existingVaccine.setNotes(vaccineDetails.getNotes());
         existingVaccine.setStatus(vaccineDetails.getStatus());
@@ -77,4 +78,9 @@ public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
             return false;
         }
     }
+
+
+
+
+
 }

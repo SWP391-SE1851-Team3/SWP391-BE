@@ -1,31 +1,30 @@
 package com.team_3.School_Medical_Management_System.DTO;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Vaccination_recordsDTO {
-    private Integer VaccinationRecordID;
-    private String notes;
-    private Integer StudentID;
+public class Vaccination_records_SentParent_Edit_DTO {
+    private Integer studentId;
     private String StudentName;
-    private LocalDateTime observation_time;
+    private Integer vaccineBatchId;
+    private String vaccineBatchName;
     private String symptoms;
     private String severity;
+    private String notes;
     private String observation_notes;
-    private Integer EditNurseID;
-    private Integer BatchID;
-    private String VaccineName;
+    private LocalDateTime observation_time;
     private String status;
-    private String  className;
+    private Integer EditNurseID;
+    private String className;
     private String EditNurseName;
-    private Integer CreateNurseID;
-    private String CreateNurseName;
-
+    // Trả về cho phụ huynh
+    private Integer parentID;
+    @JsonIgnore
+    private String email;
 }
-
