@@ -1,9 +1,6 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_recordsDTO;
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_SentParent_DTO;
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_SentParent_Edit_DTO;
-import com.team_3.School_Medical_Management_System.DTO.Vaccination_records_edit_DTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
@@ -207,15 +204,11 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy học sinh"));
         record.setStudent(student);
 
-        SchoolNurse nurse = SchoolNurseRepository.findById(dto.getCreateNurseID())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
-        record.setCreatedByNurse(nurse);
 
-        if (dto.getEditNurseID() != null) {
-            SchoolNurse nurses = SchoolNurseRepository.findById(dto.getEditNurseID())
+            SchoolNurse nurse = SchoolNurseRepository.findById(dto.getEditNurseID())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
-            record.setUpdatedByNurse(nurses);
-        }
+            record.setUpdatedByNurse(nurse);
+
 
         Vaccine_Batches batch = vaccineBatchRepo.findById(dto.getVaccineBatchId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
@@ -268,7 +261,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
 
         // 7. Trả về DTO (phân biệt rõ createNurse vs editNurse)
-        SchoolNurse createNurse = SchoolNurseRepository.findById(dto.getCreateNurseID())
+        SchoolNurse createNurse = SchoolNurseRepository.findById(dto.getEditNurseID())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
 
         Vaccination_records_SentParent_Edit_DTO result = TransferModelsDTO.MappingVaccination_records_SentParent_Edit(
@@ -279,4 +272,11 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         result.setEmail(parent.getEmail());
         return result;
     }
+
+    @Override
+    public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
+        return vaccination_recordsInterFace.getStudentFollowedbyNurse();
+    }
+
+
 }

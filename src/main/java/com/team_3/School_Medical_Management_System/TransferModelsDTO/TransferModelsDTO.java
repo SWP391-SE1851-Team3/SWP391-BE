@@ -247,13 +247,7 @@ public class TransferModelsDTO {
         Vaccine_Batches_EditDTO entity = new Vaccine_Batches_EditDTO();
 
         // Dữ liệu tạo bởi (CreatedByNurse)
-        if (vaccineBatches.getCreatedByNurse() != null) {
-            entity.setCreated_by_nurse_id(vaccineBatches.getCreatedByNurse().getNurseID());
-            entity.setCreated_by_nurse_name(vaccineBatches.getCreatedByNurse().getFullName());
-        } else {
-            entity.setCreated_by_nurse_id(null);
-            entity.setCreated_by_nurse_name(null);
-        }
+
 
         // Các trường chính
         entity.setCreated_at(vaccineBatches.getCreated_at());
@@ -289,15 +283,8 @@ public class TransferModelsDTO {
     public static Vaccine_Batches MappingVaccineBatchesDTO(Vaccine_Batches_EditDTO dto) {
         Vaccine_Batches entity = new Vaccine_Batches();
 
-        // Dữ liệu tạo bởi (CreatedByNurse)
-        if (dto.getCreated_by_nurse_id() != null) {
-            SchoolNurse createdNurse = new SchoolNurse();
-            createdNurse.setNurseID(dto.getCreated_by_nurse_id());
-            createdNurse.setFullName(dto.getCreated_by_nurse_name());
-            entity.setCreatedByNurse(createdNurse);
-        } else {
-            entity.setCreatedByNurse(null);
-        }
+
+
 
         // Người chỉnh sửa cuối (UpdatedByNurse/EditNurse)
         if (dto.getEdit_nurse_id() != null) {
@@ -531,14 +518,7 @@ public class TransferModelsDTO {
             dto.setEditNurseName(null);
 
         }
-        if(record.getCreatedByNurse() != null) {
 
-            dto.setCreateNurseID(record.getCreatedByNurse().getNurseID());
-            dto.setCreateNurseName(record.getCreatedByNurse().getFullName());
-        }else {
-            dto.setCreateNurseID(null);
-            dto.setCreateNurseName(null);
-        }
         if (record.getVaccineBatches() != null) {
             dto.setVaccineBatchId(record.getVaccineBatches().getBatchID());
 
@@ -735,9 +715,6 @@ public class TransferModelsDTO {
         dto.setNotes(entity.getNotes());
         dto.setStatus(entity.getStatus());
 
-
-
-
         // 3. Từ Vaccination Record
         Vaccination_records vr = entity.getVaccination_records();
         if (vr != null) {
@@ -767,8 +744,6 @@ public class TransferModelsDTO {
                 dto.setEditNurseName(null);
                 dto.setEditNurseID(null);
             }
-
-
             // Student + Parent
             Student student = vr.getStudent();
             if (student != null) {
@@ -792,5 +767,8 @@ public class TransferModelsDTO {
 
         return dto;
     }
+
+
+
 
 }

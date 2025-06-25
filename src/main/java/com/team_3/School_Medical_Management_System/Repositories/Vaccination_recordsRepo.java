@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
+import com.team_3.School_Medical_Management_System.DTO.StudentVaccinationDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccination_recordsInterFace;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
@@ -8,12 +9,15 @@ import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import com.team_3.School_Medical_Management_System.DTO.StudentVaccinationDTO;
+
 
 import java.util.List;
 
 @Repository
 public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
     private EntityManager entityManager;
+
     @Autowired
     public Vaccination_recordsRepo(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -43,22 +47,22 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
     @Override
     public void deleteVaccination_records(int id) {
         var query = getVaccination_records_by_id(id);
-        if(query != null) {
+        if (query != null) {
             entityManager.remove(query);
-        }else{
+        } else {
             System.out.println("Vaccination_records not found");
         }
     }
 
     @Override
     public Vaccination_records getVaccination_records_by_id(int id) {
-      return entityManager.find(Vaccination_records.class, id);
+        return entityManager.find(Vaccination_records.class, id);
     }
 
     @Override
     public Vaccination_records updateVaccination_records(Vaccination_records vaccination_records) {
         var searchid = getVaccination_records_by_id(vaccination_records.getVaccinationRecordID());
-        if(searchid != null) {
+        if (searchid != null) {
             searchid.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
             searchid.setObservation_notes(vaccination_records.getObservation_notes());
             searchid.setNotes(vaccination_records.getNotes());
@@ -72,10 +76,10 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
             vaccine_Batches.setBatchID(vaccination_records.getVaccineBatches().getBatchID());
             searchid.setVaccineBatches(vaccine_Batches);
             entityManager.merge(vaccination_records);
-        }else {
+        } else {
             throw new RuntimeException("Vaccination_records not found");
         }
-       return vaccination_records;
+        return vaccination_records;
     }
 
     @Override
@@ -86,5 +90,14 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
                 .getResultList();
     }
 
-
+    @Override
+    public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
+        String jpql = "SELECT new com.team_3.School_Medical_Management_System.DTO.StudentVaccinationDTO(" +
+                "s.student.StudentID, s.student.FullName, s.student.className, " +
+                "s.observation_notes, s.vaccineBatches.vaccineType.Name, s.observation_time,s.status) " +
+                "FROM Vaccination_records s WHERE s.status = :status";
+        return entityManager.createQuery(jpql, StudentVaccinationDTO.class)
+                .setParameter("status", "Đang Theo Dõi ")
+                .getResultList();
+    }
 }
