@@ -29,10 +29,10 @@ public class HealthConsultationRepo implements HealthConsultationRepository {
     }
 
     @Override
-    public List<HealthConsultation> findByStudent(Student student) {
-        String jpql = "SELECT h FROM HealthConsultation h WHERE h.student = :student";
+    public List<HealthConsultation> findByStudentID(int studentID) {
+        String jpql = "SELECT h FROM HealthConsultation h WHERE h.studentID = :studentID";
         return entityManager.createQuery(jpql, HealthConsultation.class)
-                .setParameter("student", student)
+                .setParameter("studentID", studentID)
                 .getResultList();
     }
 

@@ -13,5 +13,6 @@ public class HealthCheckScheduleUpdateDTO {
     private String notes;
     private String status;
     private Date schedule_Date;
-    private int nurseID; // Added nurseID field
+    private Integer updatedByNurseID;
+    private String updatedByNurseName;
 }

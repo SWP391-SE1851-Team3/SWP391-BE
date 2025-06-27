@@ -15,4 +15,11 @@ public class HealthCheck_StudentCreateDTO {
     private String hearing;
     private String dentalCheck;
     private String temperature;
+    private float bmi;
+    private String overallResult;
+
+    // Added field for tracking the nurse who created the record
+
+    private Integer CreatedByNurseID;
+    private String createdByNurseName;
 }

@@ -1,24 +1,18 @@
-package com.team_3.School_Medical_Management_System.Model;
+package com.team_3.School_Medical_Management_System.DTO;
 
-import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import java.util.Date;
 
+@Data
 @NoArgsConstructor
-@ToString
-@Entity
-@Table
-@Setter
 @Getter
-public class HealthCheck_Student {
-    @Id
+@Setter
+public class HealthCheck_StudentUpdateDTO {
     private int checkID;
-
     private int studentID;
-
     private float height;
     private float weight;
     private String visionLeft;
@@ -28,9 +22,12 @@ public class HealthCheck_Student {
     private String temperature;
     private float bmi;
     private String overallResult;
-    // Added fields for tracking creation and updates
-    private Integer CreatedByNurseID;
-    private Integer UpdatedByNurseID;
-    private Date create_at;
+
+    // Only include creation fields (cannot be changed, but needed for reference)
+    private Integer updatedByNurseID;
     private Date update_at;
+    private String updatedByNurseName;
+
+    // Update fields are excluded
+    // update_at, updatedByNurseID, and updatedByNurseName are not here
 }

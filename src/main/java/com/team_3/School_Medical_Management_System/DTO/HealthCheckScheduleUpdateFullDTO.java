@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-public class HealthCheck_ScheduleDTO {
+public class HealthCheckScheduleUpdateFullDTO {
     private int health_ScheduleID;
     private Date schedule_Date;
     private String name;
@@ -19,11 +19,11 @@ public class HealthCheck_ScheduleDTO {
     private String notes;
     private String status;
 
-    // Added new fields for tracking creation and updates
-    private Date create_at;
+    // Only update-related fields
     private Date update_at;
-    private Integer CreatedByNurseID;
-    private Integer UpdatedByNurseID;
-    private String createdByNurseName;
+    private Integer updatedByNurseID;
     private String updatedByNurseName;
+
+    // Explicitly NO creation-related fields
+    // createdByNurseID and createdByNurseName are excluded
 }

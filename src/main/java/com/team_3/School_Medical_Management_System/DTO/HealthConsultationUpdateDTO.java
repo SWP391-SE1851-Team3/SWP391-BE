@@ -4,20 +4,20 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class HealthConsultationDTO {
+public class HealthConsultationUpdateDTO {
     private int consultID;
     private int studentID;
     private String studentName;
-    private String className;
     private int checkID;
+    private Date scheduledDate;
     private String status;
     private String reason;
 
-    // Added fields for tracking creation and updates
-    private Integer CreatedByNurseID;
+    // Only update-related fields
     private Integer UpdatedByNurseID;
-    private Date create_at;
     private Date update_at;
-    private String createdByNurseName;
     private String updatedByNurseName;
+
+    // No creation-related fields
+    // CreatedByNurseID and createdByNurseName are excluded
 }

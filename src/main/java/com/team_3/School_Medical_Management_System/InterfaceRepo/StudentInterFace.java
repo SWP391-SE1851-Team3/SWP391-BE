@@ -22,4 +22,6 @@ public interface StudentInterFace {
     public List<Student> getStudentsByParentID(int parentID);
 
     public Optional<Student> findById(int studentId);
+
+    List<Student> findByClassName(String className);
 }

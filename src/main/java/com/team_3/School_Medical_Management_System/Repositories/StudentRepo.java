@@ -74,4 +74,12 @@ public class StudentRepo implements StudentInterFace {
         Student student = entityManager.find(Student.class, studentId);
         return Optional.ofNullable(student);
     }
+
+    @Override
+    public List<Student> findByClassName(String className) {
+        String jpql = "SELECT s FROM Student s WHERE s.ClassName = :className";
+        return entityManager.createQuery(jpql, Student.class)
+                .setParameter("className", className)
+                .getResultList();
+    }
 }

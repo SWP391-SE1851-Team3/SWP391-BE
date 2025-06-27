@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthConsentForm;
 import com.team_3.School_Medical_Management_System.Service.HealthConsentFormService;
@@ -19,11 +20,25 @@ public class HealthConsentFormController {
     private HealthConsentFormService healthConsentFormService;
 
 
+    // Get all consent forms
+    @GetMapping("/all")
+    public ResponseEntity<List<HealthConsentFormDTO>> getAllConsentForms() {
+        try {
+            List<HealthConsentForm> forms = healthConsentFormService.getAllConsentForms();
+            List<HealthConsentFormDTO> dtos = forms.stream()
+                    .map(healthConsentFormService::convertToDTO)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // Update consent form with parent's decision
     @PutMapping("/{formId}")
     public ResponseEntity<HealthConsentFormDTO> updateConsentForm(
             @PathVariable int formId,
-            @RequestParam boolean isAgreed,
+            @RequestParam String isAgreed,
             @RequestParam(required = false) String notes) {
 
         HealthConsentForm updatedForm = healthConsentFormService.updateConsentForm(formId, isAgreed, notes);
@@ -63,5 +78,57 @@ public class HealthConsentFormController {
                 .map(healthConsentFormService::convertToDTO)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    @PostMapping("/create-for-class")
+    public ResponseEntity<Void> createConsentFormsForClass(@RequestBody ConsentFormRequestDTO request) {
+        try {
+            healthConsentFormService.createConsentFormsForClass(request);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/by-class/{className}")
+    public ResponseEntity<List<HealthConsentForm>> getConsentFormsByClass(@PathVariable String className) {
+        try {
+            List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByClass(className);
+            return new ResponseEntity<>(forms, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/by-class-and-schedule/{className}/{scheduleId}")
+    public ResponseEntity<List<HealthConsentForm>> getConsentFormsByClassAndSchedule(
+            @PathVariable String className,
+            @PathVariable Integer scheduleId) {
+        try {
+            List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByClassAndSchedule(className, scheduleId);
+            return new ResponseEntity<>(forms, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/accepted/{scheduleId}")
+    public ResponseEntity<List<HealthConsentForm>> getAcceptedConsentForms(@PathVariable Integer scheduleId) {
+        try {
+            List<HealthConsentForm> forms = healthConsentFormService.getAcceptedConsentForms(scheduleId);
+            return new ResponseEntity<>(forms, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/rejected/{scheduleId}")
+    public ResponseEntity<List<HealthConsentForm>> getRejectedConsentForms(@PathVariable Integer scheduleId) {
+        try {
+            List<HealthConsentForm> forms = healthConsentFormService.getRejectedConsentForms(scheduleId);
+            return new ResponseEntity<>(forms, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
