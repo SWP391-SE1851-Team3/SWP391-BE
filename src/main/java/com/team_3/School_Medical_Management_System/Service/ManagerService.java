@@ -8,9 +8,11 @@ import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Man
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
+import com.team_3.School_Medical_Management_System.Repositories.Post_vaccination_observationsRepo;
 import com.team_3.School_Medical_Management_System.Repositories.SchoolNurseRepo;
 import com.team_3.School_Medical_Management_System.Repositories.StudentRepo;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.ApiStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,21 +25,52 @@ import java.util.Optional;
 @Transactional
 public class ManagerService implements ManagerServiceInterFace {
     private ManagerInterFace managerInterFace;
-
+    @Autowired
+    private HealthCheckStudentRepository healthCheckStudentRepo;
+    @Autowired
+    private Consent_formsInterFace consentFormsRepo;
     @Autowired
     private StudentRepo studentRepo;
     @Autowired
-private Vaccination_recordsInterFace vaccinationRecordRepo;
+    private Vaccination_recordsInterFace vaccinationRecordRepo;
     @Autowired
     private RoleRepo roleRepo;
-
+    @Autowired
+    private Post_vaccination_observationsInterFace postVaccinationObservationRepo;
     @Autowired
     private SchoolNurseRepo nurseRepository;
 
     @Autowired
+    private MedicalEventDetailsRepository medicalEventDetailsRepo;
+    @Autowired
+    private MedicationSubmissionInterFace medicationSubmissionRepo;
+    @Autowired
     private ParentRepo parentRepository;
     @Autowired
     private ManagerRepository managerRepository;
+    @Autowired
+    private StudentHealthProfileInterFace studentHealthProfileRepo;
+    @Autowired
+    MedicationDetailRepository medicationDetailRepo;
+    @Autowired
+    private HealthConsentFormRepoInterface healthConsentFormRepo;
+    @Autowired
+    private HealthConsultationRepository healthConsultationRepo;
+    @Autowired
+    private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionRepo;
+    @Autowired
+   private MedicalEventRepo  medicalEventRepo;
+    @Autowired
+   private MedicalEvent_EventTypeRepo medicalEventEventTypeRepo;
+    @Autowired
+    private MedicalEvent_NurseRepo medicalEventNurseRepo;
+    @Autowired
+    private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepo;
+    @Autowired
+    private NotificationsParentRepository notificationsParentRepo;
+@Autowired
+private HealthConsultationParentRepo healthConsultationParentRepo;
+
 
     @Autowired
     public ManagerService(ManagerInterFace managerInterFace) {
@@ -109,6 +142,7 @@ private Vaccination_recordsInterFace vaccinationRecordRepo;
         return false;
 
     }
+
 
 
     @Override
@@ -218,7 +252,7 @@ private Vaccination_recordsInterFace vaccinationRecordRepo;
         }
         return null;
     }
-
+@Transactional
     @Override
     public ResponseEntity<String> deleteUser(int id, int roleId) {
 
@@ -227,18 +261,39 @@ private Vaccination_recordsInterFace vaccinationRecordRepo;
             case 1: // Parent
                 Parent parent = parentRepository.checkIdAndRoleExist(id, roleId);
                 if (parent == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
                 } else {
+                    try {
+                        // 1. Lấy danh sách students của parent này
+                        List<Student> students = studentRepo.getStudentsByParentID(parent.getParentID());
 
+                        // 2. Xóa tất cả dữ liệu liên quan đến từng student
+                        for (Student student : students) {
+                            deleteStudentRelatedData(student.getStudentID());
+                        }
 
-                    List<Student> students = studentRepo.getStudentsByParentID(parent.getParentID());
-                    for (Student s : students) {
-                        studentRepo.removeStudent(s.getStudentID());
+                        // 3. Xóa dữ liệu liên quan trực tiếp đến Parent
+                        deleteParentRelatedData(parent.getParentID());
+
+                        // 4. Xóa students
+                        for (Student student : students) {
+                            studentRepo.removeStudent(student.getStudentID());
+                        }
+
+                        // 5. Cuối cùng xóa Parent
+                        parentRepository.DeleteParent(id);
+
+                        return ResponseEntity.ok("Parent and all related data deleted successfully.");
+
+                    } catch (Exception e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Error deleting parent: " + e.getMessage());
                     }
-                    parentRepository.DeleteParent(id);
+
                 }
 
-                break;
+
             case 2: // SchoolNurse
                 nurseRepository.DeleteSchoolNurses(id);
                 break;
@@ -252,64 +307,64 @@ private Vaccination_recordsInterFace vaccinationRecordRepo;
 
     }
 
-//    private void deleteStudentRelatedData(int studentId) {
-//        // Xóa vaccination records và post-vaccination observations
-//        List<Vaccination_records> vaccinationRecords = vaccinationRecordRepo.getVaccination_recordsByStudentId(studentId);
-//        for (Vaccination_records record : vaccinationRecords) {
-//            postVaccinationObservationRepo.deleteByVaccinationRecordId(record.getVaccinationRecordID());
-//        }
-//        vaccinationRecordRepo.deleteByStudentId(studentId);
+    private void deleteStudentRelatedData(int studentId) {
+        // Xóa vaccination records và post-vaccination observations
+        List<Vaccination_records> vaccinationRecords = vaccinationRecordRepo.getVaccination_recordsByStudentId(studentId);
+        for (Vaccination_records record : vaccinationRecords) {
+            postVaccinationObservationRepo.deleteByVaccinationRecordId(record.getVaccinationRecordID());
+        }
+        vaccinationRecordRepo.deleteByStudentId(studentId);
+
+        // Xóa health check student
+        healthCheckStudentRepo.deleteByStudentId(studentId);
+
+        // Xóa consent forms
+        consentFormsRepo.deleteConsentFormsByStudentId(studentId);
+
+        // Xóa health consent form
+        healthConsentFormRepo.deleteByStudentId(studentId);
+
+        // Xóa student health profile
+        studentHealthProfileRepo.deleteHealthProfile(studentId);
+
+        // Xóa medical event details
+        medicalEventDetailsRepo.deleteByStudent_StudentID(studentId);
+
+        // Xóa health consultation liên quan
+        healthConsultationRepo.deleteByStudent_StudentID(studentId);
+    }
+
+    private void deleteParentRelatedData(int parentId) {
+        // Xóa medication submissions và details
+        List<MedicationSubmission> submissions = medicationSubmissionRepo.findByParentId(parentId);
+        for (MedicationSubmission submission : submissions) {
+            medicationDetailRepo.deleteByMedicationSubmission_MedicationSubmissionId(submission.getMedicationSubmissionId());
+            confirmMedicationSubmissionRepo.deleteByMedicationSubmissionId(submission.getMedicationSubmissionId());
+        }
+        medicationSubmissionRepo.deleteByParentIdm(parentId);
+
+        // Xóa medical events của parent này
+        List<MedicalEvent> events = medicalEventRepo.getByParentId(parentId);
+        for (MedicalEvent event : events) {
+            medicalEventEventTypeRepo.deleteByMedicalEvent_EventID(event.getEventID());
+            medicalEventNurseRepo.deleteByMedicalEvent_EventID(event.getEventID());
+            notificationsMedicalEventDetailsRepo.deleteByMedicalEvent_EventID(event.getEventID());
+        }
+        medicalEventRepo.deleteByParentID(parentId);
+
+        // Xóa notifications
+        notificationsParentRepo.deleteByParentId(parentId);
+
+        // Xóa health consultation parent
+        healthConsultationParentRepo.deleteByParentID(parentId);
+
+        // Xóa consent forms của parent
+        consentFormsRepo.deleteByConsent_FormByParentID(parentId);
+
+        // Xóa health consent forms của parent
+     //  healthConsentFormRepo.deleteByParentId(parentId);
+    }
 //
-//        // Xóa health check student
-//        healthCheckStudentRepo.deleteByStudentId(studentId);
-//
-//        // Xóa consent forms
-//        consentFormsRepo.deleteByStudentId(studentId);
-//
-//        // Xóa health consent form
-//        healthConsentFormRepo.deleteByStudentId(studentId);
-//
-//        // Xóa student health profile
-//        studentHealthProfileRepo.deleteByStudentId(studentId);
-//
-//        // Xóa medical event details
-//        medicalEventDetailsRepo.deleteByStudentId(studentId);
-//
-//        // Xóa health consultation liên quan
-//        healthConsultationRepo.deleteByStudentId(studentId);
-//    }
-//
-//    private void deleteParentRelatedData(int parentId) {
-//        // Xóa medication submissions và details
-//        List<MedicationSubmission> submissions = medicationSubmissionRepo.getByParentId(parentId);
-//        for (MedicationSubmission submission : submissions) {
-//            medicationDetailRepo.deleteBySubmissionId(submission.getMedicationSubmissionID());
-//            confirmMedicationSubmissionRepo.deleteBySubmissionId(submission.getMedicationSubmissionID());
-//        }
-//        medicationSubmissionRepo.deleteByParentId(parentId);
-//
-//        // Xóa medical events của parent này
-//        List<MedicalEvent> events = medicalEventRepo.getByParentId(parentId);
-//        for (MedicalEvent event : events) {
-//            medicalEventEventTypeRepo.deleteByEventId(event.getEventID());
-//            medicalEventNurseRepo.deleteByEventId(event.getEventID());
-//            notificationsMedicalEventDetailsRepo.deleteByEventId(event.getEventID());
-//        }
-//        medicalEventRepo.deleteByParentId(parentId);
-//
-//        // Xóa notifications
-//        notificationsParentRepo.deleteByParentId(parentId);
-//
-//        // Xóa health consultation parent
-//        healthConsultationParentRepo.deleteByParentId(parentId);
-//
-//        // Xóa consent forms của parent
-//        consentFormsRepo.deleteByParentId(parentId);
-//
-//        // Xóa health consent forms của parent
-//        healthConsentFormRepo.deleteByParentId(parentId);
-//    }
-////
 }
 
 

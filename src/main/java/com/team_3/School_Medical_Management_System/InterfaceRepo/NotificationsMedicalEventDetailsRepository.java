@@ -5,7 +5,7 @@ import com.team_3.School_Medical_Management_System.Model.Notifications_MedicalEv
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationsMedicalEventDetailsRepository extends JpaRepository<Notifications_MedicalEventDetails, Notifications_MedicalEventDetailsId> {
-
+public void deleteByMedicalEvent_EventID(Integer medicalId);
 
     // Additional query methods can be defined here if needed
 

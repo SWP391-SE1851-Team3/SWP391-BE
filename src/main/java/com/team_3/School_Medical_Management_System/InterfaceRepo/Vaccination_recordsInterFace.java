@@ -14,4 +14,6 @@ public interface Vaccination_recordsInterFace {
     public Vaccination_records updateVaccination_records(Vaccination_records vaccination_records);
     List<Vaccination_records> getVaccination_recordsByStudentId(int studentId);
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse();
+
+    public  void deleteByStudentId(int studentId);
 }

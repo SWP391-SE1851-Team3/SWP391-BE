@@ -58,4 +58,12 @@ public class Post_vaccination_observationsRepo implements Post_vaccination_obser
         }
     }
 
+    @Override
+    public void deleteByVaccinationRecordId(Integer id) {
+        String jpql = "DELETE FROM Post_vaccination_observations p WHERE p.vaccination_records.VaccinationRecordID = :recordId";
+        entityManager.createQuery(jpql)
+                .setParameter("recordId", id)
+                .executeUpdate();
+    }
+
 }

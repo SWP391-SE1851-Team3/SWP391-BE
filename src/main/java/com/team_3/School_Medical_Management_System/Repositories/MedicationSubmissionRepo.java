@@ -51,6 +51,14 @@ public class MedicationSubmissionRepo implements MedicationSubmissionInterFace {
         return entityManager.createQuery("SELECT m FROM MedicationSubmission m", MedicationSubmission.class).getResultList();
     }
 
+    @Override
+    public void deleteByParentIdm(int parentId) {
+        String jpql = "DELETE FROM MedicationSubmission m WHERE m.parentId = :parentId";
+        entityManager.createQuery(jpql)
+                .setParameter("parentId", parentId)
+                .executeUpdate();
+    }
+
 //    public List<MedicationSubmission> findPendingSubmissions() {
 //        return findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
 //    }

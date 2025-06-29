@@ -9,4 +9,6 @@ public interface Post_vaccination_observationsInterFace {
     public Post_vaccination_observations getPost_vaccination_observation(Integer id);
     public Post_vaccination_observations addPost_vaccination_observation(Post_vaccination_observations post_vaccination_observation);
     public Post_vaccination_observations updatePost_vaccination_observation(Post_vaccination_observations post_vaccination_observation);
+
+    public void deleteByVaccinationRecordId(Integer id);
 }

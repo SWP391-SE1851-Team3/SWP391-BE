@@ -13,10 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface MedicalEventRepo extends JpaRepository<MedicalEvent, Integer> {
+ @Query("SELECT m FROM MedicalEvent m WHERE m.parent.ParentID = :parentId")
+ public List<MedicalEvent> getByParentId(@Param("parentId") int parentId);
 
-//    @Query("SELECT m FROM MedicalEvent m LEFT JOIN FETCH m.medicalEventEventTypes WHERE m.eventID = :eventId")
-//    Optional<MedicalEvent> findByIdWithEventTypes(@Param("eventId") Integer eventId);
-//  // List<MedicalEvent> findByParentID(Integer parentId);
+
+@Query("DELETE FROM MedicalEvent m WHERE m.parent.ParentID = :parentId")
+public void deleteByParentID(@Param("parentId") int parentId);
 
 
 }

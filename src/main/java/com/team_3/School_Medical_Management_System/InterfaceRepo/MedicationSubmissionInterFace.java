@@ -3,6 +3,7 @@ package com.team_3.School_Medical_Management_System.InterfaceRepo;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,6 +16,12 @@ public interface MedicationSubmissionInterFace extends JpaRepository<MedicationS
 
     @Query("SELECT m FROM MedicationSubmission m")
     List<MedicationSubmission> findAllSubmissions();
+
+
+
+    @Query("DELETE FROM MedicationSubmission m WHERE m.parentId = :parentId")
+    void deleteByParentIdm(@Param("parentId") int parentId);
+   // public void deleteByParentIdm(int medicationSubmissionId);
 
 
 }
