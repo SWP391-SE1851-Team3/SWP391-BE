@@ -1,7 +1,9 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyReportDTO;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Service.DashboardServiceImpl;
+import com.team_3.School_Medical_Management_System.Service.MedicalSupplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,18 +11,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/dashboard")
 @Tag(name = "Dashboard Report", description = "API báo cáo dashboard cho ADMIN")
 
 public class DashboardController {
-
+    private MedicalSupplyService medicalSupplyService;
     private DashboardServiceImpl dashboardService;
 
     @Autowired
-    public DashboardController(DashboardServiceImpl dashboardService) {
+    public DashboardController(MedicalSupplyService medicalSupplyService, DashboardServiceImpl dashboardService) {
+        this.medicalSupplyService = medicalSupplyService;
         this.dashboardService = dashboardService;
     }
 
@@ -108,6 +114,20 @@ public class DashboardController {
 
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @Operation(summary = "Thống kê vật tư y tế")
+    @GetMapping("/reportMedicalSupply")
+    public ResponseEntity<List<MedicalSupplyReportDTO>> getMedicalSupplyReport(
+            @RequestParam(required = false) Integer categoryId) {
+        List<MedicalSupplyReportDTO> report = medicalSupplyService.getMedicalSupplyReport(categoryId);
+        return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/low-stock-MedicalSupply")
+    public ResponseEntity<List<MedicalSupplyReportDTO>> getLowStockReport() {
+        List<MedicalSupplyReportDTO> lowStockReport = medicalSupplyService.getLowStockReport();
+        return ResponseEntity.ok(lowStockReport);
     }
 
 }

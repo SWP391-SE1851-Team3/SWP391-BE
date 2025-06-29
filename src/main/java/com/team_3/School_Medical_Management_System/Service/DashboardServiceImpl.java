@@ -18,7 +18,13 @@ public class DashboardServiceImpl implements DashboardService{
     private  MedicationStatsRepository medicationStatsRepository;
 
     @Autowired
-    public DashboardServiceImpl(SystemStatsRepository systemStatsRepository, MedicalEventStatsRepository medicalEventStatsRepository, VaccinationStatsRepository vaccinationStatsRepository, HealthCheckStatsRepository healthCheckStatsRepository, MedicationStatsRepository medicationStatsRepository) {
+    public DashboardServiceImpl(MedicalSupplyRepository medicalSupplyRepository,
+                                SystemStatsRepository systemStatsRepository,
+                                MedicalEventStatsRepository medicalEventStatsRepository,
+                                VaccinationStatsRepository vaccinationStatsRepository,
+                                HealthCheckStatsRepository healthCheckStatsRepository,
+                                MedicationStatsRepository medicationStatsRepository) {
+
         this.systemStatsRepository = systemStatsRepository;
         this.medicalEventStatsRepository = medicalEventStatsRepository;
         this.vaccinationStatsRepository = vaccinationStatsRepository;

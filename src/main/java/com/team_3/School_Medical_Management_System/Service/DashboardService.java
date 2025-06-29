@@ -9,4 +9,5 @@ public interface DashboardService {
     VaccinationStats getVaccinationStats();
     HealthCheckStats getHealthCheckStats();
     MedicationStats getMedicationStats();
+
 }
