@@ -26,7 +26,8 @@ public class ManagerService implements ManagerServiceInterFace {
 
     @Autowired
     private StudentRepo studentRepo;
-
+    @Autowired
+private Vaccination_recordsInterFace vaccinationRecordRepo;
     @Autowired
     private RoleRepo roleRepo;
 
@@ -110,76 +111,32 @@ public class ManagerService implements ManagerServiceInterFace {
     }
 
 
-
-
     @Override
     public ResponseEntity<?> createUser(UserDTO userDTO) {
 
-            Optional<Role> role = roleRepo.findById(userDTO.getRoleId());
-            if (!role.isPresent()) {
-                return ResponseEntity.badRequest().body("RoleID không tồn tại");
-            }
+        Optional<Role> role = roleRepo.findById(userDTO.getRoleId());
+        if (!role.isPresent()) {
+            return ResponseEntity.badRequest().body("RoleID không tồn tại");
+        }
 
-            // Kiểm tra Username
-            if (parentRepository.existsByUserName(userDTO.getUserName()) ||
-                    nurseRepository.existsByUserName(userDTO.getUserName())) {
-                return ResponseEntity.badRequest().body("Username đã tồn tại");
-            }
+        // Kiểm tra Username
+        if (parentRepository.existsByUserName(userDTO.getUserName()) ||
+                nurseRepository.existsByUserName(userDTO.getUserName())) {
+            return ResponseEntity.badRequest().body("Username đã tồn tại");
+        }
 
-            // Kiểm tra Email
-            if (parentRepository.existsByEmail(userDTO.getEmail()) ||
-                    nurseRepository.existsByEmail(userDTO.getEmail())) {
-                return ResponseEntity.badRequest().body("Email đã tồn tại");
-            }
-
-
-            switch (userDTO.getRoleId()) {
-
-                case 3: // Parent
-                    Parent p = new Parent();
-                    //  ParentDTO parentDTO = new ParentDTO();
-                    p.setUserName(userDTO.getUserName());
-                    p.setPassword(userDTO.getPassword());
-                    p.setFullName(userDTO.getFullName());
-                    p.setPhone(userDTO.getPhone());
-                    p.setEmail(userDTO.getEmail());
-                    p.setIsActive(userDTO.getIsActive());
-                    p.setOccupation(userDTO.getOccupation());
-                    p.setRelationship(userDTO.getRelationship());
-                    p.setRoleID(userDTO.getRoleId());
-
-                        parentRepository.AddNewParent(p);
-                        return ResponseEntity.ok(p);
+        // Kiểm tra Email
+        if (parentRepository.existsByEmail(userDTO.getEmail()) ||
+                nurseRepository.existsByEmail(userDTO.getEmail())) {
+            return ResponseEntity.badRequest().body("Email đã tồn tại");
+        }
 
 
-                case 2: // SchoolNurse
-                    SchoolNurse n = new SchoolNurse();
-                    n.setUserName(userDTO.getUserName());
-                    n.setPassword(userDTO.getPassword());
-                    n.setFullName(userDTO.getFullName());
-                    n.setPhone(userDTO.getPhone());
-                    n.setEmail(userDTO.getEmail());
-                    n.setIsActive(userDTO.getIsActive());
-                    n.setCertification(userDTO.getCertification());
-                    n.setSpecialisation(userDTO.getSpecialisation());
-                    n.setRoleID(userDTO.getRoleId());
+        switch (userDTO.getRoleId()) {
 
-                        nurseRepository.AddNewSchoolNurses(n);
-                        return ResponseEntity.ok(n);
+            case 1: // Parent
+                Parent p = new Parent();
 
-                default:
-                    return ResponseEntity.badRequest().body("Không thể thêm mới tài khoản cho vai trò này!");
-            }
-
-
-    }
-
-    @Override
-    public ResponseEntity<?> updateUser(int id,int roleId, UserDTO userDTO) {
-
-        switch (roleId) {
-            case 3:
-                Parent p = parentRepository.GetParentById(id);
                 p.setUserName(userDTO.getUserName());
                 p.setPassword(userDTO.getPassword());
                 p.setFullName(userDTO.getFullName());
@@ -189,11 +146,13 @@ public class ManagerService implements ManagerServiceInterFace {
                 p.setOccupation(userDTO.getOccupation());
                 p.setRelationship(userDTO.getRelationship());
                 p.setRoleID(userDTO.getRoleId());
-                Parent updateP = parentRepository.UpdateParent(p);
-                return ResponseEntity.ok(updateP);
 
-            case 2:
-                SchoolNurse n = nurseRepository.GetSchoolNursesById(id);
+                parentRepository.AddNewParent(p);
+                return ResponseEntity.ok(p);
+
+
+            case 2: // SchoolNurse
+                SchoolNurse n = new SchoolNurse();
                 n.setUserName(userDTO.getUserName());
                 n.setPassword(userDTO.getPassword());
                 n.setFullName(userDTO.getFullName());
@@ -203,6 +162,57 @@ public class ManagerService implements ManagerServiceInterFace {
                 n.setCertification(userDTO.getCertification());
                 n.setSpecialisation(userDTO.getSpecialisation());
                 n.setRoleID(userDTO.getRoleId());
+
+                nurseRepository.AddNewSchoolNurses(n);
+                return ResponseEntity.ok(n);
+
+            default:
+                return ResponseEntity.badRequest().body("Không thể thêm mới tài khoản cho vai trò này!");
+        }
+
+
+    }
+
+    @Override
+    public ResponseEntity<?> updateUser(int id, int roleId, UserDTO userDTO) {
+
+        switch (roleId) {
+            case 1:
+                Parent parent = parentRepository.checkIdAndRoleExist(id, roleId);
+                if (parent == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
+                } else {
+                    Parent p = parentRepository.GetParentById(id);
+                    p.setUserName(userDTO.getUserName());
+                    //    p.setUserName(userDTO.getUserName());
+                    p.setPassword(userDTO.getPassword());
+                    p.setFullName(userDTO.getFullName());
+                    p.setPhone(userDTO.getPhone());
+                    p.setEmail(userDTO.getEmail());
+                    p.setIsActive(userDTO.getIsActive());
+                    p.setOccupation(userDTO.getOccupation());
+                    p.setRelationship(userDTO.getRelationship());
+                    p.setRoleID(p.getRoleID());
+                    Parent updateP = parentRepository.UpdateParent(p);
+                    return ResponseEntity.ok(updateP);
+                }
+            case 2:
+
+                SchoolNurse n = nurseRepository.checkIdAndRoleExist(id, roleId);
+
+                if (n == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("SchoolNurse with ID " + id + " and RoleID " + roleId + " not found.");
+                }
+                //SchoolNurse n = nurseRepository.GetSchoolNursesById(id);
+                n.setUserName(userDTO.getUserName());
+                n.setPassword(userDTO.getPassword());
+                n.setFullName(userDTO.getFullName());
+                n.setPhone(userDTO.getPhone());
+                n.setEmail(userDTO.getEmail());
+                n.setIsActive(userDTO.getIsActive());
+                n.setCertification(userDTO.getCertification());
+                n.setSpecialisation(userDTO.getSpecialisation());
+                n.setRoleID(n.getRoleID());
                 SchoolNurse updateN = nurseRepository.UpdateSchoolNurses(n);
                 return ResponseEntity.ok(updateN);
         }
@@ -213,14 +223,21 @@ public class ManagerService implements ManagerServiceInterFace {
     public ResponseEntity<String> deleteUser(int id, int roleId) {
 
 
-
         switch (roleId) {
-            case 3: // Parent
-                List<Student> students = studentRepo.getStudentsByParentID(id);
-                for (Student s : students) {
-                    students.remove(s);
+            case 1: // Parent
+                Parent parent = parentRepository.checkIdAndRoleExist(id, roleId);
+                if (parent == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
+                } else {
+
+
+                    List<Student> students = studentRepo.getStudentsByParentID(parent.getParentID());
+                    for (Student s : students) {
+                        studentRepo.removeStudent(s.getStudentID());
+                    }
+                    parentRepository.DeleteParent(id);
                 }
-                parentRepository.DeleteParent(id);
+
                 break;
             case 2: // SchoolNurse
                 nurseRepository.DeleteSchoolNurses(id);
@@ -234,7 +251,65 @@ public class ManagerService implements ManagerServiceInterFace {
 
 
     }
+
+//    private void deleteStudentRelatedData(int studentId) {
+//        // Xóa vaccination records và post-vaccination observations
+//        List<Vaccination_records> vaccinationRecords = vaccinationRecordRepo.getVaccination_recordsByStudentId(studentId);
+//        for (Vaccination_records record : vaccinationRecords) {
+//            postVaccinationObservationRepo.deleteByVaccinationRecordId(record.getVaccinationRecordID());
+//        }
+//        vaccinationRecordRepo.deleteByStudentId(studentId);
 //
+//        // Xóa health check student
+//        healthCheckStudentRepo.deleteByStudentId(studentId);
+//
+//        // Xóa consent forms
+//        consentFormsRepo.deleteByStudentId(studentId);
+//
+//        // Xóa health consent form
+//        healthConsentFormRepo.deleteByStudentId(studentId);
+//
+//        // Xóa student health profile
+//        studentHealthProfileRepo.deleteByStudentId(studentId);
+//
+//        // Xóa medical event details
+//        medicalEventDetailsRepo.deleteByStudentId(studentId);
+//
+//        // Xóa health consultation liên quan
+//        healthConsultationRepo.deleteByStudentId(studentId);
+//    }
+//
+//    private void deleteParentRelatedData(int parentId) {
+//        // Xóa medication submissions và details
+//        List<MedicationSubmission> submissions = medicationSubmissionRepo.getByParentId(parentId);
+//        for (MedicationSubmission submission : submissions) {
+//            medicationDetailRepo.deleteBySubmissionId(submission.getMedicationSubmissionID());
+//            confirmMedicationSubmissionRepo.deleteBySubmissionId(submission.getMedicationSubmissionID());
+//        }
+//        medicationSubmissionRepo.deleteByParentId(parentId);
+//
+//        // Xóa medical events của parent này
+//        List<MedicalEvent> events = medicalEventRepo.getByParentId(parentId);
+//        for (MedicalEvent event : events) {
+//            medicalEventEventTypeRepo.deleteByEventId(event.getEventID());
+//            medicalEventNurseRepo.deleteByEventId(event.getEventID());
+//            notificationsMedicalEventDetailsRepo.deleteByEventId(event.getEventID());
+//        }
+//        medicalEventRepo.deleteByParentId(parentId);
+//
+//        // Xóa notifications
+//        notificationsParentRepo.deleteByParentId(parentId);
+//
+//        // Xóa health consultation parent
+//        healthConsultationParentRepo.deleteByParentId(parentId);
+//
+//        // Xóa consent forms của parent
+//        consentFormsRepo.deleteByParentId(parentId);
+//
+//        // Xóa health consent forms của parent
+//        healthConsentFormRepo.deleteByParentId(parentId);
+//    }
+////
 }
 
 

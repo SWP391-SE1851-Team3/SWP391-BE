@@ -94,5 +94,18 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
                 .getSingleResult() > 0;
     }
 
+    @Override
+    public SchoolNurse checkIdAndRoleExist(int id, int roleId) {
+        String jpql = "SELECT s FROM SchoolNurse s WHERE s.NurseID = :id AND s.RoleID = :roleId";
+        try {
+            return entityManager.createQuery(jpql, SchoolNurse.class)
+                    .setParameter("id", id)
+                    .setParameter("roleId", roleId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null; // Không tìm thấy kết quả
+        }
+    }
+
 
 }

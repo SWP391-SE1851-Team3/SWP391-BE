@@ -71,6 +71,7 @@ public class DashboardServiceImpl implements DashboardService{
                 .completedEvents(medicalEventStatsRepository.countCompletedEvents())
                 .pendingEvents(medicalEventStatsRepository.countPendingEvents())
                 .notificationRate(medicalEventStatsRepository.calculateNotificationRate())
+              //  .createdDay(medicalEventStatsRepository.getCreatedDay())
                 .build();
     }
 

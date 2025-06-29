@@ -100,6 +100,19 @@ public class ParentRepo implements ParentInterFace  {
                 .getSingleResult();
     }
 
+    @Override
+    public Parent checkIdAndRoleExist(int id, int role) {
+        String jpql = "SELECT p FROM Parent p WHERE p.ParentID = :id AND p.RoleID = :role";
+        try {
+            return entityManager.createQuery(jpql, Parent.class)
+                    .setParameter("id", id)
+                    .setParameter("role", role)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null; // Không tìm thấy kết quả
+        }
+    }
+
 
     @Override
     public boolean existsByUserName(String userName) {

@@ -42,7 +42,7 @@ public class UserController {
 
 
 
-    @PutMapping("/updateUser/{id}")
+    @PutMapping("/updateUser/{id}/{roleId}")
     public ResponseEntity<?> updateUser(@PathVariable int id,@PathVariable int roleId, @RequestBody UserDTO userDTO) {
 
         return ResponseEntity.ok(managerService.updateUser(id,roleId,userDTO));

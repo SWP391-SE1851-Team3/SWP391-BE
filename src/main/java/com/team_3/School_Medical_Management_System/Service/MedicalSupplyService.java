@@ -1,8 +1,11 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyReportDTO;
+import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalSupplyRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.SupplyCategoryRepo;
 import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
+import com.team_3.School_Medical_Management_System.Model.SupplyCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +14,16 @@ import java.util.List;
 
 @Service
 public class MedicalSupplyService {
-
+private SupplyCategoryRepo supplyCategory;
     private MedicalSupplyRepository medicalSupplyRepository;
     @Autowired
-    public MedicalSupplyService(MedicalSupplyRepository medicalSupplyRepository) {
+
+
+    public MedicalSupplyService(SupplyCategoryRepo supplyCategory, MedicalSupplyRepository medicalSupplyRepository) {
+        this.supplyCategory = supplyCategory;
         this.medicalSupplyRepository = medicalSupplyRepository;
     }
+
 
     public List<MedicalSupplyReportDTO> getMedicalSupplyReport(Integer categoryId) {
         // Lấy danh sách vật tư từ repository
@@ -63,4 +70,17 @@ public class MedicalSupplyService {
         dto.setIsBelowReorderLevel(supply.getQuantityAvailable() < supply.getReorderLevel());
         return dto;
     }
+    public List<SupplyCategoryDTO> getAllCategories() {
+
+        List<SupplyCategory> list = supplyCategory.findAll();
+        List<SupplyCategoryDTO> dto = new ArrayList<>();
+        for (SupplyCategory category : list) {
+SupplyCategoryDTO d = new SupplyCategoryDTO();
+            d.setId(category.getCategoryID());
+            d.setCategoryName(category.getCategoryName());
+            dto.add(d);
+        }
+        return dto;
+    }
+
 }

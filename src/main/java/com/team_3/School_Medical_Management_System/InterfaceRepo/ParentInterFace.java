@@ -16,7 +16,7 @@ public interface ParentInterFace {
     public Parent getParentByEmail(String Email);
 
 
-
+    public Parent checkIdAndRoleExist(int id, int role);
 
     public boolean  existsByUserName(String userName);
     public boolean  existsByEmail(String userName);

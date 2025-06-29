@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyReportDTO;
+import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Service.DashboardServiceImpl;
 import com.team_3.School_Medical_Management_System.Service.MedicalSupplyService;
@@ -128,6 +129,12 @@ public class DashboardController {
     public ResponseEntity<List<MedicalSupplyReportDTO>> getLowStockReport() {
         List<MedicalSupplyReportDTO> lowStockReport = medicalSupplyService.getLowStockReport();
         return ResponseEntity.ok(lowStockReport);
+    }
+    @Operation(summary = "Lấy full báo cáo vật tư y tế theo danh mục")
+    @GetMapping("/reportSupplyBCategory")
+    public ResponseEntity<List<SupplyCategoryDTO>> getMedicalSupplyReportByCategory() {
+        List<SupplyCategoryDTO> report = medicalSupplyService.getAllCategories();
+        return ResponseEntity.ok(report);
     }
 
 }

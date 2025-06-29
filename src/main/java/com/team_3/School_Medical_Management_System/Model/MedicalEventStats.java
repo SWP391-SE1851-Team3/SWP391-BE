@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,4 +17,6 @@ public class MedicalEventStats {
     private Long completedEvents;
     private Long pendingEvents;
     private Double notificationRate;
+    private Date createdDay;
+
 }
