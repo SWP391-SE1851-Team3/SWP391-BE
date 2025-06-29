@@ -41,6 +41,10 @@ public class Vaccination_records {
     @JoinColumn(name = "UpdatedByNurseID")
     private SchoolNurse updatedByNurse;
 
+    @ManyToOne
+    @JoinColumn(name = "consent_id")
+    private Consent_forms consentForm;
+
 
 
     private String status;

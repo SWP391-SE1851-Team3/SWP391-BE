@@ -26,6 +26,7 @@ public class Vaccination_recordsDTO {
     private String EditNurseName;
     private Integer CreateNurseID;
     private String CreateNurseName;
+    private Integer consentId;
 
 }
 

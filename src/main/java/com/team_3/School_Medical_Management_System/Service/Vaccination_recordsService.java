@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -47,6 +48,11 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
 
     @Autowired
     private VaccineBatchRepository vaccineBatchRepo;
+
+
+
+    @Autowired
+    private ConsentRepository cosentRepo;
 
     @Autowired
     public Vaccination_recordsService(Vaccination_recordsInterFace vaccination_recordsInterFace) {
@@ -103,6 +109,20 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
 
     @Override
     public Vaccination_records_SentParent_DTO createEmail(Vaccination_records_SentParent_DTO dto) {
+
+        Optional<Consent_forms> consentOpt = cosentRepo.findByStudentIdAndBatchIdAndStatus(
+                dto.getStudentId(),
+                dto.getVaccineBatchId(),
+                "Đã xác nhận"
+        );
+
+        Consent_forms consent = consentOpt.orElseThrow(() ->
+                new RuntimeException("Chưa có phiếu đồng ý được phê duyệt cho học sinh này"));
+
+        if (!"Đồng Ý".equalsIgnoreCase(consent.getIsAgree())) {
+            throw new RuntimeException("Phụ huynh chưa đồng ý tiêm chủng");
+        }
+
         // 1. Tạo entity từ DTO
         Vaccination_records record = new Vaccination_records();
         record.setNotes(dto.getNotes());
@@ -111,6 +131,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         record.setObservation_notes(dto.getObservation_notes());
         record.setObservation_time(dto.getObservation_time());
         record.setStatus(dto.getStatus());
+        record.setConsentForm(consent);
 
         // 2. Mapping các entity bằng fetch từ DB
         Student student = studentRepo.findById(dto.getStudentId())
@@ -192,12 +213,26 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         Vaccination_records record = vaccinationRepo.findById(recordId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ tiêm chủng"));
 
+        Optional<Consent_forms> consentOpt = cosentRepo.findByStudentIdAndBatchIdAndStatus(
+                dto.getStudentId(),
+                dto.getVaccineBatchId(),
+                "Đã xác nhận"
+        );
+
+        Consent_forms consent = consentOpt.orElseThrow(() ->
+                new RuntimeException("Chưa có phiếu đồng ý được phê duyệt cho học sinh này"));
+
+        if (!"Đồng Ý".equalsIgnoreCase(consent.getIsAgree())) {
+            throw new RuntimeException("Phụ huynh chưa đồng ý tiêm chủng");
+        }
+
         record.setNotes(dto.getNotes());
         record.setSymptoms(dto.getSymptoms());
         record.setSeverity(dto.getSeverity());
         record.setObservation_notes(dto.getObservation_notes());
         record.setObservation_time(dto.getObservation_time());
         record.setStatus(dto.getStatus());
+        record.setConsentForm(consent);
 
         // 2. Mapping các entity bằng fetch từ DB
         Student student = studentRepo.findById(dto.getStudentId())
@@ -272,11 +307,13 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         result.setEmail(parent.getEmail());
         return result;
     }
-
     @Override
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
         return vaccination_recordsInterFace.getStudentFollowedbyNurse();
     }
+
+
+
 
 
 }

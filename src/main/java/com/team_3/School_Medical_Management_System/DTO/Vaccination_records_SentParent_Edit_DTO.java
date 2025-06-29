@@ -23,6 +23,7 @@ public class Vaccination_records_SentParent_Edit_DTO {
     private Integer EditNurseID;
     private String className;
     private String EditNurseName;
+    private Integer consentId;
     // Trả về cho phụ huynh
     private Integer parentID;
     @JsonIgnore
