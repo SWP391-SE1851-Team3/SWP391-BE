@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.HealthCheckStudentSimplif
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentCreateDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentUpdateDTO;
+import com.team_3.School_Medical_Management_System.DTO.HealthCheckStudentUpdateResponseDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckStudentService;
@@ -58,7 +59,7 @@ public class HealthCheckStudentController {
 
     // Update health check results - modified to use UpdateDTO and handle update fields internally
     @PutMapping("/{id}")
-    public ResponseEntity<HealthCheck_Student> updateHealthCheckResults(
+    public ResponseEntity<HealthCheckStudentUpdateResponseDTO> updateHealthCheckResults(
             @PathVariable int id,
             @RequestBody HealthCheck_StudentUpdateDTO updateDTO,
             @RequestParam(required = false) Integer nurseID) {
@@ -92,9 +93,33 @@ public class HealthCheckStudentController {
                 fullDTO.setUpdatedByNurseName(nurse.getFullName());
             }
         }
-
         HealthCheck_Student updatedResult = healthCheckStudentService.updateHealthCheckResults(id, fullDTO);
-        return new ResponseEntity<>(updatedResult, HttpStatus.OK);
+        // Map to response DTO
+        HealthCheckStudentUpdateResponseDTO response = new HealthCheckStudentUpdateResponseDTO();
+        response.setCheckID(updatedResult.getCheckID());
+        response.setStudentID(updatedResult.getStudentID());
+        response.setHeight(updatedResult.getHeight());
+        response.setWeight(updatedResult.getWeight());
+        response.setVisionLeft(updatedResult.getVisionLeft());
+        response.setVisionRight(updatedResult.getVisionRight());
+        response.setHearing(updatedResult.getHearing());
+        response.setDentalCheck(updatedResult.getDentalCheck());
+        response.setTemperature(updatedResult.getTemperature());
+        response.setBmi(updatedResult.getBmi());
+        response.setOverallResult(updatedResult.getOverallResult());
+        response.setCreate_at(updatedResult.getCreate_at());
+        response.setUpdate_at(updatedResult.getUpdate_at());
+        response.setUpdatedByNurseID(updatedResult.getUpdatedByNurseID());
+        // Lấy updatedByNurseName từ updatedByNurseID
+        String updatedByNurseName = null;
+        if (updatedResult.getUpdatedByNurseID() != null) {
+            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(updatedResult.getUpdatedByNurseID());
+            if (nurse != null) {
+                updatedByNurseName = nurse.getFullName();
+            }
+        }
+        response.setUpdatedByNurseName(updatedByNurseName);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Delete health check results

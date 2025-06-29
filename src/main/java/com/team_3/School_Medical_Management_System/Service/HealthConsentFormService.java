@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
+import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
@@ -30,7 +31,7 @@ public class HealthConsentFormService {
     private NotificationsParentRepository notificationsParentRepository;
 
     @Autowired
-    private HealthCheckRepository healthCheckRepository;
+    private HealthCheckStudentService healthCheckStudentService;
 
     // Update consent form with parent's decision
     public HealthConsentForm updateConsentForm(int formId, String isAgreed, String notes) {
@@ -38,9 +39,24 @@ public class HealthConsentFormService {
 
         if (optionalForm.isPresent()) {
             HealthConsentForm form = optionalForm.get();
+            String oldIsAgreed = form.getIsAgreed();
             form.setIsAgreed(isAgreed);
             form.setNotes(notes);
-            return healthConsentFormRepository.save(form);
+            HealthConsentForm savedForm = healthConsentFormRepository.save(form);
+            // If isAgreed changed to "accepted" and was not previously "accepted", create HealthCheck_Student
+            if (!"accepted".equalsIgnoreCase(oldIsAgreed) && "accepted".equalsIgnoreCase(isAgreed)) {
+                HealthCheck_StudentDTO dto = new HealthCheck_StudentDTO();
+                dto.setFormID(form.getFormID());
+                dto.setHealth_ScheduleID(form.getHealth_ScheduleID());
+                dto.setStudentID(form.getStudentID());
+                // You can set other default values for dto here if needed
+                try {
+                    healthCheckStudentService.createHealthCheckResults(dto);
+                } catch (Exception e) {
+                    // Optionally log or handle exception
+                }
+            }
+            return savedForm;
         }
 
         return null;
@@ -127,11 +143,6 @@ public class HealthConsentFormService {
             consentForm.setCreatedByNurseID(request.getCreatedByNurseId());
             consentForm.setUpdatedByNurseID(request.getUpdatedByNurseID());
             HealthConsentForm savedConsentForm = healthConsentFormRepository.save(consentForm);
-
-            // Create corresponding HealthCheck entry
-            HealthCheck healthCheck = new HealthCheck();
-            healthCheck.setFormID(savedConsentForm.getFormID());
-            healthCheckRepository.save(healthCheck);
 
             // Create notification for parent
             if (student.getParent() != null) {

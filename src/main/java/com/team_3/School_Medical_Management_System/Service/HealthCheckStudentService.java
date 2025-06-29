@@ -27,9 +27,6 @@ public class HealthCheckStudentService {
     private HealthCheckStudentRepository healthCheckStudentRepository;
 
     @Autowired
-    private HealthCheckRepository healthCheckRepository;
-
-    @Autowired
     private HealthConsentFormRepository healthConsentFormRepository;
 
     @Autowired
@@ -50,35 +47,28 @@ public class HealthCheckStudentService {
     // Create health check results using DTO with CheckID
     @Transactional
     public HealthCheck_Student createHealthCheckResults(HealthCheck_StudentDTO dto) {
-        // Fetch the Student object first
-        Optional<Student> studentOpt = studentRepository.findById(dto.getStudentID());
+        // Check HealthConsentForm by formID
+        Optional<HealthConsentForm> consentOpt = healthConsentFormRepository.findById(dto.getFormID());
+        if (!consentOpt.isPresent()) {
+            throw new RuntimeException("HealthConsentForm not found with formID: " + dto.getFormID());
+        }
+        HealthConsentForm consentForm = consentOpt.get();
+        if (!"accepted".equalsIgnoreCase(consentForm.getIsAgreed())) {
+            throw new RuntimeException("Cannot create HealthCheck_Student: Consent form is not accepted.");
+        }
+        // Use studentID from consent form
+        int studentId = consentForm.getStudentID();
+        Optional<Student> studentOpt = studentRepository.findById(studentId);
         if (!studentOpt.isPresent()) {
-            throw new RuntimeException("Student not found with ID: " + dto.getStudentID());
+            throw new RuntimeException("Student not found with ID: " + studentId);
         }
         Student student = studentOpt.get();
-
-        // Find HealthCheck record by checkID from DTO
-        Optional<HealthCheck> healthCheckOpt = healthCheckRepository.findById(dto.getCheckID());
-        if (!healthCheckOpt.isPresent()) {
-            throw new RuntimeException("HealthCheck not found with checkID: " + dto.getCheckID());
-        }
-        HealthCheck healthCheck = healthCheckOpt.get();
-
-        // Check if a HealthCheck_Student record already exists with this checkID
-        Optional<HealthCheck_Student> existingHealthCheckStudent =
-            healthCheckStudentRepository.findById(healthCheck.getCheckID());
-
-        if (existingHealthCheckStudent.isPresent()) {
-            throw new RuntimeException("A health check record already exists for checkID: " +
-                healthCheck.getCheckID() + " with formID: " + healthCheck.getFormID());
-        }
-
-        // Create HealthCheck_Student with the checkID from request
+        // Create HealthCheck_Student
         HealthCheck_Student healthCheckStudent = new HealthCheck_Student();
-        healthCheckStudent.setCheckID(healthCheck.getCheckID());
-        healthCheckStudent.setStudentID(dto.getStudentID()); // Thêm dòng này
-
-        // Set other properties
+        healthCheckStudent.setStudentID(studentId);
+        healthCheckStudent.setFormID(dto.getFormID());
+        healthCheckStudent.setHealth_ScheduleID(dto.getHealth_ScheduleID());
+        // Set other properties, allow empty/null if not provided
         healthCheckStudent.setHeight(dto.getHeight());
         healthCheckStudent.setWeight(dto.getWeight());
         healthCheckStudent.setVisionLeft(dto.getVisionLeft());
@@ -87,9 +77,12 @@ public class HealthCheckStudentService {
         healthCheckStudent.setDentalCheck(dto.getDentalCheck());
         healthCheckStudent.setTemperature(dto.getTemperature());
         healthCheckStudent.setOverallResult(dto.getOverallResult());
-        // Calculate BMI
-        float heightInMeters = dto.getHeight() / 100f;
-        float bmi = dto.getWeight() / (heightInMeters * heightInMeters);
+        // Calculate BMI only if height and weight are valid
+        float bmi = 0;
+        if (dto.getHeight() > 0 && dto.getWeight() > 0) {
+            float heightInMeters = dto.getHeight() / 100f;
+            bmi = dto.getWeight() / (heightInMeters * heightInMeters);
+        }
         healthCheckStudent.setBmi(bmi);
         // Set creation information
         healthCheckStudent.setCreate_at(new Date());
@@ -355,13 +348,6 @@ public class HealthCheckStudentService {
         }
         dto.setUpdatedByNurseName(updatedByNurseName);
 
-        // Set formID from health check - fetch from database using checkID
-        Optional<HealthCheck> healthCheckOpt = healthCheckRepository.findById(entity.getCheckID());
-        if (healthCheckOpt.isPresent()) {
-            HealthCheck healthCheck = healthCheckOpt.get();
-            dto.setFormID(healthCheck.getFormID());
-        }
-
         // Set student info (flat fields) - fetch from database using studentID
         Optional<Student> studentOpt = studentRepository.findById(entity.getStudentID());
         if (studentOpt.isPresent()) {
@@ -373,4 +359,3 @@ public class HealthCheckStudentService {
         return dto;
     }
 }
-

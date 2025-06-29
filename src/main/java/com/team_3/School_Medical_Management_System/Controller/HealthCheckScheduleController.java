@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_ScheduleDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateFullDTO;
@@ -114,24 +115,31 @@ public class HealthCheckScheduleController {
 
     // Update health check schedule
     @PutMapping("/{id}")
-    public ResponseEntity<HealthCheck_Schedule> updateHealthCheckSchedule(
+    public ResponseEntity<HealthCheckScheduleResponseDTO> updateHealthCheckSchedule(
             @PathVariable int id,
             @RequestBody HealthCheckScheduleUpdateFullDTO dto) {
-
-        // Handle updater nurse information
-        if (dto.getUpdatedByNurseID() != null && dto.getUpdatedByNurseID() > 0) {
+        // Chỉ xử lý updatedByNurse, không lấy hoặc set createdByNurse nữa
+        if (dto.getUpdatedByNurseID() != null) {
             SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(dto.getUpdatedByNurseID());
             if (nurse != null) {
-                // Set updater nurse name if not already set
-                if (dto.getUpdatedByNurseName() == null || dto.getUpdatedByNurseName().isEmpty()) {
-                    dto.setUpdatedByNurseName(nurse.getFullName());
-                }
+                dto.setUpdatedByNurseName(nurse.getFullName());
             }
         }
-
         HealthCheck_Schedule updatedSchedule = healthCheckScheduleService.updateHealthCheckScheduleWithUpdateDTO(id, dto);
         if (updatedSchedule != null) {
-            return new ResponseEntity<>(updatedSchedule, HttpStatus.OK);
+            // Map entity to response DTO (không có createdByNurseID và createdByNurseName)
+            HealthCheckScheduleResponseDTO responseDTO = new HealthCheckScheduleResponseDTO();
+            responseDTO.setHealth_ScheduleID(updatedSchedule.getHealth_ScheduleID());
+            responseDTO.setSchedule_Date(updatedSchedule.getSchedule_Date());
+            responseDTO.setName(updatedSchedule.getName());
+            responseDTO.setLocation(updatedSchedule.getLocation());
+            responseDTO.setNotes(updatedSchedule.getNotes());
+            responseDTO.setStatus(updatedSchedule.getStatus());
+            responseDTO.setCreate_at(updatedSchedule.getCreate_at());
+            responseDTO.setUpdate_at(updatedSchedule.getUpdate_at());
+            responseDTO.setUpdatedByNurseID(updatedSchedule.getUpdatedByNurseID());
+            responseDTO.setUpdatedByNurseName(updatedSchedule.getUpdatedByNurseName());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

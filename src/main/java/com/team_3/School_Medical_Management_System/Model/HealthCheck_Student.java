@@ -15,18 +15,19 @@ import java.util.Date;
 @Getter
 public class HealthCheck_Student {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int checkID;
-
-    private int studentID;
-
-    private float height;
-    private float weight;
+    private Integer studentID;
+    private Integer formID;
+    private Integer health_ScheduleID;
+    private Float height;
+    private Float weight;
     private String visionLeft;
     private String visionRight;
     private String hearing;
     private String dentalCheck;
     private String temperature;
-    private float bmi;
+    private Float bmi;
     private String overallResult;
     // Added fields for tracking creation and updates
     private Integer CreatedByNurseID;

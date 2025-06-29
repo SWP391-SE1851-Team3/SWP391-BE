@@ -139,7 +139,6 @@ public class HealthCheckScheduleService {
         Optional<HealthCheck_Schedule> optionalSchedule = healthCheckScheduleRepository.findById(id);
         if (optionalSchedule.isPresent()) {
             HealthCheck_Schedule schedule = optionalSchedule.get();
-
             // Update basic information
             schedule.setName(dto.getName());
             schedule.setSchedule_Date(dto.getSchedule_Date());

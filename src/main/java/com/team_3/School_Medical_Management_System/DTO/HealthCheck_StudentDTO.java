@@ -13,6 +13,7 @@ import java.util.Date;
 public class HealthCheck_StudentDTO {
     private int checkID;
     private int studentID;
+    private int health_ScheduleID; // Thêm ID lịch khám sức khỏe
     private String studentName;  // Thêm tên học sinh
     private String className;    // Thêm tên lớp
     private float height;
@@ -24,6 +25,7 @@ public class HealthCheck_StudentDTO {
     private String temperature;
     private float bmi;
     private String overallResult;
+    private int formID; // Added field for form ID
 
     // Added fields for tracking creation and updates
     private Integer CreatedByNurseID;

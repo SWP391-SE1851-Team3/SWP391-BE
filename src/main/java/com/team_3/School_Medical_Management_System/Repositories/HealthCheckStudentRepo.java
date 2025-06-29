@@ -30,7 +30,7 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
 
     @Override
     public List<HealthCheck_Student> findByStudent_StudentID(int studentID) {
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.student.StudentID = :studentID";
+        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.studentID = :studentID";
         return entityManager.createQuery(jpql, HealthCheck_Student.class)
                 .setParameter("studentID", studentID)
                 .getResultList();
@@ -228,7 +228,7 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
 
     @Override
     public Integer findMaxCheckIdByStudentId(int studentId) {
-        String jpql = "SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.student.StudentID = :studentId";
+        String jpql = "SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.studentID = :studentId";
         try {
             return entityManager.createQuery(jpql, Integer.class)
                     .setParameter("studentId", studentId)
