@@ -37,9 +37,7 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Lấy thống kê tổng quan hệ thống
-     */
+
     @Operation(summary = "Thống kê tổng quan hệ thống")
     @GetMapping("/system-stats")
     public ResponseEntity<SystemStats> getSystemStats() {
@@ -54,9 +52,7 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Lấy thống kê sự kiện y tế
-     */
+
     @Operation(summary = "Thống kê sự kiện y tế")
     @GetMapping("/medical-events")
     public ResponseEntity<MedicalEventStats> getMedicalEventStats() {
@@ -71,9 +67,7 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Lấy thống kê tiêm chủng
-     */
+
     @Operation(summary = "Thống kê tiêm chủng")
     @GetMapping("/vaccination")
     public ResponseEntity<VaccinationStats> getVaccinationStats() {
@@ -88,9 +82,6 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Lấy thống kê khám sức khỏe
-     */
     @Operation(summary = "Thống kê khám sức khỏe")
     @GetMapping("/health-check")
     public ResponseEntity<HealthCheckStats> getHealthCheckStats() {
@@ -105,9 +96,6 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Lấy thống kê gửi thuốc
-     */
     @Operation(summary = "Thống kê gửi thuốc")
     @GetMapping("/medication")
     public ResponseEntity<MedicationStats> getMedicationStats() {
@@ -122,12 +110,4 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Health check endpoint
-     */
-    @Operation(summary = "Kiểm tra service")
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("Dashboard Service OK - " + java.time.LocalDateTime.now());
-    }
 }

@@ -22,6 +22,7 @@ public class UserController {
     private RoleService roleService;
     @Autowired
     private ManagerService managerService;
+
     private ParentRepository parentRepository;
     private SchoolNurseRepository schoolNurseRepository;
 

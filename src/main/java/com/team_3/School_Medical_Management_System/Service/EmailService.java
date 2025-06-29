@@ -145,30 +145,5 @@ public class EmailService {
         notificationsParentRepository.save(notification);
     }
 
-    /**
-     * Phương thức kiểm tra cấu hình email
-     */
-    public void testEmailConfig(String to) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setTo(to);
-            helper.setSubject("Kiểm tra cấu hình email");
-            helper.setText(
-                    "<html><body>" +
-                            "<h2>Kiểm tra email</h2>" +
-                            "<p>Đây là email kiểm tra cấu hình.</p>" +
-                            "<p>Thời gian: " + getCurrentVietnamDateTime() + "</p>" +
-                            "<p>Người gửi: " + getCurrentUsername() + "</p>" +
-                            "</body></html>",
-                    true
-            );
-
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Lỗi khi gửi email kiểm tra: " + e.getMessage(), e);
-        }
-    }
 
 }

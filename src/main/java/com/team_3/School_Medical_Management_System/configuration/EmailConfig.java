@@ -20,11 +20,13 @@ public class EmailConfig {
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+
         // Cấu hình server email
         mailSender.setHost("smtp.gmail.com"); // Thay đổi nếu bạn sử dụng nhà cung cấp email khác
         mailSender.setPort(587);
-        mailSender.setUsername(username); // Thay thế bằng email của bạn
-        mailSender.setPassword(password); // Thay thế bằng mật khẩu hoặc mật khẩu ứng dụng
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
         mailSender.setDefaultEncoding("UTF-8"); // Hỗ trợ tiếng Việt
 
         // Cấu hình thuộc tính bổ sung

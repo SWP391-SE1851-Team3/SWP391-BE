@@ -163,7 +163,7 @@ public class MedicalEventService {
             notification.setTitle(title);
             notification.setContent(content);
             notification.setCreateAt(savedEvent.getEventDateTime());
-            //  notification.setCreatedBy(currentUser); // Thêm thông tin người tạo
+
             notificationsParentRepository.save(notification);
             try {
                 // Gửi email với thông tin người dùng và thời gian

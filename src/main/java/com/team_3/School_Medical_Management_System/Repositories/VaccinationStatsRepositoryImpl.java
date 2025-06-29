@@ -64,7 +64,7 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
         try {
             String sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgree = 'YES' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgree = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM Consent_forms
                 """;
             Query query = entityManager.createNativeQuery(sql);
