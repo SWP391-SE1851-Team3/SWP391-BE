@@ -51,7 +51,7 @@ public class ManagerService implements ManagerServiceInterFace {
     @Autowired
     private StudentHealthProfileInterFace studentHealthProfileRepo;
     @Autowired
-    MedicationDetailRepository medicationDetailRepo;
+    private MedicationDetailRepository medicationDetailRepo;
     @Autowired
     private HealthConsentFormRepoInterface healthConsentFormRepo;
     @Autowired
@@ -59,17 +59,17 @@ public class ManagerService implements ManagerServiceInterFace {
     @Autowired
     private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionRepo;
     @Autowired
-   private MedicalEventRepo  medicalEventRepo;
+    private MedicalEventRepo medicalEventRepo;
     @Autowired
-   private MedicalEvent_EventTypeRepo medicalEventEventTypeRepo;
+    private MedicalEvent_EventTypeRepo medicalEventEventTypeRepo;
     @Autowired
     private MedicalEvent_NurseRepo medicalEventNurseRepo;
     @Autowired
     private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepo;
     @Autowired
     private NotificationsParentRepository notificationsParentRepo;
-@Autowired
-private HealthConsultationParentRepo healthConsultationParentRepo;
+    @Autowired
+    private HealthConsultationParentRepo healthConsultationParentRepo;
 
 
     @Autowired
@@ -142,7 +142,6 @@ private HealthConsultationParentRepo healthConsultationParentRepo;
         return false;
 
     }
-
 
 
     @Override
@@ -252,7 +251,13 @@ private HealthConsultationParentRepo healthConsultationParentRepo;
         }
         return null;
     }
-@Transactional
+
+
+
+
+
+
+    @Transactional(rollbackOn = Exception.class)
     @Override
     public ResponseEntity<String> deleteUser(int id, int roleId) {
 
@@ -293,8 +298,17 @@ private HealthConsultationParentRepo healthConsultationParentRepo;
 
                 }
 
-
             case 2: // SchoolNurse
+
+                SchoolNurse nurse = nurseRepository.checkIdAndRoleExist(id, roleId);
+                if (nurse == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body("SchoolNurse with ID " + id + " and RoleID " + roleId + " not found.");
+                }
+
+
+                // Xóa tất cả dữ liệu liên quan đến SchoolNurse
+
                 nurseRepository.DeleteSchoolNurses(id);
                 break;
 
@@ -316,7 +330,7 @@ private HealthConsultationParentRepo healthConsultationParentRepo;
         vaccinationRecordRepo.deleteByStudentId(studentId);
 
         // Xóa health check student
-        healthCheckStudentRepo.deleteByStudentId(studentId);
+        healthCheckStudentRepo.deleteByStudentID(studentId);
 
         // Xóa consent forms
         consentFormsRepo.deleteConsentFormsByStudentId(studentId);
@@ -333,6 +347,8 @@ private HealthConsultationParentRepo healthConsultationParentRepo;
         // Xóa health consultation liên quan
         healthConsultationRepo.deleteByStudent_StudentID(studentId);
     }
+
+
 
     private void deleteParentRelatedData(int parentId) {
         // Xóa medication submissions và details
@@ -362,9 +378,9 @@ private HealthConsultationParentRepo healthConsultationParentRepo;
         consentFormsRepo.deleteByConsent_FormByParentID(parentId);
 
         // Xóa health consent forms của parent
-     //  healthConsentFormRepo.deleteByParentId(parentId);
+        healthConsentFormRepo.deleteByParentID(parentId);
     }
-//
+
 }
 
 

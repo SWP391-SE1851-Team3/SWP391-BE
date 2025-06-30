@@ -167,7 +167,7 @@ public class MedicalEventService {
             notificationsParentRepository.save(notification);
             try {
                 // Gửi email với thông tin người dùng và thời gian
-                emailService.sendHtmlNotificationEmail(parent.get(), title, content, notification.getNotificationId());
+                emailService.sendHtmlNotificationEmail(parent.get(), title, content, notification.getNotificationId(), event.getCreatedByNurse().getFullName());
                 // emailService.testEmailConfig("ytruongtieuhoc@example.com");
             } catch (Exception e) {
                 throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);

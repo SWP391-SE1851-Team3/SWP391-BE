@@ -34,7 +34,7 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
 
 
     @Override
-    public void deleteByStudentId(int studentId) {
+    public void deleteByStudentID(int studentId) {
         String jpql = "DELETE FROM HealthCheck_Student h WHERE h.studentID = :studentId";
         entityManager.createQuery(jpql).setParameter("studentId", studentId).executeUpdate();
     }

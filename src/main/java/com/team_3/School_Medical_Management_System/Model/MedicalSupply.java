@@ -33,6 +33,8 @@ public class MedicalSupply {
     @JoinColumn(name = "CategoryID")
     private SupplyCategory category;
 
+
+   // Self-referential relationship for hierarchical structure
     public MedicalSupply() {
     }
     public MedicalSupply(Integer medicalSupplyId, String supplyName, String unit, Integer quantityAvailable, Integer reorderLevel, String storageTemperature, java.sql.Date dateAdded, SupplyCategory category) {

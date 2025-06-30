@@ -51,7 +51,7 @@ public class EmailService {
         updateNotificationStatus(notificationId);
     }
 
-    public void sendHtmlNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
+    public void sendHtmlNotificationEmail(Parent parent, String title, String content, Integer notificationId,String nameNurse) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
             String currentUser = getCurrentUsername();
@@ -63,7 +63,7 @@ public class EmailService {
 
             helper.setTo(parent.getEmail());
             helper.setSubject(title);
-            helper.setText(createHtmlContent(parent, content, currentDateTime, currentUser), true);
+            helper.setText(createHtmlContent(parent, content, currentDateTime, currentUser,nameNurse), true);
 
             mailSender.send(message);
 
@@ -80,7 +80,7 @@ public class EmailService {
      */
     private String getCurrentUsername() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = "TRƯỜNG FPT";
+        String name = "NHÂN VIÊN Y TẾ TRƯỜNG FP";
         return  name;
     }
 
@@ -95,36 +95,268 @@ public class EmailService {
     /**
      * Tạo nội dung HTML đẹp mắt cho email
      */
-    private String createHtmlContent(Parent parent, String content, String datetime, String username) {
-        return String.format(
-                "<html>" +
-                        "<head>" +
-                        "    <meta charset=\"UTF-8\">" +
-                        "    <style>" +
-                        "        body { font-family: Arial, sans-serif; }" +
-                        "        .header { background-color: #28a745; color: white; padding: 10px; text-align: center; }" +
-                        "        .content { margin: 20px; line-height: 1.6; }" +
-                        "        .footer { background-color: #f8f9fa; padding: 10px; font-size: smaller; }" +
-                        "        .info { color: #6c757d; }" +
-                        "    </style>" +
-                        "</head>" +
-                        "<body>" +
-                        "    <div class=\"header\"><h2>Thông báo sự kiện y tế khẩn cấp</h2></div>" +
-                        "    <div class=\"content\">" +
-                        "        %s" +
-                        "    </div>" +
-                        "    <div class=\"footer\">" +
-                        "        <p class=\"info\">Thông tin bổ sung:</p>" +
-                        "        <p>Thời gian gửi: %s</p>" +
-                        "        <p>Người gửi: %s</p>" +
-                        "        <hr>" +
-                        "        <p>Trân trọng,<br>Ban y tế trường học</p>" +
-                        "    </div>" +
-                        "</body>" +
-                        "</html>",
-                formatContentToHtml(content),
-                datetime,
-                username
+    private String createHtmlContent(Parent parent, String content, String datetime, String username, String currentUser) {
+        return String.format("""
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Thông báo y tế khẩn cấp</title>
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    background-color: #f4f4f4;
+                }
+                
+                .email-container {
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                    overflow: hidden;
+                }
+                
+                .header {
+                    background: linear-gradient(135deg, #e74c3c, #c0392b);
+                    color: white;
+                    padding: 30px 20px;
+                    text-align: center;
+                    position: relative;
+                }
+                
+                .header::before {
+                    content: '🚨';
+                    font-size: 3em;
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                
+                .header h1 {
+                    font-size: 24px;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                }
+                
+                .header .subtitle {
+                    font-size: 14px;
+                    opacity: 0.9;
+                }
+                
+                .content {
+                    padding: 30px 25px;
+                }
+                
+                .greeting {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    margin-bottom: 20px;
+                }
+                
+                .alert-box {
+                    background-color: #fff5f5;
+                    border-left: 4px solid #e74c3c;
+                    padding: 20px;
+                    margin: 20px 0;
+                    border-radius: 5px;
+                }
+                
+                .alert-text {
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: #2c3e50;
+                    margin-bottom: 15px;
+                }
+                
+                .info-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 15px;
+                    margin: 25px 0;
+                }
+                
+                .info-item {
+                    background-color: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 8px;
+                    border-left: 3px solid #3498db;
+                }
+                
+                .info-item .label {
+                    font-weight: 600;
+                    color: #34495e;
+                    font-size: 14px;
+                    margin-bottom: 5px;
+                }
+                
+                .info-item .value {
+                    color: #2c3e50;
+                    font-size: 16px;
+                }
+                
+                .contact-section {
+                    background: linear-gradient(135deg, #3498db, #2980b9);
+                    color: white;
+                    padding: 25px;
+                    margin: 25px 0;
+                    border-radius: 10px;
+                    text-align: center;
+                }
+                
+                .contact-section h3 {
+                    margin-bottom: 15px;
+                    font-size: 20px;
+                }
+                
+                .phone-number {
+                    background-color: rgba(255, 255, 255, 0.2);
+                    padding: 15px 25px;
+                    border-radius: 50px;
+                    font-size: 24px;
+                    font-weight: bold;
+                    display: inline-block;
+                    margin: 10px 0;
+                    letter-spacing: 2px;
+                }
+                
+                .actions {
+                    text-align: center;
+                    margin: 25px 0;
+                }
+                
+                .btn {
+                    display: inline-block;
+                    padding: 12px 30px;
+                    background: linear-gradient(135deg, #27ae60, #229954);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    margin: 0 10px;
+                    transition: transform 0.2s;
+                }
+                
+                .btn:hover {
+                    transform: translateY(-2px);
+                }
+                
+                .footer {
+                    background-color: #2c3e50;
+                    color: #bdc3c7;
+                    padding: 25px;
+                    text-align: center;
+                    font-size: 14px;
+                }
+                
+                .footer .school-info {
+                    margin-bottom: 15px;
+                }
+                
+                .footer .timestamp {
+                    font-size: 12px;
+                    opacity: 0.8;
+                    border-top: 1px solid #34495e;
+                    padding-top: 15px;
+                    margin-top: 15px;
+                }
+                
+                @media (max-width: 600px) {
+                    .email-container {
+                        margin: 10px;
+                        border-radius: 0;
+                    }
+                    
+                    .info-grid {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .content {
+                        padding: 20px 15px;
+                    }
+                    
+                    .phone-number {
+                        font-size: 20px;
+                        padding: 12px 20px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <h1>THÔNG BÁO Y TẾ KHẨN CẤP</h1>
+                    <div class="subtitle">Từ Ban Giám Hiệu Trường</div>
+                </div>
+                
+                <div class="content">
+                    <div class="greeting">
+                        Kính gửi phụ huynh %s,
+                    </div>
+                    
+                    <div class="alert-box">
+                        <div class="alert-text">
+                            Chúng tôi xin thông báo có <strong>sự kiện y tế khẩn cấp</strong> 
+                            xảy ra tại trường học. Chúng tôi đã xử lý tình huống một cách 
+                            chuyên nghiệp và đảm bảo an toàn cho học sinh.
+                        </div>
+                    </div>
+                    
+                    <div class="info-grid">
+                      
+                        <div class="info-item">
+                            <div class="label">👨‍⚕️ Người xử lý</div>
+                            <div class="value">%s</div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-text">
+                        <strong>Thông tin chi tiết:</strong><br>
+                        %s
+                    </div>
+                    
+                    <div class="contact-section">
+                        <h3>📞 LIÊN HỆ NGAY</h3>
+                        <p>Để biết thêm thông tin chi tiết, vui lòng liên hệ:</p>
+                        <div class="phone-number">19001818</div>
+                        <p><small>Đường dây nóng - Hoạt động 24/7</small></p>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="tel:19001818" class="btn">📞 Gọi ngay</a>
+                        <a href="#" class="btn">📋 Xem chi tiết</a>
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <div class="school-info">
+                        <strong>Ban Giám Hiệu Trường</strong><br>
+                        Email: info@school.edu.vn | Website: www.school.edu.vn
+                    </div>
+                    <div class="timestamp">
+                        Email được gửi lúc: %s<br>
+                        Người gửi: %s
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """,
+                parent.getFullName(),
+               // savedEvent.getEventDateTime(), // Thời gian sự kiện
+                currentUser, // Người xử lý
+                content, // Nội dung chi tiết
+                datetime, // Thời gian gửi email
+                currentUser // Người gửi
         );
     }
     /**

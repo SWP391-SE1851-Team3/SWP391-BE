@@ -21,10 +21,10 @@ public interface HealthConsentFormRepository extends JpaRepository<HealthConsent
     @Query("SELECT h FROM HealthConsentForm h WHERE h.health_ScheduleID = :healthCheckScheduleID AND h.isAgreed = :isAgreed")
     List<HealthConsentForm> findByHealthCheckScheduleIDAndIsAgreed(@Param("healthCheckScheduleID") int healthCheckScheduleID, @Param("isAgreed") String isAgreed);
 
-    @Query("SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.ClassName = :className AND h.health_ScheduleID = :healthCheckScheduleID")
+    @Query("SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.className = :className AND h.health_ScheduleID = :healthCheckScheduleID")
     List<HealthConsentForm> findByStudentClassNameAndHealthCheckScheduleID(@Param("className") String className, @Param("healthCheckScheduleID") int healthCheckScheduleID);
 
-    @Query("SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.ClassName = :className")
+    @Query("SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.className = :className")
     List<HealthConsentForm> findByStudentClassName(@Param("className") String className);
 
 }

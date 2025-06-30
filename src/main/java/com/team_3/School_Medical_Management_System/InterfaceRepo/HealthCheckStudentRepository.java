@@ -1,10 +1,5 @@
 package com.team_3.School_Medical_Management_System.InterfaceRepo;
 
-
-
-
-
-
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +15,7 @@ public interface HealthCheckStudentRepository extends JpaRepository<HealthCheck_
 
     @Query("SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.studentID = :studentId")
     Integer findMaxCheckIdByStudentId(@Param("studentId") int studentId);
-    public void deleteByStudentId(int studentId);
+
+
+    public void deleteByStudentID(int studentId);
 }
