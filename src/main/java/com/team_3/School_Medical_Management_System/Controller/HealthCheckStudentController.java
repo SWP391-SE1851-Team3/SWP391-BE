@@ -9,6 +9,7 @@ import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckStudentService;
 import com.team_3.School_Medical_Management_System.Service.SchoolNurseService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class HealthCheckStudentController {
 
     // Record health check results using new DTO (without CheckID)
     @PostMapping("/create")
+    @Operation(summary = "Tạo kết quả kiểm tra sức khỏe mới cho học sinh")
     public ResponseEntity<HealthCheck_Student> createHealthCheckResults(@RequestBody HealthCheck_StudentDTO dto) {
         if (dto.getCreatedByNurseID() != null && dto.getCreatedByNurseID() > 0) {
             // Get the nurse by ID and set the name if found
@@ -52,12 +54,14 @@ public class HealthCheckStudentController {
 
     // Get health check results for a student
     @GetMapping("/student/{studentId}")
+    @Operation(summary = "Lấy kết quả kiểm tra sức khỏe cho một học sinh cụ thể theo ID học sinh")
     public ResponseEntity<List<HealthCheckStudentSimplifiedDTO>> getHealthCheckResultsByStudent(@PathVariable int studentId) {
         List<HealthCheckStudentSimplifiedDTO> results = healthCheckStudentService.getSimplifiedHealthCheckResultsByStudent(studentId);
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
     @GetMapping("/health-check-schedule/{healthScheduleId}")
+    @Operation(summary = "Lấy kết quả kiểm tra sức khỏe theo ID lịch kiểm tra sức khỏe")
     public ResponseEntity<List<HealthCheckStudentSimplifiedDTO>> getHealthCheckResultsBySchedule(@PathVariable int healthScheduleId) {
         List<HealthCheckStudentSimplifiedDTO> results = healthCheckStudentService.getSimplifiedHealthCheckResultsBySchedule(healthScheduleId);
         return new ResponseEntity<>(results, HttpStatus.OK);
@@ -65,6 +69,7 @@ public class HealthCheckStudentController {
 
     // Update health check results - modified to use UpdateDTO and handle update fields internally
     @PutMapping("/{id}")
+    @Operation(summary = "Cập nhật kết quả kiểm tra sức khỏe cho học sinh")
     public ResponseEntity<HealthCheckStudentUpdateResponseDTO> updateHealthCheckResults(
             @PathVariable int id,
             @RequestBody HealthCheck_StudentUpdateDTO updateDTO,
@@ -151,11 +156,13 @@ public class HealthCheckStudentController {
 
     // Delete health check results
     @DeleteMapping("/{id}")
+    @Operation(summary = "Xóa kết quả kiểm tra sức khỏe theo ID")
     public ResponseEntity<Void> deleteHealthCheckResults(@PathVariable int id) {
         healthCheckStudentService.deleteHealthCheckResults(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @GetMapping("/all")
+    @Operation(summary = "Lấy tất cả kết quả kiểm tra sức khỏe cho tất cả học sinh")
     public ResponseEntity<List<HealthCheckStudentSimplifiedDTO>> getAllHealthCheckResults() {
         List<HealthCheckStudentSimplifiedDTO> results = healthCheckStudentService.getAllHealthCheckResultsSimplified();
         return new ResponseEntity<>(results, HttpStatus.OK);

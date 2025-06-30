@@ -8,6 +8,7 @@ import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckScheduleService;
 import com.team_3.School_Medical_Management_System.Service.SchoolNurseService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class HealthCheckScheduleController {
 
     // Create a new health check schedule with nurse information
     @PostMapping
+    @Operation(summary = "Tạo lịch kiểm tra sức khỏe mới")
     public ResponseEntity<HealthCheck_Schedule> createHealthCheckSchedule(@RequestBody HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
         // If we have creator nurse ID, get the nurse name
         if (healthCheckScheduleDTO.getCreatedByNurseID() != null && healthCheckScheduleDTO.getCreatedByNurseID() > 0) {
@@ -65,6 +67,7 @@ public class HealthCheckScheduleController {
 
     // Get all health check schedules
     @GetMapping
+    @Operation(summary = "Lấy tất cả các lịch kiểm tra sức khỏe")
     public ResponseEntity<List<HealthCheck_Schedule>> getAllHealthCheckSchedules() {
         List<HealthCheck_Schedule> schedules = healthCheckScheduleService.getAllHealthCheckSchedulesWithNurseNames();
         return new ResponseEntity<>(schedules, HttpStatus.OK);
@@ -72,6 +75,7 @@ public class HealthCheckScheduleController {
 
     // Get health check schedules by status
     @GetMapping("/status/{status}")
+    @Operation(summary = "Nhận lịch kiểm tra sức khỏe theo status")
     public ResponseEntity<List<HealthCheck_Schedule>> getHealthCheckSchedulesByStatus(@PathVariable String status) {
         List<HealthCheck_Schedule> schedules = healthCheckScheduleService.getHealthCheckSchedulesByStatus(status);
         return new ResponseEntity<>(schedules, HttpStatus.OK);
@@ -79,6 +83,7 @@ public class HealthCheckScheduleController {
 
     // Get a specific health check schedule by ID
     @GetMapping("/{id}")
+    @Operation(summary = "Nhận lịch kiểm tra sức khỏe cụ thể theo sheduleID")
     public ResponseEntity<HealthCheck_Schedule> getHealthCheckScheduleById(@PathVariable int id) {
         Optional<HealthCheck_Schedule> optionalSchedule = healthCheckScheduleService.getHealthCheckScheduleById(id);
 
@@ -115,6 +120,7 @@ public class HealthCheckScheduleController {
 
     // Update health check schedule
     @PutMapping("/{id}")
+    @Operation(summary = "Cập nhật lịch khám sức khỏe theo ID")
     public ResponseEntity<HealthCheckScheduleResponseDTO> updateHealthCheckSchedule(
             @PathVariable int id,
             @RequestBody HealthCheckScheduleUpdateFullDTO dto) {

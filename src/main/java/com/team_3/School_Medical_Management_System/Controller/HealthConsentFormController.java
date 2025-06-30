@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthConsentForm;
 import com.team_3.School_Medical_Management_System.Service.HealthConsentFormService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class HealthConsentFormController {
     private HealthConsentFormService healthConsentFormService;
 
 
-    // Get all consent forms
     @GetMapping("/all")
+    @Operation(summary = "Lấy tất cả các mẫu đơn đồng ý về sức khỏe")
     public ResponseEntity<List<HealthConsentFormDTO>> getAllConsentForms() {
         try {
             List<HealthConsentForm> forms = healthConsentFormService.getAllConsentForms();
@@ -34,8 +35,9 @@ public class HealthConsentFormController {
         }
     }
 
-    // Update consent form with parent's decision
+    // Cập nhật mẫu đơn đồng ý theo quyết định của phụ huynh
     @PutMapping("/{formId}")
+    @Operation(summary = "Cập nhật mẫu đơn đồng ý về sức khỏe theo ID")
     public ResponseEntity<HealthConsentFormDTO> updateConsentForm(
             @PathVariable int formId,
             @RequestParam String isAgreed,
@@ -50,8 +52,9 @@ public class HealthConsentFormController {
         }
     }
 
-    // Get all consent forms for a specific health check schedule
+    // Lấy tất cả các mẫu đơn đồng ý cho một lịch khám sức khỏe cụ thể
     @GetMapping("/schedule/{scheduleId}")
+    @Operation(summary = "Lấy tất cả các mẫu đơn đồng ý cho một lịch khám sức khỏe cụ thể")
     public ResponseEntity<List<HealthConsentFormDTO>> getConsentFormsBySchedule(@PathVariable int scheduleId) {
         List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsBySchedule(scheduleId);
         List<HealthConsentFormDTO> formDTOs = forms.stream()
@@ -60,8 +63,9 @@ public class HealthConsentFormController {
         return new ResponseEntity<>(formDTOs, HttpStatus.OK);
     }
 
-    // Get all agreed consent forms for a specific health check schedule
+    // Lấy tất cả các mẫu đơn đã đồng ý cho một lịch khám sức khỏe cụ thể
     @GetMapping("/schedule/{scheduleId}/agreed")
+    @Operation(summary = "Lấy tất cả các mẫu đơn đã đồng ý cho một lịch khám sức khỏe cụ thể")
     public ResponseEntity<List<HealthConsentFormDTO>> getAgreedConsentFormsBySchedule(@PathVariable int scheduleId) {
         List<HealthConsentForm> forms = healthConsentFormService.getAgreedConsentFormsBySchedule(scheduleId);
         List<HealthConsentFormDTO> formDTOs = forms.stream()
@@ -70,8 +74,9 @@ public class HealthConsentFormController {
         return new ResponseEntity<>(formDTOs, HttpStatus.OK);
     }
 
-    // Get all consent forms by parentId
+    // Lấy tất cả các mẫu đơn đồng ý theo ID phụ huynh
     @GetMapping("/parent/{parentId}")
+    @Operation(summary = "Lấy tất cả các mẫu đơn đồng ý theo ID phụ huynh")
     public ResponseEntity<List<HealthConsentFormDTO>> getConsentFormsByParentId(@PathVariable Integer parentId) {
         List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByParentId(parentId);
         List<HealthConsentFormDTO> dtos = forms.stream()
@@ -80,7 +85,9 @@ public class HealthConsentFormController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    // Tạo mẫu đơn đồng ý cho một lớp học
     @PostMapping("/create-for-class")
+    @Operation(summary = "Tạo mẫu đơn đồng ý cho một lớp học")
     public ResponseEntity<?> createConsentFormsForClass(@RequestBody ConsentFormRequestDTO request) {
         try {
             healthConsentFormService.createConsentFormsForClass(request);
@@ -91,7 +98,9 @@ public class HealthConsentFormController {
         }
     }
 
+    // Lấy mẫu đơn đồng ý theo tên lớp và ID lịch khám sức khỏe
     @GetMapping("/by-class/{className}")
+    @Operation(summary = "Lấy mẫu đơn đồng ý theo tên lớp và ID lịch khám sức khỏe")
     public ResponseEntity<List<HealthConsentForm>> getConsentFormsByClass(@PathVariable String className, int health_ScheduleID) {
         try {
             List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByClass(className, health_ScheduleID);
@@ -101,7 +110,9 @@ public class HealthConsentFormController {
         }
     }
 
+    // Lấy mẫu đơn đồng ý theo tên lớp và ID lịch khám
     @GetMapping("/by-class-and-schedule/{className}/{scheduleId}")
+    @Operation(summary = "Lấy mẫu đơn đồng ý theo tên lớp và ID lịch khám")
     public ResponseEntity<List<HealthConsentForm>> getConsentFormsByClassAndSchedule(
             @PathVariable String className,
             @PathVariable Integer scheduleId) {
@@ -113,7 +124,9 @@ public class HealthConsentFormController {
         }
     }
 
+    // Lấy tất cả các mẫu đơn đã được chấp nhận cho một lịch khám
     @GetMapping("/accepted/{scheduleId}")
+    @Operation(summary = "Lấy tất cả các mẫu đơn đã được chấp nhận cho một lịch khám")
     public ResponseEntity<List<HealthConsentForm>> getAcceptedConsentForms(@PathVariable Integer scheduleId) {
         try {
             List<HealthConsentForm> forms = healthConsentFormService.getAcceptedConsentForms(scheduleId);
@@ -123,7 +136,9 @@ public class HealthConsentFormController {
         }
     }
 
+    // Lấy tất cả các mẫu đơn đã bị từ chối cho một lịch khám
     @GetMapping("/rejected/{scheduleId}")
+    @Operation(summary = "Lấy tất cả các mẫu đơn đã bị từ chối cho một lịch khám")
     public ResponseEntity<List<HealthConsentForm>> getRejectedConsentForms(@PathVariable Integer scheduleId) {
         try {
             List<HealthConsentForm> forms = healthConsentFormService.getRejectedConsentForms(scheduleId);
