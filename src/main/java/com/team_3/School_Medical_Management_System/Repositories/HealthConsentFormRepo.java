@@ -33,7 +33,7 @@ public class HealthConsentFormRepo implements com.team_3.School_Medical_Manageme
 
     // Các phương thức tùy chỉnh từ interface
     @Override
-    public List<HealthConsentForm> findByStudent(int studentId) {
+    public List<HealthConsentForm> findByStudentID(int studentId) {
         TypedQuery<HealthConsentForm> query = entityManager.createQuery(
                 "SELECT h FROM HealthConsentForm h WHERE h.studentID = :studentId",
                 HealthConsentForm.class
@@ -43,9 +43,9 @@ public class HealthConsentFormRepo implements com.team_3.School_Medical_Manageme
     }
 
     @Override
-    public List<HealthConsentForm> findByHealth_ScheduleID(int healthScheduleID) {
+    public List<HealthConsentForm> findByHealthScheduleID(int healthScheduleID) {
         TypedQuery<HealthConsentForm> query = entityManager.createQuery(
-                "SELECT h FROM HealthConsentForm h WHERE h.health_ScheduleID = :healthScheduleID",
+                "SELECT h FROM HealthConsentForm h WHERE h.healthScheduleID = :healthScheduleID",
                 HealthConsentForm.class
         );
         query.setParameter("healthScheduleID", healthScheduleID);
@@ -53,38 +53,26 @@ public class HealthConsentFormRepo implements com.team_3.School_Medical_Manageme
     }
 
     @Override
-    public List<HealthConsentForm> findByHealthCheckScheduleIDAndIsAgreed(int healthCheckScheduleID, String isAgreed) {
+    public List<HealthConsentForm> findByHealthScheduleIDAndIsAgreed(int healthScheduleID, String isAgreed) {
         TypedQuery<HealthConsentForm> query = entityManager.createQuery(
-                "SELECT h FROM HealthConsentForm h WHERE h.health_ScheduleID = :healthCheckScheduleID AND h.isAgreed = :isAgreed",
+                "SELECT h FROM HealthConsentForm h WHERE h.healthScheduleID = :healthScheduleID AND h.isAgreed = :isAgreed",
                 HealthConsentForm.class
         );
-        query.setParameter("healthCheckScheduleID", healthCheckScheduleID);
+        query.setParameter("healthScheduleID", healthScheduleID);
         query.setParameter("isAgreed", isAgreed);
         return query.getResultList();
     }
 
     @Override
-    public List<HealthConsentForm> findByStudentClassNameAndHealthCheckScheduleID(String className, int healthCheckScheduleID) {
+    public List<HealthConsentForm> findByClassNameAndHealthScheduleID(String className, int healthScheduleID) {
         TypedQuery<HealthConsentForm> query = entityManager.createQuery(
-                "SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.ClassName = :className AND h.health_ScheduleID = :healthCheckScheduleID",
+                "SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.className = :ClassName AND h.healthScheduleID = :health_ScheduleID",
                 HealthConsentForm.class
         );
-        query.setParameter("className", className);
-        query.setParameter("healthCheckScheduleID", healthCheckScheduleID);
+        query.setParameter("ClassName", className);
+        query.setParameter("health_ScheduleID", healthScheduleID);
         return query.getResultList();
     }
-
-    @Override
-    public List<HealthConsentForm> findByStudentClassName(String className) {
-        TypedQuery<HealthConsentForm> query = entityManager.createQuery(
-                "SELECT h FROM HealthConsentForm h JOIN Student s ON h.studentID = s.StudentID WHERE s.ClassName = :className",
-                HealthConsentForm.class
-        );
-        query.setParameter("className", className);
-        return query.getResultList();
-    }
-
-
 
     // Các phương thức CRUD cơ bản
     @Override

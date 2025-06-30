@@ -32,6 +32,8 @@ public class HealthConsentFormService {
 
     @Autowired
     private HealthCheckStudentService healthCheckStudentService;
+    @Autowired
+    private EmailService emailService;
 
     // Update consent form with parent's decision
     public HealthConsentForm updateConsentForm(int formId, String isAgreed, String notes) {
@@ -47,7 +49,7 @@ public class HealthConsentFormService {
             if (!"accepted".equalsIgnoreCase(oldIsAgreed) && "accepted".equalsIgnoreCase(isAgreed)) {
                 HealthCheck_StudentDTO dto = new HealthCheck_StudentDTO();
                 dto.setFormID(form.getFormID());
-                dto.setHealth_ScheduleID(form.getHealth_ScheduleID());
+                dto.setHealth_ScheduleID(form.getHealthScheduleID());
                 dto.setStudentID(form.getStudentID());
                 // You can set other default values for dto here if needed
                 try {
@@ -64,19 +66,19 @@ public class HealthConsentFormService {
 
     // Get all consent forms for a specific health check schedule
     public List<HealthConsentForm> getConsentFormsBySchedule(int scheduleId) {
-        return healthConsentFormRepository.findByHealth_ScheduleID(scheduleId);
+        return healthConsentFormRepository.findByHealthScheduleID(scheduleId);
     }
 
     // Get all agreed consent forms for a specific health check schedule
     public List<HealthConsentForm> getAgreedConsentFormsBySchedule(int scheduleId) {
-        return healthConsentFormRepository.findByHealthCheckScheduleIDAndIsAgreed(scheduleId, "Approved");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "Approved");
     }
 
     // Get all consent forms by parentId
     public List<HealthConsentForm> getConsentFormsByParentId(Integer parentId) {
         List<Student> students = studentRepository.getStudentsByParentID(parentId);
         return students.stream()
-                .flatMap(student -> healthConsentFormRepository.findByStudent(student.getStudentID()).stream())
+                .flatMap(student -> healthConsentFormRepository.findByStudentID(student.getStudentID()).stream())
                 .collect(Collectors.toList());
     }
 
@@ -90,7 +92,7 @@ public class HealthConsentFormService {
         HealthConsentFormDTO dto = new HealthConsentFormDTO();
         dto.setFormID(form.getFormID());
         dto.setStudentID(form.getStudentID()); // form.getStudent() trả về int studentID
-        dto.setHealthScheduleID(form.getHealth_ScheduleID()); // form.getHealthCheckSchedule() trả về int healthScheduleID
+        dto.setHealthScheduleID(form.getHealthScheduleID()); // form.getHealthCheckSchedule() trả về int healthScheduleID
         dto.setIsAgreed(form.getIsAgreed());
         dto.setNotes(form.getNotes());
         dto.setSend_date(form.getSend_date());
@@ -112,14 +114,14 @@ public class HealthConsentFormService {
 
         // Fetch health schedule name from database using healthScheduleID
         try {
-            Optional<HealthCheck_Schedule> scheduleOpt = healthCheckScheduleRepository.findById(form.getHealth_ScheduleID());
+            Optional<HealthCheck_Schedule> scheduleOpt = healthCheckScheduleRepository.findById(form.getHealthScheduleID());
             if (scheduleOpt.isPresent()) {
                 HealthCheck_Schedule schedule = scheduleOpt.get();
                 dto.setHealthScheduleName(schedule.getName());
             }
         } catch (Exception e) {
             // Log error but continue processing
-            System.err.println("Error fetching schedule info for ID " + form.getHealth_ScheduleID() + ": " + e.getMessage());
+            System.err.println("Error fetching schedule info for ID " + form.getHealthScheduleID() + ": " + e.getMessage());
         }
 
         return dto;
@@ -135,7 +137,7 @@ public class HealthConsentFormService {
             HealthConsentForm consentForm = new HealthConsentForm();
             consentForm.setStudentID(student.getStudentID());
             consentForm.setParentID(student.getParent().getParentID());
-            consentForm.setHealth_ScheduleID(schedule.getHealth_ScheduleID()); // Set scheduleID thay vì Schedule object
+            consentForm.setHealthScheduleID(schedule.getHealth_ScheduleID()); // Set scheduleID thay vì Schedule object
             consentForm.setSend_date(new Date());
             consentForm.setExpire_date(request.getExpireDate());
             consentForm.setIsAgreed(request.getIsAgreed());
@@ -146,31 +148,43 @@ public class HealthConsentFormService {
 
             // Create notification for parent
             if (student.getParent() != null) {
+                String tittle = "Yêu cầu đồng ý kiểm tra sức khỏe cho học sinh " + student.getFullName();
+                String content = "Một đợt khám sức khỏe mới đã được lên lịch cho học sinh " + student.getFullName() +
+                        ". Vui lòng xem và xác nhận đồng ý cho con em của bạn.";
                 NotificationsParent notification = new NotificationsParent();
                 notification.setParent(student.getParent());
-                notification.setTitle("Yêu cầu đồng ý kiểm tra sức khỏe cho học sinh " + student.getFullName());
-                notification.setContent("Một đợt khám sức khỏe mới đã được lên lịch. Vui lòng xem và xác nhận đồng ý cho con em của bạn.");
+                notification.setTitle(tittle);
+                notification.setContent(content);
                 notification.setCreateAt(LocalDateTime.now());
                 notification.setStatus(false);
                 notificationsParentRepository.save(notification);
+                try {
+                    // Gửi email với thông tin người dùng và thời gian
+                    emailService.sendHtmlNotificationEmail(student.getParent(), tittle, content, notification.getNotificationId());
+                    // emailService.testEmailConfig("ytruongtieuhoc@example.com");
+                } catch (Exception e) {
+                    throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+                }
             }
+
+
         }
     }
 
-    public List<HealthConsentForm> getConsentFormsByClass(String className) {
-        return healthConsentFormRepository.findByStudentClassName(className);
+    public List<HealthConsentForm> getConsentFormsByClass(String className, int scheduleId) {
+        return healthConsentFormRepository.findByClassNameAndHealthScheduleID(className, scheduleId);
     }
 
     public List<HealthConsentForm> getConsentFormsByClassAndSchedule(String className, Integer scheduleId) {
-        return healthConsentFormRepository.findByStudentClassNameAndHealthCheckScheduleID(className, scheduleId);
+        return healthConsentFormRepository.findByClassNameAndHealthScheduleID(className, scheduleId);
     }
 
     public List<HealthConsentForm> getAcceptedConsentForms(Integer scheduleId) {
-        return healthConsentFormRepository.findByHealthCheckScheduleIDAndIsAgreed(scheduleId, "true");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "true");
     }
 
     public List<HealthConsentForm> getRejectedConsentForms(Integer scheduleId) {
-        return healthConsentFormRepository.findByHealthCheckScheduleIDAndIsAgreed(scheduleId, "false");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "false");
     }
 
 

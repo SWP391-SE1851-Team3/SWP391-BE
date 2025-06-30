@@ -81,19 +81,20 @@ public class HealthConsentFormController {
     }
 
     @PostMapping("/create-for-class")
-    public ResponseEntity<Void> createConsentFormsForClass(@RequestBody ConsentFormRequestDTO request) {
+    public ResponseEntity<?> createConsentFormsForClass(@RequestBody ConsentFormRequestDTO request) {
         try {
             healthConsentFormService.createConsentFormsForClass(request);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: " + e.getMessage());
         }
     }
 
     @GetMapping("/by-class/{className}")
-    public ResponseEntity<List<HealthConsentForm>> getConsentFormsByClass(@PathVariable String className) {
+    public ResponseEntity<List<HealthConsentForm>> getConsentFormsByClass(@PathVariable String className, int health_ScheduleID) {
         try {
-            List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByClass(className);
+            List<HealthConsentForm> forms = healthConsentFormService.getConsentFormsByClass(className, health_ScheduleID);
             return new ResponseEntity<>(forms, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

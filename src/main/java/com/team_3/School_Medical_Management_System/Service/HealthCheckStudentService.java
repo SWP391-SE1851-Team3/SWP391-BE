@@ -91,64 +91,11 @@ public class HealthCheckStudentService {
         healthCheckStudent.setUpdatedByNurseID(dto.getUpdatedByNurseID());
         // Save HealthCheck_Student
         HealthCheck_Student savedResult = healthCheckStudentRepository.save(healthCheckStudent);
-        // Check for abnormal results and create consultations if needed
-        checkForAbnormalResults(savedResult);
         // Send notification to parent about health check results
         sendHealthCheckResultNotification(savedResult);
         return savedResult;
     }
 
-    // Check for abnormal health check results and create consultation appointments
-    private void checkForAbnormalResults(HealthCheck_Student healthCheckResult) {
-        boolean hasAbnormalResults = false;
-        StringBuilder issues = new StringBuilder();
-
-        // Check vision (less than 8/10)
-        float visionLeftValue = parseVisionValue(healthCheckResult.getVisionLeft());
-        float visionRightValue = parseVisionValue(healthCheckResult.getVisionRight());
-
-        if (visionLeftValue < 0.8 || visionRightValue < 0.8) {
-            hasAbnormalResults = true;
-            issues.append("Thị lực dưới 8/10. ");
-        }
-
-        // Check dental issues
-        if (healthCheckResult.getDentalCheck() != null &&
-                !healthCheckResult.getDentalCheck().equalsIgnoreCase("Normal") &&
-                !healthCheckResult.getDentalCheck().equalsIgnoreCase("Bình thường")) {
-            hasAbnormalResults = true;
-            issues.append("Vấn đề răng miệng: ").append(healthCheckResult.getDentalCheck()).append(". ");
-        }
-
-        // Check BMI (outside normal range 18.5-24.9)
-        if (healthCheckResult.getBmi() < 18.5 || healthCheckResult.getBmi() > 24.9) {
-            hasAbnormalResults = true;
-            if (healthCheckResult.getBmi() < 18.5) {
-                issues.append("BMI thấp (").append(String.format("%.1f", healthCheckResult.getBmi())).append(") - Thiếu cân. ");
-            } else {
-                issues.append("BMI cao (").append(String.format("%.1f", healthCheckResult.getBmi())).append(") - Thừa cân. ");
-            }
-        }
-
-        // Create consultation appointment if abnormal results detected
-        if (hasAbnormalResults) {
-            // Get student by studentID from healthCheckResult
-            Optional<Student> studentOpt = studentRepository.findById(healthCheckResult.getStudentID());
-            if (studentOpt.isPresent()) {
-                Student student = studentOpt.get();
-
-                HealthConsultation consultation = new HealthConsultation();
-                consultation.setStudentID(student.getStudentID()); // Use studentID instead of Student object
-                consultation.setCheckID(healthCheckResult.getCheckID()); // Use checkID instead of HealthCheckStudent object
-                consultation.setStatus("pending"); // Changed from boolean false to String "pending"
-
-                HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
-
-                // Send notification to parent about consultation appointment
-                sendConsultationNotification(savedConsultation);
-            }
-        }
-    }
 
     // Parse vision value from string format (e.g., "8/10" -> 0.8)
     private float parseVisionValue(String visionStr) {
@@ -268,8 +215,6 @@ public class HealthCheckStudentService {
             }
             // Save updated result
             HealthCheck_Student updatedResult = healthCheckStudentRepository.save(existingResult);
-            // Check for abnormal results again
-            checkForAbnormalResults(updatedResult);
             // Send updated notification
             sendHealthCheckResultNotification(updatedResult);
             return updatedResult;

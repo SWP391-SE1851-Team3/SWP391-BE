@@ -77,7 +77,7 @@ public class StudentRepo implements StudentInterFace {
 
     @Override
     public List<Student> findByClassName(String className) {
-        String jpql = "SELECT s FROM Student s WHERE s.ClassName = :className";
+        String jpql = "SELECT s FROM Student s WHERE s.className = :className";
         return entityManager.createQuery(jpql, Student.class)
                 .setParameter("className", className)
                 .getResultList();
