@@ -3,7 +3,10 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
+import com.team_3.School_Medical_Management_System.Model.Consent_forms;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +22,22 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:5173")
 public class Consent_formsController {
     private Consent_formsServiceInterFace consent_formsServiceInterFace;
+
     @Autowired
     public Consent_formsController(Consent_formsServiceInterFace consent_formsServiceInterFace) {
         this.consent_formsServiceInterFace = consent_formsServiceInterFace;
     }
 
     @GetMapping("/viewParent")
-    public List<Consent_formViewDTO>  getConsent_forms() {
+    public List<Consent_formViewDTO> getConsent_forms() {
         var consent_forms = consent_formsServiceInterFace.getConsent_forms();
         return consent_forms;
     }
+
     @GetMapping("/viewNurse")
-    public List<Consent_formsDTO>  getConsent_forms_nurse() {
+    public List<Consent_formViewDTO> getConsent_forms_nurse() {
         var listConset = consent_formsServiceInterFace.getAllConsentForms();
-        return  listConset;
+        return listConset;
     }
 
     @GetMapping("/consent_formsParentName")
@@ -49,9 +54,9 @@ public class Consent_formsController {
     }
 
     @GetMapping("/consent-info")
-    public Consent_formsDTO getConsentInfo(
+    public Consent_formViewDTO getConsentInfo(
             @RequestParam int consent_form_id) {
-        Consent_formsDTO dto = consent_formsServiceInterFace.getConsentFormForParent(consent_form_id);
+        Consent_formViewDTO dto = consent_formsServiceInterFace.getConsentFormForParent(consent_form_id);
         return dto;
     }
 
@@ -60,7 +65,7 @@ public class Consent_formsController {
         var listArgee = consent_formsServiceInterFace.getConsent_formsIsAgree(dot);
         if (listArgee == null) {
             return null;
-        }else {
+        } else {
             return listArgee;
         }
     }
@@ -84,7 +89,7 @@ public class Consent_formsController {
 
     @GetMapping("/ConsentFormsDisAgree/{dot}")
     public ResponseEntity<Long> countConsentFormsDisAgreeByBatch(@PathVariable String dot) {
-        Long count  = consent_formsServiceInterFace.countConsentFormsDisAgreeByBatch(dot);
+        Long count = consent_formsServiceInterFace.countConsentFormsDisAgreeByBatch(dot);
         return ResponseEntity.ok(count);
     }
 
@@ -96,19 +101,19 @@ public class Consent_formsController {
     }
 
     @GetMapping("/byStudentId/{studentId}")
-    public List<Consent_formViewDTO>  getConsent_formsByStudentId(@PathVariable int studentId) {
+    public List<Consent_formViewDTO> getConsent_formsByStudentId(@PathVariable int studentId) {
         return consent_formsServiceInterFace.getConsentByStudentId(studentId);
     }
 
     @GetMapping("/Consent_forms/parent-pending")
-    public ResponseEntity<?> getFormsPendingForParent(int parentId){
+    public ResponseEntity<?> getFormsPendingForParent(int parentId) {
         List<Consent_formViewDTO> forms = consent_formsServiceInterFace.findPendingForParent(parentId);
         List<Map<String, Object>> result = forms.stream().map(form -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("FullNameOfStudent",form .getFullNameOfStudent());
+            map.put("FullNameOfStudent", form.getFullNameOfStudent());
             map.put("VaccinesName", form.getVaccineName());
             map.put("ParentName", form.getFullNameOfParent());
-            map.put("location", form.getLocalDate());
+            map.put("location", form.getLocation());
             map.put("scheduledDate", form.getScheduledDate());
             map.put("send_date", form.getSend_date());
             map.put("expire_date", form.getExpire_date());
@@ -123,10 +128,10 @@ public class Consent_formsController {
     @PutMapping("/Consent_forms/parent-response/{id}")
     public ResponseEntity<?> updateByParent(@PathVariable int id, @RequestBody @Valid ConsentFormParentResponseDTO dto) {
         try {
-           dto.setConsentFormId(id);
-           if(consent_formsServiceInterFace.getConsentFormForParent(id) == null) {
-               return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-           }
+            dto.setConsentFormId(id);
+            if (consent_formsServiceInterFace.getConsentFormForParent(id) == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
             consent_formsServiceInterFace.processParentResponse(dto);
 
@@ -148,13 +153,12 @@ public class Consent_formsController {
     }
 
     @PutMapping("/editConsent/nurse/{id}")
-    public ResponseEntity<?> updatebyNurse(@PathVariable int id, @RequestBody Consent_formsDTO form ) {
+    public ResponseEntity<?> updatebyNurse(@PathVariable int id, @RequestBody Consent_formsDTO form) {
         try {
             form.setConsent_id(id);
-            if(consent_formsServiceInterFace.getConsentFormForParent(id) == null) {
+            if (consent_formsServiceInterFace.getConsentFormForParent(id) == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            else {
+            } else {
                 consent_formsServiceInterFace.updateConsent(form);
                 return ResponseEntity.ok(Map.of(
                         "success", true,
@@ -170,5 +174,85 @@ public class Consent_formsController {
         }
     }
 
+    @PostMapping("/consent-forms/send-by-classname")
+    public ResponseEntity<?> sendByClass(@RequestBody SendConsentFormRequestDTO dto) {
+        try {
+            consent_formsServiceInterFace.sendConsentFormsByClassName(
+                    dto.getClassName(),
+                    dto.getBatchId(),
+                    dto.getSendDate(),
+                    dto.getExpireDate(),
+                    dto.getStatus()
+            );
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Đã gửi phiếu cho lớp " + dto.getClassName()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+    @GetMapping("/findDot")
+    @Operation(summary = "liên quan đến đợt")
+    public ResponseEntity<?> findDot() {
+        var dot = consent_formsServiceInterFace.findDot();
+        if (dot == null || dot.isEmpty()) {
+            return ResponseEntity.noContent().build(); // hoặc trả về 204
+        } else {
+            return ResponseEntity.ok(dot);
+        }
+    }
+
+    @GetMapping("/IsAgree")
+    @Operation(summary = "liên quan phụ huynh có đồng ý ko")
+
+    public ResponseEntity<?> getIsAgree() {
+        var agree = consent_formsServiceInterFace.getIsAgree();
+        if (agree == null || agree.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }else {
+            return ResponseEntity.ok(agree);
+        }
+    }
+
+    @GetMapping("/DisAgree")
+    @Operation(summary = "liên quan phụ huynh có không đồng ý ko")
+
+    public ResponseEntity<?> getDisAgree() {
+        var disagree = consent_formsServiceInterFace.getDisAgree();
+        if (disagree == null || disagree.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }else {
+            return ResponseEntity.ok(disagree);
+        }
+    }
+
+    @GetMapping("/status")
+    @Operation(summary = "liên quan phụ huynh đã duyệt chua")
+
+    public ResponseEntity<?> getStatus() {
+        var status = consent_formsServiceInterFace.getStatus();
+        if (status == null || status.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }else {
+            return ResponseEntity.ok(status);
+        }
+    }
+
+    @GetMapping("/disstatus")
+    @Operation(summary = "liên quan phụ huynh Đang chờ phản hồi chua")
+
+    public ResponseEntity<?> getDisStatus() {
+        var disstatus = consent_formsServiceInterFace.getDisStatus();
+        if (disstatus == null || disstatus.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }else {
+            return ResponseEntity.ok(disstatus);
+        }
+    }
 
 }

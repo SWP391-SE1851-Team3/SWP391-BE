@@ -1,11 +1,14 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
 
+import com.team_3.School_Medical_Management_System.DTO.Consent_form_dot;
+import com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
 import com.team_3.School_Medical_Management_System.Model.Consent_forms;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Types;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -54,7 +57,7 @@ public class Consent_formsRepo implements Consent_formsInterFace {
 
     @Override
     public List<Consent_forms> getConsent_formsClass(String class_name) {
-        String jpql = "SELECT c FROM Consent_forms c WHERE c.student.ClassName = :class_name";
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.student.className = :class_name";
         return entityManager.createQuery(jpql, Consent_forms.class).setParameter("class_name", class_name).getResultList();
     }
 
@@ -134,7 +137,7 @@ public class Consent_formsRepo implements Consent_formsInterFace {
                 "JOIN FETCH c.student s " +
                 "WHERE c.status = :status AND c.parent.ParentID = :parentId";
         return entityManager.createQuery(jpql, Consent_forms.class)
-                .setParameter("status", "Đang Chờ Phê Duyệt")
+                .setParameter("status", "Ðang Chờ Phản Hồi")
                 .setParameter("parentId", parentId)
                 .getResultList();
     }
@@ -161,4 +164,57 @@ public class Consent_formsRepo implements Consent_formsInterFace {
             return null;
         }
     }
+
+    @Override
+    public List<Consent_forms> getStudentConsentForms(String class_name) {
+        String jpql = """
+        SELECT c
+        FROM Consent_forms c
+        JOIN c.student s
+        WHERE s.className = :class_name
+    """;
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("class_name", class_name)
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_form_dot> findDot() {
+        String jpql = "SELECT new com.team_3.School_Medical_Management_System.DTO.Consent_form_dot(c.consent_id, v.dot) " +
+                "FROM Consent_forms c JOIN c.vaccineBatches v";
+        return entityManager.createQuery(jpql, Consent_form_dot.class).getResultList();
+    }
+
+    public List<Consent_forms> getIsAgree() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.IsAgree = :isAgree";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("isAgree", "Đồng Ý")
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getDisAgree() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.IsAgree = :isAgree";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("isAgree", "Ko dong y")
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getStatus() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.status = :status";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("status", "ÐÃ PHÊ DUY?T")
+                .getResultList();
+    }
+
+    @Override
+    public List<Consent_forms> getDisStatus() {
+        String jpql = "SELECT c FROM Consent_forms c WHERE c.status = :status";
+        return entityManager.createQuery(jpql, Consent_forms.class)
+                .setParameter("status", "Dang Cho Phan hoi")
+                .getResultList();
+    }
+
+
 }

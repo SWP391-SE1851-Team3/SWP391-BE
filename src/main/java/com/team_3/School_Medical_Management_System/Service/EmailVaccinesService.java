@@ -5,7 +5,6 @@ import com.team_3.School_Medical_Management_System.Model.NotificationsParent;
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,20 +16,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class EmailService {
+public class EmailVaccinesService {
     @Autowired
     private JavaMailSender mailSender;
-
     @Autowired
     private NotificationsParentRepository notificationsParentRepository;
-    public void sendOTP(String toEmail, String otp) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("thanhdinhphot@gmail.com ");
-        message.setTo(toEmail);
-        message.setSubject("Mã xác nhận khôi phục mật khẩu");
-        message.setText("Mã xác nhận của bạn là: " + otp);
-        mailSender.send(message);
-    }
 
     public void sendSimpleNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -81,7 +71,7 @@ public class EmailService {
     private String getCurrentUsername() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = "TRƯỜNG FPT";
-        return  name;
+        return name;
     }
 
     /**
@@ -109,7 +99,7 @@ public class EmailService {
                         "    </style>" +
                         "</head>" +
                         "<body>" +
-                        "    <div class=\"header\"><h2>Thông báo sự kiện y tế khẩn cấp</h2></div>" +
+                        "   <div class=\"header\"><h2>THÔNG BÁO HỒ SƠ TIÊM CHỦNG CỦA HỌC SINH</h2></div>" +
                         "    <div class=\"content\">" +
                         "        %s" +
                         "    </div>" +
@@ -127,6 +117,7 @@ public class EmailService {
                 username
         );
     }
+
     /**
      * Chuyển đổi nội dung văn bản thành HTML
      */
@@ -171,37 +162,7 @@ public class EmailService {
         }
     }
 
-    private String createHtmlContent_HealthRecord(Parent parent, String content, String datetime, String username) {
-        return String.format(
-                "<html>" +
-                        "<head>" +
-                        "    <meta charset=\"UTF-8\">" +
-                        "    <style>" +
-                        "        body { font-family: Arial, sans-serif; }" +
-                        "        .header { background-color: #28a745; color: white; padding: 10px; text-align: center; }" +
-                        "        .content { margin: 20px; line-height: 1.6; }" +
-                        "        .footer { background-color: #f8f9fa; padding: 10px; font-size: smaller; }" +
-                        "        .info { color: #6c757d; }" +
-                        "    </style>" +
-                        "</head>" +
-                        "<body>" +
-                        "    <div class=\"header\"><h2>Thông báo hồ sơ tiêm chủng của học sinh</h2></div>" +
-                        "    <div class=\"content\">" +
-                        "        %s" +
-                        "    </div>" +
-                        "    <div class=\"footer\">" +
-                        "        <p class=\"info\">Thông tin bổ sung:</p>" +
-                        "        <p>Thời gian gửi: %s</p>" +
-                        "        <p>Người gửi: %s</p>" +
-                        "        <hr>" +
-                        "        <p>Trân trọng,<br>Ban y tế trường học</p>" +
-                        "    </div>" +
-                        "</body>" +
-                        "</html>",
-                formatContentToHtml(content),
-                datetime,
-                username
-        );
-    }
+
+
 
 }

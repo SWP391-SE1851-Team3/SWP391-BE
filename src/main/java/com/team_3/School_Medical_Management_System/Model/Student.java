@@ -21,7 +21,8 @@ public class Student {
     @NotBlank(message = "FullName Not allow empty")
     private String FullName;
     @NotBlank(message = "ClassName Not allow empty")
-    private String ClassName;
+    @Column(name = "ClassName")
+    private String className;
     private int IsActive;
 //    private int ParentID;
     @ManyToOne
