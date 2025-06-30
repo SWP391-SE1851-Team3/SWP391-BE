@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -68,7 +69,18 @@ public class StudentRepo implements StudentInterFace {
         return students;
     }
 
+    @Override
+    public Optional<Student> findById(int studentId) {
+        Student student = entityManager.find(Student.class, studentId);
+        return Optional.ofNullable(student);
+    }
 
-
+    @Override
+    public List<Student> findByClassName(String className) {
+        String jpql = "SELECT s FROM Student s WHERE s.ClassName = :className";
+        return entityManager.createQuery(jpql, Student.class)
+                .setParameter("className", className)
+                .getResultList();
+    }
 
 }
