@@ -1,9 +1,8 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
-import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthCheckStudentRepository;
-
-import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
-import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthConsultationRepository;
+import com.team_3.School_Medical_Management_System.Model.HealthConsultation;
+import com.team_3.School_Medical_Management_System.Model.Student;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -18,32 +17,36 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-
 @Repository
 @Transactional
-public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
+public class HealthConsultationRepo implements HealthConsultationRepository {
 
     private final EntityManager entityManager;
 
-
     @Autowired
-    public HealthCheckStudentRepo(EntityManager entityManager) {
+    public HealthConsultationRepo(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
-
-
     @Override
-    public void deleteByStudentId(int studentId) {
-        String jpql = "DELETE FROM HealthCheck_Student h WHERE h.studentID = :studentId";
-        entityManager.createQuery(jpql).setParameter("studentId", studentId).executeUpdate();
-    }
-    @Override
-    public List<HealthCheck_Student> findByStudent_StudentID(int studentID) {
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.studentID = :studentID";
-        return entityManager.createQuery(jpql, HealthCheck_Student.class)
+    public List<HealthConsultation> findByStudentID(int studentID) {
+        String jpql = "SELECT h FROM HealthConsultation h WHERE h.studentID = :studentID";
+        return entityManager.createQuery(jpql, HealthConsultation.class)
                 .setParameter("studentID", studentID)
                 .getResultList();
+    }
+
+    @Override
+    public List<HealthConsultation> findByStatus(String status) {
+        String jpql = "SELECT h FROM HealthConsultation h WHERE h.status = :status";
+        return entityManager.createQuery(jpql, HealthConsultation.class)
+                .setParameter("status", status)
+                .getResultList();
+    }
+
+    @Override
+    public void deleteByStudent_StudentID(int studentId) {
+
     }
 
     @Override
@@ -52,27 +55,27 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public <S extends HealthCheck_Student> S saveAndFlush(S entity) {
+    public <S extends HealthConsultation> S saveAndFlush(S entity) {
         S result = save(entity);
         flush();
         return result;
     }
 
     @Override
-    public <S extends HealthCheck_Student> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends HealthConsultation> List<S> saveAllAndFlush(Iterable<S> entities) {
         List<S> result = saveAll(entities);
         flush();
         return result;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<HealthCheck_Student> entities) {
+    public void deleteAllInBatch(Iterable<HealthConsultation> entities) {
         entities.forEach(entityManager::remove);
     }
 
     @Override
     public void deleteAllByIdInBatch(Iterable<Integer> ids) {
-        String jpql = "DELETE FROM HealthCheck_Student h WHERE h.id IN :ids";
+        String jpql = "DELETE FROM HealthConsultation h WHERE h.id IN :ids";
         entityManager.createQuery(jpql)
                 .setParameter("ids", ids)
                 .executeUpdate();
@@ -80,26 +83,26 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
 
     @Override
     public void deleteAllInBatch() {
-        entityManager.createQuery("DELETE FROM HealthCheck_Student").executeUpdate();
+        entityManager.createQuery("DELETE FROM HealthConsultation").executeUpdate();
     }
 
     @Override
-    public HealthCheck_Student getOne(Integer id) {
+    public HealthConsultation getOne(Integer id) {
         return getById(id);
     }
 
     @Override
-    public HealthCheck_Student getById(Integer id) {
-        return entityManager.find(HealthCheck_Student.class, id);
+    public HealthConsultation getById(Integer id) {
+        return entityManager.find(HealthConsultation.class, id);
     }
 
     @Override
-    public HealthCheck_Student getReferenceById(Integer id) {
-        return entityManager.getReference(HealthCheck_Student.class, id);
+    public HealthConsultation getReferenceById(Integer id) {
+        return entityManager.getReference(HealthConsultation.class, id);
     }
 
     @Override
-    public <S extends HealthCheck_Student> Optional<S> findOne(Example<S> example) {
+    public <S extends HealthConsultation> Optional<S> findOne(Example<S> example) {
         try {
             List<S> results = findAll(example);
             return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
@@ -109,42 +112,42 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public <S extends HealthCheck_Student> List<S> findAll(Example<S> example) {
+    public <S extends HealthConsultation> List<S> findAll(Example<S> example) {
         // Basic implementation - in real world would need more complex query building
         return (List<S>) findAll();
     }
 
     @Override
-    public <S extends HealthCheck_Student> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends HealthConsultation> List<S> findAll(Example<S> example, Sort sort) {
         // Basic implementation - in real world would need more complex query building
         return (List<S>) findAll(sort);
     }
 
     @Override
-    public <S extends HealthCheck_Student> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends HealthConsultation> Page<S> findAll(Example<S> example, Pageable pageable) {
         // Basic implementation - in real world would need more complex query building
         return (Page<S>) findAll(pageable);
     }
 
     @Override
-    public <S extends HealthCheck_Student> long count(Example<S> example) {
+    public <S extends HealthConsultation> long count(Example<S> example) {
         return findAll(example).size();
     }
 
     @Override
-    public <S extends HealthCheck_Student> boolean exists(Example<S> example) {
+    public <S extends HealthConsultation> boolean exists(Example<S> example) {
         return !findAll(example).isEmpty();
     }
 
     @Override
-    public <S extends HealthCheck_Student, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends HealthConsultation, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         // Implementation would need a custom FluentQuery implementation
         throw new UnsupportedOperationException("findBy with queryFunction not implemented");
     }
 
     @Override
-    public <S extends HealthCheck_Student> S save(S entity) {
-        if (entity.getCheckID() == 0) {
+    public <S extends HealthConsultation> S save(S entity) {
+        if (entity.getConsultID() == 0) {
             entityManager.persist(entity);
             return entity;
         } else {
@@ -153,14 +156,14 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public <S extends HealthCheck_Student> List<S> saveAll(Iterable<S> entities) {
+    public <S extends HealthConsultation> List<S> saveAll(Iterable<S> entities) {
         entities.forEach(this::save);
         return (List<S>) entities;
     }
 
     @Override
-    public Optional<HealthCheck_Student> findById(Integer id) {
-        HealthCheck_Student entity = entityManager.find(HealthCheck_Student.class, id);
+    public Optional<HealthConsultation> findById(Integer id) {
+        HealthConsultation entity = entityManager.find(HealthConsultation.class, id);
         return Optional.ofNullable(entity);
     }
 
@@ -170,25 +173,25 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public List<HealthCheck_Student> findAll() {
-        return entityManager.createQuery("SELECT h FROM HealthCheck_Student h", HealthCheck_Student.class)
+    public List<HealthConsultation> findAll() {
+        return entityManager.createQuery("SELECT h FROM HealthConsultation h", HealthConsultation.class)
                 .getResultList();
     }
 
     @Override
-    public List<HealthCheck_Student> findAll(Sort sort) {
+    public List<HealthConsultation> findAll(Sort sort) {
         // Basic implementation - sorting would require more complex query building
         return findAll();
     }
 
     @Override
-    public Page<HealthCheck_Student> findAll(Pageable pageable) {
+    public Page<HealthConsultation> findAll(Pageable pageable) {
         // Basic implementation - paging would require more complex query building
         throw new UnsupportedOperationException("Paging not implemented");
     }
 
     @Override
-    public List<HealthCheck_Student> findAllById(Iterable<Integer> ids) {
+    public List<HealthConsultation> findAllById(Iterable<Integer> ids) {
         // Convert Iterable to List for JPQL IN clause
         StringBuilder idList = new StringBuilder();
         ids.forEach(id -> idList.append(id).append(","));
@@ -201,13 +204,13 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
             return List.of();
         }
 
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.checkID IN (" + idString + ")";
-        return entityManager.createQuery(jpql, HealthCheck_Student.class).getResultList();
+        String jpql = "SELECT h FROM HealthConsultation h WHERE h.id IN (" + idString + ")";
+        return entityManager.createQuery(jpql, HealthConsultation.class).getResultList();
     }
 
     @Override
     public long count() {
-        return entityManager.createQuery("SELECT COUNT(h) FROM HealthCheck_Student h", Long.class)
+        return entityManager.createQuery("SELECT COUNT(h) FROM HealthConsultation h", Long.class)
                 .getSingleResult();
     }
 
@@ -217,7 +220,7 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public void delete(HealthCheck_Student entity) {
+    public void delete(HealthConsultation entity) {
         entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
     }
 
@@ -227,26 +230,12 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends HealthCheck_Student> entities) {
+    public void deleteAll(Iterable<? extends HealthConsultation> entities) {
         entities.forEach(this::delete);
     }
 
     @Override
     public void deleteAll() {
-        entityManager.createQuery("DELETE FROM HealthCheck_Student").executeUpdate();
-    }
-
-    @Override
-    public Integer findMaxCheckIdByStudentId(int studentId) {
-        String jpql = "SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.studentID = :studentId";
-        try {
-            return entityManager.createQuery(jpql, Integer.class)
-                    .setParameter("studentId", studentId)
-                    .getSingleResult();
-        } catch (Exception e) {
-            // Return null if no results found or any other error
-            return null;
-        }
-
+        entityManager.createQuery("DELETE FROM HealthConsultation").executeUpdate();
     }
 }
