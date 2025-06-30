@@ -15,4 +15,7 @@ public interface HealthCheckStudentRepository extends JpaRepository<HealthCheck_
 
     @Query("SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.studentID = :studentId")
     Integer findMaxCheckIdByStudentId(@Param("studentId") int studentId);
+
+    @Query("SELECT h FROM HealthCheck_Student h WHERE h.health_ScheduleID = :health_ScheduleID")
+    List<HealthCheck_Student> findByHealth_ScheduleID(@Param("health_ScheduleID") int health_ScheduleID);
 }

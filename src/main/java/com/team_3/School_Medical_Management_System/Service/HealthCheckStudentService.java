@@ -259,14 +259,12 @@ public class HealthCheckStudentService {
             existingResult.setBmi(bmi);
 
             // Set update information
-            existingResult.setUpdate_at(new Date());
-            existingResult.setUpdatedByNurseID(dto.getUpdatedByNurseID());
-            // Preserve the creation information if it's missing in the existing record
-            if (existingResult.getCreatedByNurseID() == null && dto.getCreatedByNurseID() != null) {
+            if (existingResult.getCreatedByNurseID() == null) {
                 existingResult.setCreatedByNurseID(dto.getCreatedByNurseID());
-            }
-            if (existingResult.getCreate_at() == null && dto.getCreate_at() != null) {
-                existingResult.setCreate_at(dto.getCreate_at());
+                existingResult.setCreate_at(new Date());
+            } else {
+                existingResult.setUpdatedByNurseID(dto.getUpdatedByNurseID());
+                existingResult.setUpdate_at(new Date());
             }
             // Save updated result
             HealthCheck_Student updatedResult = healthCheckStudentRepository.save(existingResult);
@@ -299,6 +297,12 @@ public class HealthCheckStudentService {
     // Get simplified health check results for a student
     public List<HealthCheckStudentSimplifiedDTO> getSimplifiedHealthCheckResultsByStudent(int studentId) {
         return healthCheckStudentRepository.findByStudent_StudentID(studentId).stream()
+                .map(this::convertToSimplifiedDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<HealthCheckStudentSimplifiedDTO> getSimplifiedHealthCheckResultsBySchedule(int health_ScheduleID) {
+        return healthCheckStudentRepository.findByHealth_ScheduleID(health_ScheduleID).stream()
                 .map(this::convertToSimplifiedDTO)
                 .collect(Collectors.toList());
     }
@@ -357,5 +361,11 @@ public class HealthCheckStudentService {
         }
 
         return dto;
+    }
+
+    // Get health check result by ID
+    public HealthCheck_Student getHealthCheckStudentById(int id) {
+        Optional<HealthCheck_Student> result = healthCheckStudentRepository.findById(id);
+        return result.orElse(null);
     }
 }

@@ -52,7 +52,7 @@ public class HealthCheckScheduleController {
 
 
         if (createdSchedule.getUpdatedByNurseID() != null &&
-            (createdSchedule.getUpdatedByNurseName() == null || createdSchedule.getUpdatedByNurseName().isEmpty())) {
+                (createdSchedule.getUpdatedByNurseName() == null || createdSchedule.getUpdatedByNurseName().isEmpty())) {
             SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(createdSchedule.getUpdatedByNurseID());
             if (nurse != null) {
                 createdSchedule.setUpdatedByNurseName(nurse.getFullName());
@@ -87,7 +87,7 @@ public class HealthCheckScheduleController {
 
             // Get creator nurse name if needed
             if (schedule.getCreatedByNurseID() != null && schedule.getCreatedByNurseID() > 0
-                && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
+                    && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
                 SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getCreatedByNurseID());
                 if (nurse != null) {
                     schedule.setCreatedByNurseName(nurse.getFullName());
@@ -98,7 +98,7 @@ public class HealthCheckScheduleController {
 
             // Get updater nurse name if needed
             if (schedule.getUpdatedByNurseID() != null && schedule.getUpdatedByNurseID() > 0
-                && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
+                    && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
                 SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getUpdatedByNurseID());
                 if (nurse != null) {
                     schedule.setUpdatedByNurseName(nurse.getFullName());

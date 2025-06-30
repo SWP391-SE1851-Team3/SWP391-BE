@@ -57,17 +57,25 @@ public class HealthCheckStudentController {
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
+    @GetMapping("/health-check-schedule/{healthScheduleId}")
+    public ResponseEntity<List<HealthCheckStudentSimplifiedDTO>> getHealthCheckResultsBySchedule(@PathVariable int healthScheduleId) {
+        List<HealthCheckStudentSimplifiedDTO> results = healthCheckStudentService.getSimplifiedHealthCheckResultsBySchedule(healthScheduleId);
+        return new ResponseEntity<>(results, HttpStatus.OK);
+    }
+
     // Update health check results - modified to use UpdateDTO and handle update fields internally
     @PutMapping("/{id}")
     public ResponseEntity<HealthCheckStudentUpdateResponseDTO> updateHealthCheckResults(
             @PathVariable int id,
             @RequestBody HealthCheck_StudentUpdateDTO updateDTO,
             @RequestParam(required = false) Integer nurseID) {
-
-        // Create a full DTO with update information added
+        // Lấy bản ghi cũ
+        HealthCheck_Student old = healthCheckStudentService.getHealthCheckStudentById(id);
+        if (old == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         HealthCheck_StudentDTO fullDTO = new HealthCheck_StudentDTO();
-
-        // Copy fields from updateDTO to fullDTO
+        // Copy fields từ updateDTO sang fullDTO
         fullDTO.setCheckID(updateDTO.getCheckID());
         fullDTO.setStudentID(updateDTO.getStudentID());
         fullDTO.setHeight(updateDTO.getHeight());
@@ -78,47 +86,66 @@ public class HealthCheckStudentController {
         fullDTO.setDentalCheck(updateDTO.getDentalCheck());
         fullDTO.setTemperature(updateDTO.getTemperature());
         fullDTO.setOverallResult(updateDTO.getOverallResult());
-
-        // Copy creation information
-        fullDTO.setUpdate_at(updateDTO.getUpdate_at());
-        fullDTO.setUpdatedByNurseID(updateDTO.getUpdatedByNurseID());
-        // Set update information internally
-        fullDTO.setUpdate_at(new Date());
-        fullDTO.setUpdatedByNurseID(nurseID);
-
-        // If nurseID is provided, get nurse name
-        if (nurseID != null) {
-            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(nurseID);
-            if (nurse != null) {
-                fullDTO.setUpdatedByNurseName(nurse.getFullName());
+        // Logic set nurse
+        if ((old.getCreatedByNurseID() == null || old.getCreatedByNurseID() == 0) && nurseID != null) {
+            // Lần đầu sửa
+            fullDTO.setCreatedByNurseID(nurseID);
+        } else {
+            // Các lần sau
+            fullDTO.setCreatedByNurseID(old.getCreatedByNurseID());
+            if (nurseID != null) {
+                fullDTO.setUpdatedByNurseID(nurseID);
             }
         }
-        HealthCheck_Student updatedResult = healthCheckStudentService.updateHealthCheckResults(id, fullDTO);
-        // Map to response DTO
+        // Gọi service update
+        HealthCheck_Student updated = healthCheckStudentService.updateHealthCheckResults(id, fullDTO);
+        if (updated == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        // Convert sang DTO trả về
         HealthCheckStudentUpdateResponseDTO response = new HealthCheckStudentUpdateResponseDTO();
-        response.setCheckID(updatedResult.getCheckID());
-        response.setStudentID(updatedResult.getStudentID());
-        response.setHeight(updatedResult.getHeight());
-        response.setWeight(updatedResult.getWeight());
-        response.setVisionLeft(updatedResult.getVisionLeft());
-        response.setVisionRight(updatedResult.getVisionRight());
-        response.setHearing(updatedResult.getHearing());
-        response.setDentalCheck(updatedResult.getDentalCheck());
-        response.setTemperature(updatedResult.getTemperature());
-        response.setBmi(updatedResult.getBmi());
-        response.setOverallResult(updatedResult.getOverallResult());
-        response.setCreate_at(updatedResult.getCreate_at());
-        response.setUpdate_at(updatedResult.getUpdate_at());
-        response.setUpdatedByNurseID(updatedResult.getUpdatedByNurseID());
-        // Lấy updatedByNurseName từ updatedByNurseID
+        response.setCheckID(updated.getCheckID());
+        response.setStudentID(updated.getStudentID());
+        response.setHeight(updated.getHeight());
+        response.setWeight(updated.getWeight());
+        response.setVisionLeft(updated.getVisionLeft());
+        response.setVisionRight(updated.getVisionRight());
+        response.setHearing(updated.getHearing());
+        response.setDentalCheck(updated.getDentalCheck());
+        response.setTemperature(updated.getTemperature());
+        response.setBmi(updated.getBmi());
+        response.setOverallResult(updated.getOverallResult());
+        response.setCreate_at(updated.getCreate_at());
+        response.setUpdate_at(updated.getUpdate_at());
+        if (updated.getUpdatedByNurseID() != null) {
+            response.setUpdatedByNurseID(updated.getUpdatedByNurseID());
+        } else {
+            response.setUpdatedByNurseID(null);
+        }
+        if (updated.getCreatedByNurseID() != null) {
+            response.setCreatedByNurseID(updated.getCreatedByNurseID());
+        } else {
+            response.setCreatedByNurseID(null);
+        }
+        String createdByNurseName = null;
+        if (updated.getCreatedByNurseID() != null) {
+            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(response.getCreatedByNurseID());
+            if (nurse != null) {
+                createdByNurseName = nurse.getFullName();
+            }
+        }
+        response.setCreatedByNurseName(createdByNurseName);
+        response.setUpdatedByNurseID(updated.getUpdatedByNurseID());
         String updatedByNurseName = null;
-        if (updatedResult.getUpdatedByNurseID() != null) {
-            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(updatedResult.getUpdatedByNurseID());
+        if (updated.getUpdatedByNurseID() != null) {
+            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(response.getUpdatedByNurseID());
             if (nurse != null) {
                 updatedByNurseName = nurse.getFullName();
             }
         }
         response.setUpdatedByNurseName(updatedByNurseName);
+        response.setCreate_at(updated.getCreate_at());
+        response.setUpdate_at(updated.getUpdate_at());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

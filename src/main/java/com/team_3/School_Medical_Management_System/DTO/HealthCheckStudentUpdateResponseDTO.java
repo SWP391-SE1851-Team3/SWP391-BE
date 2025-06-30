@@ -16,8 +16,10 @@ public class HealthCheckStudentUpdateResponseDTO {
     private String overallResult;
     private Date create_at;
     private Date update_at;
-    private int updatedByNurseID;
+    private Integer updatedByNurseID;
     private String updatedByNurseName;
+    private Integer createdByNurseID;
+    private String createdByNurseName;
 
     // Getters and setters
     public Integer getCheckID() { return checkID; }
@@ -48,7 +50,11 @@ public class HealthCheckStudentUpdateResponseDTO {
     public void setUpdate_at(Date update_at) { this.update_at = update_at; }
     public String getUpdatedByNurseName() { return updatedByNurseName; }
     public void setUpdatedByNurseName(String updatedByNurseName) { this.updatedByNurseName = updatedByNurseName; }
-    public int getUpdatedByNurseID() { return updatedByNurseID; }
-    public void setUpdatedByNurseID(int updatedByNurseID) { this.updatedByNurseID = updatedByNurseID; }
-}
+    public Integer getUpdatedByNurseID() { return updatedByNurseID; }
+    public void setUpdatedByNurseID(Integer updatedByNurseID) { this.updatedByNurseID = updatedByNurseID; }
 
+    public String getCreatedByNurseName() { return createdByNurseName; }
+    public void setCreatedByNurseName(String createdByNurseName) { this.createdByNurseName = createdByNurseName; }
+    public Integer getCreatedByNurseID() { return createdByNurseID; }
+    public void setCreatedByNurseID(Integer createdByNurseID) { this.createdByNurseID = createdByNurseID; }
+}
