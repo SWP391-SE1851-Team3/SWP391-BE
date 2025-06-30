@@ -53,7 +53,7 @@ public class StudentRepo implements StudentInterFace {
 
     @Override
     public Student GetStudentByName(String FullName, String ClassName) {
-        String sql = "select s from Student s where s.FullName = :FullName and s.ClassName = :ClassName";
+        String sql = "select s from Student s where s.FullName = :FullName and s.className = :ClassName";
         return entityManager.createQuery(sql, Student.class).
                 setParameter("FullName", FullName).
                 setParameter("ClassName", ClassName).
@@ -82,4 +82,5 @@ public class StudentRepo implements StudentInterFace {
                 .setParameter("className", className)
                 .getResultList();
     }
+
 }

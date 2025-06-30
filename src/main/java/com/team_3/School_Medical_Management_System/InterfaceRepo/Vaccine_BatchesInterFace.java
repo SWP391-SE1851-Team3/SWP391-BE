@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.InterfaceRepo;
 
+import com.team_3.School_Medical_Management_System.DTO.Consent_form_dot;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 
 import java.util.List;

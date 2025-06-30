@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.InterfaceRepo;
 
+import com.team_3.School_Medical_Management_System.DTO.StudentVaccinationDTO;
 import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 
@@ -12,4 +13,5 @@ public interface Vaccination_recordsInterFace {
     public Vaccination_records getVaccination_records_by_id(int id);
     public Vaccination_records updateVaccination_records(Vaccination_records vaccination_records);
     List<Vaccination_records> getVaccination_recordsByStudentId(int studentId);
+    public List<StudentVaccinationDTO> getStudentFollowedbyNurse();
 }

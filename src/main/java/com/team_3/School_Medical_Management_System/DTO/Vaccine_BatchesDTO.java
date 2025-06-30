@@ -16,7 +16,6 @@ public class Vaccine_BatchesDTO {
     private Integer BatchID;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
-    private Integer nurse_id;
     private String dot;
     private Integer quantity_received;
     private LocalDateTime scheduled_date;
@@ -24,5 +23,8 @@ public class Vaccine_BatchesDTO {
     private String status;
     private String notes;
     private Integer VaccineTypeID;
-    private String nurse_name;
+    private String edit_nurse_name;
+    private Integer created_by_nurse_id;
+    private String created_by_nurse_name;
+    private Integer edit_nurse_id;
 }

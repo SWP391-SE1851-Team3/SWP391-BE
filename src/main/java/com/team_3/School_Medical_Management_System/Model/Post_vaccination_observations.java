@@ -1,38 +1,28 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-
+@Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class Vaccination_records {
+@NoArgsConstructor
+public class Post_vaccination_observations {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer VaccinationRecordID;
-
-    private String notes;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BatchID")
-    private Vaccine_Batches vaccineBatches;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "StudentID")
-    private Student student;
-
+    private Integer observation_id;
     private LocalDateTime observation_time;
     private String symptoms;
     private String severity;
-    private String observation_notes;
-
+    private String notes;
+    private String status;
+    @ManyToOne
+    @JoinColumn(name = "VaccinationRecordID")
+    private Vaccination_records vaccination_records;
     @ManyToOne
     @JoinColumn(name = "CreatedByNurseID")
     private SchoolNurse createdByNurse;
@@ -42,6 +32,4 @@ public class Vaccination_records {
     private SchoolNurse updatedByNurse;
 
 
-
-    private String status;
 }
