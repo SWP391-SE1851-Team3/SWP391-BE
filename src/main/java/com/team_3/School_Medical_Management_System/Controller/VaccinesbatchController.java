@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.AdministerVaccineRequest;
 import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
@@ -71,4 +72,15 @@ public class VaccinesbatchController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Consent form not found");
         }
     }
+
+//    @PostMapping("/vaccines/administer")
+//    public ResponseEntity<?> administer(@RequestBody AdministerVaccineRequest req) {
+//        try {
+//            vaccinesServiceInterFace.administerVaccine(req.getVaccineId(), req.getDoseCount());
+//            return ResponseEntity.ok("Cập nhật thành công");
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
+
 }
