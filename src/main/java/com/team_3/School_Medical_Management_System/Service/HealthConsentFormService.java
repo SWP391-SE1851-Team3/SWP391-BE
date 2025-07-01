@@ -46,7 +46,7 @@ public class HealthConsentFormService {
             form.setNotes(notes);
             HealthConsentForm savedForm = healthConsentFormRepository.save(form);
             // If isAgreed changed to "accepted" and was not previously "accepted", create HealthCheck_Student
-            if (!"accepted".equalsIgnoreCase(oldIsAgreed) && "accepted".equalsIgnoreCase(isAgreed)) {
+            if (!"accepted".equalsIgnoreCase(oldIsAgreed) && "accepted".equalsIgnoreCase(isAgreed) || !"đồng ý".equalsIgnoreCase(oldIsAgreed) && "đồng ý".equalsIgnoreCase(isAgreed)) {
                 HealthCheck_StudentDTO dto = new HealthCheck_StudentDTO();
                 dto.setFormID(form.getFormID());
                 dto.setHealth_ScheduleID(form.getHealthScheduleID());

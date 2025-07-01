@@ -23,7 +23,6 @@ public class HealthCheckStudentSimplifiedDTO {
     private String temperature;
     private float bmi;
     private String overallResult;
-
     private Date create_at;
     private Date update_at;
     private String createdByNurseName;

@@ -91,29 +91,65 @@ public class HealthCheckStudentService {
         healthCheckStudent.setUpdatedByNurseID(dto.getUpdatedByNurseID());
         // Save HealthCheck_Student
         HealthCheck_Student savedResult = healthCheckStudentRepository.save(healthCheckStudent);
+        // Check for abnormal results and create consultations if needed
+        checkForAbnormalResults(savedResult);
         // Send notification to parent about health check results
         sendHealthCheckResultNotification(savedResult);
         return savedResult;
     }
 
+    // Check for abnormal health check results and create consultation appointments
+    private void checkForAbnormalResults(HealthCheck_Student healthCheckResult) {
+        boolean hasAbnormalResults = false;
+        StringBuilder issues = new StringBuilder();
 
-    // Parse vision value from string format (e.g., "8/10" -> 0.8)
-    private float parseVisionValue(String visionStr) {
-        if (visionStr == null || visionStr.isEmpty()) {
-            return 0;
+        // Check vision (less than 8/10)
+
+
+        if (!healthCheckResult.getVisionLeft().equalsIgnoreCase("9/10") && healthCheckResult.getVisionLeft() != null || !healthCheckResult.getVisionLeft().equalsIgnoreCase("10/10") && healthCheckResult.getVisionLeft() != null || !healthCheckResult.getVisionRight().equalsIgnoreCase("9/10") && healthCheckResult.getVisionRight() != null || !healthCheckResult.getVisionRight().equalsIgnoreCase("10/10") && healthCheckResult.getVisionRight() != null) {
+            hasAbnormalResults = true;
+            issues.append("Thị lực yếu");
         }
 
-        try {
-            if (visionStr.contains("/")) {
-                String[] parts = visionStr.split("/");
-                return Float.parseFloat(parts[0]) / Float.parseFloat(parts[1]);
+        // Check dental issues
+        if (healthCheckResult.getDentalCheck() != null &&
+                !healthCheckResult.getDentalCheck().equalsIgnoreCase("Normal") &&
+                !healthCheckResult.getDentalCheck().equalsIgnoreCase("Bình thường")) {
+            hasAbnormalResults = true;
+            issues.append("Vấn đề răng miệng: ").append(healthCheckResult.getDentalCheck()).append(". ");
+        }
+
+        // Check BMI (outside normal range 18.5-24.9)
+        if (healthCheckResult.getBmi() < 18.5 && healthCheckResult.getBmi() >0|| healthCheckResult.getBmi() > 24.9 && healthCheckResult.getBmi() >0) {
+            hasAbnormalResults = true;
+            if (healthCheckResult.getBmi() < 18.5) {
+                issues.append("BMI thấp (").append(String.format("%.1f", healthCheckResult.getBmi())).append(") - Thiếu cân. ");
             } else {
-                return Float.parseFloat(visionStr);
+                issues.append("BMI cao (").append(String.format("%.1f", healthCheckResult.getBmi())).append(") - Thừa cân. ");
             }
-        } catch (Exception e) {
-            return 0;
+        }
+
+        // Create consultation appointment if abnormal results detected
+        if (hasAbnormalResults) {
+            // Get student by studentID from healthCheckResult
+            Optional<Student> studentOpt = studentRepository.findById(healthCheckResult.getStudentID());
+            if (studentOpt.isPresent()) {
+                Student student = studentOpt.get();
+
+                HealthConsultation consultation = new HealthConsultation();
+                consultation.setStudentID(student.getStudentID()); // Use studentID instead of Student object
+                consultation.setCheckID(healthCheckResult.getCheckID()); // Use checkID instead of HealthCheckStudent object
+                consultation.setStatus("pending"); // Changed from boolean false to String "pending"
+
+                HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
+
+                // Send notification to parent about consultation appointment
+                sendConsultationNotification(savedConsultation);
+            }
         }
     }
+
+
 
     // Send notification to parent about health check results
     private void sendHealthCheckResultNotification(HealthCheck_Student healthCheckResult) {
@@ -215,6 +251,8 @@ public class HealthCheckStudentService {
             }
             // Save updated result
             HealthCheck_Student updatedResult = healthCheckStudentRepository.save(existingResult);
+            // Check for abnormal results again
+            checkForAbnormalResults(updatedResult);
             // Send updated notification
             sendHealthCheckResultNotification(updatedResult);
             return updatedResult;
