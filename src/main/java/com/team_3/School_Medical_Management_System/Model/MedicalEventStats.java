@@ -17,6 +17,6 @@ public class MedicalEventStats {
     private Long completedEvents;
     private Long pendingEvents;
     private Double notificationRate;
-    private Date createdDay;
+
 
 }

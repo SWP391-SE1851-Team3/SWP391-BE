@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
+import com.team_3.School_Medical_Management_System.DTO.AccountDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyReportDTO;
 import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
 import com.team_3.School_Medical_Management_System.Model.*;
@@ -34,7 +35,7 @@ public class DashboardController {
     @GetMapping("/full-report")
     public ResponseEntity<DashboardReportModel> getFullReport(
 
-@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
     ) {
 
@@ -142,15 +143,19 @@ public class DashboardController {
         List<MedicalSupplyReportDTO> lowStockReport = medicalSupplyService.getLowStockReport();
         return ResponseEntity.ok(lowStockReport);
     }
+
     @Operation(summary = "Lấy full báo cáo vật tư y tế theo danh mục")
     @GetMapping("/reportSupplyBCategory")
     public ResponseEntity<List<SupplyCategoryDTO>> getMedicalSupplyReportByCategory() {
         List<SupplyCategoryDTO> report = medicalSupplyService.getAllCategories();
         return ResponseEntity.ok(report);
     }
-//    @Operation(summary = "Lấy full account của mỗi role")
-//    @GetMapping("/full-account/{roleID}")
-//    public ResponseEntity Liss getFullAccountByRole(@PathVariable int roleID) {
-////        List<Account> accounts = dashboardService.getFullAccountByRole(roleID);
-//        return ResponseEntity.ok(roleID);
+
+
+    @Operation(summary = "Lấy full account của theo role")
+    @GetMapping("/full-account/{roleID}")
+    public ResponseEntity<List<AccountDTO>> getFullAccountByRole(@PathVariable int roleID) {
+        List<AccountDTO> accounts = dashboardService.getAllAccounts(roleID);
+        return ResponseEntity.ok(accounts);
+    }
 }

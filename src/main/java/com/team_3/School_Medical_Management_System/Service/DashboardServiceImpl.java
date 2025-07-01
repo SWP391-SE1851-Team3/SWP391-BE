@@ -1,37 +1,41 @@
 package com.team_3.School_Medical_Management_System.Service;
 
+import com.team_3.School_Medical_Management_System.DTO.AccountDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class DashboardServiceImpl implements DashboardService{
+public class DashboardServiceImpl implements DashboardService {
 
-
-
-    private  SystemStatsRepository systemStatsRepository;
-    private  MedicalEventStatsRepository medicalEventStatsRepository;
-    private  VaccinationStatsRepository vaccinationStatsRepository;
-    private  HealthCheckStatsRepository healthCheckStatsRepository;
-    private  MedicationStatsRepository medicationStatsRepository;
+private SchoolNurseRepository schoolNurseRepository;
+    private ParentRepository parentRepository;
+    private SystemStatsRepository systemStatsRepository;
+    private MedicalEventStatsRepository medicalEventStatsRepository;
+    private VaccinationStatsRepository vaccinationStatsRepository;
+    private HealthCheckStatsRepository healthCheckStatsRepository;
+    private MedicationStatsRepository medicationStatsRepository;
 
     @Autowired
-    public DashboardServiceImpl(MedicalSupplyRepository medicalSupplyRepository,
+    public DashboardServiceImpl(SchoolNurseRepository schoolNurseRepository, ParentRepository parentRepository,
                                 SystemStatsRepository systemStatsRepository,
-                                MedicalEventStatsRepository medicalEventStatsReposit,
+                                MedicalEventStatsRepository medicalEventStatsRepository,
                                 VaccinationStatsRepository vaccinationStatsRepository,
                                 HealthCheckStatsRepository healthCheckStatsRepository,
                                 MedicationStatsRepository medicationStatsRepository) {
-
+        this.schoolNurseRepository = schoolNurseRepository;
+        this.parentRepository = parentRepository;
         this.systemStatsRepository = systemStatsRepository;
-        this.medicalEventStatsRepository = medicalEventStatsReposit;
+        this.medicalEventStatsRepository = medicalEventStatsRepository;
         this.vaccinationStatsRepository = vaccinationStatsRepository;
         this.healthCheckStatsRepository = healthCheckStatsRepository;
         this.medicationStatsRepository = medicationStatsRepository;
     }
-
 
 
     @Override
@@ -65,15 +69,15 @@ public class DashboardServiceImpl implements DashboardService{
     public MedicalEventStats getMedicalEventStats(LocalDateTime startDate, LocalDateTime endDate) {
 
 
-            return MedicalEventStats.builder()
-                    .totalEvents(medicalEventStatsRepository.countTotalEvents(startDate, endDate))
-                    .emergencyEvents(medicalEventStatsRepository.countEmergencyEvents(startDate, endDate))
-                    .completedEvents(medicalEventStatsRepository.countCompletedEvents(startDate, endDate))
-                    .pendingEvents(medicalEventStatsRepository.countPendingEvents(startDate, endDate))
-                    .notificationRate(medicalEventStatsRepository.calculateNotificationRate(startDate, endDate))
-                    //  .createdDay(medicalEventStatsRepository.getCreatedDay())
-                    .build();
-        }
+        return MedicalEventStats.builder()
+                .totalEvents(medicalEventStatsRepository.countTotalEvents(startDate, endDate))
+                .emergencyEvents(medicalEventStatsRepository.countEmergencyEvents(startDate, endDate))
+                .completedEvents(medicalEventStatsRepository.countCompletedEvents(startDate, endDate))
+                .pendingEvents(medicalEventStatsRepository.countPendingEvents(startDate, endDate))
+                .notificationRate(medicalEventStatsRepository.calculateNotificationRate(startDate, endDate))
+                //  .createdDay(medicalEventStatsRepository.getCreatedDay())
+                .build();
+    }
 
     @Override
     public VaccinationStats getVaccinationStats(LocalDateTime startDate, LocalDateTime endDate) {
@@ -112,4 +116,41 @@ public class DashboardServiceImpl implements DashboardService{
                 .approvalRate(medicationStatsRepository.calculateApprovalRate(startDate, endDate))
                 .build();
     }
-}
+
+    @Override
+    public List<AccountDTO> getAllAccounts(int roleID) {
+        if (roleID == 1) {
+
+            List<Parent> parents = parentRepository.getAllBy();
+            List<AccountDTO> a = new ArrayList<>();
+            for (Parent p : parents) {
+                AccountDTO accountDTO = new AccountDTO();
+                accountDTO.setUsername(p.getUserName());
+                accountDTO.setPassword(p.getPassword());
+                accountDTO.setEmail(p.getEmail());
+                // Add to a list or return as needed
+                a.add(accountDTO);
+            }
+            return a;
+
+        } else if (roleID == 2) {
+            List<SchoolNurse> nurses = schoolNurseRepository.getAll();
+            List<AccountDTO> a = new ArrayList<>();
+            for (SchoolNurse n : nurses) {
+                AccountDTO accountDTO = new AccountDTO();
+                accountDTO.setUsername(n.getUserName());
+                accountDTO.setPassword(n.getPassword());
+                accountDTO.setEmail(n.getEmail());
+                // Add to a list or return as needed
+                a.add(accountDTO);
+            }
+            return a;
+
+        } else {
+            // Handle other roles or return an empty list
+            return null;
+
+        }
+
+        }
+    }
