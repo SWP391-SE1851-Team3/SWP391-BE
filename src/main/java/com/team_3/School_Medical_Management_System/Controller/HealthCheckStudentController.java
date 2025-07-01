@@ -83,6 +83,7 @@ public class HealthCheckStudentController {
         // Copy fields từ updateDTO sang fullDTO
         fullDTO.setCheckID(updateDTO.getCheckID());
         fullDTO.setStudentID(updateDTO.getStudentID());
+        fullDTO.setStatus(updateDTO.getStatus());
         fullDTO.setHeight(updateDTO.getHeight());
         fullDTO.setWeight(updateDTO.getWeight());
         fullDTO.setVisionLeft(updateDTO.getVisionLeft());
@@ -111,6 +112,7 @@ public class HealthCheckStudentController {
         HealthCheckStudentUpdateResponseDTO response = new HealthCheckStudentUpdateResponseDTO();
         response.setCheckID(updated.getCheckID());
         response.setStudentID(updated.getStudentID());
+        response.setStatus(updated.getStatus());
         response.setHeight(updated.getHeight());
         response.setWeight(updated.getWeight());
         response.setVisionLeft(updated.getVisionLeft());
@@ -168,3 +170,4 @@ public class HealthCheckStudentController {
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
 }
+

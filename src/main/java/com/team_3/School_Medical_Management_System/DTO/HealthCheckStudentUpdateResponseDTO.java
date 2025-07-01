@@ -5,6 +5,7 @@ import java.util.Date;
 public class HealthCheckStudentUpdateResponseDTO {
     private int checkID;
     private Integer studentID;
+    private String status;       // Thêm trường status
     private Float height;
     private Float weight;
     private String visionLeft;
@@ -26,6 +27,10 @@ public class HealthCheckStudentUpdateResponseDTO {
     public void setCheckID(Integer checkID) { this.checkID = checkID; }
     public Integer getStudentID() { return studentID; }
     public void setStudentID(Integer studentID) { this.studentID = studentID; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
     public Float getHeight() { return height; }
     public void setHeight(Float height) { this.height = height; }
     public Float getWeight() { return weight; }

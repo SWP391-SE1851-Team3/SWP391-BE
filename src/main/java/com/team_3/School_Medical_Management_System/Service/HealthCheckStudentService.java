@@ -53,7 +53,7 @@ public class HealthCheckStudentService {
             throw new RuntimeException("HealthConsentForm not found with formID: " + dto.getFormID());
         }
         HealthConsentForm consentForm = consentOpt.get();
-        if (!"accepted".equalsIgnoreCase(consentForm.getIsAgreed())) {
+        if (!"đồng ý".equalsIgnoreCase(consentForm.getIsAgreed())) {
             throw new RuntimeException("Cannot create HealthCheck_Student: Consent form is not accepted.");
         }
         // Use studentID from consent form
@@ -68,6 +68,7 @@ public class HealthCheckStudentService {
         healthCheckStudent.setStudentID(studentId);
         healthCheckStudent.setFormID(dto.getFormID());
         healthCheckStudent.setHealth_ScheduleID(dto.getHealth_ScheduleID());
+        healthCheckStudent.setStatus(dto.getStatus()); // Thêm set status
         // Set other properties, allow empty/null if not provided
         healthCheckStudent.setHeight(dto.getHeight());
         healthCheckStudent.setWeight(dto.getWeight());
@@ -92,7 +93,7 @@ public class HealthCheckStudentService {
         // Save HealthCheck_Student
         HealthCheck_Student savedResult = healthCheckStudentRepository.save(healthCheckStudent);
         // Check for abnormal results and create consultations if needed
-        checkForAbnormalResults(savedResult);
+        checkForAbnormalResults(savedResult); // Truyền object thay vì string
         // Send notification to parent about health check results
         sendHealthCheckResultNotification(savedResult);
         return savedResult;
@@ -100,55 +101,31 @@ public class HealthCheckStudentService {
 
     // Check for abnormal health check results and create consultation appointments
     private void checkForAbnormalResults(HealthCheck_Student healthCheckResult) {
-        boolean hasAbnormalResults = false;
-        StringBuilder issues = new StringBuilder();
-
-        // Check vision (less than 8/10)
-
-
-        if (!healthCheckResult.getVisionLeft().equalsIgnoreCase("9/10") && healthCheckResult.getVisionLeft() != null || !healthCheckResult.getVisionLeft().equalsIgnoreCase("10/10") && healthCheckResult.getVisionLeft() != null || !healthCheckResult.getVisionRight().equalsIgnoreCase("9/10") && healthCheckResult.getVisionRight() != null || !healthCheckResult.getVisionRight().equalsIgnoreCase("10/10") && healthCheckResult.getVisionRight() != null) {
-            hasAbnormalResults = true;
-            issues.append("Thị lực yếu");
+        if (healthCheckResult == null || healthCheckResult.getStatus() == null) {
+            return;
         }
 
-        // Check dental issues
-        if (healthCheckResult.getDentalCheck() != null &&
-                !healthCheckResult.getDentalCheck().equalsIgnoreCase("Normal") &&
-                !healthCheckResult.getDentalCheck().equalsIgnoreCase("Bình thường")) {
-            hasAbnormalResults = true;
-            issues.append("Vấn đề răng miệng: ").append(healthCheckResult.getDentalCheck()).append(". ");
-        }
+        String status = healthCheckResult.getStatus().trim();
+        if (status.equalsIgnoreCase("Cần tư vấn y tế")
+                ) {
 
-        // Check BMI (outside normal range 18.5-24.9)
-        if (healthCheckResult.getBmi() < 18.5 && healthCheckResult.getBmi() >0|| healthCheckResult.getBmi() > 24.9 && healthCheckResult.getBmi() >0) {
-            hasAbnormalResults = true;
-            if (healthCheckResult.getBmi() < 18.5) {
-                issues.append("BMI thấp (").append(String.format("%.1f", healthCheckResult.getBmi())).append(") - Thiếu cân. ");
-            } else {
-                issues.append("BMI cao (").append(String.format("%.1f", healthCheckResult.getBmi())).append(") - Thừa cân. ");
-            }
-        }
-
-        // Create consultation appointment if abnormal results detected
-        if (hasAbnormalResults) {
-            // Get student by studentID from healthCheckResult
-            Optional<Student> studentOpt = studentRepository.findById(healthCheckResult.getStudentID());
-            if (studentOpt.isPresent()) {
-                Student student = studentOpt.get();
-
+            try {
                 HealthConsultation consultation = new HealthConsultation();
-                consultation.setStudentID(student.getStudentID()); // Use studentID instead of Student object
-                consultation.setCheckID(healthCheckResult.getCheckID()); // Use checkID instead of HealthCheckStudent object
-                consultation.setStatus("pending"); // Changed from boolean false to String "pending"
-
+                consultation.setStudentID(healthCheckResult.getStudentID());
+                consultation.setCheckID(healthCheckResult.getCheckID());
+                consultation.setStatus("Đang chờ xử lý");
+                consultation.setReason("Cần tư vấn y tế theo đánh giá của y tá");
+                consultation.setCreate_at(new Date());
+                consultation.setCreatedByNurseID(healthCheckResult.getCreatedByNurseID());
                 HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
-
-                // Send notification to parent about consultation appointment
+                // Gửi thông báo cho phụ huynh
                 sendConsultationNotification(savedConsultation);
+
+            } catch (Exception e) {
+
             }
         }
     }
-
 
 
     // Send notification to parent about health check results
@@ -227,6 +204,7 @@ public class HealthCheckStudentService {
             HealthCheck_Student existingResult = optionalResult.get();
 
             // Update fields
+            existingResult.setStatus(dto.getStatus()); // Thêm update status
             existingResult.setHeight(dto.getHeight());
             existingResult.setWeight(dto.getWeight());
             existingResult.setVisionLeft(dto.getVisionLeft());
@@ -252,7 +230,7 @@ public class HealthCheckStudentService {
             // Save updated result
             HealthCheck_Student updatedResult = healthCheckStudentRepository.save(existingResult);
             // Check for abnormal results again
-            checkForAbnormalResults(updatedResult);
+            checkForAbnormalResults(updatedResult); // Truyền object thay vì string
             // Send updated notification
             sendHealthCheckResultNotification(updatedResult);
             return updatedResult;
@@ -302,6 +280,7 @@ public class HealthCheckStudentService {
         // Basic health check info
         dto.setCheckID(entity.getCheckID());
         dto.setStudentID(entity.getStudentID());
+        dto.setStatus(entity.getStatus()); // Thêm set status
         dto.setHeight(entity.getHeight());
         dto.setWeight(entity.getWeight());
         dto.setVisionLeft(entity.getVisionLeft());
