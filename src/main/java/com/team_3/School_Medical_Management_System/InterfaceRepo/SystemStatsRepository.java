@@ -6,4 +6,5 @@ public interface SystemStatsRepository {
     public Long countParents();
     public Long countNurses();
     public Long countManagers();
+    public Long countMedicalSupplies();
 }

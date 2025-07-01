@@ -19,6 +19,5 @@ public class DashboardReportModel {
     private HealthCheckStats healthCheckStats;
     private MedicationStats medicationStats;
 
-    private LocalDateTime createdAt;
 
 }

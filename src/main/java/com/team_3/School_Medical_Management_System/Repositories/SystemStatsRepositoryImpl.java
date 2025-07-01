@@ -80,4 +80,17 @@ public class SystemStatsRepositoryImpl implements SystemStatsRepository {
             return 0L;
         }
     }
+
+    @Override
+    public Long countMedicalSupplies() {
+        try {
+            String sql = "SELECT COUNT(*) FROM MedicalSupply";
+            Query query = entityManager.createNativeQuery(sql);
+            Number result = (Number) query.getSingleResult();
+            return result.longValue();
+        } catch (Exception e) {
+
+            return 0L;
+        }
+    }
 }

@@ -14,8 +14,9 @@ import java.util.List;
 
 @Service
 public class MedicalSupplyService {
-private SupplyCategoryRepo supplyCategory;
+    private SupplyCategoryRepo supplyCategory;
     private MedicalSupplyRepository medicalSupplyRepository;
+
     @Autowired
 
 
@@ -68,14 +69,16 @@ private SupplyCategoryRepo supplyCategory;
         dto.setReorderLevel(supply.getReorderLevel());
         // Kiểm tra xem số lượng có dưới mức đặt hàng lại không
         dto.setIsBelowReorderLevel(supply.getQuantityAvailable() < supply.getReorderLevel());
+        dto.setDateAdded(supply.getDateAdded());
         return dto;
     }
+
     public List<SupplyCategoryDTO> getAllCategories() {
 
         List<SupplyCategory> list = supplyCategory.findAll();
         List<SupplyCategoryDTO> dto = new ArrayList<>();
         for (SupplyCategory category : list) {
-SupplyCategoryDTO d = new SupplyCategoryDTO();
+            SupplyCategoryDTO d = new SupplyCategoryDTO();
             d.setId(category.getCategoryID());
             d.setCategoryName(category.getCategoryName());
             dto.add(d);

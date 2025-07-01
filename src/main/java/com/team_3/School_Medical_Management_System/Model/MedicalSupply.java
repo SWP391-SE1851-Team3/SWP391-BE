@@ -34,6 +34,14 @@ public class MedicalSupply {
     private SupplyCategory category;
 
 
+    @ManyToOne
+    @JoinColumn(name = "BatchID")
+    private Vaccine_Batches vaccineBatch;
+
+
+    @ManyToOne
+    @JoinColumn(name = "CheckID")
+    private HealthCheck_Student healthCheckStudent;
    // Self-referential relationship for hierarchical structure
     public MedicalSupply() {
     }

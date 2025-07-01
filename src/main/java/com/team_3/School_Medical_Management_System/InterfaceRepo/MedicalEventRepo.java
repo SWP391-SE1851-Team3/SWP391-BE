@@ -23,5 +23,9 @@ public interface MedicalEventRepo extends JpaRepository<MedicalEvent, Integer> {
 @Query("DELETE FROM MedicalEvent m WHERE m.parent.ParentID = :parentId")
 public void deleteByParentID(@Param("parentId") int parentId);
 
+ @Modifying
+ @Query("UPDATE MedicalEvent m SET m.parent = NULL WHERE m.parent.ParentID = :parentID")
+ public void setNullParentIDByParentID(@Param("parentID") int parentID);
+
 
 }

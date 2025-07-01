@@ -18,11 +18,7 @@ public interface MedicationSubmissionInterFace extends JpaRepository<MedicationS
     @Query("SELECT m FROM MedicationSubmission m")
     List<MedicationSubmission> findAllSubmissions();
 
-
-@Modifying
-    @Query("DELETE FROM MedicationSubmission m WHERE m.parentId = :parentId")
-    void deleteByParentIdm(@Param("parentId") int parentId);
-   // public void deleteByParentIdm(int medicationSubmissionId);
-
-
+    @Modifying
+    @Query("UPDATE MedicationSubmission m SET m.parentId = NULL WHERE m.parentId = :parentID")
+    public void setNullParentIDByParentID(@Param("parentID") int parentID);
 }

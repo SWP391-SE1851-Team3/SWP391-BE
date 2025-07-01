@@ -16,4 +16,5 @@ public class SystemStats {
     private Long totalParents;
     private Long totalNurses;
     private Long totalManagers;
+    private Long totalMedicalSupplies;
 }

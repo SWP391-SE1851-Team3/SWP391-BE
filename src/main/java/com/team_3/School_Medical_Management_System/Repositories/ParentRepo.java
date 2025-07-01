@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentInterFace
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
@@ -98,6 +99,15 @@ public class ParentRepo implements ParentInterFace  {
         return entityManager.createQuery(jpql, Parent.class)
                 .setParameter("Email", Email)
                 .getSingleResult();
+    }
+    @Transactional
+    @Override
+    public void deleteParent(int id) {
+        String jpql = "DELETE FROM Parent p WHERE p.ParentID = :id";
+        entityManager.createQuery(jpql)
+                .setParameter("id", id)
+                .executeUpdate();
+        entityManager.flush();
     }
 
     @Override

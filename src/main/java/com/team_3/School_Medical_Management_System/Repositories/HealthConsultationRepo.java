@@ -44,10 +44,19 @@ public class HealthConsultationRepo implements HealthConsultationRepository {
                 .getResultList();
     }
 
+
+
     @Override
     public void deleteByStudent_StudentID(int studentId) {
-
+String jpql = "DELETE FROM HealthConsultation h WHERE h.studentID = :studentId OR h.checkID IN " +
+                "(SELECT hcs.checkID FROM HealthCheck_Student hcs WHERE hcs.studentID = :studentId)";
+        entityManager.createQuery(jpql)
+                .setParameter("studentId", studentId)
+                .executeUpdate();
     }
+
+
+
 
     @Override
     public void flush() {

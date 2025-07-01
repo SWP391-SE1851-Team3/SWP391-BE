@@ -37,4 +37,15 @@ public class MedicalSupplyRepo implements MedicalSupplyRepository {
         String query = "SELECT ms FROM MedicalSupply ms";
         return entityManager.createQuery(query, MedicalSupply.class).getResultList();
     }
+
+    @Override
+    public void deleteByHealthCheckStudent_CheckID(int checkID) {
+        String query = "DELETE FROM MedicalSupply ms WHERE ms.healthCheckStudent.checkID = :checkID";
+        entityManager.getTransaction().begin();
+        entityManager.createQuery(query)
+                .setParameter("checkID", checkID)
+                .executeUpdate();
+        entityManager.getTransaction().commit();
+
+    }
 }

@@ -14,6 +14,7 @@ import com.team_3.School_Medical_Management_System.Repositories.StudentRepo;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.ApiStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,8 @@ public class ManagerService implements ManagerServiceInterFace {
     private Post_vaccination_observationsInterFace postVaccinationObservationRepo;
     @Autowired
     private SchoolNurseRepo nurseRepository;
-
+    @Autowired
+    private MedicalSupplyRepository medicalSupplyRepo;
     @Autowired
     private MedicalEventDetailsRepository medicalEventDetailsRepo;
     @Autowired
@@ -253,134 +255,55 @@ public class ManagerService implements ManagerServiceInterFace {
     }
 
 
-
-
-
-
-    @Transactional(rollbackOn = Exception.class)
     @Override
     public ResponseEntity<String> deleteUser(int id, int roleId) {
-
-
-        switch (roleId) {
-            case 1: // Parent
-                Parent parent = parentRepository.checkIdAndRoleExist(id, roleId);
-                if (parent == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
-                } else {
-                    try {
-                        // 1. Lấy danh sách students của parent này
-                        List<Student> students = studentRepo.getStudentsByParentID(parent.getParentID());
-
-                        // 2. Xóa tất cả dữ liệu liên quan đến từng student
-                        for (Student student : students) {
-                            deleteStudentRelatedData(student.getStudentID());
-                        }
-
-                        // 3. Xóa dữ liệu liên quan trực tiếp đến Parent
-                        deleteParentRelatedData(parent.getParentID());
-
-                        // 4. Xóa students
-                        for (Student student : students) {
-                            studentRepo.removeStudent(student.getStudentID());
-                        }
-
-                        // 5. Cuối cùng xóa Parent
-                        parentRepository.DeleteParent(id);
-
-                        return ResponseEntity.ok("Parent and all related data deleted successfully.");
-
-                    } catch (Exception e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body("Error deleting parent: " + e.getMessage());
+        try {
+            switch (roleId) {
+                case 1: // Parent
+                    Parent parent = parentRepository.checkIdAndRoleExist(id, roleId);
+                    if (parent == null) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
                     }
 
-                }
+                    parent.setIsActive(0); // Set the parent as inactive instead of deleting
+                    parentRepository.UpdateParent(parent);
+                    return ResponseEntity.ok("Parent data deleted successfully.");
 
-            case 2: // SchoolNurse
+                case 2: // SchoolNurse
+                    SchoolNurse n = nurseRepository.checkIdAndRoleExist(id, roleId);
 
-                SchoolNurse nurse = nurseRepository.checkIdAndRoleExist(id, roleId);
-                if (nurse == null) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body("SchoolNurse with ID " + id + " and RoleID " + roleId + " not found.");
-                }
+                    if (n == null) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("SchoolNurse with ID " + id + " and RoleID " + roleId + " not found.");
+                    }
 
 
-                // Xóa tất cả dữ liệu liên quan đến SchoolNurse
+                    n.setIsActive(0); // Set the nurse as inactive instead of deleting
+                    nurseRepository.UpdateSchoolNurses(n);
+                    return ResponseEntity.ok("SchoolNurse data deleted successfully.");
+                case 3: // Student
+                    Student student = studentRepo.findById(id).orElse(null);
+                    if (student == null) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body("Student with ID " + id + " not found.");
+                    }
+                    student.setIsActive(0); // Set the student as inactive instead of deleting
+                    studentRepo.UpdateStudent(student);
+                    return ResponseEntity.ok("Student data deleted successfully.");
 
-                nurseRepository.DeleteSchoolNurses(id);
-                break;
-
-            default:
-                return ResponseEntity.badRequest().body("RoleID không hợp lệ");
+                default:
+                    return ResponseEntity.badRequest().body("Invalid RoleID: " + roleId);
+            }
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Data integrity violation: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting user: " + e.getMessage());
         }
-
-        return ResponseEntity.notFound().build();
 
 
     }
-
-    private void deleteStudentRelatedData(int studentId) {
-        // Xóa vaccination records và post-vaccination observations
-        List<Vaccination_records> vaccinationRecords = vaccinationRecordRepo.getVaccination_recordsByStudentId(studentId);
-        for (Vaccination_records record : vaccinationRecords) {
-            postVaccinationObservationRepo.deleteByVaccinationRecordId(record.getVaccinationRecordID());
-        }
-        vaccinationRecordRepo.deleteByStudentId(studentId);
-
-        // Xóa health check student
-        healthCheckStudentRepo.deleteByStudentID(studentId);
-
-        // Xóa consent forms
-        consentFormsRepo.deleteConsentFormsByStudentId(studentId);
-
-        // Xóa health consent form
-        healthConsentFormRepo.deleteByStudentId(studentId);
-
-        // Xóa student health profile
-        studentHealthProfileRepo.deleteHealthProfile(studentId);
-
-        // Xóa medical event details
-        medicalEventDetailsRepo.deleteByStudent_StudentID(studentId);
-
-        // Xóa health consultation liên quan
-        healthConsultationRepo.deleteByStudent_StudentID(studentId);
-    }
-
-
-
-    private void deleteParentRelatedData(int parentId) {
-        // Xóa medication submissions và details
-        List<MedicationSubmission> submissions = medicationSubmissionRepo.findByParentId(parentId);
-        for (MedicationSubmission submission : submissions) {
-            medicationDetailRepo.deleteByMedicationSubmission_MedicationSubmissionId(submission.getMedicationSubmissionId());
-            confirmMedicationSubmissionRepo.deleteByMedicationSubmissionId(submission.getMedicationSubmissionId());
-        }
-        medicationSubmissionRepo.deleteByParentIdm(parentId);
-
-        // Xóa medical events của parent này
-        List<MedicalEvent> events = medicalEventRepo.getByParentId(parentId);
-        for (MedicalEvent event : events) {
-            medicalEventEventTypeRepo.deleteByMedicalEvent_EventID(event.getEventID());
-            medicalEventNurseRepo.deleteByMedicalEvent_EventID(event.getEventID());
-            notificationsMedicalEventDetailsRepo.deleteByMedicalEvent_EventID(event.getEventID());
-        }
-        medicalEventRepo.deleteByParentID(parentId);
-
-        // Xóa notifications
-        notificationsParentRepo.deleteByParentId(parentId);
-
-        // Xóa health consultation parent
-        healthConsultationParentRepo.deleteByParentID(parentId);
-
-        // Xóa consent forms của parent
-        consentFormsRepo.deleteByConsent_FormByParentID(parentId);
-
-        // Xóa health consent forms của parent
-        healthConsentFormRepo.deleteByParentID(parentId);
-    }
-
 }
 
 

@@ -14,5 +14,8 @@ public interface StudentHealthProfileInterFace {
     StudentHealthProfile AddHealthProfile(StudentHealthProfileDTO dto);
     StudentHealthProfile getHealthProfileByStudentName(String studentName);
     StudentHealthProfile getStudentHealthProfileByStudentId(int studentId);
+    public void deleteByStudentId(int studentId);
 
+
+    void setNullParentIDByParentID(int parentId);
 }

@@ -20,13 +20,13 @@ public class DashboardServiceImpl implements DashboardService{
     @Autowired
     public DashboardServiceImpl(MedicalSupplyRepository medicalSupplyRepository,
                                 SystemStatsRepository systemStatsRepository,
-                                MedicalEventStatsRepository medicalEventStatsRepository,
+                                MedicalEventStatsRepository medicalEventStatsReposit,
                                 VaccinationStatsRepository vaccinationStatsRepository,
                                 HealthCheckStatsRepository healthCheckStatsRepository,
                                 MedicationStatsRepository medicationStatsRepository) {
 
         this.systemStatsRepository = systemStatsRepository;
-        this.medicalEventStatsRepository = medicalEventStatsRepository;
+        this.medicalEventStatsRepository = medicalEventStatsReposit;
         this.vaccinationStatsRepository = vaccinationStatsRepository;
         this.healthCheckStatsRepository = healthCheckStatsRepository;
         this.medicationStatsRepository = medicationStatsRepository;
@@ -35,16 +35,16 @@ public class DashboardServiceImpl implements DashboardService{
 
 
     @Override
-    public DashboardReportModel getFullReport() {
+    public DashboardReportModel getFullReport(LocalDateTime startDate, LocalDateTime endDate) {
 
 
         return DashboardReportModel.builder()
                 .systemStats(getSystemStats())
-                .medicalEventStats(getMedicalEventStats())
-                .vaccinationStats(getVaccinationStats())
-                .healthCheckStats(getHealthCheckStats())
-                .medicationStats(getMedicationStats())
-                .createdAt(LocalDateTime.now())
+                .medicalEventStats(getMedicalEventStats(startDate, endDate))
+                .vaccinationStats(getVaccinationStats(startDate, endDate))
+                .healthCheckStats(getHealthCheckStats(startDate, endDate))
+                .medicationStats(getMedicationStats(startDate, endDate))
+
                 .build();
     }
 
@@ -57,59 +57,59 @@ public class DashboardServiceImpl implements DashboardService{
                 .activeStudents(systemStatsRepository.countActiveStudents())
                 .totalParents(systemStatsRepository.countParents())
                 .totalNurses(systemStatsRepository.countNurses())
-                .totalManagers(systemStatsRepository.countManagers())
+                .totalManagers(systemStatsRepository.countManagers()).totalMedicalSupplies(systemStatsRepository.countMedicalSupplies())
                 .build();
     }
 
     @Override
-    public MedicalEventStats getMedicalEventStats() {
+    public MedicalEventStats getMedicalEventStats(LocalDateTime startDate, LocalDateTime endDate) {
 
 
-        return MedicalEventStats.builder()
-                .totalEvents(medicalEventStatsRepository.countTotalEvents())
-                .emergencyEvents(medicalEventStatsRepository.countEmergencyEvents())
-                .completedEvents(medicalEventStatsRepository.countCompletedEvents())
-                .pendingEvents(medicalEventStatsRepository.countPendingEvents())
-                .notificationRate(medicalEventStatsRepository.calculateNotificationRate())
-              //  .createdDay(medicalEventStatsRepository.getCreatedDay())
-                .build();
-    }
+            return MedicalEventStats.builder()
+                    .totalEvents(medicalEventStatsRepository.countTotalEvents(startDate, endDate))
+                    .emergencyEvents(medicalEventStatsRepository.countEmergencyEvents(startDate, endDate))
+                    .completedEvents(medicalEventStatsRepository.countCompletedEvents(startDate, endDate))
+                    .pendingEvents(medicalEventStatsRepository.countPendingEvents(startDate, endDate))
+                    .notificationRate(medicalEventStatsRepository.calculateNotificationRate(startDate, endDate))
+                    //  .createdDay(medicalEventStatsRepository.getCreatedDay())
+                    .build();
+        }
 
     @Override
-    public VaccinationStats getVaccinationStats() {
+    public VaccinationStats getVaccinationStats(LocalDateTime startDate, LocalDateTime endDate) {
 
 
         return VaccinationStats.builder()
-                .totalBatches(vaccinationStatsRepository.countTotalBatches())
-                .completedBatches(vaccinationStatsRepository.countCompletedBatches())
-                .totalVaccinated(vaccinationStatsRepository.countTotalVaccinated())
-                .consentRate(vaccinationStatsRepository.calculateConsentRate())
-                .totalReactions(vaccinationStatsRepository.countTotalReactions())
+                .totalBatches(vaccinationStatsRepository.countTotalBatches(startDate, endDate))
+                .completedBatches(vaccinationStatsRepository.countCompletedBatches(startDate, endDate))
+                .totalVaccinated(vaccinationStatsRepository.countTotalVaccinated(startDate, endDate))
+                .consentRate(vaccinationStatsRepository.calculateConsentRate(startDate, endDate))
+                .totalReactions(vaccinationStatsRepository.countTotalReactions(startDate, endDate))
                 .build();
     }
 
     @Override
-    public HealthCheckStats getHealthCheckStats() {
+    public HealthCheckStats getHealthCheckStats(LocalDateTime startDate, LocalDateTime endDate) {
 
 
         return HealthCheckStats.builder()
-                .totalSchedules(healthCheckStatsRepository.countTotalSchedules())
-                .completedSchedules(healthCheckStatsRepository.countCompletedSchedules())
-                .totalChecked(healthCheckStatsRepository.countTotalChecked())
-                .consentRate(healthCheckStatsRepository.calculateConsentRate())
-                .averageBMI(healthCheckStatsRepository.calculateAverageBMI())
+                .totalSchedules(healthCheckStatsRepository.countTotalSchedules(startDate, endDate))
+                .completedSchedules(healthCheckStatsRepository.countCompletedSchedules(startDate, endDate))
+                .totalChecked(healthCheckStatsRepository.countTotalChecked(startDate, endDate))
+                .consentRate(healthCheckStatsRepository.calculateConsentRate(startDate, endDate))
+                .averageBMI(healthCheckStatsRepository.calculateAverageBMI(startDate, endDate))
                 .build();
     }
 
     @Override
-    public MedicationStats getMedicationStats() {
+    public MedicationStats getMedicationStats(LocalDateTime startDate, LocalDateTime endDate) {
 
 
         return MedicationStats.builder()
-                .totalSubmissions(medicationStatsRepository.countTotalSubmissions())
-                .approvedSubmissions(medicationStatsRepository.countApprovedSubmissions())
-                .rejectedSubmissions(medicationStatsRepository.countRejectedSubmissions())
-                .approvalRate(medicationStatsRepository.calculateApprovalRate())
+                .totalSubmissions(medicationStatsRepository.countTotalSubmissions(startDate, endDate))
+                .approvedSubmissions(medicationStatsRepository.countApprovedSubmissions(startDate, endDate))
+                .rejectedSubmissions(medicationStatsRepository.countRejectedSubmissions(startDate, endDate))
+                .approvalRate(medicationStatsRepository.calculateApprovalRate(startDate, endDate))
                 .build();
     }
 }

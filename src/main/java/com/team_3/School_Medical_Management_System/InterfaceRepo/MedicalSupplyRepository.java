@@ -9,4 +9,6 @@ public interface MedicalSupplyRepository {
 
     public   List<MedicalSupply> findByCategoryCategoryId(Integer categoryId);
     public List<MedicalSupply> findAll(); // lấy tất cả MedicalSupply
+
+    public void deleteByHealthCheckStudent_CheckID(int checkID);
 }
