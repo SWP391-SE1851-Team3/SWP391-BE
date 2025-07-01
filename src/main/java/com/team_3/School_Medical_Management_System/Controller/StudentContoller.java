@@ -28,7 +28,7 @@ public class StudentContoller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> GetStudentById(@PathVariable int id) {
+    public ResponseEntity<Student> GetStudentById(@PathVariable Integer id) {
         var p = studentService.getStudent(id);
         if (p == null) {
             return ResponseEntity.notFound().build();
@@ -53,7 +53,7 @@ public class StudentContoller {
     }
 
     @DeleteMapping("/{id}")
-    public void DeleteStudent(@PathVariable int id) {
+    public void DeleteStudent(@PathVariable Integer id) {
         var p = studentService.getStudent(id);
         if (p == null) {
             return;

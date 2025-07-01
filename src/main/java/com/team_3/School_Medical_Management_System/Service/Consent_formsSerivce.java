@@ -207,18 +207,27 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
        var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
        return TransferModelsDTO.MappingConsent(updateConsent);
     }
-    @Override
-    public void sendConsentFormsByClassName(String className, Integer batchId,
-                                            LocalDateTime sendDate, LocalDateTime expireDate,String status) {
-        List<Student> students = studentRepository.findByClassName(className);
 
+    @Override
+    public SendConsentFormResult sendConsentFormsByClassName(
+            String className,
+            Integer batchId,
+            LocalDateTime sendDate,
+            LocalDateTime expireDate,
+            String status
+    ) {
+        List<Student> students = studentRepository.findByClassName(className);
         Vaccine_Batches batch = vaccineBatchRepository.findById(batchId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
 
+        List<Consent_forms> sentForms = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         for (Student student : students) {
             Parent parent = student.getParent();
-            if (parent == null) continue;
-
+            if (parent == null) {
+                errors.add("Không tìm thấy phụ huynh cho học sinh: " + student.getFullName());
+                continue;
+            }
             Consent_forms form = new Consent_forms();
             form.setStudent(student);
             form.setParent(parent);
@@ -227,9 +236,10 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
             form.setExpire_date(expireDate);
             form.setStatus(status);
             consent_formsRepos.save(form);
+            sentForms.add(form);
         }
+        return new SendConsentFormResult(sentForms, errors);
     }
-
     @Override
     public List<Consent_form_dot> findDot() {
         return consent_formsRepo.findDot();

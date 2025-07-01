@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface StudentServiceInterFace {
     public void addStudent(Student student);
-    public void removeStudent(int id);
-    public Student getStudent(int id);
+    public void removeStudent(Integer id);
+    public Student getStudent(Integer id);
     public List<Student> getStudents();
     public Student UpdateStudent(Student student);
     public Student GetStudentByName(String FullName, String ClassName);
