@@ -32,12 +32,4 @@ public class Vaccination_records_SentParent_DTO {
     @JsonIgnore
     private String email;
 
-
-
-
-
-
-
-
-
 }

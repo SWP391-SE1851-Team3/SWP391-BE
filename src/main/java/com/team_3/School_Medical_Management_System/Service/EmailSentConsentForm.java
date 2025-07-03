@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-
 @Service
-public class EmailVaccinesService {
+public class EmailSentConsentForm {
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
@@ -99,7 +98,7 @@ public class EmailVaccinesService {
                         "    </style>" +
                         "</head>" +
                         "<body>" +
-                        "   <div class=\"header\"><h2>Cập nhật hồ sơ tiêm chủng của học sinh </h2></div>" +
+                        "   <div class=\"header\"><h2>Gửi Thông Tin Tiêm Chủng Cho Học Sinh </h2></div>" +
                         "    <div class=\"content\">" +
                         "        %s" +
                         "    </div>" +
@@ -161,8 +160,5 @@ public class EmailVaccinesService {
             throw new RuntimeException("Lỗi khi gửi email kiểm tra: " + e.getMessage(), e);
         }
     }
-
-
-
 
 }

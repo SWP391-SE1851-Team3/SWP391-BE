@@ -516,12 +516,8 @@ public class TransferModelsDTO {
         }else{
             dto.setConsentId(null);
         }
-
         if (record.getStudent() != null) {
             dto.setStudentId(record.getStudent().getStudentID());
-            dto.setClassName(record.getStudent().getClassName());
-            dto.setStudentName(record.getStudent().getFullName());
-
             if (record.getStudent().getParent() != null) {
                 Parent parent = record.getStudent().getParent();
                 dto.setParentID(parent.getParentID());
@@ -538,13 +534,15 @@ public class TransferModelsDTO {
             dto.setEditNurseName(null);
 
         }
-
-        if (record.getVaccineBatches() != null) {
+        if(record.getCreatedByNurse() != null) {
+            dto.setCreateNurseID(record.getCreatedByNurse().getNurseID());
+            dto.setCreateNurseName(record.getCreatedByNurse().getFullName());
+        }else {
+            dto.setCreateNurseID(null);
+            dto.setCreateNurseName(null);
+        }
+        if(record.getVaccineBatches() != null) {
             dto.setVaccineBatchId(record.getVaccineBatches().getBatchID());
-
-            if (record.getVaccineBatches().getVaccineType() != null) {
-                dto.setVaccineBatchName(record.getVaccineBatches().getVaccineType().getName());
-            }
         }
 
         return dto;
@@ -801,9 +799,7 @@ public class TransferModelsDTO {
         if (entity.getHealthCheck() != null) {
             dto.setHealthCheckId(entity.getHealthCheck().getCheckID());
         }
-        if (entity.getMedicalEvent() != null) {
-            dto.setEvenId(entity.getMedicalEvent().getEventID());
-        }
+
 
         return dto;
     }
@@ -831,11 +827,7 @@ public class TransferModelsDTO {
             supply.setHealthCheck(hc);
         }
 
-        if (dto.getEvenId() != null) {
-            MedicalEvent ev = new MedicalEvent();
-            ev.setEventID(dto.getEvenId());
-            supply.setMedicalEvent(ev);
-        }
+
 
         return supply;
     }

@@ -97,7 +97,7 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
                 "s.observation_notes, s.vaccineBatches.vaccineType.Name, s.observation_time,s.status) " +
                 "FROM Vaccination_records s WHERE s.status = :status";
         return entityManager.createQuery(jpql, StudentVaccinationDTO.class)
-                .setParameter("status", "Đang Theo Dõi ")
+                .setParameter("status", "Cần theo dõi")
                 .getResultList();
     }
 }
