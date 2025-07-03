@@ -12,8 +12,8 @@ import java.util.List;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
-
-private SchoolNurseRepository schoolNurseRepository;
+    private ManagerRepository managerRepository;
+    private SchoolNurseRepository schoolNurseRepository;
     private ParentRepository parentRepository;
     private SystemStatsRepository systemStatsRepository;
     private MedicalEventStatsRepository medicalEventStatsRepository;
@@ -21,13 +21,10 @@ private SchoolNurseRepository schoolNurseRepository;
     private HealthCheckStatsRepository healthCheckStatsRepository;
     private MedicationStatsRepository medicationStatsRepository;
 
+
     @Autowired
-    public DashboardServiceImpl(SchoolNurseRepository schoolNurseRepository, ParentRepository parentRepository,
-                                SystemStatsRepository systemStatsRepository,
-                                MedicalEventStatsRepository medicalEventStatsRepository,
-                                VaccinationStatsRepository vaccinationStatsRepository,
-                                HealthCheckStatsRepository healthCheckStatsRepository,
-                                MedicationStatsRepository medicationStatsRepository) {
+    public DashboardServiceImpl(ManagerRepository managerRepository, SchoolNurseRepository schoolNurseRepository, ParentRepository parentRepository, SystemStatsRepository systemStatsRepository, MedicalEventStatsRepository medicalEventStatsRepository, VaccinationStatsRepository vaccinationStatsRepository, HealthCheckStatsRepository healthCheckStatsRepository, MedicationStatsRepository medicationStatsRepository) {
+        this.managerRepository = managerRepository;
         this.schoolNurseRepository = schoolNurseRepository;
         this.parentRepository = parentRepository;
         this.systemStatsRepository = systemStatsRepository;
@@ -121,28 +118,30 @@ private SchoolNurseRepository schoolNurseRepository;
     public List<AccountDTO> getAllAccounts(int roleID) {
         if (roleID == 1) {
 
-            List<Parent> parents = parentRepository.getAllBy();
+            List<Parent> parents = parentRepository.getAllWithIsActive();
             List<AccountDTO> a = new ArrayList<>();
             for (Parent p : parents) {
+
                 AccountDTO accountDTO = new AccountDTO();
                 accountDTO.setId(p.getParentID());
-                accountDTO.setUsername(p.getUserName());
+                accountDTO.setUserName(p.getUserName());
                 accountDTO.setPassword(p.getPassword());
                 accountDTO.setEmail(p.getEmail());
                 accountDTO.setPhone(p.getPhone());
                 accountDTO.setFullName(p.getFullName());
+
                 // Add to a list or return as needed
                 a.add(accountDTO);
             }
             return a;
 
         } else if (roleID == 2) {
-            List<SchoolNurse> nurses = schoolNurseRepository.getAll();
+            List<SchoolNurse> nurses = schoolNurseRepository.getAllWithIsActive();
             List<AccountDTO> a = new ArrayList<>();
             for (SchoolNurse n : nurses) {
                 AccountDTO accountDTO = new AccountDTO();
                 accountDTO.setId(n.getNurseID());
-                accountDTO.setUsername(n.getUserName());
+                accountDTO.setUserName(n.getUserName());
                 accountDTO.setPassword(n.getPassword());
                 accountDTO.setEmail(n.getEmail());
                 accountDTO.setPhone(n.getPhone());
@@ -152,11 +151,23 @@ private SchoolNurseRepository schoolNurseRepository;
             }
             return a;
 
-        } else {
-            // Handle other roles or return an empty list
-            return null;
+        } else if (roleID == 3) {
+            List<Manager> managers = managerRepository.getAllWithIsActive();
+            List<AccountDTO> a = new ArrayList<>();
+            for (Manager m : managers) {
+                AccountDTO accountDTO = new AccountDTO();
+                accountDTO.setId(m.getManagerID());
+                accountDTO.setUserName(m.getUserName());
+                accountDTO.setPassword(m.getPassword());
+                accountDTO.setEmail(m.getEmail());
+                accountDTO.setPhone(m.getPhone());
+                accountDTO.setFullName(m.getFullName());
+                // Add to a list or return as needed
+                a.add(accountDTO);
+            }
+            return a;
 
         }
-
-        }
+        return null;
     }
+}
