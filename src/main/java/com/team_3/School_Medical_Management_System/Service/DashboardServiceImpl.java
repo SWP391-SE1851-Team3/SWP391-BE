@@ -125,6 +125,7 @@ private SchoolNurseRepository schoolNurseRepository;
             List<AccountDTO> a = new ArrayList<>();
             for (Parent p : parents) {
                 AccountDTO accountDTO = new AccountDTO();
+                accountDTO.setId(p.getParentID());
                 accountDTO.setUsername(p.getUserName());
                 accountDTO.setPassword(p.getPassword());
                 accountDTO.setEmail(p.getEmail());
@@ -140,6 +141,7 @@ private SchoolNurseRepository schoolNurseRepository;
             List<AccountDTO> a = new ArrayList<>();
             for (SchoolNurse n : nurses) {
                 AccountDTO accountDTO = new AccountDTO();
+                accountDTO.setId(n.getNurseID());
                 accountDTO.setUsername(n.getUserName());
                 accountDTO.setPassword(n.getPassword());
                 accountDTO.setEmail(n.getEmail());

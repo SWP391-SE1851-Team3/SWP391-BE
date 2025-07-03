@@ -132,8 +132,18 @@ public class MedicalEventService {
             if (existingSupply == null) {
                 throw new EntityNotFoundException("MedicalSupply không tồn tại với ID: " + medicalSupply.getMedicalSupplyId());
             }
-            event.add(existingSupply);
 
+            event.add(existingSupply);
+            //. kiemer tra số lượngq
+            if(dto.getQuantity() > medicalSupply.getQuantityAvailable()){
+                throw new EntityNotFoundException("Số lượng" + medicalSupply.getSupplyName()+" không có  đủ trong kho@");
+
+            }else {
+                // Cập nhật số lượng trong kho
+                int newQuantity = medicalSupply.getQuantityAvailable() - dto.getQuantity();
+                medicalSupply.setQuantityAvailable(newQuantity);
+
+            }
         }
 
 
@@ -218,6 +228,8 @@ public class MedicalEventService {
         r.setResult(details.getResult());
         r.setProcessingStatus(details.getProcessingStatus());
         r.setEventTypeId(dto.getEventTypeId());
+        r.setMedicalSupplies(listMedicalSupplies);
+      //  r.setQuantity(savedEvent.get);
         return r;
 
     }

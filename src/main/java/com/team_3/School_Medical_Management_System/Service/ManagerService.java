@@ -1,9 +1,6 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.ManagerDTO;
-import com.team_3.School_Medical_Management_System.DTO.ParentDTO;
-import com.team_3.School_Medical_Management_System.DTO.ParentManagerDTO;
-import com.team_3.School_Medical_Management_System.DTO.UserDTO;
+import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ManagerServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
@@ -26,52 +23,21 @@ import java.util.Optional;
 @Transactional
 public class ManagerService implements ManagerServiceInterFace {
     private ManagerInterFace managerInterFace;
-    @Autowired
-    private HealthCheckStudentRepository healthCheckStudentRepo;
-    @Autowired
-    private Consent_formsInterFace consentFormsRepo;
+
     @Autowired
     private StudentRepo studentRepo;
-    @Autowired
-    private Vaccination_recordsInterFace vaccinationRecordRepo;
+
     @Autowired
     private RoleRepo roleRepo;
-    @Autowired
-    private Post_vaccination_observationsInterFace postVaccinationObservationRepo;
+
     @Autowired
     private SchoolNurseRepo nurseRepository;
-    @Autowired
-    private MedicalSupplyRepository medicalSupplyRepo;
-    @Autowired
-    private MedicalEventDetailsRepository medicalEventDetailsRepo;
-    @Autowired
-    private MedicationSubmissionInterFace medicationSubmissionRepo;
+
     @Autowired
     private ParentRepo parentRepository;
     @Autowired
     private ManagerRepository managerRepository;
-    @Autowired
-    private StudentHealthProfileInterFace studentHealthProfileRepo;
-    @Autowired
-    private MedicationDetailRepository medicationDetailRepo;
-    @Autowired
-    private HealthConsentFormRepoInterface healthConsentFormRepo;
-    @Autowired
-    private HealthConsultationRepository healthConsultationRepo;
-    @Autowired
-    private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionRepo;
-    @Autowired
-    private MedicalEventRepo medicalEventRepo;
-    @Autowired
-    private MedicalEvent_EventTypeRepo medicalEventEventTypeRepo;
-    @Autowired
-    private MedicalEvent_NurseRepo medicalEventNurseRepo;
-    @Autowired
-    private NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepo;
-    @Autowired
-    private NotificationsParentRepository notificationsParentRepo;
-    @Autowired
-    private HealthConsultationParentRepo healthConsultationParentRepo;
+
 
 
     @Autowired
@@ -209,7 +175,7 @@ public class ManagerService implements ManagerServiceInterFace {
     }
 
     @Override
-    public ResponseEntity<?> updateUser(int id, int roleId, UserDTO userDTO) {
+    public ResponseEntity<?> updateUser(int id, int roleId, UserUpdateDTO userDTO) {
 
         switch (roleId) {
             case 1:
@@ -224,10 +190,7 @@ public class ManagerService implements ManagerServiceInterFace {
                     p.setFullName(userDTO.getFullName());
                     p.setPhone(userDTO.getPhone());
                     p.setEmail(userDTO.getEmail());
-                    p.setIsActive(userDTO.getIsActive());
-                    p.setOccupation(userDTO.getOccupation());
-                    p.setRelationship(userDTO.getRelationship());
-                    p.setRoleID(p.getRoleID());
+
                     Parent updateP = parentRepository.UpdateParent(p);
                     return ResponseEntity.ok(updateP);
                 }
@@ -244,10 +207,7 @@ public class ManagerService implements ManagerServiceInterFace {
                 n.setFullName(userDTO.getFullName());
                 n.setPhone(userDTO.getPhone());
                 n.setEmail(userDTO.getEmail());
-                n.setIsActive(userDTO.getIsActive());
-                n.setCertification(userDTO.getCertification());
-                n.setSpecialisation(userDTO.getSpecialisation());
-                n.setRoleID(n.getRoleID());
+
                 SchoolNurse updateN = nurseRepository.UpdateSchoolNurses(n);
                 return ResponseEntity.ok(updateN);
         }

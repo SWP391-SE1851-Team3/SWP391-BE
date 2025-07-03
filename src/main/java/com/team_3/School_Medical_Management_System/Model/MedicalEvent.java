@@ -48,15 +48,28 @@ public class MedicalEvent {
 
     private List<MedicalEvent_EventType> medicalEventEventTypes;
 
-    @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<MedicalSupply> medicalSupplies;
+
+
+
+
+    @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MedicalSupply> medicalSupplies = new java.util.ArrayList<>();
 
     public MedicalEvent() {
     }
-     public  void add(MedicalSupply o){
+
+    public void add(MedicalSupply o) {
 
         medicalSupplies.add(o);
-     }
+        o.setMedicalEvent(this);
+
+    }
+
+    public void remove(MedicalSupply o) {
+        medicalSupplies.remove(o);
+        o.setMedicalEvent(null);
+    }
+
 
     public MedicalEvent(String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime) {
         this.usageMethod = usageMethod;

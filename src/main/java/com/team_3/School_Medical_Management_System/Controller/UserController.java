@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.SchoolNurseDTO;
 import com.team_3.School_Medical_Management_System.DTO.UserDTO;
+import com.team_3.School_Medical_Management_System.DTO.UserUpdateDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseRepository;
 import com.team_3.School_Medical_Management_System.Model.Role;
@@ -43,7 +44,7 @@ public class UserController {
 
 
     @PutMapping("/updateUser/{id}/{roleId}")
-    public ResponseEntity<?> updateUser(@PathVariable int id,@PathVariable int roleId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> updateUser(@PathVariable int id, @PathVariable int roleId, @RequestBody UserUpdateDTO userDTO) {
 
         return ResponseEntity.ok(managerService.updateUser(id,roleId,userDTO));
     }

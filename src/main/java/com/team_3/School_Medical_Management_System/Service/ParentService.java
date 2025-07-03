@@ -111,7 +111,7 @@ public class ParentService implements ParentSerivceInterFace {
     public UserDTO convertParentToUserDTO(Parent parent) {
         UserDTO dto = new UserDTO();
         //dto.setId(parent.getParentID());
-        dto.setUserType("Parent");
+
         dto.setUserName(parent.getUserName());
         dto.setPassword(parent.getPassword());
         dto.setFullName(parent.getFullName());
