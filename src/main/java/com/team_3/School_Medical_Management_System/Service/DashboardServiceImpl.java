@@ -128,6 +128,8 @@ private SchoolNurseRepository schoolNurseRepository;
                 accountDTO.setUsername(p.getUserName());
                 accountDTO.setPassword(p.getPassword());
                 accountDTO.setEmail(p.getEmail());
+                accountDTO.setPhone(p.getPhone());
+                accountDTO.setFullName(p.getFullName());
                 // Add to a list or return as needed
                 a.add(accountDTO);
             }
@@ -141,6 +143,8 @@ private SchoolNurseRepository schoolNurseRepository;
                 accountDTO.setUsername(n.getUserName());
                 accountDTO.setPassword(n.getPassword());
                 accountDTO.setEmail(n.getEmail());
+                accountDTO.setPhone(n.getPhone());
+                accountDTO.setFullName(n.getFullName());
                 // Add to a list or return as needed
                 a.add(accountDTO);
             }

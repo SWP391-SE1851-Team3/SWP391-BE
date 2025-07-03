@@ -8,7 +8,8 @@ public interface MedicalSupplyRepository {
     public List<MedicalSupply> findByQuantityAvailableLessThanReorderLevel(); // tìm những MedicalS có Quantity < ReorderLevel
 
     public   List<MedicalSupply> findByCategoryCategoryId(Integer categoryId);
-    public List<MedicalSupply> findAll(); // lấy tất cả MedicalSupply
+    public List<MedicalSupply> findAll();// lấy tất cả MedicalSupply
 
-    public void deleteByHealthCheckStudent_CheckID(int checkID);
+    public MedicalSupply findById(Integer id); // tìm MedicalSupply theo id
+
 }

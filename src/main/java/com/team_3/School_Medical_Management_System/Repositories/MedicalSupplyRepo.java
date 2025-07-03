@@ -39,13 +39,12 @@ public class MedicalSupplyRepo implements MedicalSupplyRepository {
     }
 
     @Override
-    public void deleteByHealthCheckStudent_CheckID(int checkID) {
-        String query = "DELETE FROM MedicalSupply ms WHERE ms.healthCheckStudent.checkID = :checkID";
-        entityManager.getTransaction().begin();
-        entityManager.createQuery(query)
-                .setParameter("checkID", checkID)
-                .executeUpdate();
-        entityManager.getTransaction().commit();
-
+    public MedicalSupply findById(Integer id) {
+        String query = "SELECT ms FROM MedicalSupply ms WHERE ms.id = :id";
+        return entityManager.createQuery(query, MedicalSupply.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
+
+
 }

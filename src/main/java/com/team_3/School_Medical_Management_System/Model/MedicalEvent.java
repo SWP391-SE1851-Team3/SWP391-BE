@@ -30,7 +30,7 @@ public class MedicalEvent {
     //@Pattern(regexp = "^\\d{2,3}(\\s*(?:bpm|BPM))?$", message = "Nhịp tim không hợp lệ (ví dụ: 60, 75 bpm, 80BPM). Cho phép từ 60 đến 999 bpm.")
     private String heartRate;
     private LocalDateTime eventDateTime;
-    //private Integer parentID;
+
 
     @ManyToOne
     @JoinColumn(name = "ParentID")
@@ -48,21 +48,24 @@ public class MedicalEvent {
 
     private List<MedicalEvent_EventType> medicalEventEventTypes;
 
-
+    @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<MedicalSupply> medicalSupplies;
 
     public MedicalEvent() {
     }
+     public  void add(MedicalSupply o){
 
+        medicalSupplies.add(o);
+     }
 
-
-    public MedicalEvent(String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID) {
+    public MedicalEvent(String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime) {
         this.usageMethod = usageMethod;
         this.isEmergency = isEmergency;
         this.hasParentBeenInformed = hasParentBeenInformed;
         this.temperature = temperature;
         this.heartRate = heartRate;
         this.eventDateTime = eventDateTime;
-        // this.parentID = parentID;
+
     }
 
 }

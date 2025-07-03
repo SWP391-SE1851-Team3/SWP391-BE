@@ -8,6 +8,9 @@ public class AccountDTO {
     private String username;
     private String password;
     private String email;
+    private String fullName;
+    private String phone;
+    // "Parent" hoặc "SchoolNurse"
 
 
     public AccountDTO() {

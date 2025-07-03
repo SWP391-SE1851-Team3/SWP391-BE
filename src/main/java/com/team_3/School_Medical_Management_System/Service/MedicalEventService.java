@@ -5,6 +5,7 @@ import com.team_3.School_Medical_Management_System.DTO.MedicalEventDetailsDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventUpdateDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
+import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Repositories.MedicalEvent_NurseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,9 @@ import java.util.Optional;
 
 @Service
 public class MedicalEventService {
+
+    private MedicalSupplyRepository medicalSupplyRepository; // Model cho MedicalSupply
+
 
     private MedicalEvent_NurseRepository medicalNurseRepo; // Repository cho MedicalEvent_Nurse
 
@@ -54,8 +58,10 @@ public class MedicalEventService {
 
     private MedicalEvent_NurseRepo medicalEventNurseRepo; // Repository cho MedicalEvent_Nurse
 
+
     @Autowired
-    public MedicalEventService(MedicalEvent_NurseRepository medicalNurseRepo, EmailService emailService, MedicalEvent_EventTypeRepo medicalEventType, SchoolNurseRepository schoolNurseRepository, NotificationsParentRepository notificationsParentRepository, MedicalEvent_NurseRepo medicalEventNurseRepository, MedicalEventTypeRepo medicalEventTypeRepo, MedicalEventRepo medicalEventRepository, ParentRepository parentRepository, StudentRepository studentRepository, NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository, MedicalEventDetailsRepository medicalEventDetailsRepository, JavaMailSender mailSender, StudentRepository studentRepo, MedicalEvent_EventTypeRepo medicalEventEventTypeRepository, MedicalEvent_NurseRepo medicalEventNurseRepo) {
+    public MedicalEventService(MedicalSupplyRepository medicalSupplyRepository, MedicalEvent_NurseRepository medicalNurseRepo, EmailService emailService, MedicalEvent_EventTypeRepo medicalEventType, SchoolNurseRepository schoolNurseRepository, NotificationsParentRepository notificationsParentRepository, MedicalEvent_NurseRepo medicalEventNurseRepository, MedicalEventTypeRepo medicalEventTypeRepo, MedicalEventRepo medicalEventRepository, ParentRepository parentRepository, StudentRepository studentRepository, NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository, MedicalEventDetailsRepository medicalEventDetailsRepository, MedicalEvent_EventTypeRepo medicalEventEventTypeRepository, MedicalEvent_NurseRepo medicalEventNurseRepo) {
+        this.medicalSupplyRepository = medicalSupplyRepository;
         this.medicalNurseRepo = medicalNurseRepo;
         this.emailService = emailService;
         this.medicalEventType = medicalEventType;
@@ -68,10 +74,11 @@ public class MedicalEventService {
         this.studentRepository = studentRepository;
         this.notificationsMedicalEventDetailsRepository = notificationsMedicalEventDetailsRepository;
         this.medicalEventDetailsRepository = medicalEventDetailsRepository;
-
         this.medicalEventEventTypeRepository = medicalEventEventTypeRepository;
         this.medicalEventNurseRepo = medicalEventNurseRepo;
     }
+
+
 
 
 
@@ -115,7 +122,23 @@ public class MedicalEventService {
         }
 
         event.setCreatedByNurse(nurseOptional.get());
-        event.setUpdatedByNurse(nurseOptional.get());   // vif đầu tiên cũng là người y tá này luônn
+        event.setUpdatedByNurse(nurseOptional.get());
+
+
+
+        List<MedicalSupply> listMedicalSupplies = dto.getMedicalSupplies();
+        for (MedicalSupply medicalSupply : listMedicalSupplies) {
+            MedicalSupply existingSupply = medicalSupplyRepository.findById(medicalSupply.getMedicalSupplyId());
+            if (existingSupply == null) {
+                throw new EntityNotFoundException("MedicalSupply không tồn tại với ID: " + medicalSupply.getMedicalSupplyId());
+            }
+            event.add(existingSupply);
+
+        }
+
+
+
+        // vif đầu tiên cũng là người y tá này luônn
         MedicalEvent savedEvent = medicalEventRepository.save(event);
         //========================================================================================
 
@@ -167,7 +190,7 @@ public class MedicalEventService {
             notificationsParentRepository.save(notification);
             try {
                 // Gửi email với thông tin người dùng và thời gian
-                emailService.sendHtmlNotificationEmail(parent.get(), title, content, notification.getNotificationId(), event.getCreatedByNurse().getFullName());
+                emailService.sendHtmlNotificationEmailMedicalEvent(parent.get(), title, content, notification.getNotificationId(), event.getCreatedByNurse().getFullName());
                 // emailService.testEmailConfig("ytruongtieuhoc@example.com");
             } catch (Exception e) {
                 throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
