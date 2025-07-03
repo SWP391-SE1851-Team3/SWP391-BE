@@ -276,5 +276,10 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         return vaccination_recordsInterFace.getStudentFollowedbyNurse();
     }
 
+    @Override
+    public StudentVaccinationDTO updateStudentFollowedbyNurse(StudentVaccinationDTO studentVaccinationDTO) {
+       return vaccination_recordsInterFace.updateStudentFollowedbyNurse(studentVaccinationDTO);
+    }
+
 
 }
