@@ -3,8 +3,12 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccine_BatchesServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalSupplyRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepo;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccine_BatchesInterFace;
+import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
+import com.team_3.School_Medical_Management_System.Model.Vaccine_Types;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
+
+    @Autowired
+    private VaccineBatchRepo vaccineBatch;
+
+    @Autowired
+    private MedicalSupplyRepository supplyRepo;
+
+
     private Vaccine_BatchesInterFace vaccinesInterFace;
 
     @Autowired
@@ -42,20 +54,64 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
 
     @Override
     public Vaccine_BatchesDTO AddVaccinebatch(Vaccine_BatchesDTO vaccinesDTO) {
-        var vaccine = vaccinesInterFace.AddVaccine_batch(TransferModelsDTO.MappingVaccineDTO(vaccinesDTO));
-        return TransferModelsDTO.MappingVaccines(vaccine);
+        // Mapping DTO sang entity
+        Vaccine_Batches newBatchEntity = TransferModelsDTO.MappingVaccineDTO(vaccinesDTO);
+
+        // Lưu batch mới và nhận lại object đã có batch_id
+        Vaccine_Batches savedBatch = vaccinesInterFace.AddVaccine_batch(newBatchEntity);
+
+         int doseCount = vaccinesDTO.getQuantity_received(); // ví dụ: 100 liều
+
+        // Lấy typeID từ DTO (hoặc từ savedBatch)
+        Integer typeId = vaccinesDTO.getVaccineTypeID();
+
+        // Tìm tất cả vật tư liên quan đến loại vaccine đó (thông qua batch.vaccineType)
+        List<MedicalSupply> supplies = supplyRepo.findByVaccineTypeId(typeId);
+
+        for (MedicalSupply supply : supplies) {
+            int used = doseCount; // Mặc định 1 vật tư cho 1 liều
+
+            if (supply.getQuantityAvailable() < used) {
+                throw new RuntimeException("Không đủ vật tư: " + supply.getSupplyName());
+            }
+            // Trừ vật tư
+            supply.setQuantityAvailable(supply.getQuantityAvailable() - used);
+            supplyRepo.save(supply);
+        }
+
+        // Trả về DTO
+        return TransferModelsDTO.MappingVaccines(savedBatch);
     }
+
+
+
 
     @Override
     public Vaccine_Batches_EditDTO UpdateVaccinebatch(Vaccine_Batches_EditDTO dto) {
-        Vaccine_Batches entity = TransferModelsDTO.MappingVaccineBatchesDTO(dto);
-        // Gọi cập nhật qua interface
-        Vaccine_Batches updatedVaccine = vaccinesInterFace.UpdateVaccine_batch(entity);
-        if (updatedVaccine != null) {
+        var entity = TransferModelsDTO.MappingVaccineBatchesDTO(dto);
+        var updatedVaccine = vaccinesInterFace.UpdateVaccine_batch(entity);
+        int doseCount = dto.getQuantity_received(); // ví dụ: 100 liều
+
+        // Lấy typeID từ DTO (hoặc từ savedBatch)
+        Integer typeId = dto.getVaccineTypeID();
+
+        // Tìm tất cả vật tư liên quan đến loại vaccine đó (thông qua batch.vaccineType)
+        List<MedicalSupply> supplies = supplyRepo.findByVaccineTypeId(typeId);
+
+        for (MedicalSupply supply : supplies) {
+            int used = doseCount; // Mặc định 1 vật tư cho 1 liều
+
+            if (supply.getQuantityAvailable() < used) {
+                throw new RuntimeException("Không đủ vật tư: " + supply.getSupplyName());
+            }
+
+            // Trừ vật tư
+            supply.setQuantityAvailable(supply.getQuantityAvailable() - used);
+            supplyRepo.save(supply);
+        }
             return TransferModelsDTO.MappingVaccineBatches(updatedVaccine);
         }
-        return null;
-    }
+
 
     @Override
     public Vaccine_BatchesDTO getVaccineByID(Integer vaccineID) {
@@ -67,8 +123,26 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
     public boolean updateConsentFormStatus(int bacthId, String status) {
         return vaccinesInterFace.updateConsentFormStatus(bacthId, status);
     }
-
-
+//    @Override
+//    public void administerVaccine(int vaccineId, int doseCount){
+//        Vaccine_Batches vaccine = vaccineBatch.findById(vaccineId).
+//                orElseThrow(() -> new RuntimeException("Không tìm thấy vaccine"));
+//        int currvaccines = vaccine.getQuantity_received();
+//        if(currvaccines < doseCount){
+//            throw new RuntimeException("Không đủ vaccine để tiêm");
+//        }
+//        vaccine.setQuantity_received(currvaccines - doseCount);
+//        vaccineBatch.save(vaccine);
+//
+//        List<MedicalSupply> supplies = supplyRepo.findByVaccine(vaccine);
+//        for (MedicalSupply supply : supplies) {
+//            int used = doseCount; // mỗi liều trừ 1 vật tư (giả định)
+//            if (supply.getQuantityAvailable() < used) {
+//                throw new RuntimeException("Không đủ vật tư: " + supply.getSupplyName());
+//            }
+//            supply.setQuantityAvailable(supply.getQuantityAvailable() - used);
+//            supplyRepo.save(supply);
+//        }
 
 }
 

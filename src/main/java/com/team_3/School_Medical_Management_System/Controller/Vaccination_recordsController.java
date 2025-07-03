@@ -79,8 +79,10 @@ public class Vaccination_recordsController {
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
         return vaccination_recordsServiceInterFace.getStudentFollowedbyNurse();
     }
-
-
-
-
+    @PutMapping("/updateStudentFollowedbyNurse/{id}")
+    public StudentVaccinationDTO updateStudentFollowedbyNurse(@PathVariable Integer id ,@RequestBody StudentVaccinationDTO studentVaccinationDTO){
+        studentVaccinationDTO.setRecordId(id);
+        var uppdate = vaccination_recordsServiceInterFace.updateStudentFollowedbyNurse(studentVaccinationDTO);
+        return uppdate;
+    }
 }

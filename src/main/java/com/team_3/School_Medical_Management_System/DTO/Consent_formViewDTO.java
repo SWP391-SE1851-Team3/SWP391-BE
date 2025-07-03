@@ -27,6 +27,7 @@ public class Consent_formViewDTO {
     private LocalDateTime send_date;
     private LocalDateTime expire_date;
     private String status;
+    private Integer bacthID;
 
 
 

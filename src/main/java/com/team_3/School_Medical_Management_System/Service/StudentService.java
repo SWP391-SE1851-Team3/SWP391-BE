@@ -39,7 +39,7 @@ public class StudentService implements StudentServiceInterFace {
     }
 
     @Override
-    public void removeStudent(int id) {
+    public void removeStudent(Integer id) {
         var p = getStudent(id);
         if (p != null) {
             studentInterFace.removeStudent(id);
@@ -49,7 +49,7 @@ public class StudentService implements StudentServiceInterFace {
     }
 
     @Override
-    public Student getStudent(int id) {
+    public Student getStudent(Integer id) {
         return studentInterFace.getStudent(id);
     }
 

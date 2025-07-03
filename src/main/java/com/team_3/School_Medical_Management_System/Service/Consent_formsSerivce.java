@@ -4,10 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
 import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepositories;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
@@ -45,11 +42,25 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
     @Autowired
     private VaccineBatchRepository vaccineBatchRepository;
 
+    @Autowired
+    private EmailSentConsentForm emailService;
+
+
 
     @Autowired
     public Consent_formsSerivce(Consent_formsInterFace consent_formsRepo) {
         this.consent_formsRepo = consent_formsRepo;
     }
+
+    @Autowired
+    private VaccinationRecordRepository vaccinationRecordRepository;
+
+    @Autowired
+    private NotificationsParentService notificationsParentService;
+
+    @Autowired
+    private Vaccination_recordsService vaccinationRecordsService;
+
 
     @Override
     public List<Consent_formViewDTO> getConsent_forms() {
@@ -89,10 +100,13 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         // Gán thông tin còn lại từ DTO
         consent.setSend_date(dto.getSend_date());
         consent.setExpire_date(dto.getExpire_date());
-        consent.setIsAgree(dto.getIsAgree());
+
         consent.setHasAllergy(dto.getHasAllergy());
         consent.setReason(dto.getReason());
         consent.setStatus(dto.getStatus());
+        consent.setIsAgree(dto.getIsAgree());
+
+
 
 
         // 3. Lưu vào database
@@ -180,20 +194,58 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Override
     public void processParentResponse(ConsentFormParentResponseDTO dto) {
+        // 1. Tìm phiếu đồng ý theo ID
         Consent_forms form = consent_formsRepos.findById(dto.getConsentFormId())
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phiếu"));
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phiếu với ID: " + dto.getConsentFormId()));
 
-        boolean isDisagree = dto.getIsAgree() != null && dto.getIsAgree() == null;
-        boolean hasNoReason = dto.getReason() == null || dto.getReason().trim().isEmpty();
-        if (isDisagree && hasNoReason) {
-            throw new IllegalArgumentException("Vui lòng ghi rõ lý do từ chối");
+        // 2. Nếu phụ huynh từ chối nhưng không ghi lý do thì báo lỗi
+        if ("Không đồng ý".equalsIgnoreCase(dto.getIsAgree())) {
+            if (dto.getReason() == null || dto.getReason().trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng ghi rõ lý do từ chối.");
+            }
         }
+
+        // 3. Cập nhật phiếu
         form.setIsAgree(dto.getIsAgree());
         form.setReason(dto.getReason());
         form.setHasAllergy(dto.getHasAllergy());
         form.setStatus("ĐÃ PHÊ DUYỆT");
+
+        // 👉 Nếu bạn để transactional bên ngoài, hãy đảm bảo catch lỗi đúng để không rollback
         consent_formsRepos.save(form);
+
+        // 4. Nếu phụ huynh đồng ý → tạo hồ sơ tiêm chủng và gửi email
+        if ("Đồng ý".equalsIgnoreCase(dto.getIsAgree())) {
+            try {
+                // Kiểm tra xem có đủ dữ liệu để tạo record chưa
+                Student student = form.getStudent();
+                Vaccine_Batches batch = form.getVaccineBatches();
+
+                if (student == null || batch == null) {
+                    throw new IllegalStateException("Thiếu thông tin học sinh hoặc lô vaccine.");
+                }
+
+                Vaccination_records_SentParent_DTO recordDTO = new Vaccination_records_SentParent_DTO();
+                recordDTO.setCosentID(form.getConsent_id());
+                recordDTO.setStudentId(student.getStudentID());
+                recordDTO.setVaccineBatchId(batch.getBatchID());
+//                recordDTO.setCreateNurseName(form.getVaccineBatches().getCreatedByNurse().getFullName());
+//                recordDTO.setCreateNurseID(form.getVaccineBatches().getCreatedByNurse().getNurseID());
+//                recordDTO.setEditnurseID(form.getVaccineBatches().getUpdatedByNurse().getNurseID());
+//                recordDTO.setEditNurseName(form.getVaccineBatches().getUpdatedByNurse().getFullName());
+
+                // Gọi tạo form và gửi email
+                vaccinationRecordsService.createEmail(recordDTO);
+
+            } catch (Exception ex) {
+                // 👉 Ghi log để kiểm tra mà không rollback toàn bộ transaction
+                System.err.println("Lỗi khi tạo hồ sơ tiêm chủng và gửi email: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
     }
+
+
 
     @Override
     public List<Consent_formViewDTO> getAllConsentForms() {
@@ -206,18 +258,30 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
        var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
        return TransferModelsDTO.MappingConsent(updateConsent);
     }
-    @Override
-    public void sendConsentFormsByClassName(String className, Integer batchId,
-                                            LocalDateTime sendDate, LocalDateTime expireDate,String status) {
-        List<Student> students = studentRepository.findByClassName(className);
 
+    @Override
+    public SendConsentFormResult sendConsentFormsByClassName(
+            String className,
+            Integer batchId,
+            LocalDateTime sendDate,
+            LocalDateTime expireDate,
+            String status
+    ) {
+        List<Student> students = studentRepository.findByClassName(className);
         Vaccine_Batches batch = vaccineBatchRepository.findById(batchId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
 
+        List<Consent_forms> sentForms = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+
         for (Student student : students) {
             Parent parent = student.getParent();
-            if (parent == null) continue;
+            if (parent == null) {
+                errors.add("Không tìm thấy phụ huynh cho học sinh: " + student.getFullName());
+                continue;
+            }
 
+            // Tạo và lưu form
             Consent_forms form = new Consent_forms();
             form.setStudent(student);
             form.setParent(parent);
@@ -226,8 +290,28 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
             form.setExpire_date(expireDate);
             form.setStatus(status);
             consent_formsRepos.save(form);
+            sentForms.add(form);
+
+            // Gửi thông báo cho từng phụ huynh
+            String title = "Gửi phiếu tiêm chủng cho học sinh " + student.getFullName();
+            String content = "Một đợt tiêm chủng mới đã được lên lịch cho học sinh " + student.getFullName() +
+                    ". Vui lòng truy cập hệ thống để xác nhận đồng ý hoặc từ chối.";
+
+            NotificationsParent notification = new NotificationsParent();
+            notification.setParent(parent);
+            notification.setTitle(title);
+            notification.setContent(content);
+            notification.setCreateAt(LocalDateTime.now());
+            notification.setStatus(false); // chưa đọc
+
+            Integer notificationId = notificationsParentService.createAutoNotification(
+                    parent.getParentID(), title, content);
+            emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
         }
+
+        return new SendConsentFormResult(sentForms, errors);
     }
+
 
     @Override
     public List<Consent_form_dot> findDot() {

@@ -12,4 +12,5 @@ public interface Vaccine_BatchesServiceInterFace {
     public Vaccine_Batches_EditDTO UpdateVaccinebatch(Vaccine_Batches_EditDTO dto);
     public Vaccine_BatchesDTO getVaccineByID(Integer vaccineID);
     public boolean updateConsentFormStatus(int consentFormId, String status);
+//    public void administerVaccine(int vaccineId, int doseCount);
 }
