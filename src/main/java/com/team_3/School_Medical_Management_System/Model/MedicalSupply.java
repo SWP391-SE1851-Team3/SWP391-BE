@@ -29,15 +29,13 @@ public class MedicalSupply {
     private HealthCheck HealthCheck;
 
     @ManyToOne
-    @JoinColumn(name = "EventID")
-    private MedicalEvent MedicalEvent;
-
-    @ManyToOne
-    @JoinColumn(name = "BatchID")
-    private Vaccine_Batches vaccineBatch;
-    @ManyToOne
     @JoinColumn(name = "CategoryID")
     private SupplyCategory SupplyCategory;
+    private Integer EventID;
+
+    @ManyToOne
+    @JoinColumn(name = "VaccineTypeID")
+    private Vaccine_Types vaccineType;
 }
 
 

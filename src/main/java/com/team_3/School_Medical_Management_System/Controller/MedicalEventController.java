@@ -38,11 +38,11 @@ public class MedicalEventController {
     }
 
 
-    @GetMapping("/{className}")
-    public ResponseEntity<List<StudentsDTO>> getAllByClassName(@PathVariable String className) {
-        List<StudentsDTO> events = studentService.getAllStudentsByClassName(className);
-        return ResponseEntity.ok(events);
-    }
+//    @GetMapping("/{className}")
+//    public ResponseEntity<List<StudentsDTO>> getAllByClassName(@PathVariable String className) {
+//        List<StudentsDTO> events = studentService.getAllStudentsByClassName(className);
+//        return ResponseEntity.ok(events);
+//    }
 
 
     @PutMapping("/{eventId}")

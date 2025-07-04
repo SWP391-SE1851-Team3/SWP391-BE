@@ -3,7 +3,6 @@ package com.team_3.School_Medical_Management_System.TransferModelsDTO;
 import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.Model.*;
-import jakarta.validation.Valid;
 
 public class TransferModelsDTO {
 
@@ -793,8 +792,8 @@ public class TransferModelsDTO {
         dto.setStorageTemperature(entity.getStorageTemperature());
         dto.setDateAdded(entity.getDateAdded());
 
-        if (entity.getVaccineBatch() != null) {
-            dto.setVaccineBatchId(entity.getVaccineBatch().getBatchID());
+        if (entity.getVaccineType() != null) {
+            dto.setVaccineTypeID(entity.getVaccineType().getVaccineTypeID());
         }
         if (entity.getHealthCheck() != null) {
             dto.setHealthCheckId(entity.getHealthCheck().getCheckID());
@@ -812,29 +811,17 @@ public class TransferModelsDTO {
         supply.setReorderLevel(dto.getReorderLevel());
         supply.setStorageTemperature(dto.getStorageTemperature());
         supply.setDateAdded(dto.getDateAdded());
-
-        // ✅ Gán vaccineBatch nếu có
-        if (dto.getVaccineBatchId() != null) {
-            Vaccine_Batches batch = new Vaccine_Batches();
-            batch.setBatchID(dto.getVaccineBatchId());
-            supply.setVaccineBatch(batch);
+        if (dto.getVaccineTypeID() != null) {
+            Vaccine_Types type = new Vaccine_Types();
+            type.setVaccineTypeID(dto.getVaccineTypeID());
+            supply.setVaccineType(type);
         }
-
-        // ❌ Không bắt buộc phải có
         if (dto.getHealthCheckId() != null) {
             HealthCheck hc = new HealthCheck();
             hc.setCheckID(dto.getHealthCheckId());
             supply.setHealthCheck(hc);
         }
-
-
-
         return supply;
     }
-
-
-
-
-
 
 }
