@@ -132,7 +132,7 @@ public class ManagerService implements ManagerServiceInterFace {
 
             switch (userDTO.getRoleId()) {
 
-                case 3: // Parent
+                case 1: // Parent
                     Parent p = new Parent();
                     //  ParentDTO parentDTO = new ParentDTO();
                     p.setUserName(userDTO.getUserName());

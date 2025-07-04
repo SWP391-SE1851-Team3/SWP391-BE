@@ -5,6 +5,7 @@ import java.util.Date;
 public class HealthCheckStudentUpdateResponseDTO {
     private int checkID;
     private Integer studentID;
+    private String status;       // Thêm trường status
     private Float height;
     private Float weight;
     private String visionLeft;
@@ -16,14 +17,20 @@ public class HealthCheckStudentUpdateResponseDTO {
     private String overallResult;
     private Date create_at;
     private Date update_at;
-    private int updatedByNurseID;
+    private Integer updatedByNurseID;
     private String updatedByNurseName;
+    private Integer createdByNurseID;
+    private String createdByNurseName;
 
     // Getters and setters
     public Integer getCheckID() { return checkID; }
     public void setCheckID(Integer checkID) { this.checkID = checkID; }
     public Integer getStudentID() { return studentID; }
     public void setStudentID(Integer studentID) { this.studentID = studentID; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
     public Float getHeight() { return height; }
     public void setHeight(Float height) { this.height = height; }
     public Float getWeight() { return weight; }
@@ -48,7 +55,11 @@ public class HealthCheckStudentUpdateResponseDTO {
     public void setUpdate_at(Date update_at) { this.update_at = update_at; }
     public String getUpdatedByNurseName() { return updatedByNurseName; }
     public void setUpdatedByNurseName(String updatedByNurseName) { this.updatedByNurseName = updatedByNurseName; }
-    public int getUpdatedByNurseID() { return updatedByNurseID; }
-    public void setUpdatedByNurseID(int updatedByNurseID) { this.updatedByNurseID = updatedByNurseID; }
-}
+    public Integer getUpdatedByNurseID() { return updatedByNurseID; }
+    public void setUpdatedByNurseID(Integer updatedByNurseID) { this.updatedByNurseID = updatedByNurseID; }
 
+    public String getCreatedByNurseName() { return createdByNurseName; }
+    public void setCreatedByNurseName(String createdByNurseName) { this.createdByNurseName = createdByNurseName; }
+    public Integer getCreatedByNurseID() { return createdByNurseID; }
+    public void setCreatedByNurseID(Integer createdByNurseID) { this.createdByNurseID = createdByNurseID; }
+}

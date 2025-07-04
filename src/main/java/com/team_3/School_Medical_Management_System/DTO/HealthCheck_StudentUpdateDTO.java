@@ -13,6 +13,7 @@ import java.util.Date;
 public class HealthCheck_StudentUpdateDTO {
     private int checkID;
     private int studentID;
+    private String status;       // Thêm trường status
     private float height;
     private float weight;
     private String visionLeft;

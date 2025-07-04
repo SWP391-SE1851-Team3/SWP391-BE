@@ -2,12 +2,13 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_ScheduleDTO;
-import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateFullDTO;
+import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckScheduleService;
 import com.team_3.School_Medical_Management_System.Service.SchoolNurseService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class HealthCheckScheduleController {
 
     // Create a new health check schedule with nurse information
     @PostMapping
+    @Operation(summary = "Tạo lịch kiểm tra sức khỏe mới")
     public ResponseEntity<HealthCheck_Schedule> createHealthCheckSchedule(@RequestBody HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
         // If we have creator nurse ID, get the nurse name
         if (healthCheckScheduleDTO.getCreatedByNurseID() != null && healthCheckScheduleDTO.getCreatedByNurseID() > 0) {
@@ -52,7 +54,7 @@ public class HealthCheckScheduleController {
 
 
         if (createdSchedule.getUpdatedByNurseID() != null &&
-            (createdSchedule.getUpdatedByNurseName() == null || createdSchedule.getUpdatedByNurseName().isEmpty())) {
+                (createdSchedule.getUpdatedByNurseName() == null || createdSchedule.getUpdatedByNurseName().isEmpty())) {
             SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(createdSchedule.getUpdatedByNurseID());
             if (nurse != null) {
                 createdSchedule.setUpdatedByNurseName(nurse.getFullName());
@@ -65,6 +67,7 @@ public class HealthCheckScheduleController {
 
     // Get all health check schedules
     @GetMapping
+    @Operation(summary = "Lấy tất cả các lịch kiểm tra sức khỏe")
     public ResponseEntity<List<HealthCheck_Schedule>> getAllHealthCheckSchedules() {
         List<HealthCheck_Schedule> schedules = healthCheckScheduleService.getAllHealthCheckSchedulesWithNurseNames();
         return new ResponseEntity<>(schedules, HttpStatus.OK);
@@ -72,6 +75,7 @@ public class HealthCheckScheduleController {
 
     // Get health check schedules by status
     @GetMapping("/status/{status}")
+    @Operation(summary = "Nhận lịch kiểm tra sức khỏe theo status")
     public ResponseEntity<List<HealthCheck_Schedule>> getHealthCheckSchedulesByStatus(@PathVariable String status) {
         List<HealthCheck_Schedule> schedules = healthCheckScheduleService.getHealthCheckSchedulesByStatus(status);
         return new ResponseEntity<>(schedules, HttpStatus.OK);
@@ -79,6 +83,7 @@ public class HealthCheckScheduleController {
 
     // Get a specific health check schedule by ID
     @GetMapping("/{id}")
+    @Operation(summary = "Nhận lịch kiểm tra sức khỏe cụ thể theo sheduleID")
     public ResponseEntity<HealthCheck_Schedule> getHealthCheckScheduleById(@PathVariable int id) {
         Optional<HealthCheck_Schedule> optionalSchedule = healthCheckScheduleService.getHealthCheckScheduleById(id);
 
@@ -87,7 +92,7 @@ public class HealthCheckScheduleController {
 
             // Get creator nurse name if needed
             if (schedule.getCreatedByNurseID() != null && schedule.getCreatedByNurseID() > 0
-                && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
+                    && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
                 SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getCreatedByNurseID());
                 if (nurse != null) {
                     schedule.setCreatedByNurseName(nurse.getFullName());
@@ -98,7 +103,7 @@ public class HealthCheckScheduleController {
 
             // Get updater nurse name if needed
             if (schedule.getUpdatedByNurseID() != null && schedule.getUpdatedByNurseID() > 0
-                && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
+                    && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
                 SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getUpdatedByNurseID());
                 if (nurse != null) {
                     schedule.setUpdatedByNurseName(nurse.getFullName());
@@ -115,6 +120,7 @@ public class HealthCheckScheduleController {
 
     // Update health check schedule
     @PutMapping("/{id}")
+    @Operation(summary = "Cập nhật lịch khám sức khỏe theo ID")
     public ResponseEntity<HealthCheckScheduleResponseDTO> updateHealthCheckSchedule(
             @PathVariable int id,
             @RequestBody HealthCheckScheduleUpdateFullDTO dto) {
@@ -127,7 +133,7 @@ public class HealthCheckScheduleController {
         }
         HealthCheck_Schedule updatedSchedule = healthCheckScheduleService.updateHealthCheckScheduleWithUpdateDTO(id, dto);
         if (updatedSchedule != null) {
-            // Map entity to response DTO (không có createdByNurseID và createdByNurseName)
+            // Map entity to response DTO (không có createdByNurseID v�� createdByNurseName)
             HealthCheckScheduleResponseDTO responseDTO = new HealthCheckScheduleResponseDTO();
             responseDTO.setHealth_ScheduleID(updatedSchedule.getHealth_ScheduleID());
             responseDTO.setSchedule_Date(updatedSchedule.getSchedule_Date());
@@ -139,6 +145,35 @@ public class HealthCheckScheduleController {
             responseDTO.setUpdate_at(updatedSchedule.getUpdate_at());
             responseDTO.setUpdatedByNurseID(updatedSchedule.getUpdatedByNurseID());
             responseDTO.setUpdatedByNurseName(updatedSchedule.getUpdatedByNurseName());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @PutMapping("/{id}/status")
+    @Operation(summary = "Cập nhật status lịch khám sức khỏe theo ID")
+    public ResponseEntity<HealthCheckScheduleResponseDTO> updateStatusHealthCheckSchedule(
+            @PathVariable int id,
+            @RequestBody StatusUpdateDTO statusUpdateDTO) {
+
+        HealthCheck_Schedule updatedSchedule = healthCheckScheduleService.updateHealthCheckScheduleStatus(id, statusUpdateDTO.getStatus());
+
+        if (updatedSchedule != null) {
+            // Map entity to response DTO
+            HealthCheckScheduleResponseDTO responseDTO = new HealthCheckScheduleResponseDTO();
+            responseDTO.setHealth_ScheduleID(updatedSchedule.getHealth_ScheduleID());
+            responseDTO.setSchedule_Date(updatedSchedule.getSchedule_Date());
+            responseDTO.setName(updatedSchedule.getName());
+            responseDTO.setLocation(updatedSchedule.getLocation());
+            responseDTO.setNotes(updatedSchedule.getNotes());
+            responseDTO.setStatus(updatedSchedule.getStatus());
+            responseDTO.setCreate_at(updatedSchedule.getCreate_at());
+            responseDTO.setUpdate_at(updatedSchedule.getUpdate_at());
+            responseDTO.setUpdatedByNurseID(updatedSchedule.getUpdatedByNurseID());
+            responseDTO.setUpdatedByNurseName(updatedSchedule.getUpdatedByNurseName());
+
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
