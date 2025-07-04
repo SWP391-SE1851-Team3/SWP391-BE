@@ -129,11 +129,42 @@ public class HealthConsentFormService {
         return dto;
     }
 
+    // Send notification to parent about health check consent form
+    private void sendConsentFormNotification(Student student, HealthCheck_Schedule schedule) {
+        if (student.getParent() != null) {
+            String title = "Yêu cầu đồng ý kiểm tra sức khỏe cho học sinh " + student.getFullName();
+            String content = "Một đợt khám sức khỏe mới '" + schedule.getName() +
+                    "' đã được lên lịch cho học sinh " + student.getFullName() +
+                    ". Vui lòng xem và xác nhận đồng ý cho con em của bạn.";
+
+            NotificationsParent notification = new NotificationsParent();
+            notification.setParent(student.getParent());
+            notification.setTitle(title);
+            notification.setContent(content);
+            notification.setCreateAt(LocalDateTime.now());
+            notification.setStatus(false);
+            notificationsParentRepository.save(notification);
+
+            try {
+                // Gửi email với thông tin người dùng và thời gian
+                emailService.sendHtmlNotificationEmailForHealthCheck(
+                    student.getParent(),
+                    title,
+                    content,
+                    notification.getNotificationId()
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+            }
+        }
+    }
+
     public void createConsentFormsForMultipleClasses(ConsentFormRequestDTO request) {
         try {
             List<HealthConsentForm> consentForms = new ArrayList<>();
             List<String> skippedClasses = new ArrayList<>();
-            HealthCheck_Schedule schedule = healthCheckScheduleRepository.findById(request.getHealthScheduleId()).orElseThrow(() -> new RuntimeException("HealthCheck_Schedule not found with id: " + request.getHealthScheduleId()));
+            HealthCheck_Schedule schedule = healthCheckScheduleRepository.findById(request.getHealthScheduleId())
+                .orElseThrow(() -> new RuntimeException("HealthCheck_Schedule not found with id: " + request.getHealthScheduleId()));
 
             // Lặp qua danh sách các lớp
             for (String className : request.getClassName()) {
@@ -166,26 +197,8 @@ public class HealthConsentFormService {
                     // Thêm consentForm vào list
                     consentForms.add(consentForm);
 
-                    // Create notification for parent
-                    if (student.getParent() != null) {
-                        String tittle = "Yêu cầu đồng ý kiểm tra sức khỏe cho học sinh " + student.getFullName();
-                        String content = "Một đợt khám sức khỏe mới đã được lên lịch cho học sinh " + student.getFullName() +
-                                ". Vui lòng xem và xác nhận đồng ý cho con em của bạn.";
-                        NotificationsParent notification = new NotificationsParent();
-                        notification.setParent(student.getParent());
-                        notification.setTitle(tittle);
-                        notification.setContent(content);
-                        notification.setCreateAt(LocalDateTime.now());
-                        notification.setStatus(false);
-                        notificationsParentRepository.save(notification);
-                        try {
-                            // Gửi email với thông tin người dùng và thời gian
-                            emailService.sendHtmlNotificationEmailForHealthCheck(student.getParent(), tittle, content, notification.getNotificationId());
-                            // emailService.testEmailConfig("ytruongtieuhoc@example.com");
-                        } catch (Exception e) {
-                            throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
-                        }
-                    }
+                    // Send notification and email to parent
+                    sendConsentFormNotification(student, schedule);
                 }
             }
 
@@ -196,12 +209,13 @@ public class HealthConsentFormService {
 
             // Thông báo về các lớp bị bỏ qua
             if (!skippedClasses.isEmpty()) {
-                String message = "Các lớp sau đã có form cho lịch khám này và được bỏ qua: " + String.join(", ", skippedClasses);
+                String scheduleName = schedule.getName();
+                String message = "Lớp " + String.join(", ", skippedClasses) + " đã tồn tại phiếu xác nhận của đợt " + scheduleName;
                 throw new RuntimeException(message);
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tạo consent forms cho nhiều lớp: " + e.getMessage());
+
         }
     }
 

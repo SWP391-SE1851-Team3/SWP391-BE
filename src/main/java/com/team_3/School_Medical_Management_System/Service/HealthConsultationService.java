@@ -30,6 +30,9 @@ public class HealthConsultationService {
     @Autowired
     private SchoolNurseInterFace schoolNurseRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     // Helper method to get nurse name by ID
     public String getNurseNameById(Integer nurseId) {
         if (nurseId == null) {
@@ -78,19 +81,14 @@ public class HealthConsultationService {
 
             HealthConsultation updatedConsultation = healthConsultationRepository.save(consultation);
 
-            // If consultation is completed, notify the parent
-            if (status.equals("completed")) {
-                notifyParentAboutCompletedConsultation(updatedConsultation);
-            }
-
             return updatedConsultation;
         }
 
         return null;
     }
 
-     //Notify parent about completed consultation
-    private void notifyParentAboutCompletedConsultation(HealthConsultation consultation) {
+    // Notify parent about consultation invitation (make it public for external use)
+    public void notifyParentAboutConsultationInvitation(HealthConsultation consultation) {
         // Get the student using studentID
         Optional<Student> studentOpt = studentRepository.findById(consultation.getStudentID());
 
@@ -100,15 +98,33 @@ public class HealthConsultationService {
             if (student.getParent() != null) {
                 NotificationsParent notification = new NotificationsParent();
                 notification.setParent(student.getParent());
-                notification.setTitle("Tư vấn y tế đã hoàn thành");
-
-                String content = "Buổi tư vấn y tế cho " + student.getFullName() + " đã hoàn thành.\n";
+                notification.setTitle("Mời tư vấn y tế");
+                String title = "Mời tư vấn y tế cho " + student.getFullName();
+                String content = "Con em cần được tư vấn y tế vì lý do: " + consultation.getReason() +
+                        ". Vui lòng sắp xếp thời gian để tham gia buổi tư vấn với đội ngũ y tế của trường.";
+                if (consultation.getLocation() != null && !consultation.getLocation().isEmpty()) {
+                    content += "\nĐịa điểm: " + consultation.getLocation();
+                }
+                if (consultation.getConsultDate() != null) {
+                    content += "\nThời gian dự kiến: " + consultation.getConsultDate();
+                }
 
                 notification.setContent(content);
                 notification.setCreateAt(LocalDateTime.now());
                 notification.setStatus(false);
 
                 notificationsParentRepository.save(notification);
+                try {
+                    // Gửi email mời tư vấn
+                    emailService.sendHtmlNotificationEmailForHealthCheckConsultation(
+                            student.getParent(),
+                            title,
+                            content,
+                            notification.getNotificationId()
+                    );
+                } catch (Exception e) {
+                    throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+                }
             }
         }
     }
@@ -189,7 +205,11 @@ public class HealthConsultationService {
             consultation.setUpdatedByNurseID(dto.getUpdatedByNurseID());
         }
 
+        // Notify parent about the new consultation invitation
+        notifyParentAboutConsultationInvitation(consultation);
+
         return healthConsultationRepository.save(consultation);
+
     }
 
     // Get a consultation by ID
