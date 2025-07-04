@@ -1,9 +1,9 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConsentFormsRepos;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConsentFormsRepository;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Consent_formsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;

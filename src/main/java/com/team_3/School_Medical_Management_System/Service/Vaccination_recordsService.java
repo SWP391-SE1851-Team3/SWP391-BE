@@ -1,10 +1,9 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccination_recordsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
-import com.team_3.School_Medical_Management_System.Repositories.*;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import com.team_3.School_Medical_Management_System.configuration.EmailConfig;
 import jakarta.transaction.Transactional;

@@ -17,9 +17,9 @@ public class StudentVaccinationDTO {
     private String vaccineTypeName;
     private LocalDateTime observationTime;
     private String status;
-    public StudentVaccinationDTO(Integer studentId, String fullName, String className,
-                                 String observationNotes, String vaccineTypeName,
-                                 LocalDateTime observationTime,String status) {
+    private Integer recordId;
+
+    public StudentVaccinationDTO(Integer studentId, String fullName, String className, String observationNotes, String vaccineTypeName, LocalDateTime observationTime, String status, Integer recordId) {
         this.studentId = studentId;
         this.fullName = fullName;
         this.className = className;
@@ -27,5 +27,6 @@ public class StudentVaccinationDTO {
         this.vaccineTypeName = vaccineTypeName;
         this.observationTime = observationTime;
         this.status = status;
+        this.recordId = recordId;
     }
 }

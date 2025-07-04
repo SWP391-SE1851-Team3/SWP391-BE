@@ -1,7 +1,6 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
+package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 
 import java.util.List;
 

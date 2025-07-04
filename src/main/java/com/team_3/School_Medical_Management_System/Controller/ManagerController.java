@@ -1,7 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.LoginResponse;
 import com.team_3.School_Medical_Management_System.DTO.ManagerLoginResponeDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ManagerServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ManagerServiceInterFace;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

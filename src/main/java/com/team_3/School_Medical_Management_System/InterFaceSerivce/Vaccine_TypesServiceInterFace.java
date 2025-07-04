@@ -1,10 +1,9 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
+package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 
 import com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_TypesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Types_Edit_DTO;
-import com.team_3.School_Medical_Management_System.Model.Vaccine_Types;
 
 import java.util.List;
 
