@@ -44,6 +44,12 @@ public class HealthCheckStudentService {
     @Autowired
     private SchoolNurseService schoolNurseService;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private HealthConsultationService healthConsultationService;
+
     // Create health check results using DTO with CheckID
     @Transactional
     public HealthCheck_Student createHealthCheckResults(HealthCheck_StudentDTO dto) {
@@ -94,8 +100,6 @@ public class HealthCheckStudentService {
         HealthCheck_Student savedResult = healthCheckStudentRepository.save(healthCheckStudent);
         // Check for abnormal results and create consultations if needed
         checkForAbnormalResults(savedResult); // Truyền object thay vì string
-        // Send notification to parent about health check results
-        sendHealthCheckResultNotification(savedResult);
         return savedResult;
     }
 
@@ -106,9 +110,7 @@ public class HealthCheckStudentService {
         }
 
         String status = healthCheckResult.getStatus().trim();
-        if (status.equalsIgnoreCase("Cần tư vấn y tế")
-                ) {
-
+        if (status.equalsIgnoreCase("Cần tư vấn y tế")) {
             try {
                 HealthConsultation consultation = new HealthConsultation();
                 consultation.setStudentID(healthCheckResult.getStudentID());
@@ -117,12 +119,16 @@ public class HealthCheckStudentService {
                 consultation.setReason("Cần tư vấn y tế theo đánh giá của y tá");
                 consultation.setCreate_at(new Date());
                 consultation.setCreatedByNurseID(healthCheckResult.getCreatedByNurseID());
-                HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
-                // Gửi thông báo cho phụ huynh
-//                sendConsultationNotification(savedConsultation);
+
+                // Save consultation và gửi thông báo mời tư vấn
+                HealthConsultation savedConsultation = healthConsultationService.save(consultation);
+
+                // Gửi thông báo mời tư vấn cho phụ huynh
+                healthConsultationService.notifyParentAboutConsultationInvitation(savedConsultation);
 
             } catch (Exception e) {
-
+                // Log error but don't break the flow
+                System.err.println("Error creating consultation: " + e.getMessage());
             }
         }
     }
@@ -139,6 +145,7 @@ public class HealthCheckStudentService {
                 notification.setParent(student.getParent());
                 notification.setTitle("Kết quả kiểm tra sức khỏe");
 
+                String tittle = "Kết quả kiểm tra sức khỏe của " + student.getFullName();
                 StringBuilder content = new StringBuilder();
                 content.append("Kết quả kiểm tra sức khỏe của ")
                         .append(student.getFullName())
@@ -160,6 +167,13 @@ public class HealthCheckStudentService {
                 notification.setCreateAt(LocalDateTime.now());
                 notification.setStatus(false);
                 notificationsParentRepository.save(notification);
+                try {
+                    // Gửi email với thông tin người dùng và thời gian
+                    emailService.sendHtmlNotificationEmailForHealthCheckStudent(student.getParent(), tittle, content.toString(), notification.getNotificationId());
+                    // emailService.testEmailConfig("ytruongtieuhoc@example.com");
+                } catch (Exception e) {
+                    throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+                }
             }
         }
     }
@@ -207,7 +221,9 @@ public class HealthCheckStudentService {
             // Check for abnormal results again
             checkForAbnormalResults(updatedResult); // Truyền object thay vì string
             // Send updated notification
-            sendHealthCheckResultNotification(updatedResult);
+            if("Đã hoàn thành".equalsIgnoreCase(updatedResult.getStatus())) {
+                sendHealthCheckResultNotification(updatedResult);
+            }
             return updatedResult;
         }
 
