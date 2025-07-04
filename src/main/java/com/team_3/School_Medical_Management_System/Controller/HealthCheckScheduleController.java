@@ -2,8 +2,8 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleResponseDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_ScheduleDTO;
-import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateFullDTO;
+import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckScheduleService;
@@ -133,7 +133,7 @@ public class HealthCheckScheduleController {
         }
         HealthCheck_Schedule updatedSchedule = healthCheckScheduleService.updateHealthCheckScheduleWithUpdateDTO(id, dto);
         if (updatedSchedule != null) {
-            // Map entity to response DTO (không có createdByNurseID và createdByNurseName)
+            // Map entity to response DTO (không có createdByNurseID v�� createdByNurseName)
             HealthCheckScheduleResponseDTO responseDTO = new HealthCheckScheduleResponseDTO();
             responseDTO.setHealth_ScheduleID(updatedSchedule.getHealth_ScheduleID());
             responseDTO.setSchedule_Date(updatedSchedule.getSchedule_Date());
@@ -145,6 +145,35 @@ public class HealthCheckScheduleController {
             responseDTO.setUpdate_at(updatedSchedule.getUpdate_at());
             responseDTO.setUpdatedByNurseID(updatedSchedule.getUpdatedByNurseID());
             responseDTO.setUpdatedByNurseName(updatedSchedule.getUpdatedByNurseName());
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @PutMapping("/{id}/status")
+    @Operation(summary = "Cập nhật status lịch khám sức khỏe theo ID")
+    public ResponseEntity<HealthCheckScheduleResponseDTO> updateStatusHealthCheckSchedule(
+            @PathVariable int id,
+            @RequestBody StatusUpdateDTO statusUpdateDTO) {
+
+        HealthCheck_Schedule updatedSchedule = healthCheckScheduleService.updateHealthCheckScheduleStatus(id, statusUpdateDTO.getStatus());
+
+        if (updatedSchedule != null) {
+            // Map entity to response DTO
+            HealthCheckScheduleResponseDTO responseDTO = new HealthCheckScheduleResponseDTO();
+            responseDTO.setHealth_ScheduleID(updatedSchedule.getHealth_ScheduleID());
+            responseDTO.setSchedule_Date(updatedSchedule.getSchedule_Date());
+            responseDTO.setName(updatedSchedule.getName());
+            responseDTO.setLocation(updatedSchedule.getLocation());
+            responseDTO.setNotes(updatedSchedule.getNotes());
+            responseDTO.setStatus(updatedSchedule.getStatus());
+            responseDTO.setCreate_at(updatedSchedule.getCreate_at());
+            responseDTO.setUpdate_at(updatedSchedule.getUpdate_at());
+            responseDTO.setUpdatedByNurseID(updatedSchedule.getUpdatedByNurseID());
+            responseDTO.setUpdatedByNurseName(updatedSchedule.getUpdatedByNurseName());
+
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

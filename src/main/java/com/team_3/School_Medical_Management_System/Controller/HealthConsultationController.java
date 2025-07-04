@@ -90,7 +90,7 @@ public class HealthConsultationController {
     // Cập nhật tư vấn sức khỏe
     @PutMapping("/{consultationId}")
     @Operation(summary = "Cập nhật tư vấn sức khỏe")
-    public ResponseEntity<HealthConsultationDTO> updateConsultation(
+    public ResponseEntity<HealthConsultationUpdateDTO> updateConsultation(
             @PathVariable int consultationId,
             @RequestBody HealthConsultationUpdateDTO updateDTO) {
 
@@ -106,10 +106,14 @@ public class HealthConsultationController {
             consultationId,
             updateDTO.getStatus(),
             updateDTO.getReason(),
+            updateDTO.getLocation(),
+            updateDTO.getConsultDate(),
             updateDTO.getUpdatedByNurseID());
 
         if (updatedConsultation != null) {
-            return new ResponseEntity<>(healthConsultationService.convertToDTO(updatedConsultation), HttpStatus.OK);
+            // Convert to update DTO to return only the fields that were sent in request
+            HealthConsultationUpdateDTO responseDTO = healthConsultationService.convertToUpdateDTO(updatedConsultation);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

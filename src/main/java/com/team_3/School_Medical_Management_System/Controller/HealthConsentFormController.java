@@ -85,16 +85,15 @@ public class HealthConsentFormController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-    // Tạo mẫu đơn đồng ý cho một lớp học
-    @PostMapping("/create-for-class")
-    @Operation(summary = "Tạo mẫu đơn đồng ý cho một lớp học")
-    public ResponseEntity<?> createConsentFormsForClass(@RequestBody ConsentFormRequestDTO request) {
+    @PostMapping("/create-for-multiple-classes")
+    @Operation(summary = "Tạo mẫu đơn đồng ý cho nhiều lớp học")
+    public ResponseEntity<?> createConsentFormsForMultipleClasses(@RequestBody ConsentFormRequestDTO request) {
         try {
-            healthConsentFormService.createConsentFormsForClass(request);
+            healthConsentFormService.createConsentFormsForMultipleClasses(request);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error: " + e.getMessage());
+                    .body("Error: " + e.getMessage());
         }
     }
 

@@ -7,10 +7,12 @@ import java.util.Date;
 public class HealthConsultationDTO {
     private int consultID;
     private int studentID;
+    private Date consultDate;
     private String studentName;
     private String className;
     private int checkID;
     private String status;
+    private String location;
     private String reason;
 
     // Added fields for tracking creation and updates

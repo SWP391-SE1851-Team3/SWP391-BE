@@ -68,7 +68,7 @@ public class HealthCheckStudentService {
         healthCheckStudent.setStudentID(studentId);
         healthCheckStudent.setFormID(dto.getFormID());
         healthCheckStudent.setHealth_ScheduleID(dto.getHealth_ScheduleID());
-        healthCheckStudent.setStatus(dto.getStatus()); // Thêm set status
+        healthCheckStudent.setStatus("Chờ ghi nhận"); // Thêm set status
         // Set other properties, allow empty/null if not provided
         healthCheckStudent.setHeight(dto.getHeight());
         healthCheckStudent.setWeight(dto.getWeight());
@@ -113,13 +113,13 @@ public class HealthCheckStudentService {
                 HealthConsultation consultation = new HealthConsultation();
                 consultation.setStudentID(healthCheckResult.getStudentID());
                 consultation.setCheckID(healthCheckResult.getCheckID());
-                consultation.setStatus("Đang chờ xử lý");
+                consultation.setStatus("Cần tư vấn y tế");
                 consultation.setReason("Cần tư vấn y tế theo đánh giá của y tá");
                 consultation.setCreate_at(new Date());
                 consultation.setCreatedByNurseID(healthCheckResult.getCreatedByNurseID());
                 HealthConsultation savedConsultation = healthConsultationRepository.save(consultation);
                 // Gửi thông báo cho phụ huynh
-                sendConsultationNotification(savedConsultation);
+//                sendConsultationNotification(savedConsultation);
 
             } catch (Exception e) {
 
@@ -164,31 +164,6 @@ public class HealthCheckStudentService {
         }
     }
 
-    // Send notification to parent about consultation appointment
-    private void sendConsultationNotification(HealthConsultation consultation) {
-        // Get the student using studentID
-        Optional<Student> studentOpt = studentRepository.findById(consultation.getStudentID());
-
-        if (studentOpt.isPresent()) {
-            Student student = studentOpt.get();
-
-            if (student.getParent() != null) {
-                NotificationsParent notification = new NotificationsParent();
-                notification.setParent(student.getParent());
-                notification.setTitle("Lịch hẹn tư vấn y tế");
-
-                StringBuilder content = new StringBuilder();
-                content.append("Phát hiện vấn đề sức khỏe cần tư vấn cho ")
-                        .append(student.getFullName())
-                        .append(":\n");
-
-                notification.setContent(content.toString());
-                notification.setCreateAt(LocalDateTime.now());
-                notification.setStatus(false);
-                notificationsParentRepository.save(notification);
-            }
-        }
-    }
 
     // Get health check results for a student
     public List<HealthCheck_Student> getHealthCheckResultsByStudent(int studentId) {
