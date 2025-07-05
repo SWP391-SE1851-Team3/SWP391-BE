@@ -18,6 +18,6 @@ public class MedicalSupplyDTO {
     private Date DateAdded;
     private Integer VaccineTypeID;
     private Integer HealthCheckId;
-    private  Integer EventID;
+    private  Integer CategoryID;
 
 }

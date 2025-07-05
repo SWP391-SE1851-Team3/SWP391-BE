@@ -55,7 +55,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public Parent LoginByAccount(String email, String password) {
-        String sql = "SELECT p FROM Parent p WHERE p.Email = :email AND p.Password = :password";
+        String sql = "SELECT p FROM Parent p WHERE p.email = :email AND p.Password = :password";
         try {
             return entityManager.createQuery(sql, Parent.class)
                     .setParameter("email", email)
@@ -74,7 +74,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public boolean changePassword(String email, String oldPassword, String newPassword) {
-        String jpql = "SELECT p FROM Parent p WHERE p.Email = :email";
+        String jpql = "SELECT p FROM Parent p WHERE p.email = :email";
         List<Parent> results = entityManager.createQuery(jpql, Parent.class)
                 .setParameter("email", email)
                 .getResultList();
@@ -94,7 +94,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public Parent getParentByEmail(String Email) {
-        String jpql = "SELECT p FROM Parent p WHERE p.Email = :Email";
+        String jpql = "SELECT p FROM Parent p WHERE p.email = :Email";
         return entityManager.createQuery(jpql, Parent.class)
                 .setParameter("Email", Email)
                 .getSingleResult();
@@ -112,7 +112,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public boolean existsByEmail(String mail) {
-        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.Email = :Email", Long.class)
+        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.email = :Email", Long.class)
                 .setParameter("Email", mail)
                 .getSingleResult() > 0;
     }

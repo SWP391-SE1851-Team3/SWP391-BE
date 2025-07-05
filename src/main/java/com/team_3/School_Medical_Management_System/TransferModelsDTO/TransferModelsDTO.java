@@ -798,6 +798,10 @@ public class TransferModelsDTO {
         if (entity.getHealthCheck() != null) {
             dto.setHealthCheckId(entity.getHealthCheck().getCheckID());
         }
+        if(entity.getSupplyCategory() != null) {
+            dto.setCategoryID(entity.getSupplyCategory().getCategoryID());
+        }
+
 
 
         return dto;
@@ -817,9 +821,15 @@ public class TransferModelsDTO {
             supply.setVaccineType(type);
         }
         if (dto.getHealthCheckId() != null) {
-            HealthCheck hc = new HealthCheck();
+            HealthCheck_Student hc = new HealthCheck_Student();
             hc.setCheckID(dto.getHealthCheckId());
             supply.setHealthCheck(hc);
+        }
+
+        if(dto.getCategoryID() != null) {
+            SupplyCategory supplyCategory = new SupplyCategory();
+            supplyCategory.setCategoryID(dto.getCategoryID());
+            supply.setSupplyCategory(supplyCategory);
         }
         return supply;
     }

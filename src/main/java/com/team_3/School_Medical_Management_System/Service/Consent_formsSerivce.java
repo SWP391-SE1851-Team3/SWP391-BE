@@ -106,9 +106,6 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         consent.setStatus(dto.getStatus());
         consent.setIsAgree(dto.getIsAgree());
 
-
-
-
         // 3. Lưu vào database
         Consent_forms saved = consent_formsRepo.addConsent_forms(consent);
 
@@ -261,54 +258,63 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Override
     public SendConsentFormResult sendConsentFormsByClassName(
-            String className,
+            List<String> className,
             Integer batchId,
             LocalDateTime sendDate,
             LocalDateTime expireDate,
             String status
     ) {
-        List<Student> students = studentRepository.findByClassName(className);
+
         Vaccine_Batches batch = vaccineBatchRepository.findById(batchId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
 
+        List<String> getALlClass = studentRepository.findAllClassNames();
         List<Consent_forms> sentForms = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        for (Student student : students) {
-            Parent parent = student.getParent();
-            if (parent == null) {
-                errors.add("Không tìm thấy phụ huynh cho học sinh: " + student.getFullName());
+        for (String nameclass : className) {
+            if (!getALlClass.contains(nameclass)) {
+                errors.add("Không tìm thấy lớp: " + nameclass);
                 continue;
             }
 
-            // Tạo và lưu form
-            Consent_forms form = new Consent_forms();
-            form.setStudent(student);
-            form.setParent(parent);
-            form.setVaccineBatches(batch);
-            form.setSend_date(sendDate);
-            form.setExpire_date(expireDate);
-            form.setStatus(status);
-            consent_formsRepos.save(form);
-            sentForms.add(form);
+            List<Student> students = studentRepository.findByClassName(nameclass);
 
-            // Gửi thông báo cho từng phụ huynh
-            String title = "Gửi phiếu tiêm chủng cho học sinh " + student.getFullName();
-            String content = "Một đợt tiêm chủng mới đã được lên lịch cho học sinh " + student.getFullName() +
-                    ". Vui lòng truy cập hệ thống để xác nhận đồng ý hoặc từ chối.";
+            for (Student student : students) {
+                Parent parent = student.getParent();
+                if (parent == null) {
+                    errors.add("Không tìm thấy phụ huynh cho học sinh: " + student.getFullName());
+                    continue;
+                }
 
-            NotificationsParent notification = new NotificationsParent();
-            notification.setParent(parent);
-            notification.setTitle(title);
-            notification.setContent(content);
-            notification.setCreateAt(LocalDateTime.now());
-            notification.setStatus(false); // chưa đọc
+                // Tạo và lưu form
+                Consent_forms form = new Consent_forms();
+                form.setStudent(student);
+                form.setParent(parent);
+                form.setVaccineBatches(batch);
+                form.setSend_date(sendDate);
+                form.setExpire_date(expireDate);
+                form.setStatus(status);
+                consent_formsRepos.save(form);
+                sentForms.add(form);
 
-            Integer notificationId = notificationsParentService.createAutoNotification(
-                    parent.getParentID(), title, content);
-            emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
+                // Gửi thông báo cho từng phụ huynh
+                String title = "Gửi phiếu tiêm chủng cho học sinh " + student.getFullName();
+                String content = "Một đợt tiêm chủng mới đã được lên lịch cho học sinh " + student.getFullName() +
+                        ". Vui lòng truy cập hệ thống để xác nhận đồng ý hoặc từ chối.";
+
+                NotificationsParent notification = new NotificationsParent();
+                notification.setParent(parent);
+                notification.setTitle(title);
+                notification.setContent(content);
+                notification.setCreateAt(LocalDateTime.now());
+                notification.setStatus(false); // chưa đọc
+
+                Integer notificationId = notificationsParentService.createAutoNotification(
+                        parent.getParentID(), title, content);
+                emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
+            }
         }
-
         return new SendConsentFormResult(sentForms, errors);
     }
 

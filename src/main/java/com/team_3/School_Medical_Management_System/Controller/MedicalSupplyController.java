@@ -31,11 +31,16 @@ public class MedicalSupplyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping
-    public ResponseEntity<MedicalSupplyDTO> update(@RequestBody MedicalSupplyDTO dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<MedicalSupplyDTO> update(
+            @PathVariable Integer id,
+            @RequestBody MedicalSupplyDTO dto
+    ) {
+        dto.setMedicalSupplyID(id); // Gán ID vào DTO
         MedicalSupplyDTO result = medicalSupplyService.updateMedicalSupply(dto);
         return ResponseEntity.ok(result);
     }
+
 
 
 }

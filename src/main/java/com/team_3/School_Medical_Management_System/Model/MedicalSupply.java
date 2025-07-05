@@ -1,9 +1,6 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -16,6 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class MedicalSupply {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer MedicalSupplyID;
     private String SupplyName;
     private String Unit;
@@ -24,14 +22,13 @@ public class MedicalSupply {
     private String StorageTemperature;
     private Date DateAdded;
     @ManyToOne
-
     @JoinColumn(name = "CheckID")
-    private HealthCheck HealthCheck;
+    private HealthCheck_Student HealthCheck;
+
 
     @ManyToOne
     @JoinColumn(name = "CategoryID")
     private SupplyCategory SupplyCategory;
-    private Integer EventID;
 
     @ManyToOne
     @JoinColumn(name = "VaccineTypeID")
