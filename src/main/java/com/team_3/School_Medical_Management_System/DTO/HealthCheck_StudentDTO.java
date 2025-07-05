@@ -16,7 +16,6 @@ public class HealthCheck_StudentDTO {
     private int health_ScheduleID; // Thêm ID lịch khám sức khỏe
     private String studentName;  // Thêm tên học sinh
     private String className;    // Thêm tên lớp
-    private String status;       // Thêm trường status
     private float height;
     private float weight;
     private String visionLeft;

@@ -1,7 +1,8 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccination_recordsServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
+import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 import com.team_3.School_Medical_Management_System.configuration.EmailConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -78,10 +79,8 @@ public class Vaccination_recordsController {
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
         return vaccination_recordsServiceInterFace.getStudentFollowedbyNurse();
     }
-    @PutMapping("/updateStudentFollowedbyNurse/{id}")
-    public StudentVaccinationDTO updateStudentFollowedbyNurse(@PathVariable Integer id ,@RequestBody StudentVaccinationDTO studentVaccinationDTO){
-        studentVaccinationDTO.setRecordId(id);
-        var uppdate = vaccination_recordsServiceInterFace.updateStudentFollowedbyNurse(studentVaccinationDTO);
-        return uppdate;
-    }
+
+
+
+
 }

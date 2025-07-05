@@ -1,7 +1,6 @@
 package com.team_3.School_Medical_Management_System.Model;
 
 import jakarta.persistence.*;
-
 import lombok.Data;
 
 import java.sql.Date;
@@ -68,4 +67,3 @@ public class MedicalSupply {
         this.healthCheckStudent = healthCheckStudent;
     }
 }
-

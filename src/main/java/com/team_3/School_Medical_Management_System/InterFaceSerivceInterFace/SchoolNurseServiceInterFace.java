@@ -1,5 +1,7 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivce;
+package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
+import com.team_3.School_Medical_Management_System.DTO.UserDTO;
+import com.team_3.School_Medical_Management_System.Model.Parent;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 
 import java.util.List;

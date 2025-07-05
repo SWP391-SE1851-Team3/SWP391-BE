@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Vaccination_records_SentParent_Edit_DTO {
     private Integer studentId;
+    private String StudentName;
     private Integer vaccineBatchId;
+    private String vaccineBatchName;
     private String symptoms;
     private String severity;
     private String notes;
@@ -19,12 +21,8 @@ public class Vaccination_records_SentParent_Edit_DTO {
     private LocalDateTime observation_time;
     private String status;
     private Integer EditNurseID;
+    private String className;
     private String EditNurseName;
-    private Integer consentId;
-    @JsonIgnore
-    private Integer CreateNurseID;
-    @JsonIgnore
-    private String CreateNurseName;
     // Trả về cho phụ huynh
     private Integer parentID;
     @JsonIgnore

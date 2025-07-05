@@ -1,19 +1,11 @@
 package com.team_3.School_Medical_Management_System.Model;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
 
 import java.util.Date;
 
 @Entity
-
 @Table(name = "SupplyCategory")
 @Data
 public class SupplyCategory {
@@ -37,4 +29,3 @@ public class SupplyCategory {
     public SupplyCategory() {
     }
 }
-

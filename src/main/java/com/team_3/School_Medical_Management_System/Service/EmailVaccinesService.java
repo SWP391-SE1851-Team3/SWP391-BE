@@ -99,7 +99,7 @@ public class EmailVaccinesService {
                         "    </style>" +
                         "</head>" +
                         "<body>" +
-                        "   <div class=\"header\"><h2>Cập nhật hồ sơ tiêm chủng của học sinh </h2></div>" +
+                        "   <div class=\"header\"><h2>THÔNG BÁO HỒ SƠ TIÊM CHỦNG CỦA HỌC SINH</h2></div>" +
                         "    <div class=\"content\">" +
                         "        %s" +
                         "    </div>" +

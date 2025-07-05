@@ -15,6 +15,4 @@ public interface Vaccination_recordsInterFace {
     List<Vaccination_records> getVaccination_recordsByStudentId(int studentId);
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse();
 
-    public StudentVaccinationDTO updateStudentFollowedbyNurse(StudentVaccinationDTO studentVaccinationDTO);
-
 }

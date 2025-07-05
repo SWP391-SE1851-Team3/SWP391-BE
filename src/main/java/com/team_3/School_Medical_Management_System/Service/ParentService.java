@@ -1,8 +1,9 @@
 package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.UserDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.ParentSerivceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ParentSerivceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.RoleRepo;
 import com.team_3.School_Medical_Management_System.Model.Parent;
+import com.team_3.School_Medical_Management_System.Model.Role;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

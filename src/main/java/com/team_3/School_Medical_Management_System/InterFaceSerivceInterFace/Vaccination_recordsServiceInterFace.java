@@ -1,6 +1,7 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivce;
+package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
+import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 
 import java.util.List;
 
@@ -14,5 +15,4 @@ public interface Vaccination_recordsServiceInterFace {
     public Vaccination_records_SentParent_DTO createEmail(Vaccination_records_SentParent_DTO dto);
     public Vaccination_records_SentParent_Edit_DTO updateAndResendEmail(Integer recordId, Vaccination_records_SentParent_Edit_DTO dto);
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse();
-    public StudentVaccinationDTO updateStudentFollowedbyNurse(StudentVaccinationDTO studentVaccinationDTO);
 }

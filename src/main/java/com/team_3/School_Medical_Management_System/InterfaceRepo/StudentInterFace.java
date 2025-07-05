@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface StudentInterFace {
     public void addStudent(Student student);
 
-    public void removeStudent(Integer id);
+    public void removeStudent(int id);
 
-    public Student getStudent(Integer id);
+    public Student getStudent(int id);
 
     public List<Student> getStudents();
 

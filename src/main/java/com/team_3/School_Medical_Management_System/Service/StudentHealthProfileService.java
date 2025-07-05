@@ -1,7 +1,7 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentHealthProfileDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentHealthProfileServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentHealthProfileServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentHealthProfileInterFace;
 import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import jakarta.transaction.Transactional;

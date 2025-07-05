@@ -25,8 +25,7 @@ public class Parent {
     @Pattern(regexp = "^(84|0)(3|5|7|8|9)[0-9]{8}$", message = "Phone invalid")
     private String Phone;
     @Email
-    @Column(name = "Email") // DB có thể viết hoa
-    private String email;
+    private String Email;
     private int IsActive;
     private int RoleID;
     @NotBlank(message = "Occupation Not allow empty")

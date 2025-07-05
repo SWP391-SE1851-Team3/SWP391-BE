@@ -43,14 +43,6 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
     }
 
     @Override
-    public List<HealthCheck_Student> findByHealth_ScheduleID(int health_ScheduleID) {
-        String jpql = "SELECT h FROM HealthCheck_Student h WHERE h.health_ScheduleID = :health_ScheduleID";
-        return entityManager.createQuery(jpql, HealthCheck_Student.class)
-                .setParameter("health_ScheduleID", health_ScheduleID)
-                .getResultList();
-    }
-
-    @Override
     public void flush() {
         entityManager.flush();
     }

@@ -15,10 +15,6 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     Parent GetParentByStudentId(@Param("studentId") Integer studentId);
    // Optional<Parent> findByUsername (String username);
 
-
     @Query("SELECT p FROM Parent p WHERE p.IsActive =1")
     public List<Parent> getAllWithIsActive();
-
-    Optional<Parent> findByEmail(String email);
-
 }

@@ -30,19 +30,13 @@ public class StudentRepo implements StudentInterFace {
     }
 
     @Override
-    public void removeStudent(Integer id) {
+    public void removeStudent(int id) {
+        entityManager.remove(id);
 
-        Student student = entityManager.find(Student.class, id);
-        if (student != null) {
-            entityManager.remove(student); // ✅ đúng, truyền entity
-        } else {
-            throw new RuntimeException("Student not found");
-        }
     }
 
-
     @Override
-    public Student getStudent(Integer id) {
+    public Student getStudent(int id) {
         return entityManager.find(Student.class, id);
     }
 
@@ -83,7 +77,7 @@ public class StudentRepo implements StudentInterFace {
 
     @Override
     public List<Student> findByClassName(String className) {
-        String jpql = "SELECT s FROM Student s WHERE s.className = :className";
+        String jpql = "SELECT s FROM Student s WHERE s.ClassName = :className";
         return entityManager.createQuery(jpql, Student.class)
                 .setParameter("className", className)
                 .getResultList();

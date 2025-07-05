@@ -20,7 +20,6 @@ public class HealthCheck_Student {
     private Integer studentID;
     private Integer formID;
     private Integer health_ScheduleID;
-    private String status;
     private Float height;
     private Float weight;
     private String visionLeft;

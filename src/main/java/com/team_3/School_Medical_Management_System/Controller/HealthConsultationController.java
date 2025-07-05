@@ -6,7 +6,6 @@ import com.team_3.School_Medical_Management_System.Model.HealthConsultation;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthConsultationService;
 import com.team_3.School_Medical_Management_System.Service.SchoolNurseService;
-import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +25,8 @@ public class HealthConsultationController {
     @Autowired
     private SchoolNurseService schoolNurseService;
 
-    // Lấy tất cả các tư vấn sức khỏe
+    // Get all consultations
     @GetMapping("/all")
-    @Operation(summary = "Lấy tất cả các tư vấn sức khỏe")
     public ResponseEntity<List<HealthConsultationDTO>> getAllConsultations() {
         List<HealthConsultation> consultations = healthConsultationService.getAllConsultations();
         List<HealthConsultationDTO> consultationDTOs = consultations.stream()
@@ -37,9 +35,8 @@ public class HealthConsultationController {
         return new ResponseEntity<>(consultationDTOs, HttpStatus.OK);
     }
 
-    // Lấy tư vấn sức khỏe theo trạng thái (chờ xử lý/đã hoàn thành)
+    // Get consultations by status (pending/completed)
     @GetMapping("/status/{status}")
-    @Operation(summary = "Lấy tư vấn sức khỏe theo trạng thái (chờ xử lý/đã hoàn thành)")
     public ResponseEntity<List<HealthConsultationDTO>> getConsultationsByStatus(@PathVariable String status) {
         List<HealthConsultation> consultations = healthConsultationService.getConsultationsByStatus(status);
         List<HealthConsultationDTO> consultationDTOs = consultations.stream()
@@ -48,9 +45,8 @@ public class HealthConsultationController {
         return new ResponseEntity<>(consultationDTOs, HttpStatus.OK);
     }
 
-    // Lấy tư vấn sức khỏe cho một học sinh cụ thể
+    // Get consultations for a specific student
     @GetMapping("/student/{studentId}")
-    @Operation(summary = "Lấy tư vấn sức khỏe cho một học sinh cụ thể")
     public ResponseEntity<List<HealthConsultationDTO>> getConsultationsByStudent(@PathVariable int studentId) {
         List<HealthConsultation> consultations = healthConsultationService.getConsultationsByStudent(studentId);
         List<HealthConsultationDTO> consultationDTOs = consultations.stream()
@@ -59,9 +55,8 @@ public class HealthConsultationController {
         return new ResponseEntity<>(consultationDTOs, HttpStatus.OK);
     }
 
-    // Tạo mới tư vấn sức khỏe
+    // Create a new consultation
     @PostMapping
-    @Operation(summary = "Tạo mới tư vấn sức khỏe")
     public ResponseEntity<HealthConsultationDTO> createConsultation(@RequestBody HealthConsultationDTO consultationDTO) {
         // Handle creator nurse info
         if (consultationDTO.getCreatedByNurseID() != null && consultationDTO.getCreatedByNurseID() > 0) {
@@ -87,10 +82,9 @@ public class HealthConsultationController {
         return new ResponseEntity<>(healthConsultationService.convertToDTO(createdConsultation), HttpStatus.CREATED);
     }
 
-    // Cập nhật tư vấn sức khỏe
+    // Update consultation
     @PutMapping("/{consultationId}")
-    @Operation(summary = "Cập nhật tư vấn sức khỏe")
-    public ResponseEntity<HealthConsultationUpdateDTO> updateConsultation(
+    public ResponseEntity<HealthConsultationDTO> updateConsultation(
             @PathVariable int consultationId,
             @RequestBody HealthConsultationUpdateDTO updateDTO) {
 
@@ -106,14 +100,10 @@ public class HealthConsultationController {
             consultationId,
             updateDTO.getStatus(),
             updateDTO.getReason(),
-            updateDTO.getLocation(),
-            updateDTO.getConsultDate(),
             updateDTO.getUpdatedByNurseID());
 
         if (updatedConsultation != null) {
-            // Convert to update DTO to return only the fields that were sent in request
-            HealthConsultationUpdateDTO responseDTO = healthConsultationService.convertToUpdateDTO(updatedConsultation);
-            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            return new ResponseEntity<>(healthConsultationService.convertToDTO(updatedConsultation), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

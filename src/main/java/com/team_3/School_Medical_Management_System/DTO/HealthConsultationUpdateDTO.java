@@ -7,11 +7,10 @@ import java.util.Date;
 public class HealthConsultationUpdateDTO {
     private int consultID;
     private int studentID;
-    private Date consultDate;
     private String studentName;
     private int checkID;
+    private Date scheduledDate;
     private String status;
-    private String location;
     private String reason;
 
     // Only update-related fields

@@ -2,7 +2,7 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_TypesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Types_Edit_DTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccine_TypesServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccine_TypesServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccine_TypesInterFace;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.transaction.Transactional;
