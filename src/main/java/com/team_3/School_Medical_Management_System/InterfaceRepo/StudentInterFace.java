@@ -24,4 +24,6 @@ public interface StudentInterFace {
     public Optional<Student> findById(int studentId);
 
     List<Student> findByClassName(String className);
+
+    public void setNullParentIDByParentID(int parentID);
 }

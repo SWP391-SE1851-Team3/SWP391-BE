@@ -216,5 +216,21 @@ public class Consent_formsRepo implements Consent_formsInterFace {
                 .getResultList();
     }
 
+    @Override
+    public void deleteConsentFormsByStudentId(int studentId) {
+        String jpql = "DELETE FROM Consent_forms c WHERE c.student.StudentID = :studentId";
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("studentId", studentId);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void deleteByConsent_FormByParentID(int parentId) {
+        String jpql = "DELETE FROM Consent_forms c WHERE c.parent.ParentID = :parentId";
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("parentId", parentId);
+        query.executeUpdate();
+    }
+
 
 }

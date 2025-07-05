@@ -1,5 +1,6 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
+import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import lombok.*;
 import org.aspectj.weaver.loadtime.definition.LightXMLParser;
@@ -27,17 +28,13 @@ public class MedicalEventDTO {
     private Integer updatedByNurseId; // Y tá cập nhật sự kiện
     private String updatedByNurseName;
     private String note;
-    // @RequestParam
-    private
-    String result;
-    // @RequestParam
-    private
-    String processingStatus;
-    //  @RequestParam
-    private
-    Integer eventTypeId;
+    private String result;
+    private String processingStatus;
+    private Integer eventTypeId;
 
-    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, Integer nurseId, String note, String result, String processingStatus, Integer eventTypeId) {
+    private List<MedicalSupplyQuantityDTO> medicalSupplies;
+
+    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, Integer nurseId, String nurseName, Integer updatedByNurseId, String updatedByNurseName, String note, String result, String processingStatus, Integer eventTypeId, List<MedicalSupplyQuantityDTO> medicalSupplies) {
         this.eventId = eventId;
         this.usageMethod = usageMethod;
         this.isEmergency = isEmergency;
@@ -49,10 +46,14 @@ public class MedicalEventDTO {
         this.studentId = studentId;
         this.typeName = typeName;
         this.nurseId = nurseId;
+        this.nurseName = nurseName;
+        this.updatedByNurseId = updatedByNurseId;
+        this.updatedByNurseName = updatedByNurseName;
         this.note = note;
         this.result = result;
         this.processingStatus = processingStatus;
         this.eventTypeId = eventTypeId;
+        this.medicalSupplies = medicalSupplies;
     }
 
     public MedicalEventDTO() {

@@ -28,6 +28,8 @@ public interface Consent_formsInterFace {
     public List<Consent_forms> getStatus();
     public List<Consent_forms> getDisStatus();
 
+public void deleteConsentFormsByStudentId(int studentId);
+  public  void deleteByConsent_FormByParentID(int parentId);
 
 
 

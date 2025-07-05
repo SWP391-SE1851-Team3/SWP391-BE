@@ -345,4 +345,12 @@ public class ConfirmMedicationSubmissionRepo implements ConfirmMedicationSubmiss
                 .setParameter("ids", submissionIds)
                 .getResultList();
     }
+
+    @Override
+    public void deleteByMedicationSubmissionId(int medicationSubmissionId) {
+        String jpql = "DELETE FROM ConfirmMedicationSubmission c WHERE c.medicationSubmissionId = :medicationSubmissionId";
+        entityManager.createQuery(jpql)
+                .setParameter("medicationSubmissionId", medicationSubmissionId)
+                .executeUpdate();
+    }
 }

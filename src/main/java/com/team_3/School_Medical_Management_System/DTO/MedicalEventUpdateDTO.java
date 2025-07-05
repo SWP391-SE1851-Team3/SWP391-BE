@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Transactional
 @Data
@@ -22,7 +23,9 @@ public class MedicalEventUpdateDTO {
     private String processingStatus;
      // Y tá cập nhật sự kiện
     private String nurseName;
-    //public MedicalEventUpdateDTO(Integer eventId, String usageMethod, Boolean isEmergency, Boolean
+
+    private List<MedicalSupplyQuantityDTO> medicalSupplies;
+
 
     public MedicalEventUpdateDTO() {
     }
