@@ -41,7 +41,8 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         MedicationSubmission submission = new MedicationSubmission();
         submission.setParentId(medicationSubmissionDTO.getParentId());
         submission.setStudentId(medicationSubmissionDTO.getStudentId());
-        submission.setMedicineImage(medicationSubmissionDTO.getMedicineImage());
+
+        // Không cần xử lý ảnh ở đây, sẽ upload riêng sau
 
         // Convert MedicationDetailDTO list to MedicationDetail
         if (medicationSubmissionDTO.getMedicationDetails() != null && !medicationSubmissionDTO.getMedicationDetails().isEmpty()) {
@@ -242,7 +243,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
             submission.getMedicationSubmissionId(),
             submission.getParentId(),
             submission.getStudentId(),
-            submission.getMedicineImage(),
+            null, // Không trả về medicineImage trong DTO này, sẽ có endpoint riêng để lấy ảnh
             nurseName,
             studentClass,
             medicationDetailDTOs,
@@ -252,5 +253,18 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         return detailsDTO;
     }
 
+    @Override
+    public MedicationSubmission updateMedicationSubmission(MedicationSubmission medicationSubmission) {
+        // Kiểm tra submission có tồn tại không
+        MedicationSubmission existingSubmission = medicationSubmissionInterFace.findById(medicationSubmission.getMedicationSubmissionId())
+                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + medicationSubmission.getMedicationSubmissionId()));
 
+        // Cập nhật field ảnh nếu có
+        if (medicationSubmission.getMedicineImage() != null) {
+            existingSubmission.setMedicineImage(medicationSubmission.getMedicineImage());
+        }
+
+        // Lưu và trả về submission đã cập nhật
+        return medicationSubmissionInterFace.save(existingSubmission);
+    }
 }
