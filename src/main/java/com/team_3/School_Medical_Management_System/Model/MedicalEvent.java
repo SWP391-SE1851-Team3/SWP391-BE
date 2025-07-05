@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,10 +25,7 @@ public class MedicalEvent {
     private Boolean isEmergency;
     @NotNull(message = "Thông báo phụ huynh không được để trống")
     private Boolean hasParentBeenInformed;
-    // @Pattern(regexp = "^(3[5-9]|[4-4][0-9]|50)(\\.\\d)?°C$", message = "Giá trị không hợp lệ. Vui lòng nhập giá trị từ 35 đến 50 độ C.")
-
     private String temperature;
-    //@Pattern(regexp = "^\\d{2,3}(\\s*(?:bpm|BPM))?$", message = "Nhịp tim không hợp lệ (ví dụ: 60, 75 bpm, 80BPM). Cho phép từ 60 đến 999 bpm.")
     private String heartRate;
     private LocalDateTime eventDateTime;
 
@@ -35,6 +33,7 @@ public class MedicalEvent {
     @ManyToOne
     @JoinColumn(name = "ParentID")
     private Parent parent;
+
     @ManyToOne
     @JoinColumn(name = "CreatedByNurseID")
     private SchoolNurse createdByNurse;
@@ -45,30 +44,19 @@ public class MedicalEvent {
 
 
     @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL)
-
-    private List<MedicalEvent_EventType> medicalEventEventTypes;
-
+    private List<MedicalEvent_EventType> medicalEventEventTypes = new ArrayList<>();
 
 
 
 
     @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MedicalSupply> medicalSupplies = new java.util.ArrayList<>();
+    private List<MedicalEventMedicalSupply> medicalEventMedicalSupplies = new ArrayList<>();
+
 
     public MedicalEvent() {
     }
 
-    public void add(MedicalSupply o) {
 
-        medicalSupplies.add(o);
-        o.setMedicalEvent(this);
-
-    }
-
-    public void remove(MedicalSupply o) {
-        medicalSupplies.remove(o);
-        o.setMedicalEvent(null);
-    }
 
 
     public MedicalEvent(String usageMethod, Boolean isEmergency, Boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime) {
@@ -79,6 +67,11 @@ public class MedicalEvent {
         this.heartRate = heartRate;
         this.eventDateTime = eventDateTime;
 
+    }
+
+    public void addMedicalSupply(MedicalSupply medicalSupply, Integer quantityUsed) {
+        MedicalEventMedicalSupply link = new MedicalEventMedicalSupply(this, medicalSupply, quantityUsed);
+        medicalEventMedicalSupplies.add(link);
     }
 
 }

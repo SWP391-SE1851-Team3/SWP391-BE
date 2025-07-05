@@ -46,5 +46,14 @@ public class MedicalSupplyRepo implements MedicalSupplyRepository {
                 .getSingleResult();
     }
 
+    @Override
+    public void save(MedicalSupply m) {
+        entityManager.getTransaction().begin();
+        entityManager.merge(m); // Cập nhật MedicalSupply đã tồn tại
+
+        entityManager.getTransaction().commit();
+
+    }
+
 
 }

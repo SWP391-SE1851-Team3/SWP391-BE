@@ -10,6 +10,8 @@ public interface MedicalSupplyRepository {
     public   List<MedicalSupply> findByCategoryCategoryId(Integer categoryId);
     public List<MedicalSupply> findAll();// lấy tất cả MedicalSupply
 
-    public MedicalSupply findById(Integer id); // tìm MedicalSupply theo id
+    public MedicalSupply findById(Integer id);
+
+    public  void save(MedicalSupply m);// tìm MedicalSupply theo id
 
 }

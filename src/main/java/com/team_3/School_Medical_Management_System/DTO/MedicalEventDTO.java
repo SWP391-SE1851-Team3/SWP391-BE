@@ -32,10 +32,9 @@ public class MedicalEventDTO {
     private String processingStatus;
     private Integer eventTypeId;
 
-    private List<MedicalSupply> medicalSupplies; // Danh sách vật tư y tế liên quan đến sự kiện
-    private int quantity;
+    private List<MedicalSupplyQuantityDTO> medicalSupplies;
 
-    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, Integer nurseId, String nurseName, Integer updatedByNurseId, String updatedByNurseName, String note, String result, String processingStatus, Integer eventTypeId, List<MedicalSupply> medicalSupplies, int quantity) {
+    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, Integer nurseId, String nurseName, Integer updatedByNurseId, String updatedByNurseName, String note, String result, String processingStatus, Integer eventTypeId, List<MedicalSupplyQuantityDTO> medicalSupplies) {
         this.eventId = eventId;
         this.usageMethod = usageMethod;
         this.isEmergency = isEmergency;
@@ -55,7 +54,6 @@ public class MedicalEventDTO {
         this.processingStatus = processingStatus;
         this.eventTypeId = eventTypeId;
         this.medicalSupplies = medicalSupplies;
-        this.quantity = quantity;
     }
 
     public MedicalEventDTO() {

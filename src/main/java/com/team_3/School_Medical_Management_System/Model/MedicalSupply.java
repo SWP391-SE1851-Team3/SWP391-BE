@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -39,15 +41,15 @@ public class MedicalSupply {
     @ManyToOne
     @JoinColumn(name = "BatchID")
     private Vaccine_Batches vaccineBatch;
-    @ManyToOne
-    @JoinColumn(name = "EventID")
-    private MedicalEvent medicalEvent;
+
 
     @ManyToOne
     @JoinColumn(name = "CheckID")
     private HealthCheck_Student healthCheckStudent;
 
-    // Self-referential relationship for hierarchical structure
+    @OneToMany(mappedBy = "medicalSupply", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MedicalEventMedicalSupply> medicalEventMedicalSupplies = new ArrayList<>();
+
     public MedicalSupply() {
     }
 
@@ -61,7 +63,7 @@ public class MedicalSupply {
         this.dateAdded = dateAdded;
         this.category = category;
         this.vaccineBatch = vaccineBatch;
-        this.medicalEvent = medicalEvent;
+
         this.healthCheckStudent = healthCheckStudent;
     }
 }

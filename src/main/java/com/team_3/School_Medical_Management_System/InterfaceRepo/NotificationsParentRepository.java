@@ -14,8 +14,4 @@ public interface NotificationsParentRepository extends JpaRepository<Notificatio
     List<NotificationsParent> findByParent(Parent parent);
     List<NotificationsParent> findByParentAndStatus(Parent parent, boolean status);
 
-    @Modifying
-    // Xóa tất cả thông báo của phụ huynh theo ParentID
-    @Query("DELETE FROM NotificationsParent n WHERE n.parent.ParentID = :parentId")
-   public void deleteByParentId (@Param("parentId") int parentId);
 }
