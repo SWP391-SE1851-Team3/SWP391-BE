@@ -1,22 +1,27 @@
 package com.team_3.School_Medical_Management_System.Service;
 
+
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ManagerServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ManagerServiceInterFace;
+
+
+import com.team_3.School_Medical_Management_System.DTO.ManagerDTO;
+import com.team_3.School_Medical_Management_System.DTO.UserDTO;
+
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
-import com.team_3.School_Medical_Management_System.Repositories.Post_vaccination_observationsRepo;
 import com.team_3.School_Medical_Management_System.Repositories.SchoolNurseRepo;
 import com.team_3.School_Medical_Management_System.Repositories.StudentRepo;
 import jakarta.transaction.Transactional;
-import org.jetbrains.annotations.ApiStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -135,8 +140,22 @@ public class ManagerService implements ManagerServiceInterFace {
 
         switch (userDTO.getRoleId()) {
 
-            case 1: // Parent
-                Parent p = new Parent();
+
+
+
+                case 1: // Parent
+                    Parent p = new Parent();
+                    //  ParentDTO parentDTO = new ParentDTO();
+                    p.setUserName(userDTO.getUserName());
+                    p.setPassword(userDTO.getPassword());
+                    p.setFullName(userDTO.getFullName());
+                    p.setPhone(userDTO.getPhone());
+                    p.setEmail(userDTO.getEmail());
+                    p.setIsActive(userDTO.getIsActive());
+                    p.setOccupation(userDTO.getOccupation());
+                    p.setRelationship(userDTO.getRelationship());
+                    p.setRoleID(userDTO.getRoleId());
+
 
                 p.setUserName(userDTO.getUserName());
                 p.setPassword(userDTO.getPassword());

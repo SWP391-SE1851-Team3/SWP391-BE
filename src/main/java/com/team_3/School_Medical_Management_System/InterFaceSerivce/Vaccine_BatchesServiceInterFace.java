@@ -1,4 +1,4 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
+package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
@@ -12,4 +12,5 @@ public interface Vaccine_BatchesServiceInterFace {
     public Vaccine_Batches_EditDTO UpdateVaccinebatch(Vaccine_Batches_EditDTO dto);
     public Vaccine_BatchesDTO getVaccineByID(Integer vaccineID);
     public boolean updateConsentFormStatus(int consentFormId, String status);
+//    public void administerVaccine(int vaccineId, int doseCount);
 }

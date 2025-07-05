@@ -19,7 +19,10 @@ public class HealthConsultation {
     private int consultID;
     private int studentID;
     private int  checkID;
-    private String status; // false = pending, true = completed
+    @Column(name = "Consult_Date")
+    private Date consultDate;
+    private String status;
+    private String location;// false = pending, true = completed
     private String reason;
 
     // Added fields for tracking creation and updates

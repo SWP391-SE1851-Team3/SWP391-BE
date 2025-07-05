@@ -3,7 +3,6 @@ package com.team_3.School_Medical_Management_System.TransferModelsDTO;
 import com.team_3.School_Medical_Management_System.DTO.*;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.Model.*;
-import jakarta.validation.Valid;
 
 public class TransferModelsDTO {
 
@@ -144,6 +143,13 @@ public class TransferModelsDTO {
         Vaccination_recordsDTO dto = new Vaccination_recordsDTO();
 
         // Vaccine info
+        if(vaccination_records.getConsentForm() != null) {
+            dto.setConsentId(vaccination_records.getConsentForm().getConsent_id());
+        }else {
+            dto.setConsentId(null);
+        }
+
+
         if (vaccination_records.getVaccineBatches() != null &&
                 vaccination_records.getVaccineBatches().getVaccineType() != null) {
             dto.setVaccineName(vaccination_records.getVaccineBatches().getVaccineType().getName());
@@ -436,6 +442,8 @@ public class TransferModelsDTO {
         viewDTO.setConsent_id(consent_forms.getConsent_id());
         viewDTO.setStatus(consent_forms.getStatus());
         viewDTO.setLocation(consent_forms.getVaccineBatches().getLocation());
+        viewDTO.setBacthID(consent_forms.getVaccineBatches().getBatchID());
+
 
         return viewDTO;
     }
@@ -449,6 +457,12 @@ public class TransferModelsDTO {
         dto.setObservation_notes(entity.getObservation_notes());
         dto.setObservation_time(entity.getObservation_time());
         dto.setStatus(entity.getStatus());
+
+        if(entity.getConsentForm() != null) {
+            dto.setCosentID(entity.getConsentForm().getConsent_id());
+        }else{
+            dto.setCosentID(null);
+        }
 
         // Student mapping
         if (entity.getStudent() != null) {
@@ -482,7 +496,6 @@ public class TransferModelsDTO {
                 dto.setVaccineBatchName(entity.getVaccineBatches().getVaccineType().getName());
             }
         }
-
         return dto;
     }
 
@@ -497,11 +510,13 @@ public class TransferModelsDTO {
         dto.setObservation_time(record.getObservation_time());
         dto.setStatus(record.getStatus());
 
+        if(record.getConsentForm() != null) {
+            dto.setConsentId(record.getConsentForm().getConsent_id());
+        }else{
+            dto.setConsentId(null);
+        }
         if (record.getStudent() != null) {
             dto.setStudentId(record.getStudent().getStudentID());
-            dto.setClassName(record.getStudent().getClassName());
-            dto.setStudentName(record.getStudent().getFullName());
-
             if (record.getStudent().getParent() != null) {
                 Parent parent = record.getStudent().getParent();
                 dto.setParentID(parent.getParentID());
@@ -518,13 +533,15 @@ public class TransferModelsDTO {
             dto.setEditNurseName(null);
 
         }
-
-        if (record.getVaccineBatches() != null) {
+        if(record.getCreatedByNurse() != null) {
+            dto.setCreateNurseID(record.getCreatedByNurse().getNurseID());
+            dto.setCreateNurseName(record.getCreatedByNurse().getFullName());
+        }else {
+            dto.setCreateNurseID(null);
+            dto.setCreateNurseName(null);
+        }
+        if(record.getVaccineBatches() != null) {
             dto.setVaccineBatchId(record.getVaccineBatches().getBatchID());
-
-            if (record.getVaccineBatches().getVaccineType() != null) {
-                dto.setVaccineBatchName(record.getVaccineBatches().getVaccineType().getName());
-            }
         }
 
         return dto;
@@ -556,8 +573,6 @@ public class TransferModelsDTO {
             postDTO.setEditNurseID(null);
             postDTO.setEditNurseName(null);
         }
-
-
         postDTO.setVaccinationRecordID(entity.getVaccination_records().getVaccinationRecordID());
         postDTO.setVaccinationName(entity.getVaccination_records().getVaccineBatches().getVaccineType().getName());
         postDTO.setVaccinationID(entity.getVaccination_records().getVaccineBatches().getBatchID());
@@ -574,7 +589,7 @@ public class TransferModelsDTO {
         postDTO.setNotes(dto.getNotes());
         postDTO.setSymptoms(dto.getSymptoms());
         postDTO.setSeverity(dto.getSeverity());
-//        postDTO.setObservation_id(dto.getObservation_id());
+//      postDTO.setObservation_id(dto.getObservation_id());
         postDTO.setObservation_time(dto.getObservation_time());
         postDTO.setStatus(dto.getStatus());
 
@@ -767,8 +782,56 @@ public class TransferModelsDTO {
 
         return dto;
     }
+    public static MedicalSupplyDTO mapMedicalSupplyDTO(MedicalSupply entity) {
+        MedicalSupplyDTO dto = new MedicalSupplyDTO();
+        dto.setMedicalSupplyID(entity.getMedicalSupplyID());
+        dto.setSupplyName(entity.getSupplyName());
+        dto.setUnit(entity.getUnit());
+        dto.setQuantityAvailable(entity.getQuantityAvailable());
+        dto.setReorderLevel(entity.getReorderLevel());
+        dto.setStorageTemperature(entity.getStorageTemperature());
+        dto.setDateAdded(entity.getDateAdded());
+
+        if (entity.getVaccineType() != null) {
+            dto.setVaccineTypeID(entity.getVaccineType().getVaccineTypeID());
+        }
+        if (entity.getHealthCheck() != null) {
+            dto.setHealthCheckId(entity.getHealthCheck().getCheckID());
+        }
+        if(entity.getSupplyCategory() != null) {
+            dto.setCategoryID(entity.getSupplyCategory().getCategoryID());
+        }
 
 
 
+        return dto;
+    }
+    public static MedicalSupply mapToMedicalSupply(MedicalSupplyDTO dto) {
+        MedicalSupply supply = new MedicalSupply();
+        supply.setMedicalSupplyID(dto.getMedicalSupplyID());
+        supply.setSupplyName(dto.getSupplyName());
+        supply.setUnit(dto.getUnit());
+        supply.setQuantityAvailable(dto.getQuantityAvailable());
+        supply.setReorderLevel(dto.getReorderLevel());
+        supply.setStorageTemperature(dto.getStorageTemperature());
+        supply.setDateAdded(dto.getDateAdded());
+        if (dto.getVaccineTypeID() != null) {
+            Vaccine_Types type = new Vaccine_Types();
+            type.setVaccineTypeID(dto.getVaccineTypeID());
+            supply.setVaccineType(type);
+        }
+        if (dto.getHealthCheckId() != null) {
+            HealthCheck_Student hc = new HealthCheck_Student();
+            hc.setCheckID(dto.getHealthCheckId());
+            supply.setHealthCheck(hc);
+        }
+
+        if(dto.getCategoryID() != null) {
+            SupplyCategory supplyCategory = new SupplyCategory();
+            supplyCategory.setCategoryID(dto.getCategoryID());
+            supply.setSupplyCategory(supplyCategory);
+        }
+        return supply;
+    }
 
 }

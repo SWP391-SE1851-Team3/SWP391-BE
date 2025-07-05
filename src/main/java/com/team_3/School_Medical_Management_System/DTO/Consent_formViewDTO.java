@@ -3,8 +3,7 @@ package com.team_3.School_Medical_Management_System.DTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-import java.security.PrivateKey;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,6 +26,7 @@ public class Consent_formViewDTO {
     private LocalDateTime send_date;
     private LocalDateTime expire_date;
     private String status;
+    private Integer bacthID;
 
 
 

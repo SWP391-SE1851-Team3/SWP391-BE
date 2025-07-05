@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationDTO;
+import com.team_3.School_Medical_Management_System.DTO.HealthConsultationUpdateDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class HealthConsultationService {
 
     @Autowired
     private SchoolNurseInterFace schoolNurseRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     // Helper method to get nurse name by ID
     public String getNurseNameById(Integer nurseId) {
@@ -58,7 +62,7 @@ public class HealthConsultationService {
     }
 
     // Update consultation status
-    public HealthConsultation updateConsultationStatus(int consultationId, String status, String notes, Integer updatedByNurseID) {
+    public HealthConsultation updateConsultationStatus(int consultationId, String status, String notes, String location, Date consultDate, Integer updatedByNurseID) {
         Optional<HealthConsultation> optionalConsultation = healthConsultationRepository.findById(consultationId);
 
         if (optionalConsultation.isPresent()) {
@@ -67,17 +71,15 @@ public class HealthConsultationService {
             if (notes != null && !notes.isEmpty()) {
                 consultation.setReason(notes);
             }
-
+            if (location != null && !location.isEmpty()) {
+                consultation.setLocation(location);
+            }
+            consultation.setConsultDate(consultDate);
             // Set update information
             consultation.setUpdate_at(new Date());
             consultation.setUpdatedByNurseID(updatedByNurseID);
 
             HealthConsultation updatedConsultation = healthConsultationRepository.save(consultation);
-
-            // If consultation is completed, notify the parent
-            if (status.equals("completed")) {
-                notifyParentAboutCompletedConsultation(updatedConsultation);
-            }
 
             return updatedConsultation;
         }
@@ -85,8 +87,8 @@ public class HealthConsultationService {
         return null;
     }
 
-    // Notify parent about completed consultation
-    private void notifyParentAboutCompletedConsultation(HealthConsultation consultation) {
+    // Notify parent about consultation invitation (make it public for external use)
+    public void notifyParentAboutConsultationInvitation(HealthConsultation consultation) {
         // Get the student using studentID
         Optional<Student> studentOpt = studentRepository.findById(consultation.getStudentID());
 
@@ -96,15 +98,33 @@ public class HealthConsultationService {
             if (student.getParent() != null) {
                 NotificationsParent notification = new NotificationsParent();
                 notification.setParent(student.getParent());
-                notification.setTitle("Tư vấn y tế đã hoàn thành");
-
-                String content = "Buổi tư vấn y tế cho " + student.getFullName() + " đã hoàn thành.\n";
+                notification.setTitle("Mời tư vấn y tế");
+                String title = "Mời tư vấn y tế cho " + student.getFullName();
+                String content = "Con em cần được tư vấn y tế vì lý do: " + consultation.getReason() +
+                        ". Vui lòng sắp xếp thời gian để tham gia buổi tư vấn với đội ngũ y tế của trường.";
+                if (consultation.getLocation() != null && !consultation.getLocation().isEmpty()) {
+                    content += "\nĐịa điểm: " + consultation.getLocation();
+                }
+                if (consultation.getConsultDate() != null) {
+                    content += "\nThời gian dự kiến: " + consultation.getConsultDate();
+                }
 
                 notification.setContent(content);
                 notification.setCreateAt(LocalDateTime.now());
                 notification.setStatus(false);
 
                 notificationsParentRepository.save(notification);
+                try {
+                    // Gửi email mời tư vấn
+                    emailService.sendHtmlNotificationEmailForHealthCheckConsultation(
+                            student.getParent(),
+                            title,
+                            content,
+                            notification.getNotificationId()
+                    );
+                } catch (Exception e) {
+                    throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+                }
             }
         }
     }
@@ -122,9 +142,10 @@ public class HealthConsultationService {
             dto.setStudentName(student.getFullName());
             dto.setClassName(student.getClassName());
         }
-
+        dto.setConsultDate(consultation.getConsultDate());
         dto.setCheckID(consultation.getCheckID());
         dto.setStatus(consultation.getStatus());
+        dto.setLocation(consultation.getLocation());
         dto.setReason(consultation.getReason());
 
         // Set nurse tracking fields
@@ -140,6 +161,26 @@ public class HealthConsultationService {
         return dto;
     }
 
+    public HealthConsultationUpdateDTO convertToUpdateDTO(HealthConsultation consultation) {
+        HealthConsultationUpdateDTO dto = new HealthConsultationUpdateDTO();
+        dto.setConsultID(consultation.getConsultID());
+        dto.setStudentID(consultation.getStudentID());
+        dto.setConsultDate(consultation.getConsultDate());
+        Optional<Student> studentOpt = studentRepository.findById(consultation.getStudentID());
+        if (studentOpt.isPresent()) {
+            Student student = studentOpt.get();
+            dto.setStudentName(student.getFullName());
+        }
+        dto.setCheckID(consultation.getCheckID());
+        dto.setStatus(consultation.getStatus());
+        dto.setLocation(consultation.getLocation());
+        dto.setReason(consultation.getReason());
+        dto.setUpdate_at(consultation.getUpdate_at());
+        // Sử dụng getNurseNameById để lấy tên y tá từ ID
+        dto.setUpdatedByNurseName(getNurseNameById(consultation.getUpdatedByNurseID()));
+        dto.setUpdatedByNurseID(consultation.getUpdatedByNurseID());
+        return dto;
+    }
     // Create a new consultation
     public HealthConsultation createConsultation(HealthConsultationDTO dto) {
         Optional<Student> studentOpt = studentRepository.findById(dto.getStudentID());
@@ -152,7 +193,8 @@ public class HealthConsultationService {
         consultation.setCheckID(dto.getCheckID());
         consultation.setStatus(dto.getStatus() != null ? dto.getStatus() : "pending");
         consultation.setReason(dto.getReason());
-
+        consultation.setLocation(dto.getLocation());
+        consultation.setConsultDate(dto.getConsultDate());
         // Set creation information
         consultation.setCreate_at(new Date());
         consultation.setCreatedByNurseID(dto.getCreatedByNurseID());
@@ -163,7 +205,11 @@ public class HealthConsultationService {
             consultation.setUpdatedByNurseID(dto.getUpdatedByNurseID());
         }
 
+        // Notify parent about the new consultation invitation
+        notifyParentAboutConsultationInvitation(consultation);
+
         return healthConsultationRepository.save(consultation);
+
     }
 
     // Get a consultation by ID

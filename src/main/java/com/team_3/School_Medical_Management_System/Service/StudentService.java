@@ -2,7 +2,7 @@ package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.DTO.StudentsDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
 import com.team_3.School_Medical_Management_System.Model.Student;
@@ -39,7 +39,7 @@ public class StudentService implements StudentServiceInterFace {
     }
 
     @Override
-    public void removeStudent(int id) {
+    public void removeStudent(Integer id) {
         var p = getStudent(id);
         if (p != null) {
             studentInterFace.removeStudent(id);
@@ -49,7 +49,7 @@ public class StudentService implements StudentServiceInterFace {
     }
 
     @Override
-    public Student getStudent(int id) {
+    public Student getStudent(Integer id) {
         return studentInterFace.getStudent(id);
     }
 

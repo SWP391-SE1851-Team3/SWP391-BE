@@ -19,7 +19,8 @@ public class HealthConsentForm {
     private int formID;
     private int studentID;
     private int parentID;
-    private int health_ScheduleID;
+    @Column(name = "health_ScheduleID")
+    private int healthScheduleID;
     private String isAgreed;
     private String notes;
     private Date send_date;

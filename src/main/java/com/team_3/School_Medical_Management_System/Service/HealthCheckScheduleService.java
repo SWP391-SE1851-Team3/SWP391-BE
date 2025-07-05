@@ -41,7 +41,7 @@ public class HealthCheckScheduleService {
         healthCheckSchedule.setSchedule_Date(healthCheckScheduleDTO.getSchedule_Date());
         healthCheckSchedule.setLocation(healthCheckScheduleDTO.getLocation());
         healthCheckSchedule.setNotes(healthCheckScheduleDTO.getNotes());
-        healthCheckSchedule.setStatus(healthCheckScheduleDTO.getStatus());
+        healthCheckSchedule.setStatus("Đã lên lịch");
 
         // Set creation information
         healthCheckSchedule.setCreate_at(new Date());
@@ -125,10 +125,6 @@ public class HealthCheckScheduleService {
             schedule.setUpdate_at(new Date());
             schedule.setUpdatedByNurseID(dto.getUpdatedByNurseID());
             schedule.setUpdatedByNurseName(dto.getUpdatedByNurseName());
-
-            // IMPORTANT: Do not change the createdByNurseID and createdByNurseName values
-            // The original creation information is maintained
-
             return healthCheckScheduleRepository.save(schedule);
         }
         return null;

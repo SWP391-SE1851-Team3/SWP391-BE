@@ -1,75 +1,73 @@
 package com.team_3.School_Medical_Management_System.DTO;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-
-
 public class StudentsDTO {
-    private int studentID;
-    private int gender;
 
-    private String fullName;
+        private int studentID;
+        private int gender;
 
-    private String className;
-    private int isActive;
-    private int parentID;
+        private String fullName;
 
-    public int getStudentID() {
-        return studentID;
-    }
+        private String className;
+        private int isActive;
+        private int parentID;
 
-    public void setStudentID(int studentID) {
-        this.studentID = studentID;
-    }
+        public int getStudentID() {
+            return studentID;
+        }
 
-    public int getGender() {
-        return gender;
-    }
+        public void setStudentID(int studentID) {
+            this.studentID = studentID;
+        }
 
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
+        public int getGender() {
+            return gender;
+        }
 
-    public String getFullName() {
-        return fullName;
-    }
+        public void setGender(int gender) {
+            this.gender = gender;
+        }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+        public String getFullName() {
+            return fullName;
+        }
 
-    public String getClassName() {
-        return className;
-    }
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
 
-    public void setClassName(String className) {
-        this.className = className;
-    }
+        public String getClassName() {
+            return className;
+        }
 
-    public int getIsActive() {
-        return isActive;
-    }
+        public void setClassName(String className) {
+            this.className = className;
+        }
 
-    public void setIsActive(int isActive) {
-        this.isActive = isActive;
-    }
+        public int getIsActive() {
+            return isActive;
+        }
 
-    public int getParentID() {
-        return parentID;
-    }
+        public void setIsActive(int isActive) {
+            this.isActive = isActive;
+        }
 
-    public void setParentID(int parentID) {
-        this.parentID = parentID;
-    }
+        public int getParentID() {
+            return parentID;
+        }
 
-    public StudentsDTO(int studentID, int gender, String fullName, String className, int isActive, int parentID) {
-        this.studentID = studentID;
-        this.gender = gender;
-        this.fullName = fullName;
-        this.className = className;
-        this.isActive = isActive;
-        this.parentID = parentID;
-    }
-    public StudentsDTO() {
-    }
+        public void setParentID(int parentID) {
+            this.parentID = parentID;
+        }
+
+        public StudentsDTO(int studentID, int gender, String fullName, String className, int isActive, int parentID) {
+            this.studentID = studentID;
+            this.gender = gender;
+            this.fullName = fullName;
+            this.className = className;
+            this.isActive = isActive;
+            this.parentID = parentID;
+        }
+        public StudentsDTO() {
+        }
+
 }

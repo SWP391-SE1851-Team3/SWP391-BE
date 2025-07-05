@@ -2,10 +2,11 @@ package com.team_3.School_Medical_Management_System.DTO;
 
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ConsentFormRequestDTO {
-    private String className;
+    private List<String> className;
     private int healthScheduleId;
     private Date sendDate;
     private Date expireDate;
