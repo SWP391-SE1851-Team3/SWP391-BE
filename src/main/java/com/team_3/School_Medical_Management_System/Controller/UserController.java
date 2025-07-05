@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.SchoolNurseDTO;
 import com.team_3.School_Medical_Management_System.DTO.UserDTO;
+import com.team_3.School_Medical_Management_System.DTO.UserUpdateDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseRepository;
 import com.team_3.School_Medical_Management_System.Model.Role;
@@ -22,6 +23,7 @@ public class UserController {
     private RoleService roleService;
     @Autowired
     private ManagerService managerService;
+
     private ParentRepository parentRepository;
     private SchoolNurseRepository schoolNurseRepository;
 
@@ -34,15 +36,15 @@ public class UserController {
 
     @PostMapping("/createUser")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
-            return ResponseEntity.ok(managerService.createUser(userDTO));
+        return ResponseEntity.ok(managerService.createUser(userDTO));
 
     }
 
 
 
 
-    @PutMapping("/updateUser/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable int id,@PathVariable int roleId, @RequestBody UserDTO userDTO) {
+    @PutMapping("/updateUser/{id}/{roleId}")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @PathVariable int roleId, @RequestBody UserUpdateDTO userDTO) {
 
         return ResponseEntity.ok(managerService.updateUser(id,roleId,userDTO));
     }
@@ -59,7 +61,7 @@ public class UserController {
     public  ResponseEntity<List<Role>> getAllRole() {
         List<Role> roles = new ArrayList<>();
 
-            roles = roleService.getAllRoles();
+        roles = roleService.getAllRoles();
         return ResponseEntity.ok(roles);
     }
 }

@@ -89,4 +89,12 @@ public class StudentRepo implements StudentInterFace {
                 .getResultList();
     }
 
+    @Override
+    public void setNullParentIDByParentID(int parentID) {
+        String sql = "UPDATE Student s SET s.parent = NULL WHERE s.parent.ParentID = :ParentID";
+        entityManager.createQuery(sql)
+                .setParameter("ParentID", parentID)
+                .executeUpdate();
+    }
+
 }

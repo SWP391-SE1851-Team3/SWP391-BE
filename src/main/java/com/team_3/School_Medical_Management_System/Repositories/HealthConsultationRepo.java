@@ -44,6 +44,11 @@ public class HealthConsultationRepo implements HealthConsultationRepository {
                 .getResultList();
     }
 
+
+
+
+
+
     @Override
     public void flush() {
         entityManager.flush();

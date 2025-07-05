@@ -101,6 +101,7 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
                 .getResultList();
     }
 
+
     @Override
     public StudentVaccinationDTO updateStudentFollowedbyNurse(StudentVaccinationDTO studentVaccinationDTO) {
         var query = getVaccination_records_by_id(studentVaccinationDTO.getRecordId());
@@ -113,5 +114,6 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
         }
         return null;
     }
+
 
 }

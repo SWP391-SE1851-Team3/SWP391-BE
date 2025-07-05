@@ -1,41 +1,91 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicalSupplyServiceInterFace;
-import com.team_3.School_Medical_Management_System.Repositories.MedicalSupplyRepo;
-import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
-import jakarta.transaction.Transactional;
+
+import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyReportDTO;
+import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalSupplyRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.SupplyCategoryRepo;
+import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
+import com.team_3.School_Medical_Management_System.Model.SupplyCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@Transactional
-public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
-    private MedicalSupplyRepo medicalSupplyRepo;
+public class MedicalSupplyService {
+    private SupplyCategoryRepo supplyCategory;
+    private MedicalSupplyRepository medicalSupplyRepository;
+
     @Autowired
-    public MedicalSupplyService(MedicalSupplyRepo medicalSupplyRepo) {
-        this.medicalSupplyRepo = medicalSupplyRepo;
-    }
-    @Override
-    public List<MedicalSupplyDTO> getAllMedicalSupply() {
-       var p = medicalSupplyRepo.getAllMedicalSupply();
-       return p.stream().map(TransferModelsDTO :: mapMedicalSupplyDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public MedicalSupplyDTO addMedicalSupply(MedicalSupplyDTO ms) {
-      var p =   medicalSupplyRepo.addMedicalSupply(TransferModelsDTO.mapToMedicalSupply(ms));
-        return TransferModelsDTO.mapMedicalSupplyDTO(p);
 
 
+    public MedicalSupplyService(SupplyCategoryRepo supplyCategory, MedicalSupplyRepository medicalSupplyRepository) {
+        this.supplyCategory = supplyCategory;
+        this.medicalSupplyRepository = medicalSupplyRepository;
     }
 
-    @Override
-    public MedicalSupplyDTO updateMedicalSupply(MedicalSupplyDTO ms) {
-        var p =   medicalSupplyRepo.updateMedicalSupply(TransferModelsDTO.mapToMedicalSupply(ms));
-        return TransferModelsDTO.mapMedicalSupplyDTO(p);
+
+    public List<MedicalSupplyReportDTO> getMedicalSupplyReport(Integer categoryId) {
+        // Lấy danh sách vật tư từ repository
+        List<MedicalSupply> supplies;
+        if (categoryId == null) {
+            supplies = medicalSupplyRepository.findAll();
+        } else {
+            supplies = medicalSupplyRepository.findByCategoryCategoryId(categoryId);
+        }
+
+        // Chuyển đổi danh sách vật tư sang DTO bằng vòng lặp for
+        List<MedicalSupplyReportDTO> report = new ArrayList<>();
+        for (MedicalSupply supply : supplies) {
+            MedicalSupplyReportDTO dto = toReportDTO(supply);
+            report.add(dto);
+        }
+
+        return report;
     }
+
+    public List<MedicalSupplyReportDTO> getLowStockReport() {
+        // Lấy danh sách vật tư dưới mức đặt hàng lại từ repository
+        List<MedicalSupply> lowStockSupplies = medicalSupplyRepository.findByQuantityAvailableLessThanReorderLevel();
+
+        // Chuyển đổi danh sách sang DTO bằng vòng lặp for
+        List<MedicalSupplyReportDTO> report = new ArrayList<>();
+        for (MedicalSupply supply : lowStockSupplies) {
+            MedicalSupplyReportDTO dto = toReportDTO(supply);
+            report.add(dto);
+        }
+
+        return report;
+    }
+
+    private MedicalSupplyReportDTO toReportDTO(MedicalSupply supply) {
+        MedicalSupplyReportDTO dto = new MedicalSupplyReportDTO();
+        dto.setSupplyName(supply.getSupplyName());
+        // Kiểm tra null để tránh lỗi khi danh mục không tồn tại
+        dto.setCategoryName(supply.getCategory() != null ? supply.getCategory().getCategoryName() : "Không xác định");
+        dto.setUnit(supply.getUnit());
+        dto.setQuantityAvailable(supply.getQuantityAvailable());
+        dto.setReorderLevel(supply.getReorderLevel());
+        // Kiểm tra xem số lượng có dưới mức đặt hàng lại không
+        dto.setIsBelowReorderLevel(supply.getQuantityAvailable() < supply.getReorderLevel());
+        dto.setDateAdded(supply.getDateAdded());
+        return dto;
+    }
+
+    public List<SupplyCategoryDTO> getAllCategories() {
+
+        List<SupplyCategory> list = supplyCategory.findAll();
+        List<SupplyCategoryDTO> dto = new ArrayList<>();
+        for (SupplyCategory category : list) {
+            SupplyCategoryDTO d = new SupplyCategoryDTO();
+            d.setId(category.getCategoryID());
+            d.setCategoryName(category.getCategoryName());
+            dto.add(d);
+        }
+        return dto;
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Repositories;
 
 import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthCheckStudentRepository;
+
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
 import jakarta.persistence.EntityManager;
@@ -17,16 +18,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+
 @Repository
 @Transactional
 public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
 
     private final EntityManager entityManager;
 
+
     @Autowired
     public HealthCheckStudentRepo(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
+
+
+
 
     @Override
     public List<HealthCheck_Student> findByStudent_StudentID(int studentID) {
@@ -245,5 +251,6 @@ public class HealthCheckStudentRepo implements HealthCheckStudentRepository {
             // Return null if no results found or any other error
             return null;
         }
+
     }
 }

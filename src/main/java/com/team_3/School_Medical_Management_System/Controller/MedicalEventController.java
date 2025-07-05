@@ -55,8 +55,8 @@ public class MedicalEventController {
         return ResponseEntity.ok(r);
     }
 
-
-    @GetMapping("/all")
+    @Operation(summary = "Xem tất cả loại sự có y tế")
+    @GetMapping("/getAllEventTypeName")
     public ResponseEntity<List<MedicalEventType>> getAllEventTypes() {
         List<MedicalEventType> eventTypes = medicalEventTypeRepo.findAll();
 
