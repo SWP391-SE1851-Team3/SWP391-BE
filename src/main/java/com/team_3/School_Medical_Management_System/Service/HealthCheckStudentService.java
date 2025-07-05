@@ -115,7 +115,7 @@ public class HealthCheckStudentService {
                 HealthConsultation consultation = new HealthConsultation();
                 consultation.setStudentID(healthCheckResult.getStudentID());
                 consultation.setCheckID(healthCheckResult.getCheckID());
-                consultation.setStatus("Cần tư vấn y tế");
+                consultation.setStatus("Chờ lên lịch");
                 consultation.setReason("Cần tư vấn y tế theo đánh giá của y tá");
                 consultation.setCreate_at(new Date());
                 consultation.setCreatedByNurseID(healthCheckResult.getCreatedByNurseID());
@@ -123,8 +123,6 @@ public class HealthCheckStudentService {
                 // Save consultation và gửi thông báo mời tư vấn
                 HealthConsultation savedConsultation = healthConsultationService.save(consultation);
 
-                // Gửi thông báo mời tư vấn cho phụ huynh
-                healthConsultationService.notifyParentAboutConsultationInvitation(savedConsultation);
 
             } catch (Exception e) {
                 // Log error but don't break the flow
@@ -145,23 +143,51 @@ public class HealthCheckStudentService {
                 notification.setParent(student.getParent());
                 notification.setTitle("Kết quả kiểm tra sức khỏe");
 
-                String tittle = "Kết quả kiểm tra sức khỏe của " + student.getFullName();
+                String title = "Kết quả kiểm tra sức khỏe của " + student.getFullName();
+
+                // Tạo content đẹp hơn với format rõ ràng cho HTML email
                 StringBuilder content = new StringBuilder();
-                content.append("Kết quả kiểm tra sức khỏe của ")
-                        .append(student.getFullName())
-                        .append(":\n")
-                        .append("- Chiều cao: ").append(healthCheckResult.getHeight()).append(" cm\n")
-                        .append("- Cân nặng: ").append(healthCheckResult.getWeight()).append(" kg\n")
-                        .append("- BMI: ").append(String.format("%.1f", healthCheckResult.getBmi())).append("\n")
-                        .append("- Thị lực (trái/phải): ").append(healthCheckResult.getVisionLeft()).append("/").append(healthCheckResult.getVisionRight()).append("\n")
-                        .append("- Thính lực: ").append(healthCheckResult.getHearing()).append("\n")
-                        .append("- Kiểm tra răng miệng: ").append(healthCheckResult.getDentalCheck()).append("\n")
-                        .append("- Nhiệt độ: ").append(healthCheckResult.getTemperature()).append("°C");
+                content.append("Chúng tôi xin gửi đến Quý Phụ huynh kết quả kiểm tra sức khỏe định kỳ của con em ")
+                        .append(student.getFullName()).append(".<br><br>");
+
+                content.append("<strong>CHỈ SỐ SỐNG:</strong><br>");
+                content.append("• Chiều cao: ").append(healthCheckResult.getHeight()).append(" cm<br>");
+                content.append("• Cân nặng: ").append(healthCheckResult.getWeight()).append(" kg<br>");
+                content.append("• Chỉ số BMI: ").append(String.format("%.1f", healthCheckResult.getBmi()));
+
+                // Đánh giá BMI
+                float bmi = healthCheckResult.getBmi();
+                String bmiStatus = "";
+                String bmiColor = "";
+                if (bmi < 18.5) {
+                    bmiStatus = " (Thiếu cân)";
+                    bmiColor = "color: #ffc107;"; // Màu vàng
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    bmiStatus = " (Bình thường)";
+                    bmiColor = "color: #28a745;"; // Màu xanh lá
+                } else if (bmi >= 25 && bmi < 30) {
+                    bmiStatus = " (Thừa cân)";
+                    bmiColor = "color: #fd7e14;"; // Màu cam
+                } else if (bmi >= 30) {
+                    bmiStatus = " (Béo phì)";
+                    bmiColor = "color: #dc3545;"; // Màu đỏ
+                }
+                content.append(" <span style=\"").append(bmiColor).append(" font-weight: 600;\">").append(bmiStatus).append("</span><br>");
+                content.append("• Nhiệt độ cơ thể: ").append(healthCheckResult.getTemperature()).append("°C<br><br>");
+
+                content.append("<strong>KIỂM TRA CHUYÊN KHOA:</strong><br>");
+                content.append("• Thị lực mắt trái: ").append(healthCheckResult.getVisionLeft()).append("<br>");
+                content.append("• Thị lực mắt phải: ").append(healthCheckResult.getVisionRight()).append("<br>");
+                content.append("• Thính lực: ").append(healthCheckResult.getHearing()).append("<br>");
+                content.append("• Kiểm tra răng miệng: ").append(healthCheckResult.getDentalCheck()).append("<br><br>");
 
                 // Add overall result if available
                 if (healthCheckResult.getOverallResult() != null && !healthCheckResult.getOverallResult().isEmpty()) {
-                    content.append("\n- Kết quả tổng quan: ").append(healthCheckResult.getOverallResult());
+                    content.append("<strong>NHẬN XÉT TỔNG QUAN:</strong><br>");
+                    content.append("• ").append(healthCheckResult.getOverallResult()).append("<br><br>");
                 }
+
+                content.append("Vui lòng liên hệ với ban y tế nhà trường nếu Quý phụ huynh có bất kỳ thắc mắc nào về kết quả kiểm tra sức khỏe của con em.");
 
                 notification.setContent(content.toString());
                 notification.setCreateAt(LocalDateTime.now());
@@ -169,7 +195,7 @@ public class HealthCheckStudentService {
                 notificationsParentRepository.save(notification);
                 try {
                     // Gửi email với thông tin người dùng và thời gian
-                    emailService.sendHtmlNotificationEmailForHealthCheckStudent(student.getParent(), tittle, content.toString(), notification.getNotificationId());
+                    emailService.sendHtmlNotificationEmailForHealthCheckStudent(student.getParent(), title, content.toString(), notification.getNotificationId());
                     // emailService.testEmailConfig("ytruongtieuhoc@example.com");
                 } catch (Exception e) {
                     throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);

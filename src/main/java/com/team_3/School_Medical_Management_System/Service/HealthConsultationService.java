@@ -80,7 +80,10 @@ public class HealthConsultationService {
             consultation.setUpdatedByNurseID(updatedByNurseID);
 
             HealthConsultation updatedConsultation = healthConsultationRepository.save(consultation);
-
+            if(status.equalsIgnoreCase("Đang chờ xử lý")) {
+                // Notify parent about consultation completion
+                notifyParentAboutConsultationInvitation(updatedConsultation);
+            }
             return updatedConsultation;
         }
 
@@ -100,14 +103,14 @@ public class HealthConsultationService {
                 notification.setParent(student.getParent());
                 notification.setTitle("Mời tư vấn y tế");
                 String title = "Mời tư vấn y tế cho " + student.getFullName();
-                String content = "Con em cần được tư vấn y tế vì lý do: " + consultation.getReason() +
-                        ". Vui lòng sắp xếp thời gian để tham gia buổi tư vấn với đội ngũ y tế của trường.";
-                if (consultation.getLocation() != null && !consultation.getLocation().isEmpty()) {
-                    content += "\nĐịa điểm: " + consultation.getLocation();
-                }
+                String content = "Con em cần được tư vấn y tế vì lý do: " + consultation.getReason();
                 if (consultation.getConsultDate() != null) {
                     content += "\nThời gian dự kiến: " + consultation.getConsultDate();
                 }
+                if (consultation.getLocation() != null && !consultation.getLocation().isEmpty()) {
+                    content += "\nĐịa điểm: " + consultation.getLocation();
+                }
+                content += ".\n Vui lòng sắp xếp thời gian để tham gia buổi tư vấn với đội ngũ y tế của trường vào ngày này để đảm bảo sức khỏe của con em mình.";
 
                 notification.setContent(content);
                 notification.setCreateAt(LocalDateTime.now());

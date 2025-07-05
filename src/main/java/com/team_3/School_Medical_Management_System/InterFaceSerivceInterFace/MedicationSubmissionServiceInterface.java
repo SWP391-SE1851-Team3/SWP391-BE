@@ -19,3 +19,4 @@ public interface MedicationSubmissionServiceInterface {
     MedicationSubmission getMedicationSubmissionById(int submissionId);
     MedicationDetailsExtendedDTO getDetailsBySubmissionIdExtended(int submissionId);
 }
+
