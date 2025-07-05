@@ -27,5 +27,7 @@ public void deleteByParentID(@Param("parentId") int parentId);
  @Query("UPDATE MedicalEvent m SET m.parent = NULL WHERE m.parent.ParentID = :parentID")
  public void setNullParentIDByParentID(@Param("parentID") int parentID);
 
-
+ @Modifying
+ @Query("DELETE FROM MedicalEventMedicalSupply mems WHERE mems.medicalEvent.eventID = :eventId")
+ void deleteMedicalEventMedicalSuppliesByEventId(@Param("eventId") Integer eventId);
 }
