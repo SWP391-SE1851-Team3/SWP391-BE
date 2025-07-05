@@ -782,57 +782,57 @@ public class TransferModelsDTO {
 
         return dto;
     }
-    public static MedicalSupplyDTO mapMedicalSupplyDTO(MedicalSupply entity) {
-        MedicalSupplyDTO dto = new MedicalSupplyDTO();
-        dto.setMedicalSupplyID(entity.getMedicalSupplyID());
-        dto.setSupplyName(entity.getSupplyName());
-        dto.setUnit(entity.getUnit());
-        dto.setQuantityAvailable(entity.getQuantityAvailable());
-        dto.setReorderLevel(entity.getReorderLevel());
-        dto.setStorageTemperature(entity.getStorageTemperature());
-        dto.setDateAdded(entity.getDateAdded());
-
-        if (entity.getVaccineType() != null) {
-            dto.setVaccineTypeID(entity.getVaccineType().getVaccineTypeID());
-        }
-        if (entity.getHealthCheck() != null) {
-            dto.setHealthCheckId(entity.getHealthCheck().getCheckID());
-        }
-        if(entity.getSupplyCategory() != null) {
-            dto.setCategoryID(entity.getSupplyCategory().getCategoryID());
-        }
-
-
-
-        return dto;
-    }
-    public static MedicalSupply mapToMedicalSupply(MedicalSupplyDTO dto) {
-        MedicalSupply supply = new MedicalSupply();
-        supply.setMedicalSupplyID(dto.getMedicalSupplyID());
-        supply.setSupplyName(dto.getSupplyName());
-        supply.setUnit(dto.getUnit());
-        supply.setQuantityAvailable(dto.getQuantityAvailable());
-        supply.setReorderLevel(dto.getReorderLevel());
-        supply.setStorageTemperature(dto.getStorageTemperature());
-        supply.setDateAdded(dto.getDateAdded());
-        if (dto.getVaccineTypeID() != null) {
-            Vaccine_Types type = new Vaccine_Types();
-            type.setVaccineTypeID(dto.getVaccineTypeID());
-            supply.setVaccineType(type);
-        }
-        if (dto.getHealthCheckId() != null) {
-            HealthCheck_Student hc = new HealthCheck_Student();
-            hc.setCheckID(dto.getHealthCheckId());
-            supply.setHealthCheck(hc);
-        }
-
-        if(dto.getCategoryID() != null) {
-            SupplyCategory supplyCategory = new SupplyCategory();
-            supplyCategory.setCategoryID(dto.getCategoryID());
-            supply.setSupplyCategory(supplyCategory);
-        }
-        return supply;
-    }
+//    public static MedicalSupplyDTO mapMedicalSupplyDTO(MedicalSupply entity) {
+//        MedicalSupplyDTO dto = new MedicalSupplyDTO();
+//        dto.setMedicalSupplyID(entity.getMedicalSupplyID());
+//        dto.setSupplyName(entity.getSupplyName());
+//        dto.setUnit(entity.getUnit());
+//        dto.setQuantityAvailable(entity.getQuantityAvailable());
+//        dto.setReorderLevel(entity.getReorderLevel());
+//        dto.setStorageTemperature(entity.getStorageTemperature());
+//        dto.setDateAdded(entity.getDateAdded());
+//
+//        if (entity.getVaccineType() != null) {
+//            dto.setVaccineTypeID(entity.getVaccineType().getVaccineTypeID());
+//        }
+//        if (entity.getHealthCheck() != null) {
+//            dto.setHealthCheckId(entity.getHealthCheck().getCheckID());
+//        }
+//        if(entity.getSupplyCategory() != null) {
+//            dto.setCategoryID(entity.getSupplyCategory().getCategoryID());
+//        }
+//
+//
+//
+//        return dto;
+//    }
+//    public static MedicalSupply mapToMedicalSupply(MedicalSupplyDTO dto) {
+//        MedicalSupply supply = new MedicalSupply();
+//        supply.setMedicalSupplyID(dto.getMedicalSupplyID());
+//        supply.setSupplyName(dto.getSupplyName());
+//        supply.setUnit(dto.getUnit());
+//        supply.setQuantityAvailable(dto.getQuantityAvailable());
+//        supply.setReorderLevel(dto.getReorderLevel());
+//        supply.setStorageTemperature(dto.getStorageTemperature());
+//        supply.setDateAdded(dto.getDateAdded());
+//        if (dto.getVaccineTypeID() != null) {
+//            Vaccine_Types type = new Vaccine_Types();
+//            type.setVaccineTypeID(dto.getVaccineTypeID());
+//            supply.setVaccineType(type);
+//        }
+//        if (dto.getHealthCheckId() != null) {
+//            HealthCheck_Student hc = new HealthCheck_Student();
+//            hc.setCheckID(dto.getHealthCheckId());
+//            supply.setHealthCheck(hc);
+//        }
+//
+//        if(dto.getCategoryID() != null) {
+//            SupplyCategory supplyCategory = new SupplyCategory();
+//            supplyCategory.setCategoryID(dto.getCategoryID());
+//            supply.setSupplyCategory(supplyCategory);
+//        }
+//        return supply;
+//    }
 
 
     public static Vaccine_BatchDTO MappingVaccine(com.team_3.School_Medical_Management_System.Model.Vaccine_Batches vaccines, Long countAgree) {

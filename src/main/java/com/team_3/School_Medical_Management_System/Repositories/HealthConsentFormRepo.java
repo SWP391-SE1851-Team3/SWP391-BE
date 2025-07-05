@@ -63,6 +63,7 @@ public class HealthConsentFormRepo implements com.team_3.School_Medical_Manageme
         return query.getResultList();
     }
 
+
     @Override
     public List<HealthConsentForm> findByClassNameAndHealthScheduleID(String className, int healthScheduleID) {
         TypedQuery<HealthConsentForm> query = entityManager.createQuery(
