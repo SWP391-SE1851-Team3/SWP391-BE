@@ -76,16 +76,24 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     public Long countConsentFormsIsAgreeByBatch(String dot) {
 //        String jpql = "SELECT  COUNT(c) FROM Consent_forms c " +
 //                "JOIN  c.vaccineBatches v " +
-//                "WHERE c.IsAgree = 'Đồng Ý'  AND v.dot = :dot";
+//                "WHERE c.IsAgree = 'Đồng ý'  AND v.dot = :dot";
 //        return entityManager.createQuery(jpql, Long.class)
 //                .setParameter("dot", dot)
 //                .getSingleResult();
+//        String jpql = "SELECT COUNT(c) FROM Consent_forms c " +
+//                "WHERE c.IsAgree = 'Đồng ý' AND c.vaccineBatches.dot = :dot";
+//
+//        return entityManager.createQuery(jpql, Long.class)
+//                .setParameter("dot", dot.trim())
+//                .getSingleResult();
+
+
         String sql = "SELECT COUNT(*) FROM Consent_forms c " +
                 "JOIN Vaccine_Batches v ON c.BatchID = v.BatchID " +
                 "WHERE c.IsAgree = ?1 AND v.dot = ?2";
 
         return ((Number) entityManager.createNativeQuery(sql)
-                .setParameter(1, "Đồng Ý")
+                .setParameter(1, "Đồng ý")
                 .setParameter(2, dot.trim())
                 .getSingleResult()).longValue();
     }
@@ -120,6 +128,7 @@ public class Consent_formsRepo implements Consent_formsInterFace {
                 .setParameter(2, dot.trim())
                 .getSingleResult()).longValue();
     }
+
 
 
     @Override
@@ -188,7 +197,7 @@ public class Consent_formsRepo implements Consent_formsInterFace {
     public List<Consent_forms> getIsAgree() {
         String jpql = "SELECT c FROM Consent_forms c WHERE c.IsAgree = :isAgree";
         return entityManager.createQuery(jpql, Consent_forms.class)
-                .setParameter("isAgree", "Đồng Ý")
+                .setParameter("isAgree", "Đồng ý")
                 .getResultList();
     }
 

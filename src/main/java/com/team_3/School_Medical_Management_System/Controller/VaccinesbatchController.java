@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
+import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccine_BatchesServiceInterFace;
@@ -23,7 +24,7 @@ public class VaccinesbatchController {
     }
 
     @GetMapping
-    public List<Vaccine_BatchesDTO> getAllVaccines() {
+    public List<Vaccine_BatchDTO> getAllVaccines() {
         return vaccinesServiceInterFace.GetAllVaccinesbatch();
     }
 

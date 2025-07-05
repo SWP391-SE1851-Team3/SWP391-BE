@@ -40,7 +40,7 @@ public class TransferModelsDTO {
         vaccinesDTO.setCreated_at(vaccines.getCreated_at());
         vaccinesDTO.setUpdated_at(vaccines.getUpdated_at());
         vaccinesDTO.setBatchID(vaccines.getBatchID());
-
+//        vaccinesDTO.setCountAgreeConsentForms(countAgree);
         return vaccinesDTO;
     }
 
@@ -832,6 +832,34 @@ public class TransferModelsDTO {
             supply.setSupplyCategory(supplyCategory);
         }
         return supply;
+    }
+
+
+    public static Vaccine_BatchDTO MappingVaccine(com.team_3.School_Medical_Management_System.Model.Vaccine_Batches vaccines, Long countAgree) {
+        Vaccine_BatchDTO vaccinesDTO = new Vaccine_BatchDTO();
+        vaccinesDTO.setDot(vaccines.getDot());
+        // Created
+        vaccinesDTO.setCreated_by_nurse_id(vaccines.getCreatedByNurse() != null ? vaccines.getCreatedByNurse().getNurseID() : null);
+        vaccinesDTO.setCreated_by_nurse_name(vaccines.getCreatedByNurse() != null ? vaccines.getCreatedByNurse().getFullName() : null);
+        // Updated
+        if (vaccines.getUpdatedByNurse() != null) {
+            vaccinesDTO.setEdit_nurse_id(vaccines.getUpdatedByNurse().getNurseID());
+            vaccinesDTO.setEdit_nurse_name(vaccines.getUpdatedByNurse().getFullName());
+        } else {
+            vaccinesDTO.setEdit_nurse_id(null);
+            vaccinesDTO.setEdit_nurse_name(null);
+        }
+        vaccinesDTO.setLocation(vaccines.getLocation());
+        vaccinesDTO.setStatus(vaccines.getStatus());
+        vaccinesDTO.setNotes(vaccines.getNotes());
+        vaccinesDTO.setScheduled_date(vaccines.getScheduled_date());
+        vaccinesDTO.setQuantity_received(vaccines.getQuantity_received());
+        vaccinesDTO.setVaccineTypeID(vaccines.getVaccineType().getVaccineTypeID());
+        vaccinesDTO.setCreated_at(vaccines.getCreated_at());
+        vaccinesDTO.setUpdated_at(vaccines.getUpdated_at());
+        vaccinesDTO.setBatchID(vaccines.getBatchID());
+        vaccinesDTO.setCountAgreeConsentForms(countAgree);
+        return vaccinesDTO;
     }
 
 }
