@@ -21,11 +21,6 @@ public interface HealthConsultationRepository extends JpaRepository<HealthConsul
 
 
 
-    @Modifying
-
-    @Query("DELETE FROM HealthConsultation hc WHERE hc.studentID = :studentId OR hc.checkID IN " +
-            "(SELECT hcs.checkID FROM HealthCheck_Student hcs WHERE hcs.studentID = :studentId)")
-    void deleteByStudent_StudentID(@Param("studentId") int studentId);
 
 
 

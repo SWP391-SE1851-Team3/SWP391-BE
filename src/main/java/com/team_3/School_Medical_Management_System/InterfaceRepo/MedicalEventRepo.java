@@ -15,19 +15,8 @@ import java.util.Optional;
 @Repository
 public interface MedicalEventRepo extends JpaRepository<MedicalEvent, Integer> {
 
- @Modifying
- @Query("SELECT m FROM MedicalEvent m WHERE m.parent.ParentID = :parentId")
- public List<MedicalEvent> getByParentId(@Param("parentId") int parentId);
 
- @Modifying
-@Query("DELETE FROM MedicalEvent m WHERE m.parent.ParentID = :parentId")
-public void deleteByParentID(@Param("parentId") int parentId);
-
- @Modifying
- @Query("UPDATE MedicalEvent m SET m.parent = NULL WHERE m.parent.ParentID = :parentID")
- public void setNullParentIDByParentID(@Param("parentID") int parentID);
-
- @Modifying
- @Query("DELETE FROM MedicalEventMedicalSupply mems WHERE mems.medicalEvent.eventID = :eventId")
- void deleteMedicalEventMedicalSuppliesByEventId(@Param("eventId") Integer eventId);
+    @Modifying
+    @Query("DELETE FROM MedicalEventMedicalSupply mems WHERE mems.medicalEvent.eventID = :eventId")
+    void deleteMedicalEventMedicalSuppliesByEventId(@Param("eventId") Integer eventId);
 }

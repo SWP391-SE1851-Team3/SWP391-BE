@@ -13,6 +13,5 @@ public interface MedicalEvent_NurseRepo extends JpaRepository<MedicalEvent_Nurse
     @Modifying
     @Query("DELETE FROM MedicalEvent_Nurse men WHERE men.eventID = :eventId")
     void deleteByMedicalEvent_EventID(@Param("eventId") Integer eventId);
-   // void deleteByMedicalEvent_EventID(Integer eventId);
-//    Optional<MedicalEvent_Nurse> findByMedicalEvent_EventIDAndSchoolNurse_nurseID(int eventId, int nurseId);
+
 }

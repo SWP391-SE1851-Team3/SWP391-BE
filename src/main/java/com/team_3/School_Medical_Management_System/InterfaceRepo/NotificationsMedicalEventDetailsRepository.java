@@ -9,11 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface NotificationsMedicalEventDetailsRepository extends JpaRepository<Notifications_MedicalEventDetails, Notifications_MedicalEventDetailsId> {
 
-@Modifying
-    @Query("DELETE FROM Notifications_MedicalEventDetails n WHERE n.medicalEvent.eventID = :medicalId")
-    void deleteByMedicalEvent_EventID(@Param("medicalId") Integer medicalId);
-//public void deleteByMedicalEvent_EventID(Integer medicalId);
 
-    // Additional query methods can be defined here if needed
 
 }

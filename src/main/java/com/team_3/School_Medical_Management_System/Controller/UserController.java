@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping("/createUser")
     public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
-            return ResponseEntity.ok(managerService.createUser(userDTO));
+        return ResponseEntity.ok(managerService.createUser(userDTO));
 
     }
 
@@ -61,7 +61,7 @@ public class UserController {
     public  ResponseEntity<List<Role>> getAllRole() {
         List<Role> roles = new ArrayList<>();
 
-            roles = roleService.getAllRoles();
+        roles = roleService.getAllRoles();
         return ResponseEntity.ok(roles);
     }
 }

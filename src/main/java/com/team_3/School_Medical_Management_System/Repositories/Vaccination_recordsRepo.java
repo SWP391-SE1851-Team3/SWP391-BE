@@ -101,13 +101,5 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
                 .getResultList();
     }
 
-    @Override
-    public void deleteByStudentId(int studentId) {
-        String sql = "DELETE FROM Vaccination_records s WHERE s.student.StudentID = :studentId";
 
-            entityManager.createQuery(sql)
-                    .setParameter("studentId", studentId)
-                    .executeUpdate();
-
-    }
 }

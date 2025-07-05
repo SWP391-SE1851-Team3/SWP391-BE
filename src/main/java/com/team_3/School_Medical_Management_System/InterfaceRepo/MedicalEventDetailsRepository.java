@@ -17,9 +17,6 @@ public interface MedicalEventDetailsRepository extends JpaRepository<MedicalEven
     List<MedicalEventDetails> findAllByOrderByMedicalEventEventDateTimeDesc();
     Optional<MedicalEventDetails> findByMedicalEvent_EventID(Integer eventId);
 
-    //Optional<MedicalEventDetails> findByMedicalEvent_EventID(Integer eventId);
     void deleteByMedicalEvent_EventID(Integer eventId);
-    @Modifying
-    @Query("DELETE FROM MedicalEventDetails m WHERE m.student.StudentID = :studentId")
-    void deleteByStudent_StudentID(@Param("studentId") Integer studentId);
+
 }

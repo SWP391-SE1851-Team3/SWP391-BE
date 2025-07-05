@@ -17,8 +17,5 @@ public interface HealthCheckStudentRepository extends JpaRepository<HealthCheck_
     @Query("SELECT MAX(h.checkID) FROM HealthCheck_Student h WHERE h.studentID = :studentId")
     Integer findMaxCheckIdByStudentId(@Param("studentId") int studentId);
 
-    @Modifying
-    //@Transactional
-    @Query("DELETE FROM HealthCheck_Student h WHERE h.studentID = :studentId")
-    void deleteByStudentID(@Param("studentId") int studentId);
+
 }

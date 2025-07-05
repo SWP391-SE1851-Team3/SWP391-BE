@@ -257,14 +257,19 @@ public class MedicalEventService {
             throw new EntityNotFoundException("Sự kiện y tế không tồn tại với ID: " + eventId);
         }
 
-        return event.get().getMedicalEventMedicalSupplies().stream()
-                .map(link -> new MedicalSupplyQuantityDTO(
-                        link.getMedicalSupply().getMedicalSupplyId(),
-                        link.getMedicalSupply().getSupplyName(),
-                        link.getMedicalSupply().getUnit(),
-                        link.getQuantityUsed()
-                ))
-                .collect(Collectors.toList());
+        List<MedicalSupplyQuantityDTO> result = new ArrayList<>();
+
+        for (MedicalEventMedicalSupply link : event.get().getMedicalEventMedicalSupplies()) {
+            MedicalSupplyQuantityDTO dto = new MedicalSupplyQuantityDTO(
+                    link.getMedicalSupply().getMedicalSupplyId(),
+                    link.getMedicalSupply().getSupplyName(),
+                    link.getMedicalSupply().getUnit(),
+                    link.getQuantityUsed()
+            );
+            result.add(dto);
+        }
+
+        return result;
     }
 
     @Transactional

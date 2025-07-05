@@ -128,21 +128,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         return entityManager.createQuery(sql, StudentHealthProfile.class).getSingleResult();
     }
 
-    @Override
-    public void deleteByStudentId(int studentId) {
-        String sql = "DELETE FROM StudentHealthProfile s WHERE s.StudentID = :studentId";
-        entityManager.createQuery(sql)
-                .setParameter("studentId", studentId)
-                .executeUpdate();
-    }
 
-    @Override
-    public void setNullParentIDByParentID(int parentId) {
-        String sql = "UPDATE StudentHealthProfile s SET s.ParentID = NULL WHERE s.ParentID = :parentId";
-        entityManager.createQuery(sql)
-                .setParameter("parentId", parentId)
-                .executeUpdate();
-    }
 
 }
 
