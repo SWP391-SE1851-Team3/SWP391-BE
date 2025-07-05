@@ -41,7 +41,8 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         MedicationSubmission submission = new MedicationSubmission();
         submission.setParentId(medicationSubmissionDTO.getParentId());
         submission.setStudentId(medicationSubmissionDTO.getStudentId());
-        submission.setMedicineImage(medicationSubmissionDTO.getMedicineImage());
+
+        // Không cần xử lý ảnh ở đây, sẽ upload riêng sau
 
         // Convert MedicationDetailDTO list to MedicationDetail
         if (medicationSubmissionDTO.getMedicationDetails() != null && !medicationSubmissionDTO.getMedicationDetails().isEmpty()) {
@@ -218,7 +219,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         String nurseName = null;
         // Tìm ConfirmMedicationSubmission để lấy nurseId
         Optional<ConfirmMedicationSubmission> confirmOpt =
-            confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submissionId);
+                confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submissionId);
 
         if (confirmOpt.isPresent() && confirmOpt.get().getNurseId() != null) {
             int nurseId = confirmOpt.get().getNurseId();
@@ -227,30 +228,43 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
 
         // Chuyển đổi danh sách MedicationDetail thành danh sách MedicationDetailDTO
         List<MedicationDetailDTO> medicationDetailDTOs = medicationDetails.stream()
-            .map(detail -> {
-                MedicationDetailDTO dto = new MedicationDetailDTO();
-                dto.setMedicineName(detail.getMedicineName());
-                dto.setDosage(detail.getDosage());
-                dto.setTimeToUse(detail.getTimeToUse());
-                dto.setNote(detail.getNote());
-                return dto;
-            })
-            .collect(Collectors.toList());
+                .map(detail -> {
+                    MedicationDetailDTO dto = new MedicationDetailDTO();
+                    dto.setMedicineName(detail.getMedicineName());
+                    dto.setDosage(detail.getDosage());
+                    dto.setTimeToUse(detail.getTimeToUse());
+                    dto.setNote(detail.getNote());
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
         // Tạo đối tượng MedicationDetailsExtendedDTO với cấu trúc mới
         MedicationDetailsExtendedDTO detailsDTO = new MedicationDetailsExtendedDTO(
-            submission.getMedicationSubmissionId(),
-            submission.getParentId(),
-            submission.getStudentId(),
-            submission.getMedicineImage(),
-            nurseName,
-            studentClass,
-            medicationDetailDTOs,
-            submission.getSubmissionDate()
+                submission.getMedicationSubmissionId(),
+                submission.getParentId(),
+                submission.getStudentId(),
+                null, // Không trả về medicineImage trong DTO này, sẽ có endpoint riêng để lấy ảnh
+                nurseName,
+                studentClass,
+                medicationDetailDTOs,
+                submission.getSubmissionDate()
         );
 
         return detailsDTO;
     }
 
+    @Override
+    public MedicationSubmission updateMedicationSubmission(MedicationSubmission medicationSubmission) {
+        // Kiểm tra submission có tồn tại không
+        MedicationSubmission existingSubmission = medicationSubmissionInterFace.findById(medicationSubmission.getMedicationSubmissionId())
+                .orElseThrow(() -> new EntityNotFoundException("Medication submission not found with id: " + medicationSubmission.getMedicationSubmissionId()));
 
+        // Cập nhật field ảnh nếu có
+        if (medicationSubmission.getMedicineImage() != null) {
+            existingSubmission.setMedicineImage(medicationSubmission.getMedicineImage());
+        }
+
+        // Lưu và trả về submission đã cập nhật
+        return medicationSubmissionInterFace.save(existingSubmission);
+    }
 }
