@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,12 +36,15 @@ public class DashboardController {
     @GetMapping("/full-report")
     public ResponseEntity<DashboardReportModel> getFullReport(
 
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate
     ) {
 
         try {
-            DashboardReportModel report = dashboardService.getFullReport(startDate, endDate);
+            // Chuyển đổi LocalDate sang LocalDateTime để khớp với DB
+            LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+            LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+            DashboardReportModel report = dashboardService.getFullReport(startDateTime, endDateTime);
             return ResponseEntity.ok(report);
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,12 +73,14 @@ public class DashboardController {
 
     @Operation(summary = "Thống kê sự kiện y tế")
     @GetMapping("/medical-events")
-    public ResponseEntity<MedicalEventStats> getMedicalEventStats(@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                                                  @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+    public ResponseEntity<MedicalEventStats> getMedicalEventStats(@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+                                                                  @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
 
 
         try {
-            MedicalEventStats stats = dashboardService.getMedicalEventStats(startDate, endDate);
+            LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+            LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+            MedicalEventStats stats = dashboardService.getMedicalEventStats(startDateTime, endDateTime);
             return ResponseEntity.ok(stats);
         } catch (Exception e) {
 
@@ -86,13 +92,16 @@ public class DashboardController {
     @Operation(summary = "Thống kê tiêm chủng")
     @GetMapping("/vaccination")
     public ResponseEntity<VaccinationStats> getVaccinationStats(
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate
     ) {
 
 
         try {
-            VaccinationStats stats = dashboardService.getVaccinationStats(startDate, endDate);
+
+            LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+            LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+            VaccinationStats stats = dashboardService.getVaccinationStats(startDateTime, endDateTime);
             return ResponseEntity.ok(stats);
         } catch (Exception e) {
 
@@ -102,12 +111,15 @@ public class DashboardController {
 
     @Operation(summary = "Thống kê khám sức khỏe")
     @GetMapping("/health-check")
-    public ResponseEntity<HealthCheckStats> getHealthCheckStats(@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                                                @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+    public ResponseEntity<HealthCheckStats> getHealthCheckStats(@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+                                                                @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
 
 
         try {
-            HealthCheckStats stats = dashboardService.getHealthCheckStats(startDate, endDate);
+
+            LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+            LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+            HealthCheckStats stats = dashboardService.getHealthCheckStats(startDateTime, endDateTime);
             return ResponseEntity.ok(stats);
         } catch (Exception e) {
 
@@ -117,12 +129,16 @@ public class DashboardController {
 
     @Operation(summary = "Thống kê gửi thuốc")
     @GetMapping("/medication")
-    public ResponseEntity<MedicationStats> getMedicationStats(@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-                                                              @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+    public ResponseEntity<MedicationStats> getMedicationStats(@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+                                                              @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
 
 
         try {
-            MedicationStats stats = dashboardService.getMedicationStats(startDate, endDate);
+
+            LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+            LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+
+            MedicationStats stats = dashboardService.getMedicationStats(startDateTime, endDateTime);
             return ResponseEntity.ok(stats);
         } catch (Exception e) {
 

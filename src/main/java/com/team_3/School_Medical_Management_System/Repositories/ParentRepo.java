@@ -109,7 +109,7 @@ public class ParentRepo implements ParentInterFace  {
                 .executeUpdate();
         entityManager.flush();
     }
-
+@Transactional
     @Override
     public Parent checkIdAndRoleExist(int id, int role) {
         String jpql = "SELECT p FROM Parent p WHERE p.ParentID = :id AND p.RoleID = :role";

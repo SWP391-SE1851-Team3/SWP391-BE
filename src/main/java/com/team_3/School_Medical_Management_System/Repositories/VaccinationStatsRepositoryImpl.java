@@ -25,7 +25,7 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
     public Long countTotalBatches(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE created_at BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE scheduled_date BETWEEN :startDate AND :endDate";
         } else {
             sql = "SELECT COUNT(*) FROM Vaccine_Batches";
         }
@@ -48,9 +48,9 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
     public Long countCompletedBatches(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'COMPLETED' AND created_at BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'Đã xác nhận' AND scheduled_date BETWEEN :startDate AND :endDate";
         } else {
-            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'COMPLETED'";
+            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'Đã xác nhận'";
         }
         try {
             //String sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'COMPLETED'";
@@ -71,7 +71,7 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
     public Long countTotalVaccinated(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(DISTINCT StudentID) FROM Vaccination_records WHERE created_at BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(DISTINCT StudentID) FROM Vaccination_records WHERE observation_time BETWEEN :startDate AND :endDate";
         } else {
             sql = "SELECT COUNT(DISTINCT StudentID) FROM Vaccination_records";
         }
@@ -98,7 +98,7 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
                 SELECT 
                     CAST(SUM(CASE WHEN IsAgree = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM Consent_forms
-                WHERE created_at BETWEEN :startDate AND :endDate
+                WHERE send_date BETWEEN :startDate AND :endDate
                 """;
         } else {
             sql = """
@@ -137,7 +137,7 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
     public Long countTotalReactions(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM Post_vaccination_observations WHERE created_at BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM Post_vaccination_observations WHERE observation_time BETWEEN :startDate AND :endDate";
         } else {
             sql = "SELECT COUNT(*) FROM Post_vaccination_observations";
         }

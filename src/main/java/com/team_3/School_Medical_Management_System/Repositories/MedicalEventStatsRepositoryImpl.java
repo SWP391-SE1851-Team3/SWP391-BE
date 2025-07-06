@@ -21,7 +21,7 @@ public class MedicalEventStatsRepositoryImpl implements MedicalEventStatsReposit
     public MedicalEventStatsRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
-
+//nghĩa là trong DB  tôi sử dụng LocalDateTime hoặc 1 Định dạng thời gian nào mà có cả giờ nhưng hiện tại tôi tìm kiếm theo ngày thàng năm k có giờ lên tôi cần đổi thành định dạng db giống với định dạng của kiểu mình muốn tìm kiếm đúng
     @Override
     public Long countTotalEvents(LocalDateTime startDate, LocalDateTime endDate) {
         String jpql;

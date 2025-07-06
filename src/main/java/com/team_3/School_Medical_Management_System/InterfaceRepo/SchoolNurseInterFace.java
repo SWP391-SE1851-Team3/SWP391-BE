@@ -18,4 +18,6 @@ public interface SchoolNurseInterFace {
     public boolean  existsByEmail(String userName);
 
     public SchoolNurse checkIdAndRoleExist(int id, int roleId);
+
+    public void updateNurse(int id, int isActive);
 }

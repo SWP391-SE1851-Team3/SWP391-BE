@@ -65,6 +65,8 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public MedicalEventStats getMedicalEventStats(LocalDateTime startDate, LocalDateTime endDate) {
 
+//        nghĩa là trong DB  tôi sử dụng LocalDateTime hoặc 1 Định dạng thời gian nào mà có cả giờ nhưng hiện tại tôi tìm kiếm theo ngày thàng năm k có giờ lên tôi cần đổi thành định dạng db giống với định dạng của kiểu mình muốn tìm kiếm đúng
+
 
         return MedicalEventStats.builder()
                 .totalEvents(medicalEventStatsRepository.countTotalEvents(startDate, endDate))
@@ -98,7 +100,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .completedSchedules(healthCheckStatsRepository.countCompletedSchedules(startDate, endDate))
                 .totalChecked(healthCheckStatsRepository.countTotalChecked(startDate, endDate))
                 .consentRate(healthCheckStatsRepository.calculateConsentRate(startDate, endDate))
-                .averageBMI(healthCheckStatsRepository.calculateAverageBMI(startDate, endDate))
+                .averageBMI(healthCheckStatsRepository.calculateAverageBMI())
                 .build();
     }
 
@@ -108,9 +110,9 @@ public class DashboardServiceImpl implements DashboardService {
 
         return MedicationStats.builder()
                 .totalSubmissions(medicationStatsRepository.countTotalSubmissions(startDate, endDate))
-                .approvedSubmissions(medicationStatsRepository.countApprovedSubmissions(startDate, endDate))
-                .rejectedSubmissions(medicationStatsRepository.countRejectedSubmissions(startDate, endDate))
-                .approvalRate(medicationStatsRepository.calculateApprovalRate(startDate, endDate))
+                .approvedSubmissions(medicationStatsRepository.countApprovedSubmissions())
+                .rejectedSubmissions(medicationStatsRepository.countRejectedSubmissions())
+                .approvalRate(medicationStatsRepository.calculateApprovalRate())
                 .build();
     }
 

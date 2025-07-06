@@ -23,7 +23,8 @@ import java.util.Optional;
 @Transactional
 public class ManagerService implements ManagerServiceInterFace {
     private ManagerInterFace managerInterFace;
-
+    @Autowired
+   private ParentRepository parentRepo;
     @Autowired
     private StudentRepo studentRepo;
 
@@ -214,7 +215,7 @@ public class ManagerService implements ManagerServiceInterFace {
         return null;
     }
 
-
+@Transactional
     @Override
     public ResponseEntity<String> deleteUser(int id, int roleId) {
         try {
@@ -226,8 +227,14 @@ public class ManagerService implements ManagerServiceInterFace {
                                 .body("Parent with ID " + id + " and RoleID " + roleId + " not found.");
                     }
 
-                    parent.setIsActive(0); // Set the parent as inactive instead of deleting
-                    parentRepository.UpdateParent(parent);
+//                    parent.setIsActive(0); // Set the parent as inactive instead of deleting
+                    if(parent.getIsActive() == 0) {
+                        parentRepo.updateParent(parent.getParentID(),1);
+
+                    }else {
+                        parentRepo.updateParent(parent.getParentID(),0);
+                    }
+
                     return ResponseEntity.ok("Parent data deleted successfully.");
 
                 case 2: // SchoolNurse
@@ -237,9 +244,12 @@ public class ManagerService implements ManagerServiceInterFace {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("SchoolNurse with ID " + id + " and RoleID " + roleId + " not found.");
                     }
 
-
-                    n.setIsActive(0); // Set the nurse as inactive instead of deleting
-                    nurseRepository.UpdateSchoolNurses(n);
+    if(n.getIsActive() ==0){
+        nurseRepository.updateNurse(n.getNurseID(),1);
+    }
+                    else {
+        nurseRepository.updateNurse(n.getNurseID(),0);
+    }
                     return ResponseEntity.ok("SchoolNurse data deleted successfully.");
                 case 3: // Student
                     Student student = studentRepo.findById(id).orElse(null);

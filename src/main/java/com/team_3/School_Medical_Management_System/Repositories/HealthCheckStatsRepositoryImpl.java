@@ -24,7 +24,7 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
 
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE ScheduleDate BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Schedule_Date BETWEEN :startDate AND :endDate";
         } else {
             sql = "SELECT COUNT(*) FROM HealthCheck_Schedule";
         }
@@ -47,9 +47,9 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
     public Long countCompletedSchedules(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 1 AND ScheduleDate BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 'Đã xác nhận' AND Schedule_Date BETWEEN :startDate AND :endDate";
         } else {
-            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 1";
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 'Đã xác nhận'";
         }
         try {
             //String sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 1";
@@ -69,18 +69,18 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
     @Override
     public Long countTotalChecked(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
-        if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(DISTINCT StudentID) FROM HealthCheck_Student WHERE CheckDate BETWEEN :startDate AND :endDate";
-        } else {
+     //   if (startDate != null && endDate != null) {
+       //     sql = "SELECT COUNT(DISTINCT StudentID) FROM HealthCheck_Student WHERE CheckDate BETWEEN :startDate AND :endDate";
+      //  } else {
             sql = "SELECT COUNT(DISTINCT StudentID) FROM HealthCheck_Student";
-        }
+       // }
         try {
            // String sql = "SELECT COUNT(DISTINCT StudentID) FROM HealthCheck_Student";
             Query query = entityManager.createNativeQuery(sql);
-            if (startDate != null && endDate != null) {
-                query.setParameter("startDate", startDate);
-                query.setParameter("endDate", endDate);
-            }
+//            if (startDate != null && endDate != null) {
+//                query.setParameter("startDate", startDate);
+//                query.setParameter("endDate", endDate);
+//            }
             Number result = (Number) query.getSingleResult();
             return result.longValue();
         } catch (Exception e) {
@@ -95,14 +95,14 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
         if (startDate != null && endDate != null) {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgreed = 'YES' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgreed = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM HealthConsentForm
-                WHERE ConsentDate BETWEEN :startDate AND :endDate
+                WHERE send_date BETWEEN :startDate AND :endDate
                 """;
         } else {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgreed = 'YES' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgreed = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM HealthConsentForm
                 """;
         }
@@ -133,20 +133,13 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
     }
 
     @Override
-    public Double calculateAverageBMI(LocalDateTime startDate, LocalDateTime endDate) {
-        String sql;
-        if (startDate != null && endDate != null) {
-            sql = "SELECT AVG(BMI) FROM HealthCheck_Student WHERE BMI IS NOT NULL AND CheckDate BETWEEN :startDate AND :endDate";
-        } else {
-            sql = "SELECT AVG(BMI) FROM HealthCheck_Student WHERE BMI IS NOT NULL";
-        }
+    public Double calculateAverageBMI() {
+        String sql = "SELECT AVG(BMI) FROM HealthCheck_Student WHERE BMI IS NOT NULL";
+
         try {
            // String sql = "SELECT AVG(BMI) FROM HealthCheck_Student WHERE BMI IS NOT NULL";
             Query query = entityManager.createNativeQuery(sql);
-            if (startDate != null && endDate != null) {
-                query.setParameter("startDate", startDate);
-                query.setParameter("endDate", endDate);
-            }
+
             Object result = query.getSingleResult();
 
             if (result == null) {
