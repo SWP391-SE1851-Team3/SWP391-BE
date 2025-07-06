@@ -33,7 +33,7 @@ public class MedicalEventDetailsDTO {
     private Integer updatedByNurseId;
     private String updatedByNurseName;
 
-
+    private List<MedicalSupplyQuantityDTO> listMedicalSupplies;
     public MedicalEventDetailsDTO() {
     }
 }

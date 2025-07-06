@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @NoArgsConstructor
 @ToString
 @Entity
@@ -39,6 +41,9 @@ public class SchoolNurse {
     private String Certification;
     @NotBlank(message = "Specialisation Not allow empty")
     private String Specialisation;
+
+
+    // CASCADE relationships - Khi xóa Parent sẽ tự động xóa các bảng con
 
 
 }

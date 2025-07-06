@@ -51,6 +51,39 @@ public class MedicationSubmissionRepo implements MedicationSubmissionInterFace {
         return entityManager.createQuery("SELECT m FROM MedicationSubmission m", MedicationSubmission.class).getResultList();
     }
 
+//    @Override
+//    public void deleteByParentIdm(int parentId) {
+//        String jpql = "DELETE FROM MedicationSubmission m WHERE m.parentId = :parentId";
+//        entityManager.createQuery(jpql)
+//                .setParameter("parentId", parentId)
+//                .executeUpdate();
+//    }
+
+//    @Override
+//    public List<MedicationSubmission> findByStudentId(int studentId) {
+//        String jpql = "SELECT m FROM MedicationSubmission m WHERE m.studentId = :studentId";
+//        return entityManager.createQuery(jpql, MedicationSubmission.class)
+//                .setParameter("studentId", studentId)
+//                .getResultList();
+//    }
+
+//    @Override
+//    public void deleteByStudentId(int studentId) {
+//        String jpql = "DELETE FROM MedicationSubmission m WHERE m.studentId = :studentId";
+//        entityManager.createQuery(jpql)
+//                .setParameter("studentId", studentId)
+//                .executeUpdate();
+//    }
+
+    @Override
+    public void setNullParentIDByParentID(int parentID) {
+        String jpql = "UPDATE MedicationSubmission m SET m.parentId = NULL WHERE m.parentId = :parentID";
+        entityManager.createQuery(jpql)
+                .setParameter("parentID", parentID)
+                .executeUpdate();
+    }
+
+
 //    public List<MedicationSubmission> findPendingSubmissions() {
 //        return findByStatus(MedicationSubmission.SubmissionStatus.PENDING);
 //    }

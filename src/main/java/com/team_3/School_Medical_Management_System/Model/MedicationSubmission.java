@@ -21,6 +21,7 @@ public class MedicationSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int medicationSubmissionId;
 
+
     private int parentId;
     private int studentId;
 

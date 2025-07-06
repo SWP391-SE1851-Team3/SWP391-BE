@@ -37,10 +37,6 @@ public class Post_vaccination_observationsService implements Post_vaccination_ob
     private com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseRepository SchoolNurseRepository;
 
 
-
-
-
-
     @Autowired
     public Post_vaccination_observationsService(Post_vaccination_observationsInterFace postVaccinationObservationsInterFace) {
         this.postVaccinationObservationsInterFace = postVaccinationObservationsInterFace;
@@ -119,28 +115,19 @@ public class Post_vaccination_observationsService implements Post_vaccination_ob
         Integer parentID = parent.getParentID();
 
         String title = "Học Sinh Đã Bị Phản Ứng Sau Khi Tiêm Chủng Tại Trường " + studentName + " (" + className + ")";
-        String content = String.format("""
-        <p><strong>Kính gửi phụ huynh %s,</strong></p>
-        <p>Nhà trường đã nhập thông tin hồ sơ phản ứng sau tiêm cho học sinh <b>%s (%s)</b>.</p>
-        <ul>
-            <li><strong>Triệu chứng:</strong> %s</li>
-            <li><strong>Mức độ:</strong> %s</li>
-            <li><strong>Ghi chú:</strong> %s</li>
-            <li><strong>Thời gian theo dõi:</strong> %s</li>
-            <li><strong>Trạng thái:</strong> %s</li>
-        </ul>
-        <p>Thông tin được ghi nhận bởi nhân viên y tế: <strong>%s</strong></p>
-        <p>Vui lòng đăng nhập hệ thống để xem chi tiết.</p>
-        """,
-                parentName,
-                studentName, className,
-                dto.getSymptoms(),
-                dto.getSeverity(),
-                dto.getNotes(),
-                dto.getObservation_time() != null ? dto.getObservation_time().toString() : "Không có",
-                dto.getStatus(),
-                nurseName
-        );
+        String content =
+                "<p><strong>Kính gửi phụ huynh " + parentName + ",</strong></p>" +
+                        "<p>Nhà trường đã nhập thông tin hồ sơ phản ứng sau tiêm cho học sinh <b>" + studentName + " (" + className + ")</b>.</p>" +
+                        "<ul>" +
+                        "<li><strong>Triệu chứng:</strong> " + dto.getSymptoms() + "</li>" +
+                        "<li><strong>Mức độ:</strong> " + dto.getSeverity() + "</li>" +
+                        "<li><strong>Ghi chú:</strong> " + dto.getNotes() + "</li>" +
+                        "<li><strong>Thời gian theo dõi:</strong> " +
+                        (dto.getObservation_time() != null ? dto.getObservation_time().toString() : "Không có") + "</li>" +
+                        "<li><strong>Trạng thái:</strong> " + dto.getStatus() + "</li>" +
+                        "</ul>" +
+                        "<p>Thông tin được ghi nhận bởi nhân viên y tế: <strong>" + nurseName + "</strong></p>" +
+                        "<p>Vui lòng đăng nhập hệ thống để xem chi tiết.</p>";
 
         // 7. Gửi email + thông báo
         Integer notificationId = notificationsParentService.createAutoNotification(parentID, title, content);

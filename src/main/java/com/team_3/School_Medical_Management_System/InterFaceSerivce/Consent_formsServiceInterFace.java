@@ -21,7 +21,7 @@ public interface Consent_formsServiceInterFace {
     public void processParentResponse(ConsentFormParentResponseDTO dto);
     public List<Consent_formViewDTO> getAllConsentForms();
     public Consent_formsDTO updateConsent(Consent_formsDTO consentFormsDTO);
-    public void sendConsentFormsByClassName(String className, Integer batchId, LocalDateTime sendDate, LocalDateTime expireDate,String status);
+    public SendConsentFormResult  sendConsentFormsByClassName(List<String> className, Integer batchId, LocalDateTime sendDate, LocalDateTime expireDate,String status);
     public List<Consent_form_dot> findDot();
     public List<Consent_formsDTO> getIsAgree();
     public List<Consent_formsDTO> getDisAgree();

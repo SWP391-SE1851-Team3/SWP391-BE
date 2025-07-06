@@ -94,10 +94,26 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
         String jpql = "SELECT new com.team_3.School_Medical_Management_System.DTO.StudentVaccinationDTO(" +
                 "s.student.StudentID, s.student.FullName, s.student.className, " +
-                "s.observation_notes, s.vaccineBatches.vaccineType.Name, s.observation_time,s.status) " +
+                "s.observation_notes, s.vaccineBatches.vaccineType.Name, s.observation_time,s.status, s.VaccinationRecordID) " +
                 "FROM Vaccination_records s WHERE s.status = :status";
         return entityManager.createQuery(jpql, StudentVaccinationDTO.class)
-                .setParameter("status", "Đang Theo Dõi ")
+                .setParameter("status", "Cần theo dõi")
                 .getResultList();
     }
+
+
+    @Override
+    public StudentVaccinationDTO updateStudentFollowedbyNurse(StudentVaccinationDTO studentVaccinationDTO) {
+        var query = getVaccination_records_by_id(studentVaccinationDTO.getRecordId());
+        if (query != null) {
+            query.setVaccinationRecordID(studentVaccinationDTO.getRecordId());
+            query.setObservation_notes(studentVaccinationDTO.getObservationNotes());
+            query.setObservation_time(studentVaccinationDTO.getObservationTime());
+            query.setStatus(studentVaccinationDTO.getStatus());
+            return entityManager.merge(studentVaccinationDTO);
+        }
+        return null;
+    }
+
+
 }

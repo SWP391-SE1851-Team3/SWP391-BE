@@ -175,18 +175,31 @@ public class Consent_formsController {
     @PostMapping("/consent-forms/send-by-classname")
     public ResponseEntity<?> sendByClass(@RequestBody SendConsentFormRequestDTO dto) {
         try {
-            consent_formsServiceInterFace.sendConsentFormsByClassName(
+            // Gán kết quả trả về từ service vào biến result
+            SendConsentFormResult result = consent_formsServiceInterFace.sendConsentFormsByClassName(
                     dto.getClassName(),
                     dto.getBatchId(),
                     dto.getSendDate(),
                     dto.getExpireDate(),
                     dto.getStatus()
             );
+            // Nếu có lỗi, trả về thành công=false và kèm danh sách lỗi
+            if (!result.getErrors().isEmpty()) {
+                return ResponseEntity.ok(Map.of(
+                        "success", false,
+                        "message", "Một số phiếu không gửi được.",
+                        "sentCount", result.getSentForms().size(),
+                        "errors", result.getErrors()
+                ));
+            }
+            // Nếu không có lỗi, trả về thành công=true
             return ResponseEntity.ok(Map.of(
                     "success", true,
-                    "message", "Đã gửi phiếu cho lớp " + dto.getClassName()
+                    "message", "Đã gửi phiếu cho lớp " + dto.getClassName(),
+                    "sentCount", result.getSentForms().size()
             ));
         } catch (Exception e) {
+            // Nếu có lỗi hệ thống
             return ResponseEntity.status(500).body(Map.of(
                     "success", false,
                     "message", e.getMessage()
