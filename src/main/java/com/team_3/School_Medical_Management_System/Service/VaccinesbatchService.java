@@ -4,8 +4,6 @@ import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccine_BatchesServiceInterFace;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalSupplyRepository;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepo;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccine_BatchesInterFace;
 import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;

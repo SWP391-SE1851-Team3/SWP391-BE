@@ -24,6 +24,9 @@ public class MedicationSubmission {
 
     private int parentId;
     private int studentId;
+
+    // Sử dụng column MedicineImage như string để lưu Base64 hoặc đường dẫn file
+    @Column(name = "MedicineImage", columnDefinition = "NVARCHAR(MAX)")
     private String medicineImage;
 
 //    @Enumerated(EnumType.STRING)

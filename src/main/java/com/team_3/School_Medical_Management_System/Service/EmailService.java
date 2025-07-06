@@ -377,44 +377,52 @@ public class EmailService {
                 "    <title>Kết quả kiểm tra sức khỏe</title>" +
                 "    <style>" +
                 "        * { margin: 0; padding: 0; box-sizing: border-box; }" +
-                "        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; }" +
-                "        .email-container { max-width: 650px; margin: 20px auto; background: #ffffff; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }" +
-                "        .header { background: linear-gradient(135deg, #1976d2, #1565c0); color: white; padding: 35px 25px; text-align: center; position: relative; }" +
-                "        .header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"80\" cy=\"30\" r=\"1.5\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"60\" cy=\"70\" r=\"1\" fill=\"white\" opacity=\"0.1\"/></svg>'); }" +
-                "        .header h1 { font-size: 26px; margin-bottom: 10px; position: relative; z-index: 1; }" +
-                "        .header .icon { font-size: 52px; margin-bottom: 15px; }" +
-                "        .header .subtitle { font-size: 15px; opacity: 0.9; position: relative; z-index: 1; }" +
-                "        .content-wrapper { padding: 0; }" +
-                "        .greeting { background: linear-gradient(135deg, #e3f2fd, #f3e5f5); padding: 30px 35px; border-left: 5px solid #1976d2; }" +
-                "        .greeting h2 { color: #1565c0; font-size: 20px; margin-bottom: 12px; }" +
-                "        .greeting p { color: #37474f; line-height: 1.7; font-size: 15px; }" +
-                "        .main-content { padding: 35px; }" +
-                "        .content-box { background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; padding: 30px; margin: 25px 0; border-left: 5px solid #28a745; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }" +
-                "        .content-box h3 { color: #1976d2; font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; }" +
-                "        .content-text { color: #424242; line-height: 1.8; font-size: 15px; }" +
-                "        .health-results { background: #ffffff; border-radius: 10px; padding: 25px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }" +
-                "        .info-section { background: linear-gradient(135deg, #e8f5e8, #f0f8f0); padding: 28px; margin: 28px 0; border-radius: 12px; border: 1px solid #c8e6c9; }" +
-                "        .info-title { color: #2e7d32; font-weight: bold; font-size: 17px; margin-bottom: 18px; display: flex; align-items: center; }" +
-                "        .info-grid { display: flex; flex-wrap: wrap; gap: 18px; }" +
-                "        .info-item { background: rgba(255,255,255,0.9); padding: 15px 18px; border-radius: 8px; flex: 1; min-width: 220px; border: 1px solid #e0e0e0; }" +
-                "        .info-label { font-weight: 600; color: #1976d2; font-size: 13px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }" +
-                "        .info-value { color: #424242; font-size: 15px; font-weight: 500; }" +
-                "        .footer { background: linear-gradient(135deg, #263238, #37474f); color: #ecf0f1; padding: 35px; text-align: center; }" +
-                "        .footer-content { max-width: 450px; margin: 0 auto; }" +
-                "        .footer h3 { font-size: 20px; margin-bottom: 18px; color: #4fc3f7; }" +
-                "        .footer p { line-height: 1.7; margin-bottom: 12px; font-size: 14px; }" +
-                "        .footer .divider { height: 3px; background: linear-gradient(90deg, #4fc3f7, #81c784); border-radius: 2px; margin: 25px 0; }" +
-                "        .footer .school-info { font-style: italic; color: #b0bec5; font-size: 13px; }" +
-                "        .highlight { background: linear-gradient(120deg, #4fc3f7 0%%, #81c784 100%%); padding: 3px 8px; border-radius: 5px; color: #ffffff; font-weight: 600; }" +
-                "        .health-icon { color: #1976d2; font-weight: bold; margin-right: 10px; font-size: 18px; }" +
-                "        .info-icon { color: #2e7d32; font-weight: bold; margin-right: 10px; font-size: 16px; }" +
-                "        .results-badge { background: #1976d2; color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 15px; }" +
-                "        .note-section { background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }" +
-                "        .note-section p { color: #e65100; font-weight: 500; margin: 0; }" +
+                "        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; padding: 20px; }" +
+                "        .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }" +
+                "        .header { background: #28a745; color: white; padding: 30px 25px; text-align: center; }" +
+                "        .header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 600; }" +
+                "        .header .icon { font-size: 40px; margin-bottom: 12px; }" +
+                "        .header .subtitle { font-size: 14px; opacity: 0.9; }" +
+                "        .greeting { background: #f8f9fa; padding: 25px; border-left: 4px solid #28a745; }" +
+                "        .greeting h2 { color: #28a745; font-size: 20px; margin-bottom: 12px; font-weight: 600; }" +
+                "        .greeting p { color: #495057; line-height: 1.6; font-size: 15px; }" +
+                "        .main-content { padding: 30px 25px; }" +
+                "        .health-results { background: #fff; border: 2px solid #e9ecef; border-radius: 6px; padding: 25px; margin: 20px 0; }" +
+                "        .health-results h3 { color: #28a745; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; }" +
+                "        .health-results .icon { color: #28a745; margin-right: 10px; font-size: 20px; }" +
+                "        .content-text { color: #495057; line-height: 1.7; font-size: 15px; }" +
+                "        .health-metrics { background: #f8f9fa; border-radius: 6px; padding: 20px; margin: 15px 0; }" +
+                "        .health-metrics h4 { color: #495057; font-size: 16px; margin-bottom: 15px; font-weight: 600; }" +
+                "        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }" +
+                "        .metric-item { background: #ffffff; border: 1px solid #dee2e6; padding: 15px; border-radius: 4px; }" +
+                "        .metric-label { font-weight: 600; color: #6c757d; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }" +
+                "        .metric-value { color: #495057; font-size: 14px; font-weight: 500; }" +
+                "        .health-note { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; padding: 20px; margin: 20px 0; }" +
+                "        .health-note h4 { color: #155724; font-size: 16px; margin-bottom: 10px; }" +
+                "        .health-note p { color: #155724; font-size: 14px; line-height: 1.5; }" +
+                "        .contact-info { background: #e7f3ff; border-radius: 6px; padding: 20px; margin: 20px 0; text-align: center; }" +
+                "        .contact-info h4 { color: #0c5460; font-size: 16px; margin-bottom: 15px; }" +
+                "        .contact-button { background: #007bff; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; margin: 5px; display: inline-block; transition: background-color 0.2s; }" +
+                "        .contact-button:hover { background: #0056b3; }" +
+                "        .info-section { background: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0; }" +
+                "        .info-title { color: #495057; font-weight: 600; font-size: 16px; margin-bottom: 15px; }" +
+                "        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }" +
+                "        .info-item { background: #ffffff; border: 1px solid #dee2e6; padding: 15px; border-radius: 4px; }" +
+                "        .info-label { font-weight: 600; color: #6c757d; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }" +
+                "        .info-value { color: #495057; font-size: 14px; }" +
+                "        .footer { background: #343a40; color: #ffffff; padding: 25px; text-align: center; }" +
+                "        .footer h3 { font-size: 18px; margin-bottom: 15px; color: #ffffff; }" +
+                "        .footer p { line-height: 1.6; margin-bottom: 8px; font-size: 14px; color: #adb5bd; }" +
+                "        .footer .divider { height: 1px; background: #495057; margin: 15px 0; }" +
+                "        .highlight { background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-weight: 500; }" +
+                "        .bmi-normal { color: #28a745; font-weight: 600; }" +
+                "        .bmi-warning { color: #ffc107; font-weight: 600; }" +
+                "        .bmi-danger { color: #dc3545; font-weight: 600; }" +
                 "        @media (max-width: 600px) {" +
-                "            .email-container { margin: 10px; border-radius: 0; }" +
-                "            .info-grid { flex-direction: column; }" +
-                "            .main-content, .greeting { padding: 25px 20px; }" +
+                "            body { padding: 10px; }" +
+                "            .email-container { border-radius: 4px; }" +
+                "            .metrics-grid, .info-grid { grid-template-columns: 1fr; }" +
+                "            .main-content, .greeting { padding: 20px; }" +
                 "            .header { padding: 25px 20px; }" +
                 "        }" +
                 "    </style>" +
@@ -425,47 +433,46 @@ public class EmailService {
                 "            <div class=\"icon\">🩺</div>" +
                 "            <h1>Kết Quả Kiểm Tra Sức Khỏe</h1>" +
                 "            <p class=\"subtitle\">Hệ thống quản lý y tế trường học</p>" +
-                "            <span class=\"results-badge\">KẾT QUẢ CHÍNH THỨC</span>" +
                 "        </div>" +
-                "        <div class=\"content-wrapper\">" +
-                "            <div class=\"greeting\">" +
-                "                <h2>Kính chào Quý Phụ huynh %s!</h2>" +
-                "                <p>Chúng tôi xin gửi đến Quý Phụ huynh <span class=\"highlight\">kết quả kiểm tra sức khỏe</span> chi tiết của con em. Đây là báo cáo đầy đủ và chính xác từ đội ngũ y tế chuyên nghiệp của trường.</p>" +
+                "        <div class=\"greeting\">" +
+                "            <h2>Kính chào Quý Phụ huynh %s</h2>" +
+                "            <p>Chúng tôi xin gửi đến Quý Phụ huynh <span class=\"highlight\">kết quả kiểm tra sức khỏe</span> chi tiết của con em từ đội ngũ y tế chuyên nghiệp của trường.</p>" +
+                "        </div>" +
+                "        <div class=\"main-content\">" +
+                "            <div class=\"health-results\">" +
+                "                <h3><span class=\"icon\">📋</span>Báo Cáo Kết Quả Sức Khỏe</h3>" +
+                "                <div class=\"content-text\">%s</div>" +
                 "            </div>" +
-                "            <div class=\"main-content\">" +
-                "                <div class=\"content-box\">" +
-                "                    <h3><span class=\"health-icon\">📋</span>Báo Cáo Kết Quả Kiểm Tra Sức Khỏe</h3>" +
-                "                    <div class=\"health-results\">" +
-                "                        %s" +
+                "            <div class=\"health-note\">" +
+                "                <h4>📌 Lưu ý quan trọng</h4>" +
+                "                <p>Vui lòng lưu trữ kết quả này để theo dõi sức khỏe của con em. Nếu có bất kỳ thắc mắc nào về kết quả kiểm tra, xin vui lòng liên hệ trực tiếp với ban y tế nhà trường.</p>" +
+                "            </div>" +
+                "            <div class=\"contact-info\">" +
+                "                <h4>📞 Liên hệ hỗ trợ</h4>" +
+                "                <p style=\"color: #0c5460; margin-bottom: 15px;\">Ban y tế luôn sẵn sàng hỗ trợ Quý Phụ huynh</p>" +
+                "                <a href=\"tel:+84123456789\" class=\"contact-button\">📞 Gọi điện</a>" +
+                "                <a href=\"mailto:ytetrường@school.edu.vn\" class=\"contact-button\">📧 Gửi email</a>" +
+                "            </div>" +
+                "            <div class=\"info-section\">" +
+                "                <div class=\"info-title\">Thông tin gửi báo cáo</div>" +
+                "                <div class=\"info-grid\">" +
+                "                    <div class=\"info-item\">" +
+                "                        <div class=\"info-label\">Thời gian gửi</div>" +
+                "                        <div class=\"info-value\">%s</div>" +
                 "                    </div>" +
-                "                </div>" +
-                "                <div class=\"note-section\">" +
-                "                    <p><strong>📌 Lưu ý quan trọng:</strong> Vui lòng liên hệ với nhà trường nếu Quý phụ huynh có bất kỳ thắc mắc nào về kết quả kiểm tra sức khỏe của con em.</p>" +
-                "                </div>" +
-                "                <div class=\"info-section\">" +
-                "                    <div class=\"info-title\"><span class=\"info-icon\">ℹ️</span>Thông Tin Gửi Báo Cáo</div>" +
-                "                    <div class=\"info-grid\">" +
-                "                        <div class=\"info-item\">" +
-                "                            <div class=\"info-label\">📅 Thời gian gửi</div>" +
-                "                            <div class=\"info-value\">%s</div>" +
-                "                        </div>" +
-                "                        <div class=\"info-item\">" +
-                "                            <div class=\"info-label\">👤 Đơn vị gửi</div>" +
-                "                            <div class=\"info-value\">%s</div>" +
-                "                        </div>" +
+                "                    <div class=\"info-item\">" +
+                "                        <div class=\"info-label\">Người gửi</div>" +
+                "                        <div class=\"info-value\">%s</div>" +
                 "                    </div>" +
                 "                </div>" +
                 "            </div>" +
                 "        </div>" +
                 "        <div class=\"footer\">" +
-                "            <div class=\"footer-content\">" +
-                "                <h3>🏥 Ban Y Tế Trường Học</h3>" +
-                "                <p>Chúng tôi cam kết theo dõi và chăm sóc sức khỏe toàn diện cho các em học sinh với đội ngũ y tế chuyên nghiệp và trang thiết bị hiện đại.</p>" +
-                "                <div class=\"divider\"></div>" +
-                "                <p class=\"school-info\">Hệ thống quản lý y tế thông minh và chuyên nghiệp</p>" +
-                "                <p class=\"school-info\">📧 Đây là email tự động từ hệ thống, vui lòng không trả lời trực tiếp</p>" +
-                "                <p class=\"school-info\">📞 Liên hệ: Ban Y tế nhà trường để được hỗ trợ thêm</p>" +
-                "            </div>" +
+                "            <h3>🏥 Ban Y Tế Trường Học</h3>" +
+                "            <p>Chúng tôi cam kết theo dõi và chăm sóc sức khỏe toàn diện cho các em học sinh với đội ngũ y tế chuyên nghiệp.</p>" +
+                "            <div class=\"divider\"></div>" +
+                "            <p>Sức khỏe của con em là ưu tiên hàng đầu</p>" +
+                "            <p>📧 Email tự động - Vui lòng không trả lời trực tiếp</p>" +
                 "        </div>" +
                 "    </div>" +
                 "</body>" +
@@ -484,52 +491,46 @@ public class EmailService {
                 "<head>" +
                 "    <meta charset=\"UTF-8\">" +
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
-                "    <title>Thông báo mời tư vấn y tế</title>" +
+                "    <title>Mời tư vấn y tế</title>" +
                 "    <style>" +
                 "        * { margin: 0; padding: 0; box-sizing: border-box; }" +
-                "        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; }" +
-                "        .email-container { max-width: 650px; margin: 20px auto; background: #ffffff; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }" +
-                "        .header { background: linear-gradient(135deg, #ff9800, #f57c00); color: white; padding: 35px 25px; text-align: center; position: relative; }" +
-                "        .header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"80\" cy=\"30\" r=\"1.5\" fill=\"white\" opacity=\"0.1\"/><circle cx=\"60\" cy=\"70\" r=\"1\" fill=\"white\" opacity=\"0.1\"/></svg>'); }" +
-                "        .header h1 { font-size: 26px; margin-bottom: 10px; position: relative; z-index: 1; }" +
-                "        .header .icon { font-size: 52px; margin-bottom: 15px; }" +
-                "        .header .subtitle { font-size: 15px; opacity: 0.9; position: relative; z-index: 1; }" +
-                "        .content-wrapper { padding: 0; }" +
-                "        .greeting { background: linear-gradient(135deg, #fff3e0, #ffe0b2); padding: 30px 35px; border-left: 5px solid #ff9800; }" +
-                "        .greeting h2 { color: #e65100; font-size: 20px; margin-bottom: 12px; }" +
-                "        .greeting p { color: #37474f; line-height: 1.7; font-size: 15px; }" +
-                "        .main-content { padding: 35px; }" +
-                "        .content-box { background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; padding: 30px; margin: 25px 0; border-left: 5px solid #2196f3; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }" +
-                "        .content-box h3 { color: #ff9800; font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; }" +
-                "        .content-text { color: #424242; line-height: 1.8; font-size: 15px; background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; }" +
-                "        .info-section { background: linear-gradient(135deg, #e8f5e8, #f0f8f0); padding: 28px; margin: 28px 0; border-radius: 12px; border: 1px solid #c8e6c9; }" +
-                "        .info-title { color: #2e7d32; font-weight: bold; font-size: 17px; margin-bottom: 18px; display: flex; align-items: center; }" +
-                "        .info-grid { display: flex; flex-wrap: wrap; gap: 18px; }" +
-                "        .info-item { background: rgba(255,255,255,0.9); padding: 15px 18px; border-radius: 8px; flex: 1; min-width: 220px; border: 1px solid #e0e0e0; }" +
-                "        .info-label { font-weight: 600; color: #ff9800; font-size: 13px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }" +
-                "        .info-value { color: #424242; font-size: 15px; font-weight: 500; }" +
-                "        .consultation-invitation { background: #fff3e0; border: 2px solid #ff9800; padding: 25px; margin: 20px 0; border-radius: 12px; text-align: center; }" +
-                "        .consultation-invitation h4 { color: #e65100; font-weight: 600; margin-bottom: 12px; font-size: 18px; }" +
-                "        .consultation-invitation p { color: #bf360c; font-weight: 500; margin: 8px 0; line-height: 1.6; }" +
-                "        .invitation-details { background: #e3f2fd; border-left: 4px solid #2196f3; padding: 25px; margin: 20px 0; border-radius: 0 8px 8px 0; }" +
-                "        .invitation-details h4 { color: #1565c0; font-weight: 600; margin-bottom: 12px; font-size: 16px; }" +
-                "        .invitation-details p { color: #0d47a1; font-weight: 500; margin: 8px 0; line-height: 1.6; }" +
-                "        .footer { background: linear-gradient(135deg, #e65100, #ff9800); color: #ffffff; padding: 35px; text-align: center; }" +
-                "        .footer-content { max-width: 450px; margin: 0 auto; }" +
-                "        .footer h3 { font-size: 20px; margin-bottom: 18px; color: #fff3e0; }" +
-                "        .footer p { line-height: 1.7; margin-bottom: 12px; font-size: 14px; }" +
-                "        .footer .divider { height: 3px; background: linear-gradient(90deg, #fff3e0, #ffcc02); border-radius: 2px; margin: 25px 0; }" +
-                "        .footer .school-info { font-style: italic; color: #ffe0b2; font-size: 13px; }" +
-                "        .highlight { background: linear-gradient(120deg, #ff9800 0%%, #ffab40 100%%); padding: 3px 8px; border-radius: 5px; color: #ffffff; font-weight: 600; }" +
-                "        .consultation-icon { color: #ff9800; font-weight: bold; margin-right: 10px; font-size: 18px; }" +
-                "        .info-icon { color: #2e7d32; font-weight: bold; margin-right: 10px; font-size: 16px; }" +
-                "        .invitation-badge { background: #ff9800; color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 15px; }" +
-                "        .important-note { background: #fff3e0; border: 2px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 10px; text-align: center; }" +
-                "        .important-note p { color: #e65100; font-weight: 600; margin: 0; font-size: 15px; }" +
+                "        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; padding: 20px; }" +
+                "        .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }" +
+                "        .header { background: #2c5aa0; color: white; padding: 30px 25px; text-align: center; }" +
+                "        .header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 600; }" +
+                "        .header .icon { font-size: 40px; margin-bottom: 12px; }" +
+                "        .header .subtitle { font-size: 14px; opacity: 0.9; }" +
+                "        .greeting { background: #f8f9fa; padding: 25px; border-left: 4px solid #2c5aa0; }" +
+                "        .greeting h2 { color: #2c5aa0; font-size: 20px; margin-bottom: 12px; font-weight: 600; }" +
+                "        .greeting p { color: #495057; line-height: 1.6; font-size: 15px; }" +
+                "        .main-content { padding: 30px 25px; }" +
+                "        .consultation-info { background: #fff; border: 2px solid #e9ecef; border-radius: 6px; padding: 25px; margin: 20px 0; }" +
+                "        .consultation-info h3 { color: #2c5aa0; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; }" +
+                "        .consultation-info .icon { color: #2c5aa0; margin-right: 10px; font-size: 20px; }" +
+                "        .content-text { color: #495057; line-height: 1.7; font-size: 15px; }" +
+                "        .important-note { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 20px; margin: 20px 0; }" +
+                "        .important-note h4 { color: #856404; font-size: 16px; margin-bottom: 10px; }" +
+                "        .important-note p { color: #856404; font-size: 14px; line-height: 1.5; }" +
+                "        .contact-info { background: #e8f4f8; border-radius: 6px; padding: 20px; margin: 20px 0; text-align: center; }" +
+                "        .contact-info h4 { color: #0c5460; font-size: 16px; margin-bottom: 15px; }" +
+                "        .contact-button { background: #28a745; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; margin: 5px; display: inline-block; transition: background-color 0.2s; }" +
+                "        .contact-button:hover { background: #218838; }" +
+                "        .info-section { background: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0; }" +
+                "        .info-title { color: #495057; font-weight: 600; font-size: 16px; margin-bottom: 15px; }" +
+                "        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }" +
+                "        .info-item { background: #ffffff; border: 1px solid #dee2e6; padding: 15px; border-radius: 4px; }" +
+                "        .info-label { font-weight: 600; color: #6c757d; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }" +
+                "        .info-value { color: #495057; font-size: 14px; }" +
+                "        .footer { background: #343a40; color: #ffffff; padding: 25px; text-align: center; }" +
+                "        .footer h3 { font-size: 18px; margin-bottom: 15px; color: #ffffff; }" +
+                "        .footer p { line-height: 1.6; margin-bottom: 8px; font-size: 14px; color: #adb5bd; }" +
+                "        .footer .divider { height: 1px; background: #495057; margin: 15px 0; }" +
+                "        .highlight { background: #e7f3ff; color: #0c5460; padding: 2px 6px; border-radius: 3px; font-weight: 500; }" +
                 "        @media (max-width: 600px) {" +
-                "            .email-container { margin: 10px; border-radius: 0; }" +
-                "            .info-grid { flex-direction: column; }" +
-                "            .main-content, .greeting { padding: 25px 20px; }" +
+                "            body { padding: 10px; }" +
+                "            .email-container { border-radius: 4px; }" +
+                "            .info-grid { grid-template-columns: 1fr; }" +
+                "            .main-content, .greeting { padding: 20px; }" +
                 "            .header { padding: 25px 20px; }" +
                 "        }" +
                 "    </style>" +
@@ -537,58 +538,49 @@ public class EmailService {
                 "<body>" +
                 "    <div class=\"email-container\">" +
                 "        <div class=\"header\">" +
-                "            <div class=\"icon\">👨‍⚕️</div>" +
-                "            <h1>Thông Báo Mời Tư Vấn Y Tế</h1>" +
+                "            <div class=\"icon\">🏥</div>" +
+                "            <h1>Thư Mời Tư Vấn Y Tế</h1>" +
                 "            <p class=\"subtitle\">Hệ thống quản lý y tế trường học</p>" +
-                "            <span class=\"invitation-badge\">CẦN TƯ VẤN</span>" +
                 "        </div>" +
-                "        <div class=\"content-wrapper\">" +
-                "            <div class=\"greeting\">" +
-                "                <h2>Kính chào Quý Phụ huynh %s!</h2>" +
-                "                <p>Chúng tôi xin gửi đến Quý Phụ huynh lời mời tham gia <span class=\"highlight\">buổi tư vấn y tế</span> cho con em. Đây là cơ hội quan trọng để thảo luận về tình hình sức khỏe và nhận được hướng dẫn chuyên nghiệp từ đội ngũ y tế của trường.</p>" +
+                "        <div class=\"greeting\">" +
+                "            <h2>Kính chào Quý Phụ huynh %s</h2>" +
+                "            <p>Chúng tôi xin gửi đến Quý Phụ huynh lời mời tham gia <span class=\"highlight\">buổi tư vấn y tế</span> quan trọng cho con em.</p>" +
+                "        </div>" +
+                "        <div class=\"main-content\">" +
+                "            <div class=\"consultation-info\">" +
+                "                <h3><span class=\"icon\">📋</span>Thông Tin Tư Vấn</h3>" +
+                "                <div class=\"content-text\">%s</div>" +
                 "            </div>" +
-                "            <div class=\"main-content\">" +
-                "                <div class=\"content-box\">" +
-                "                    <h3><span class=\"consultation-icon\">📋</span>Thông Tin Lời Mời Tư Vấn Y Tế</h3>" +
-                "                    <div class=\"content-text\">" +
-                "                        %s" +
+                "            <div class=\"important-note\">" +
+                "                <h4>⚠️ Lưu ý quan trọng</h4>" +
+                "                <p>Vui lòng sắp xếp thời gian tham gia đầy đủ để đảm bảo hiệu quả tư vấn tốt nhất cho con em. Nếu có thay đổi lịch hẹn, xin vui lòng liên hệ trước ít nhất 24 giờ.</p>" +
+                "            </div>" +
+                "            <div class=\"contact-info\">" +
+                "                <h4>📞 Liên hệ hỗ trợ</h4>" +
+                "                <p style=\"color: #0c5460; margin-bottom: 15px;\">Đội ngũ y tế luôn sẵn sàng hỗ trợ Quý Phụ huynh</p>" +
+                "                <a href=\"tel:+84123456789\" class=\"contact-button\">📞 Gọi điện</a>" +
+                "                <a href=\"mailto:ytetrường@school.edu.vn\" class=\"contact-button\">📧 Gửi email</a>" +
+                "            </div>" +
+                "            <div class=\"info-section\">" +
+                "                <div class=\"info-title\">Thông tin gửi thông báo</div>" +
+                "                <div class=\"info-grid\">" +
+                "                    <div class=\"info-item\">" +
+                "                        <div class=\"info-label\">Thời gian gửi</div>" +
+                "                        <div class=\"info-value\">%s</div>" +
                 "                    </div>" +
-                "                </div>" +
-                "                <div class=\"consultation-invitation\">" +
-                "                    <h4>📅 Lời Mời Tham Gia Buổi Tư Vấn Y Tế</h4>" +
-                "                    <p><strong>Kính mời Quý phụ huynh sắp xếp thời gian tham gia buổi tư vấn y tế quan trọng này.</strong></p>" +
-                "                    <p>Buổi tư vấn sẽ giúp con em nhận được sự chăm sóc y tế tốt nhất và hướng dẫn phù hợp.</p>" +
-                "                </div>" +
-                "                <div class=\"invitation-details\">" +
-                "                    <h4>📋 Lưu ý quan trọng cho buổi tư vấn:</h4>" +
-                "                    <p>• Vui lòng mang theo sổ sức khỏe và các giấy tờ y tế liên quan của con em</p>" +
-                "                    <p>• Chuẩn bị danh sách các câu hỏi muốn tư vấn với đội ngũ y tế</p>" +
-                "                    <p>• Liên hệ với nhà trường để xác nhận thời gian tham gia</p>" +
-                "                </div>" +
-                "                <div class=\"info-section\">" +
-                "                    <div class=\"info-title\"><span class=\"info-icon\">ℹ️</span>Thông Tin Gửi Thông Báo</div>" +
-                "                    <div class=\"info-grid\">" +
-                "                        <div class=\"info-item\">" +
-                "                            <div class=\"info-label\">📅 Thời gian gửi</div>" +
-                "                            <div class=\"info-value\">%s</div>" +
-                "                        </div>" +
-                "                        <div class=\"info-item\">" +
-                "                            <div class=\"info-label\">👤 Đơn vị gửi</div>" +
-                "                            <div class=\"info-value\">%s</div>" +
-                "                        </div>" +
+                "                    <div class=\"info-item\">" +
+                "                        <div class=\"info-label\">Người gửi</div>" +
+                "                        <div class=\"info-value\">%s</div>" +
                 "                    </div>" +
                 "                </div>" +
                 "            </div>" +
                 "        </div>" +
                 "        <div class=\"footer\">" +
-                "            <div class=\"footer-content\">" +
-                "                <h3>🏥 Ban Y Tế Trường Học</h3>" +
-                "                <p>Chúng tôi cam kết cung cấp dịch vụ tư vấn y tế chất lượng cao và chăm sóc sức khỏe toàn diện cho các em học sinh với đội ngũ chuyên gia y tế giàu kinh nghiệm.</p>" +
-                "                <div class=\"divider\"></div>" +
-                "                <p class=\"school-info\">Hệ thống tư vấn y tế chuyên nghiệp và tận tâm</p>" +
-                "                <p class=\"school-info\">📧 Đây là email tự động từ hệ thống, vui lòng không trả lời trực tiếp</p>" +
-                "                <p class=\"school-info\">📞 Liên hệ: Ban Y tế nhà trường để xác nhận lịch hẹn</p>" +
-                "            </div>" +
+                "            <h3>🏫 Ban Y Tế Trường Học</h3>" +
+                "            <p>Chúng tôi cam kết mang đến dịch vụ chăm sóc sức khỏe chất lượng cao cho các em học sinh.</p>" +
+                "            <div class=\"divider\"></div>" +
+                "            <p>Sức khỏe của con em là ưu tiên hàng đầu</p>" +
+                "            <p>📧 Email tự động - Vui lòng không trả lời trực tiếp</p>" +
                 "        </div>" +
                 "    </div>" +
                 "</body>" +

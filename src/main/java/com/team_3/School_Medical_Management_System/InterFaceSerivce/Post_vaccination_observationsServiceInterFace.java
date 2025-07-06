@@ -1,12 +1,9 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivce;
-
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observationsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observations_edit_DTO;
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observations_SendForParent_DTO;
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observations_edit_Update_SendParent_DTO;
-
 import java.util.List;
-
 public interface Post_vaccination_observationsServiceInterFace {
      List<Post_vaccination_observationsDTO> getPost_vaccination_observations();
      Post_vaccination_observationsDTO getPost_vaccination_observation(Integer id);

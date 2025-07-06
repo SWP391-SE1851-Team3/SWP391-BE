@@ -18,4 +18,5 @@ public interface MedicationSubmissionServiceInterface {
     List<MedicationSubmissionInfoDTO> getMedicationSubmissionInfoByParentId(int parentId);
     MedicationSubmission getMedicationSubmissionById(int submissionId);
     MedicationDetailsExtendedDTO getDetailsBySubmissionIdExtended(int submissionId);
+    MedicationSubmission updateMedicationSubmission(MedicationSubmission medicationSubmission);
 }
