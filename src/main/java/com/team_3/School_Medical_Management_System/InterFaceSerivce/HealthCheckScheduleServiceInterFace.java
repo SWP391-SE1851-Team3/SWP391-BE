@@ -1,4 +1,4 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
+package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_ScheduleDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;

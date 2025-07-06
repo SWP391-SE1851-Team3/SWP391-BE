@@ -1,7 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Post_vaccination_observationsServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Post_vaccination_observationsServiceInterFace;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

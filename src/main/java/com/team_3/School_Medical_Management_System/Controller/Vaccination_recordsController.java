@@ -1,8 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccination_recordsServiceInterFace;
-import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccination_recordsServiceInterFace;
 import com.team_3.School_Medical_Management_System.configuration.EmailConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

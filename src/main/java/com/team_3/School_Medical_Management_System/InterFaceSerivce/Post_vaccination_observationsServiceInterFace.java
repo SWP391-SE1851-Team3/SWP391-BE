@@ -1,10 +1,9 @@
-package com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace;
+package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observationsDTO;
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observations_SendForParent_DTO;
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observations_edit_DTO;
 import com.team_3.School_Medical_Management_System.DTO.Post_vaccination_observations_edit_Update_SendParent_DTO;
-import com.team_3.School_Medical_Management_System.Model.Post_vaccination_observations;
 
 import java.util.List;
 

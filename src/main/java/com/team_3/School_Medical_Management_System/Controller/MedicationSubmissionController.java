@@ -1,12 +1,10 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConfirmMedicationSubmissionServiceInterface;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.MedicationSubmissionServiceInterface;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
-import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
-import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import com.team_3.School_Medical_Management_System.Service.FileStorageService;
@@ -16,18 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/medication-submission")

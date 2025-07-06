@@ -2,11 +2,9 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
-import com.team_3.School_Medical_Management_System.Model.Consent_forms;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Consent_formsServiceInterFace;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
