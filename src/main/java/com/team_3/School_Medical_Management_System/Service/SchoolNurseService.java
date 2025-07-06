@@ -1,11 +1,8 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.UserDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.RoleRepo;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseInterFace;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseRepository;
-import com.team_3.School_Medical_Management_System.Model.Role;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Repositories.SchoolNurseRepo;
 import jakarta.transaction.Transactional;

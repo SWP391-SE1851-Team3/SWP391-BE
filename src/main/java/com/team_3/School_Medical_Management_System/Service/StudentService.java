@@ -2,7 +2,7 @@ package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.DTO.StudentsDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
 import com.team_3.School_Medical_Management_System.Model.Student;
