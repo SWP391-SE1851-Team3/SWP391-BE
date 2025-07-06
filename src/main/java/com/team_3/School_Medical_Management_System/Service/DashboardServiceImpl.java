@@ -118,7 +118,7 @@ public class DashboardServiceImpl implements DashboardService {
     public List<AccountDTO> getAllAccounts(int roleID) {
         if (roleID == 1) {
 
-            List<Parent> parents = parentRepository.getAllWithIsActive();
+            List<Parent> parents = parentRepository.getAllAccounts();
             List<AccountDTO> a = new ArrayList<>();
             for (Parent p : parents) {
 
@@ -129,14 +129,14 @@ public class DashboardServiceImpl implements DashboardService {
                 accountDTO.setEmail(p.getEmail());
                 accountDTO.setPhone(p.getPhone());
                 accountDTO.setFullName(p.getFullName());
-
+accountDTO.setIsActive(p.getIsActive());
                 // Add to a list or return as needed
                 a.add(accountDTO);
             }
             return a;
 
         } else if (roleID == 2) {
-            List<SchoolNurse> nurses = schoolNurseRepository.getAllWithIsActive();
+            List<SchoolNurse> nurses = schoolNurseRepository.getAllAccounts();
             List<AccountDTO> a = new ArrayList<>();
             for (SchoolNurse n : nurses) {
                 AccountDTO accountDTO = new AccountDTO();
@@ -147,12 +147,13 @@ public class DashboardServiceImpl implements DashboardService {
                 accountDTO.setPhone(n.getPhone());
                 accountDTO.setFullName(n.getFullName());
                 // Add to a list or return as needed
+                accountDTO.setIsActive(n.getIsActive());
                 a.add(accountDTO);
             }
             return a;
 
         } else if (roleID == 3) {
-            List<Manager> managers = managerRepository.getAllWithIsActive();
+            List<Manager> managers = managerRepository.getAllAccounts();
             List<AccountDTO> a = new ArrayList<>();
             for (Manager m : managers) {
                 AccountDTO accountDTO = new AccountDTO();
@@ -163,6 +164,7 @@ public class DashboardServiceImpl implements DashboardService {
                 accountDTO.setPhone(m.getPhone());
                 accountDTO.setFullName(m.getFullName());
                 // Add to a list or return as needed
+                accountDTO.setIsActive(m.getIsActive());
                 a.add(accountDTO);
             }
             return a;

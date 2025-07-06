@@ -11,7 +11,7 @@ public class AccountDTO {
     private String fullName;
     private String phone;
     // "Parent" hoặc "SchoolNurse"
-
+    private int isActive;
 
     public AccountDTO() {
         // Default constructor
