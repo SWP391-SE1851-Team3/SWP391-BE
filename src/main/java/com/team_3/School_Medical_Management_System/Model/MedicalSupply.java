@@ -38,9 +38,9 @@ public class MedicalSupply {
     private SupplyCategory category;
 
 
-    @ManyToOne
-    @JoinColumn(name = "BatchID")
-    private Vaccine_Batches vaccineBatch;
+//    @ManyToOne
+//    @JoinColumn(name = "BatchID")
+//    private Vaccine_Batches vaccineBatch;
 
 
     @ManyToOne
@@ -62,7 +62,7 @@ public class MedicalSupply {
         this.storageTemperature = storageTemperature;
         this.dateAdded = dateAdded;
         this.category = category;
-        this.vaccineBatch = vaccineBatch;
+        //this.vaccineBatch = vaccineBatch;
 
         this.healthCheckStudent = healthCheckStudent;
     }
