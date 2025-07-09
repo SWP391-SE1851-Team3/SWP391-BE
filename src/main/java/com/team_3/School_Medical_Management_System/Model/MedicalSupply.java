@@ -38,12 +38,6 @@ public class MedicalSupply {
     @JoinColumn(name = "CategoryID")
     private SupplyCategory category;
 
-
-    @ManyToOne
-    @JoinColumn(name = "BatchID")
-    private Vaccine_Batches vaccineBatch;
-
-
     @ManyToOne
     @JoinColumn(name = "CheckID")
     private HealthCheck_Student healthCheckStudent;
@@ -54,7 +48,7 @@ public class MedicalSupply {
     public MedicalSupply() {
     }
 
-    public MedicalSupply(Integer medicalSupplyId, String supplyName, String unit, Integer quantityAvailable, Integer reorderLevel, String storageTemperature, Date dateAdded, SupplyCategory category, Vaccine_Batches vaccineBatch, MedicalEvent medicalEvent, HealthCheck_Student healthCheckStudent) {
+    public MedicalSupply(Integer medicalSupplyId, String supplyName, String unit, Integer quantityAvailable, Integer reorderLevel, String storageTemperature, Date dateAdded, SupplyCategory category, HealthCheck_Student healthCheckStudent) {
         this.medicalSupplyId = medicalSupplyId;
         this.supplyName = supplyName;
         this.unit = unit;
@@ -63,9 +57,6 @@ public class MedicalSupply {
         this.storageTemperature = storageTemperature;
         this.dateAdded = dateAdded;
         this.category = category;
-        this.vaccineBatch = vaccineBatch;
-
         this.healthCheckStudent = healthCheckStudent;
     }
 }
-

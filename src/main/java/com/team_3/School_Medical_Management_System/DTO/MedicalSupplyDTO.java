@@ -16,7 +16,6 @@ public class MedicalSupplyDTO {
     private Integer ReorderLevel;
     private String StorageTemperature;
     private Date DateAdded;
-    private Integer VaccineTypeID;
     private Integer HealthCheckId;
     private  Integer CategoryID;
 
