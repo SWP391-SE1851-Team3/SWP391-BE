@@ -48,9 +48,9 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
     public Long countCompletedBatches(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'Đã xác nhận' AND scheduled_date BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status like N'Đã xác nhận' AND scheduled_date BETWEEN :startDate AND :endDate";
         } else {
-            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'Đã xác nhận'";
+            sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status like N'Đã xác nhận'";
         }
         try {
             //String sql = "SELECT COUNT(*) FROM Vaccine_Batches WHERE status = 'COMPLETED'";
@@ -96,14 +96,14 @@ public class VaccinationStatsRepositoryImpl implements VaccinationStatsRepositor
         if (startDate != null && endDate != null) {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgree = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgree = N'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM Consent_forms
                 WHERE send_date BETWEEN :startDate AND :endDate
                 """;
         } else {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgree = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgree = N'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM Consent_forms
                 """;
         }
