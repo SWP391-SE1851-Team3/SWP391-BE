@@ -1,34 +1,112 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 
+import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyReportDTO;
 import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicalSupplyServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalSupplyRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SupplyCategoryRepo;
 import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.SupplyCategory;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class MedicalSupplyService {
-    private SupplyCategoryRepo supplyCategory;
-    private MedicalSupplyRepository medicalSupplyRepository;
+@Transactional
+public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
+
+    private final SupplyCategoryRepo supplyCategory;
+    private final MedicalSupplyRepository medicalSupplyRepository;
 
     @Autowired
-
-
-    public MedicalSupplyService(SupplyCategoryRepo supplyCategory, MedicalSupplyRepository medicalSupplyRepository) {
+    public MedicalSupplyService(SupplyCategoryRepo supplyCategory,
+                                MedicalSupplyRepository medicalSupplyRepository) {
         this.supplyCategory = supplyCategory;
         this.medicalSupplyRepository = medicalSupplyRepository;
     }
 
+    // Helper methods để convert giữa Entity và DTO
+    private MedicalSupplyDTO convertToDTO(MedicalSupply medicalSupply) {
+        MedicalSupplyDTO dto = new MedicalSupplyDTO();
+        dto.setMedicalSupplyID(medicalSupply.getMedicalSupplyId());
+        dto.setSupplyName(medicalSupply.getSupplyName());
+        dto.setUnit(medicalSupply.getUnit());
+        dto.setQuantityAvailable(medicalSupply.getQuantityAvailable());
+        dto.setReorderLevel(medicalSupply.getReorderLevel());
+        dto.setStorageTemperature(medicalSupply.getStorageTemperature());
+
+        // Convert java.sql.Date to java.util.Date
+        if (medicalSupply.getDateAdded() != null) {
+            dto.setDateAdded(new java.util.Date(medicalSupply.getDateAdded().getTime()));
+        }
+
+        // Set category ID if category exists
+        if (medicalSupply.getCategory() != null) {
+            dto.setCategoryID(medicalSupply.getCategory().getCategoryID().intValue());
+            dto.setCategoryName(medicalSupply.getCategory().getCategoryName());
+        }
+
+        return dto;
+    }
+
+    private MedicalSupply convertToEntityForCreate(MedicalSupplyDTO dto) {
+        MedicalSupply medicalSupply = new MedicalSupply();
+        medicalSupply.setSupplyName(dto.getSupplyName());
+        medicalSupply.setUnit(dto.getUnit());
+        medicalSupply.setQuantityAvailable(dto.getQuantityAvailable());
+        medicalSupply.setReorderLevel(dto.getReorderLevel());
+        medicalSupply.setStorageTemperature(dto.getStorageTemperature());
+
+        if (dto.getDateAdded() != null) {
+            medicalSupply.setDateAdded(new java.sql.Date(dto.getDateAdded().getTime()));
+        }
+
+        if (dto.getCategoryID() != null) {
+            SupplyCategory category = new SupplyCategory();
+            category.setCategoryID(dto.getCategoryID().longValue());
+            medicalSupply.setCategory(category);
+            category.setCategoryName(dto.getCategoryName());
+        }
+
+        return medicalSupply;
+    }
+
+    private MedicalSupply convertToEntityForUpdate(MedicalSupplyDTO dto) {
+        MedicalSupply medicalSupply = new MedicalSupply();
+
+        if (dto.getMedicalSupplyID() != null) {
+            medicalSupply.setMedicalSupplyId(dto.getMedicalSupplyID());
+        }
+
+        medicalSupply.setSupplyName(dto.getSupplyName());
+        medicalSupply.setUnit(dto.getUnit());
+        medicalSupply.setQuantityAvailable(dto.getQuantityAvailable());
+        medicalSupply.setReorderLevel(dto.getReorderLevel());
+        medicalSupply.setStorageTemperature(dto.getStorageTemperature());
+
+        // Convert java.util.Date to java.sql.Date
+        if (dto.getDateAdded() != null) {
+            medicalSupply.setDateAdded(new java.sql.Date(dto.getDateAdded().getTime()));
+        }
+
+        if (dto.getCategoryID() != null) {
+            SupplyCategory category = new SupplyCategory();
+            category.setCategoryID(dto.getCategoryID().longValue());
+            medicalSupply.setCategory(category);
+            category.setCategoryName(dto.getCategoryName());
+        }
+
+        return medicalSupply;
+    }
+
 
     public List<MedicalSupplyReportDTO> getMedicalSupplyReport(Integer categoryId) {
-        // Lấy danh sách vật tư từ repository
         List<MedicalSupply> supplies;
         if (categoryId == null) {
             supplies = medicalSupplyRepository.findAll();
@@ -36,7 +114,6 @@ public class MedicalSupplyService {
             supplies = medicalSupplyRepository.findByCategoryCategoryId(categoryId);
         }
 
-        // Chuyển đổi danh sách vật tư sang DTO bằng vòng lặp for
         List<MedicalSupplyReportDTO> report = new ArrayList<>();
         for (MedicalSupply supply : supplies) {
             MedicalSupplyReportDTO dto = toReportDTO(supply);
@@ -87,5 +164,75 @@ public class MedicalSupplyService {
         return dto;
     }
 
+    @Override
+    public List<MedicalSupplyDTO> getAllMedicalSupply() {
+        List<MedicalSupply> medicalSupplies = medicalSupplyRepository.findAll();
+        return medicalSupplies.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 
+    @Override
+    public MedicalSupplyDTO addMedicalSupply(MedicalSupplyDTO dto) {
+        MedicalSupply medicalSupply = convertToEntityForCreate(dto);
+        MedicalSupply savedSupply = medicalSupplyRepository.save(medicalSupply);
+        return convertToDTO(savedSupply);
+    }
+
+    @Override
+    public MedicalSupplyDTO updateMedicalSupply(MedicalSupplyDTO dto) {
+        MedicalSupply medicalSupply = convertToEntityForUpdate(dto);
+        MedicalSupply updatedSupply = medicalSupplyRepository.save(medicalSupply);
+        return convertToDTO(updatedSupply);
+    }
+
+    @Override
+    public MedicalSupplyDTO getMedicalSupplyById(Integer id) {
+        MedicalSupply medicalSupply = medicalSupplyRepository.findById(id).orElse(null);
+        if (medicalSupply == null) {
+            throw new RuntimeException("Medical Supply not found with ID: " + id);
+        }
+        return convertToDTO(medicalSupply);
+    }
+
+    @Override
+    public void deleteMedicalSupply(Integer id) {
+        if (!medicalSupplyRepository.existsById(id)) {
+            throw new RuntimeException("Medical Supply not found with ID: " + id);
+        }
+        medicalSupplyRepository.deleteById(id);
+    }
+
+    @Override
+    public List<MedicalSupplyDTO> searchMedicalSupplyByName(String name) {
+        // Assuming we need to add this method to repository interface
+        List<MedicalSupply> medicalSupplies = medicalSupplyRepository.findBySupplyNameContainingIgnoreCase(name);
+        return medicalSupplies.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MedicalSupplyDTO> searchMedicalSupplyByCategory(String category) {
+        // Tìm kiếm theo tên category
+        List<MedicalSupply> medicalSupplies = medicalSupplyRepository.findByCategoryCategoryNameContainingIgnoreCase(category);
+        return medicalSupplies.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MedicalSupplyDTO> searchMedicalSupplyByCategoryId(Integer categoryId) {
+        // Tìm kiếm theo category ID
+        List<MedicalSupply> medicalSupplies = medicalSupplyRepository.findByCategoryCategoryId(categoryId);
+        return medicalSupplies.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean existsById(Integer id) {
+        return medicalSupplyRepository.existsById(id);
+    }
 }
+
