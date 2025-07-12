@@ -33,5 +33,4 @@ public class Consent_forms {
     private LocalDateTime send_date;
     private LocalDateTime expire_date;
 
-
 }

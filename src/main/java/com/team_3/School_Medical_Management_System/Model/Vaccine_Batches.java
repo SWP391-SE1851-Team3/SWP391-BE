@@ -17,7 +17,6 @@ public class Vaccine_Batches {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer BatchID;
     private String dot;
-    private Integer quantity_received;
     private LocalDateTime scheduled_date;
     private String location;
     private String status;

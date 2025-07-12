@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyDTO;
+import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicalSupplyServiceInterFace;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,13 @@ public class MedicalSupplyController {
     public ResponseEntity<List<MedicalSupplyDTO>> searchByCategoryId(@RequestParam Integer categoryId) {
         List<MedicalSupplyDTO> list = medicalSupplyService.searchMedicalSupplyByCategoryId(categoryId);
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/categories")
+    @Operation(summary = "Lấy danh sách tất cả danh mục vật tư y tế")
+    public ResponseEntity<List<SupplyCategoryDTO>> getAllCategories() {
+        List<SupplyCategoryDTO> categories = medicalSupplyService.getAllCategories();
+        return ResponseEntity.ok(categories);
     }
 
 }

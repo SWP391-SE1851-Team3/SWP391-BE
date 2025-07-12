@@ -14,7 +14,6 @@ public class Vaccine_Batches_EditDTO {
     private LocalDateTime updated_at;
     private Integer edit_nurse_id;
     private String dot;
-    private Integer quantity_received;
     private LocalDateTime scheduled_date;
     private String location;
     private String status;

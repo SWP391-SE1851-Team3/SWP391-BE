@@ -15,7 +15,7 @@ public interface ParentInterFace {
     public boolean changePassword(String email, String oldPassword, String newPassword);
     public Parent getParentByEmail(String Email);
     public void deleteParent(int id);
-
+    public Parent getParentByEmailName(String userName);
     public Parent checkIdAndRoleExist(int id, int role);
 
     public boolean  existsByUserName(String userName);
