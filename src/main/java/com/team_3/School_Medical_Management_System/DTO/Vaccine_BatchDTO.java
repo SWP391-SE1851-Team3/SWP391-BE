@@ -13,7 +13,6 @@ public class Vaccine_BatchDTO {
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
     private String dot;
-    private Integer quantity_received;
     private LocalDateTime scheduled_date;
     private String location;
     private String status;
@@ -23,5 +22,5 @@ public class Vaccine_BatchDTO {
     private Integer created_by_nurse_id;
     private String created_by_nurse_name;
     private Integer edit_nurse_id;
-    private Long countAgreeConsentForms;
+    private Long countAgreeConsentForms;    
 }

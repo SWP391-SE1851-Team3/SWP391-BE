@@ -85,37 +85,56 @@ public class EmailSentConsentForm {
      * Tạo nội dung HTML đẹp mắt cho email
      */
     private String createHtmlContent(Parent parent, String content, String datetime, String username) {
-        return String.format(
-                "<html>" +
-                        "<head>" +
-                        "    <meta charset=\"UTF-8\">" +
-                        "    <style>" +
-                        "        body { font-family: Arial, sans-serif; }" +
-                        "        .header { background-color: #28a745; color: white; padding: 10px; text-align: center; }" +
-                        "        .content { margin: 20px; line-height: 1.6; }" +
-                        "        .footer { background-color: #f8f9fa; padding: 10px; font-size: smaller; }" +
-                        "        .info { color: #6c757d; }" +
-                        "    </style>" +
-                        "</head>" +
-                        "<body>" +
-                        "   <div class=\"header\"><h2>Gửi Thông Tin Tiêm Chủng Cho Học Sinh </h2></div>" +
-                        "    <div class=\"content\">" +
-                        "        %s" +
-                        "    </div>" +
-                        "    <div class=\"footer\">" +
-                        "        <p class=\"info\">Thông tin bổ sung:</p>" +
-                        "        <p>Thời gian gửi: %s</p>" +
-                        "        <p>Người gửi: %s</p>" +
-                        "        <hr>" +
-                        "        <p>Trân trọng,<br>Ban y tế trường học</p>" +
-                        "    </div>" +
-                        "</body>" +
-                        "</html>",
-                formatContentToHtml(content),
-                datetime,
-                username
-        );
+        return String.format("""
+            <html>
+            <head>
+                <meta charset=\"UTF-8\">
+                <style>
+                    body { font-family: Arial, sans-serif; background-color: #0f0f0f; margin: 0; padding: 0; }
+                    .card { background-color: #1c1c1e; color: #fff; max-width: 600px; margin: auto; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+                    .header { background: linear-gradient(90deg, #0ea5e9, #2563eb); padding: 20px; text-align: center; }
+                    .header h2 { margin: 0; color: white; }
+                    .subtitle { background-color: #111827; padding: 10px 20px; color: #facc15; font-weight: bold; }
+                    .content { padding: 20px; line-height: 1.6; background-color: #1f2937; }
+                    .section { background-color: #111827; margin: 15px 20px; padding: 15px; border-left: 4px solid #10b981; border-radius: 5px; }
+                    .section-title { font-weight: bold; color: #10b981; margin-bottom: 5px; }
+                    .footer { text-align: center; background-color: #1e3a8a; padding: 15px; color: #cbd5e1; font-size: 13px; }
+                    .footer p { margin: 5px 0; }
+                    .highlight { color: #facc15; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class=\"card\">
+                    <div class=\"header\">
+                        <h2>🧾 Thông Báo Khám Sức Khỏe</h2>
+                        <p style=\"margin-top: 5px; font-size: 14px;\">Hệ thống quản lý y tế trường học</p>
+                    </div>
+                    <div class=\"subtitle\">
+                        Kính chào Quý Phụ huynh <span class=\"highlight\">%s</span>!
+                    </div>
+                    <div class=\"content\">
+                        <p>Chúng tôi gửi đến Quý Phụ huynh thông báo quan trọng về <span class=\"highlight\">lịch khám sức khỏe</span> của con em.</p>
+                        <div class=\"section\">
+                            <div class=\"section-title\">✔ Chi Tiết Thông Báo</div>
+                            %s
+                        </div>
+                        <div class=\"section\">
+                            <div class=\"section-title\">📩 Thông Tin Gửi Thông Báo</div>
+                            <p>⏰ Thời gian gửi: <strong>%s</strong></p>
+                            <p>👤 Người gửi: <strong>%s</strong></p>
+                        </div>
+                    </div>
+                    <div class=\"footer\">
+                        <p>📘 Ban Y Tế Trường Học</p>
+                        <p>Chúng tôi cam kết chăm sóc sức khỏe tốt nhất cho các học sinh.</p>
+                        <p><em>Hệ thống quản lý y tế hiện đại và chuyên nghiệp</em></p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """, parent.getFullName(), formatContentToHtml(content), datetime, username);
     }
+
 
     /**
      * Chuyển đổi nội dung văn bản thành HTML

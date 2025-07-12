@@ -20,10 +20,12 @@ import java.util.List;
 
 public class SchoolNurseController {
     private SchoolNurseServiceInterFace schoolNurseService;
+    //private final JwtUtil jwtUtil;
 
     @Autowired
     public SchoolNurseController(SchoolNurseServiceInterFace schoolNurseService) {
         this.schoolNurseService = schoolNurseService;
+
     }
 
     @GetMapping
@@ -64,8 +66,19 @@ public class SchoolNurseController {
     public ResponseEntity<?> login(@Valid @RequestBody NurseLoginResponseDTO loginRequest) {
         SchoolNurse nurse = schoolNurseService.LoginByAccount(loginRequest.getEmail(), loginRequest.getPassword());
         if (nurse != null) {
+//
+//
+//
+
+
+            String token = null;
+//            jwtUtil.generateJwtToken(
+//                    Integer.valueOf(nurse.getNurseID()),  // hoặc nurseId / managerId nếu dùng chung login
+//                    Integer.valueOf(nurse.getRoleID())
+//            );
             // Trả về dữ liệu an toàn, không chứa mật khẩu, giu bao mat
-            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), 2, nurse.getNurseID(), nurse.getFullName()));
+            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), nurse.getFullName(), token));
+
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }
