@@ -20,10 +20,13 @@ import java.util.List;
 public class ParentController {
 
     private ParentService parentService;
+   // private final JwtUtil jwtUtil;
 
     @Autowired
     public ParentController(ParentService parentService) {
+
         this.parentService = parentService;
+      //  this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -66,7 +69,13 @@ public class ParentController {
     public ResponseEntity<?> login(@RequestBody ParentLoginResponseDTO parentLoginResponseDTO) {
         var p = parentService.LoginByAccount(parentLoginResponseDTO.getEmail(), parentLoginResponseDTO.getPassword());
         if (p != null) {
-            return ResponseEntity.ok(new LoginResponse(p.getEmail(), 1, p.getParentID(),p.getFullName()));
+            String token = null;
+//                    jwtUtil.generateToken(
+//                    Integer.valueOf(p.getParentID()),  // hoặc nurseId / managerId nếu dùng chung login
+//                    Integer.valueOf(p.getRoleID()) // hoặc lấy theo logic role
+//            );
+            return ResponseEntity.ok(new LoginResponse(
+                    p.getEmail(),p.getFullName(), token));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }

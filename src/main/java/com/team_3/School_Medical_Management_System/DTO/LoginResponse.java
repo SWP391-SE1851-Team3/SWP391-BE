@@ -8,32 +8,17 @@ import lombok.*;
 @ToString
 public class LoginResponse {
     private String email;
-    private int role;
-    private int parentId;// 1: Manager, 2: Nurse, 3: Parent
     private String fullName;
-    private int  nurseId;
-    private int managerId;
+    private String token;
 
 
-    public LoginResponse(String email, int role, int id, String fullName) {
+    public LoginResponse(String email, String fullName ,String token) {
         this.email = email;
-        this.role = role;
         this.fullName = fullName;
+        this.token = token;
 
-        // Gán id đúng vào từng role
-        if (role == 1) {
-            this.parentId = id;
-        } else if (role == 2) {
-            this.nurseId = id;
-        } else if (role == 3) {
-            this.managerId = id;
-        }
+
     }
-
-
-
-
-
 
 }
 

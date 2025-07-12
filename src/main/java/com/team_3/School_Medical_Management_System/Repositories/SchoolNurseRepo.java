@@ -95,6 +95,33 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
     }
 
     @Override
+    public SchoolNurse findByEmailLogin(String emailName) {
+        String jpql = "SELECT s FROM SchoolNurse s WHERE s.Email = :emailName";
+        try {
+            return entityManager.createQuery(jpql, SchoolNurse.class)
+                    .setParameter("emailName", emailName.trim())
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null; // Không tìm thấy kết quả
+        }
+    }
+
+//    @Override
+//    public SchoolNurse findByUserName(String userName) {
+//        String jpql = "SELECT s FROM SchoolNurse s WHERE s.UserName = :userName";
+//        try {
+//
+//            SchoolNurse schoolNurse = entityManager.createQuery(jpql, SchoolNurse.class)
+//                    .setParameter("userName", userName.trim())
+//                    .getSingleResult();
+//           return schoolNurse; // Trả về đối tượng SchoolNurse nếu tìm thấy
+//        } catch (Exception e) {
+//            return null; // Không tìm thấy kết quả
+//        }
+//       // Trả về null nếu không tìm thấy
+//    }
+
+    @Override
     public SchoolNurse checkIdAndRoleExist(int id, int roleId) {
         String jpql = "SELECT s FROM SchoolNurse s WHERE s.NurseID = :id AND s.RoleID = :roleId";
         try {
