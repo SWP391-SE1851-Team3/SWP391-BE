@@ -38,17 +38,13 @@ public class MedicalSupply {
     @JoinColumn(name = "CategoryID")
     private SupplyCategory category;
 
-    @ManyToOne
-    @JoinColumn(name = "CheckID")
-    private HealthCheck_Student healthCheckStudent;
-
     @OneToMany(mappedBy = "medicalSupply", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MedicalEventMedicalSupply> medicalEventMedicalSupplies = new ArrayList<>();
 
     public MedicalSupply() {
     }
 
-    public MedicalSupply(Integer medicalSupplyId, String supplyName, String unit, Integer quantityAvailable, Integer reorderLevel, String storageTemperature, Date dateAdded, SupplyCategory category, HealthCheck_Student healthCheckStudent) {
+    public MedicalSupply(Integer medicalSupplyId, String supplyName, String unit, Integer quantityAvailable, Integer reorderLevel, String storageTemperature, Date dateAdded, SupplyCategory category) {
         this.medicalSupplyId = medicalSupplyId;
         this.supplyName = supplyName;
         this.unit = unit;
@@ -57,6 +53,5 @@ public class MedicalSupply {
         this.storageTemperature = storageTemperature;
         this.dateAdded = dateAdded;
         this.category = category;
-        this.healthCheckStudent = healthCheckStudent;
     }
 }

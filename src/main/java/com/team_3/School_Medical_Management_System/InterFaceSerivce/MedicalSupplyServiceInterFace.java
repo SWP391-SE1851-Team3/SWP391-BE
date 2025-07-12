@@ -1,6 +1,7 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyDTO;
+import com.team_3.School_Medical_Management_System.DTO.SupplyCategoryDTO;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface MedicalSupplyServiceInterFace {
     List<MedicalSupplyDTO> searchMedicalSupplyByCategory(String category);
     List<MedicalSupplyDTO> searchMedicalSupplyByCategoryId(Integer categoryId);
     boolean existsById(Integer id);
+    List<SupplyCategoryDTO> getAllCategories();
 }

@@ -9,7 +9,6 @@ import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicalSupplyRe
 import com.team_3.School_Medical_Management_System.InterfaceRepo.SupplyCategoryRepo;
 import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.SupplyCategory;
-import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,14 +46,10 @@ public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
             dto.setDateAdded(new java.util.Date(medicalSupply.getDateAdded().getTime()));
         }
 
-        // Set category ID if category exists (convert Long to Integer)
+        // Set category ID if category exists
         if (medicalSupply.getCategory() != null) {
             dto.setCategoryID(medicalSupply.getCategory().getCategoryID().intValue());
-        }
-
-        // Set health check ID if healthCheckStudent exists
-        if (medicalSupply.getHealthCheckStudent() != null) {
-            dto.setHealthCheckId(medicalSupply.getHealthCheckStudent().getCheckID());
+            dto.setCategoryName(medicalSupply.getCategory().getCategoryName());
         }
 
         return dto;
@@ -76,12 +71,7 @@ public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
             SupplyCategory category = new SupplyCategory();
             category.setCategoryID(dto.getCategoryID().longValue());
             medicalSupply.setCategory(category);
-        }
-
-        if (dto.getHealthCheckId() != null) {
-            HealthCheck_Student healthCheck = new HealthCheck_Student();
-            healthCheck.setCheckID(dto.getHealthCheckId());
-            medicalSupply.setHealthCheckStudent(healthCheck);
+            category.setCategoryName(dto.getCategoryName());
         }
 
         return medicalSupply;
@@ -109,12 +99,7 @@ public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
             SupplyCategory category = new SupplyCategory();
             category.setCategoryID(dto.getCategoryID().longValue());
             medicalSupply.setCategory(category);
-        }
-
-        if (dto.getHealthCheckId() != null) {
-            HealthCheck_Student healthCheck = new HealthCheck_Student();
-            healthCheck.setCheckID(dto.getHealthCheckId());
-            medicalSupply.setHealthCheckStudent(healthCheck);
+            category.setCategoryName(dto.getCategoryName());
         }
 
         return medicalSupply;
