@@ -26,7 +26,7 @@ public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
 
     @Autowired
     public MedicalSupplyService(SupplyCategoryRepo supplyCategory,
-                                MedicalSupplyRepository medicalSupplyRepository) {
+                              MedicalSupplyRepository medicalSupplyRepository) {
         this.supplyCategory = supplyCategory;
         this.medicalSupplyRepository = medicalSupplyRepository;
     }
