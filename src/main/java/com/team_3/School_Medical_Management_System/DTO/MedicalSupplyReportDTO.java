@@ -13,4 +13,5 @@ public class MedicalSupplyReportDTO {
     private Integer reorderLevel;
     private Boolean isBelowReorderLevel;
     private Date dateAdded;
+    private String storageTemperature;
 }

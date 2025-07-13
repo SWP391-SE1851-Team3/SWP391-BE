@@ -70,6 +70,7 @@ public class MedicalSupplyService {
         // Kiểm tra xem số lượng có dưới mức đặt hàng lại không
         dto.setIsBelowReorderLevel(supply.getQuantityAvailable() < supply.getReorderLevel());
         dto.setDateAdded(supply.getDateAdded());
+        dto.setStorageTemperature(supply.getStorageTemperature());
         return dto;
     }
 
