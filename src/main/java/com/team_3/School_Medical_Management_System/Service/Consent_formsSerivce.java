@@ -1,12 +1,11 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepos;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ConsentFormsRepository;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Consent_formsServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConsentFormsRepos;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConsentFormsRepository;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Consent_formsServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Consent_formsInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepositories;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepository;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

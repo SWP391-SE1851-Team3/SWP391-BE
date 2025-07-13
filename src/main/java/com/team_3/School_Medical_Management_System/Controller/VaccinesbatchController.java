@@ -3,7 +3,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.Vaccine_BatchesServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccine_BatchesServiceInterFace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

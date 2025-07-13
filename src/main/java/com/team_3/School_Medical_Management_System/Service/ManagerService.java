@@ -1,22 +1,19 @@
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.*;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.ManagerServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ManagerServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.ParentRepo;
-import com.team_3.School_Medical_Management_System.Repositories.Post_vaccination_observationsRepo;
 import com.team_3.School_Medical_Management_System.Repositories.SchoolNurseRepo;
 import com.team_3.School_Medical_Management_System.Repositories.StudentRepo;
 import jakarta.transaction.Transactional;
-import org.jetbrains.annotations.ApiStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
