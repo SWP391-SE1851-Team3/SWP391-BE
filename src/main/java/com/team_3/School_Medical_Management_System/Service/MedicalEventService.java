@@ -111,11 +111,18 @@ public class MedicalEventService {
         if (studentOptional.isEmpty()) {
             throw new RuntimeException("Học sinh không tồn tại với ID: " + dto.getStudentId());
         }
+        Optional<Student> student = studentRepository.findStudentByParentID(dto.getParentID(), dto.getStudentId());
+        if (student.isEmpty()) {
+            throw new RuntimeException("Học sinh không tồn tại với ID: " + dto.getStudentId() + " và ParentID: " + dto.getParentID());
+        }
+
         // Kiểm tra phụ huynh
         Optional<Parent> parent = parentRepository.findById(dto.getParentID());
         if (parent.isEmpty()) {
             throw new RuntimeException("Phụ huynh không tồn tại trong hệ thống.");
         }
+
+
         event.setParent(parent.get());
         // Lưu sự kiện
         Optional<SchoolNurse> nurseOptional = schoolNurseRepository.findById(dto.getNurseId());

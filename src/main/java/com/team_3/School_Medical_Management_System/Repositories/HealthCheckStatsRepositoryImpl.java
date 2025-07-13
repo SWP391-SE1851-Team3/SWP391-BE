@@ -47,9 +47,9 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
     public Long countCompletedSchedules(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 'Đã xác nhận' AND Schedule_Date BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = N'Đã xác nhận' AND Schedule_Date BETWEEN :startDate AND :endDate";
         } else {
-            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 'Đã xác nhận'";
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = N'Đã xác nhận'";
         }
         try {
             //String sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 1";
@@ -95,14 +95,14 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
         if (startDate != null && endDate != null) {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgreed = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgreed = N'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM HealthConsentForm
                 WHERE send_date BETWEEN :startDate AND :endDate
                 """;
         } else {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN IsAgreed = 'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN IsAgreed = N'Đồng ý' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM HealthConsentForm
                 """;
         }

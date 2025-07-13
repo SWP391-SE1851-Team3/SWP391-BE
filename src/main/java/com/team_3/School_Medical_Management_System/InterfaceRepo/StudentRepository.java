@@ -9,9 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
+
+   @Query("SELECT s FROM Student s WHERE s.parent.ParentID = :parentId AND s.StudentID = :studentId")
+   Optional<Student> findStudentByParentID(@Param("parentId") int parentId, @Param("studentId") int studentId);
 
 
 }

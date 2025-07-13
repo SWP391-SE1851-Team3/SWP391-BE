@@ -22,4 +22,7 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     @Modifying
     @Query("UPDATE Parent p SET p.IsActive = :isActive WHERE p.ParentID = :parentId")
     void updateParent(@Param("parentId") Integer parentId, @Param("isActive") int isActive);
+
+   // Optional<Parent> findByEmail(String email);
+
 }
