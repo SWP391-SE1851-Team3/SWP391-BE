@@ -16,19 +16,19 @@ import java.util.Date;
 public class HealthConsultation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int consultationID;
+    private int consultID;
+    private int studentID;
+    private int  checkID;
+    @Column(name = "Consult_Date")
+    private Date consultDate;
+    private String status;
+    private String location;// false = pending, true = completed
+    private String reason;
 
-    @ManyToOne
-    @JoinColumn(name = "studentID")
-    private Student student;
+    // Added fields for tracking creation and updates
+    private Integer CreatedByNurseID;
+    private Integer UpdatedByNurseID;
+    private Date create_at;
+    private Date update_at;
 
-    @ManyToOne
-    @JoinColumn(name = "checkID")
-    private HealthCheck_Student healthCheckStudent;
-
-    private String issue;
-    private String recommendation;
-    private Date scheduledDate;
-    private boolean status; // false = pending, true = completed
-    private String notes;
 }

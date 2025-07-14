@@ -5,27 +5,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.util.Date;
 
 @NoArgsConstructor
 @ToString
 @Entity
-@Table
+@Table(name = "HealthConsentForm")
 @Setter
 @Getter
 public class HealthConsentForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int formID;
-
-    @ManyToOne
-    @JoinColumn(name = "studentID")
-    private Student student;
-
-    @ManyToOne
-    @JoinColumn(name = "health_ScheduleID")
-    private HealthCheck_Schedule healthCheckSchedule;
-
-    private Boolean isAgreed;
+    private int studentID;
+    private int parentID;
+    @Column(name = "health_ScheduleID")
+    private int healthScheduleID;
+    private String isAgreed;
     private String notes;
-    private Boolean isProcessed;
+    private Date send_date;
+    private Date expire_date;
+    private Integer createdByNurseID;
+    private Integer updatedByNurseID;
 }

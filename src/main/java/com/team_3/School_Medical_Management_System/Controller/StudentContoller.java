@@ -2,7 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.StudentServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class StudentContoller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> GetStudentById(@PathVariable int id) {
+    public ResponseEntity<Student> GetStudentById(@PathVariable Integer id) {
         var p = studentService.getStudent(id);
         if (p == null) {
             return ResponseEntity.notFound().build();
@@ -53,7 +53,7 @@ public class StudentContoller {
     }
 
     @DeleteMapping("/{id}")
-    public void DeleteStudent(@PathVariable int id) {
+    public void DeleteStudent(@PathVariable Integer id) {
         var p = studentService.getStudent(id);
         if (p == null) {
             return;

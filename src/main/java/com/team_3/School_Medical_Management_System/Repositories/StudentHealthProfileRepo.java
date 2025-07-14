@@ -128,5 +128,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         return entityManager.createQuery(sql, StudentHealthProfile.class).getSingleResult();
     }
 
+
+
 }
 

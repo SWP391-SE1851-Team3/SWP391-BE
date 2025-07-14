@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/medical-events")
+
+@PreAuthorize("hasAuthority('ROLE_NURSE')")
 
 public class MedicalEventController {
 
@@ -55,8 +58,8 @@ public class MedicalEventController {
         return ResponseEntity.ok(r);
     }
 
-
-    @GetMapping("/all")
+    @Operation(summary = "Xem tất cả loại sự có y tế")
+    @GetMapping("/getAllEventTypeName")
     public ResponseEntity<List<MedicalEventType>> getAllEventTypes() {
         List<MedicalEventType> eventTypes = medicalEventTypeRepo.findAll();
 

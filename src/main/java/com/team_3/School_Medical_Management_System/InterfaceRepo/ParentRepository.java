@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface ParentRepository extends JpaRepository<Parent, Integer> {
@@ -13,4 +14,11 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     @Query("SELECT s.parent FROM Student s WHERE s.StudentID = :studentId")
     Parent GetParentByStudentId(@Param("studentId") Integer studentId);
    // Optional<Parent> findByUsername (String username);
+
+
+    @Query("SELECT p FROM Parent p WHERE p.IsActive =1")
+    public List<Parent> getAllWithIsActive();
+
+    Optional<Parent> findByEmail(String email);
+
 }

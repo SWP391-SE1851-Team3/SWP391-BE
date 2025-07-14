@@ -3,7 +3,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 import com.team_3.School_Medical_Management_System.DTO.ChangePasswordRequest;
 import com.team_3.School_Medical_Management_System.DTO.LoginResponse;
 import com.team_3.School_Medical_Management_System.DTO.SchoolNurseDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivceInterFace.SchoolNurseServiceInterFace;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.DTO.NurseLoginResponseDTO;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import jakarta.validation.Valid;
@@ -20,10 +20,12 @@ import java.util.List;
 
 public class SchoolNurseController {
     private SchoolNurseServiceInterFace schoolNurseService;
+    //private final JwtUtil jwtUtil;
 
     @Autowired
     public SchoolNurseController(SchoolNurseServiceInterFace schoolNurseService) {
         this.schoolNurseService = schoolNurseService;
+
     }
 
     @GetMapping
@@ -64,8 +66,19 @@ public class SchoolNurseController {
     public ResponseEntity<?> login(@Valid @RequestBody NurseLoginResponseDTO loginRequest) {
         SchoolNurse nurse = schoolNurseService.LoginByAccount(loginRequest.getEmail(), loginRequest.getPassword());
         if (nurse != null) {
+//
+//
+//
+
+
+            String token = null;
+//            jwtUtil.generateJwtToken(
+//                    Integer.valueOf(nurse.getNurseID()),  // hoặc nurseId / managerId nếu dùng chung login
+//                    Integer.valueOf(nurse.getRoleID())
+//            );
             // Trả về dữ liệu an toàn, không chứa mật khẩu, giu bao mat
-            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), 2, nurse.getNurseID(), nurse.getFullName()));
+            return ResponseEntity.ok(new LoginResponse(nurse.getEmail(), nurse.getFullName(), token));
+
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         }

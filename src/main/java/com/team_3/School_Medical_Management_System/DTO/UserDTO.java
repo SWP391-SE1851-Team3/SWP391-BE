@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDTO {
    /// private Integer id;
-    private String userType; // "Parent" hoặc "SchoolNurse"
+ // "Parent" hoặc "SchoolNurse"
     private String userName;
     private String password;
     private String fullName;

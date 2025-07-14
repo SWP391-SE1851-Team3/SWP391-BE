@@ -57,7 +57,6 @@ public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
         existingVaccine.setCreated_at(vaccineDetails.getCreated_at());
         existingVaccine.setUpdated_at(vaccineDetails.getUpdated_at());
         existingVaccine.setScheduled_date(vaccineDetails.getScheduled_date());
-        existingVaccine.setQuantity_received(vaccineDetails.getQuantity_received());
         existingVaccine.setUpdatedByNurse(vaccineDetails.getUpdatedByNurse());
         existingVaccine.setLocation(vaccineDetails.getLocation());
         existingVaccine.setNotes(vaccineDetails.getNotes());

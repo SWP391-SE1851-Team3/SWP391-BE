@@ -32,4 +32,5 @@ public class Consent_forms {
     private String status;
     private LocalDateTime send_date;
     private LocalDateTime expire_date;
+
 }

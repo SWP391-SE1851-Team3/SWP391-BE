@@ -3,8 +3,10 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventDetailsDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicalEventUpdateDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicalSupplyQuantityDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
 import com.team_3.School_Medical_Management_System.Model.*;
+import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Repositories.MedicalEvent_NurseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -17,10 +19,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
 public class MedicalEventService {
+
+    private MedicalSupplyRepository medicalSupplyRepository; // Model cho MedicalSupply
+
 
     private MedicalEvent_NurseRepository medicalNurseRepo; // Repository cho MedicalEvent_Nurse
 
@@ -54,8 +60,10 @@ public class MedicalEventService {
 
     private MedicalEvent_NurseRepo medicalEventNurseRepo; // Repository cho MedicalEvent_Nurse
 
+
     @Autowired
-    public MedicalEventService(MedicalEvent_NurseRepository medicalNurseRepo, EmailService emailService, MedicalEvent_EventTypeRepo medicalEventType, SchoolNurseRepository schoolNurseRepository, NotificationsParentRepository notificationsParentRepository, MedicalEvent_NurseRepo medicalEventNurseRepository, MedicalEventTypeRepo medicalEventTypeRepo, MedicalEventRepo medicalEventRepository, ParentRepository parentRepository, StudentRepository studentRepository, NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository, MedicalEventDetailsRepository medicalEventDetailsRepository, JavaMailSender mailSender, StudentRepository studentRepo, MedicalEvent_EventTypeRepo medicalEventEventTypeRepository, MedicalEvent_NurseRepo medicalEventNurseRepo) {
+    public MedicalEventService(MedicalSupplyRepository medicalSupplyRepository, MedicalEvent_NurseRepository medicalNurseRepo, EmailService emailService, MedicalEvent_EventTypeRepo medicalEventType, SchoolNurseRepository schoolNurseRepository, NotificationsParentRepository notificationsParentRepository, MedicalEvent_NurseRepo medicalEventNurseRepository, MedicalEventTypeRepo medicalEventTypeRepo, MedicalEventRepo medicalEventRepository, ParentRepository parentRepository, StudentRepository studentRepository, NotificationsMedicalEventDetailsRepository notificationsMedicalEventDetailsRepository, MedicalEventDetailsRepository medicalEventDetailsRepository, MedicalEvent_EventTypeRepo medicalEventEventTypeRepository, MedicalEvent_NurseRepo medicalEventNurseRepo) {
+        this.medicalSupplyRepository = medicalSupplyRepository;
         this.medicalNurseRepo = medicalNurseRepo;
         this.emailService = emailService;
         this.medicalEventType = medicalEventType;
@@ -68,10 +76,11 @@ public class MedicalEventService {
         this.studentRepository = studentRepository;
         this.notificationsMedicalEventDetailsRepository = notificationsMedicalEventDetailsRepository;
         this.medicalEventDetailsRepository = medicalEventDetailsRepository;
-
         this.medicalEventEventTypeRepository = medicalEventEventTypeRepository;
         this.medicalEventNurseRepo = medicalEventNurseRepo;
     }
+
+
 
 
 
@@ -115,7 +124,38 @@ public class MedicalEventService {
         }
 
         event.setCreatedByNurse(nurseOptional.get());
-        event.setUpdatedByNurse(nurseOptional.get());   // vif đầu tiên cũng là người y tá này luônn
+        event.setUpdatedByNurse(nurseOptional.get());
+
+
+    for (MedicalSupplyQuantityDTO supplyDTO : dto.getMedicalSupplies()) {
+            // Kiểm tra vật tư
+            Optional<MedicalSupply> supplyOptional = medicalSupplyRepository.findById(supplyDTO.getMedicalSupplyId());
+            if (supplyOptional.isEmpty()) {
+                throw new EntityNotFoundException("Vật tư y tế không tồn tại với ID: " + supplyDTO.getMedicalSupplyId());
+            }
+
+            MedicalSupply supply = supplyOptional.get();
+
+            // Kiểm tra số lượng
+            if (supplyDTO.getQuantityUsed() <= 0) {
+                throw new IllegalArgumentException("Số lượng sử dụng phải lớn hơn 0 cho vật tư: " + supplyDTO.getSupplyName());
+            }
+            if (supplyDTO.getQuantityUsed() > supply.getQuantityAvailable()) {
+                throw new IllegalArgumentException("Không đủ " + supplyDTO.getSupplyName() + " trong kho");
+            }
+
+            // Cập nhật số lượng trong kho
+            int qA = supply.getQuantityAvailable() - supplyDTO.getQuantityUsed();
+            supply.setQuantityAvailable(qA);
+            medicalSupplyRepository.save(supply);
+
+            // Thêm vật tư vào sự kiện
+            event.addMedicalSupply(supply, supplyDTO.getQuantityUsed());
+        }
+
+
+
+        // vif đầu tiên cũng là người y tá này luônn
         MedicalEvent savedEvent = medicalEventRepository.save(event);
         //========================================================================================
 
@@ -150,7 +190,7 @@ public class MedicalEventService {
                     "Kính gửi phụ huynh %s,\n\n" +
                             "Có sự kiện y tế khẩn cấp xảy ra vào %s tại trường học. " +
                             "Thông tin: Con anh/chị %s là: %s. Em đã bị %s tại trường học. " +
-                            "Vui lòng liên hệ số điện thoại trường (\"19001818\") để biết thêm chi tiết.",
+                            "Vui lòng liên h�� số điện thoại trường (\"19001818\") để biết thêm chi tiết.",
                     parent.get().getFullName(),
                     savedEvent.getEventDateTime(),
                     parent.get().getFullName(),
@@ -163,12 +203,12 @@ public class MedicalEventService {
             notification.setTitle(title);
             notification.setContent(content);
             notification.setCreateAt(savedEvent.getEventDateTime());
-            //  notification.setCreatedBy(currentUser); // Thêm thông tin người tạo
+
             notificationsParentRepository.save(notification);
             try {
                 // Gửi email với thông tin người dùng và thời gian
-                emailService.sendHtmlNotificationEmail(parent.get(), title, content, notification.getNotificationId());
-                // emailService.testEmailConfig("ytruongtieuhoc@example.com");
+                emailService.sendHtmlNotificationEmailMedicalEvent(parent.get(), title, content, notification.getNotificationId(), event.getCreatedByNurse().getFullName());
+
             } catch (Exception e) {
                 throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
             }
@@ -195,8 +235,42 @@ public class MedicalEventService {
         r.setResult(details.getResult());
         r.setProcessingStatus(details.getProcessingStatus());
         r.setEventTypeId(dto.getEventTypeId());
+
+        List<MedicalSupplyQuantityDTO> medicalSupplies = new ArrayList<>();
+        for (MedicalEventMedicalSupply link : savedEvent.getMedicalEventMedicalSupplies()) {
+            MedicalSupplyQuantityDTO d = new MedicalSupplyQuantityDTO(
+                    link.getMedicalSupply().getMedicalSupplyId(),
+                    link.getMedicalSupply().getSupplyName(),
+                    link.getMedicalSupply().getUnit(),
+                    link.getQuantityUsed()
+            );
+            medicalSupplies.add(d);
+        }
+        r.setMedicalSupplies(medicalSupplies);
         return r;
 
+    }
+
+    @Transactional
+    public List<MedicalSupplyQuantityDTO> getMedicalSuppliesForEvent(Integer eventId) {
+        Optional<MedicalEvent> event = medicalEventRepository.findById(eventId);
+        if (event.isEmpty()) {
+            throw new EntityNotFoundException("Sự kiện y tế không tồn tại với ID: " + eventId);
+        }
+
+        List<MedicalSupplyQuantityDTO> result = new ArrayList<>();
+
+        for (MedicalEventMedicalSupply link : event.get().getMedicalEventMedicalSupplies()) {
+            MedicalSupplyQuantityDTO dto = new MedicalSupplyQuantityDTO(
+                    link.getMedicalSupply().getMedicalSupplyId(),
+                    link.getMedicalSupply().getSupplyName(),
+                    link.getMedicalSupply().getUnit(),
+                    link.getQuantityUsed()
+            );
+            result.add(dto);
+        }
+
+        return result;
     }
 
     @Transactional
@@ -230,10 +304,49 @@ public class MedicalEventService {
             event.setParent(event.getParent());
             event.setUpdatedByNurse(nurseOptional.get()); // Cập nhật người y tá đã cập nhật sự kiện
 
+
+           // Khôi phục số lượng v���t tư cũ
+
+//            for (MedicalEventMedicalSupply oldLink : event.getMedicalEventMedicalSupplies()) {
+//
+//                MedicalSupply oldSupply = oldLink.getMedicalSupply();
+//                int sum = oldSupply.getQuantityAvailable() + oldLink.getQuantityUsed();
+//                oldSupply.setQuantityAvailable(sum);
+//                medicalSupplyRepository.save(oldSupply);
+//            }
+            medicalEventRepository.deleteMedicalEventMedicalSuppliesByEventId(eventId);
+
+             event.getMedicalEventMedicalSupplies().clear();
+
+
+
+            // Bước 10: Cập nhật danh sách vật tư mới
+            for (MedicalSupplyQuantityDTO supplyDTO : dto.getMedicalSupplies()) {
+                Optional<MedicalSupply> supplyOptional = medicalSupplyRepository.findById(supplyDTO.getMedicalSupplyId());
+                if (supplyOptional.isEmpty()) {
+                    throw new EntityNotFoundException("Vật tư y tế không tồn tại với ID: " + supplyDTO.getMedicalSupplyId());
+                }
+
+                MedicalSupply supply = supplyOptional.get();
+
+                if (supplyDTO.getQuantityUsed() <= 0) {
+                    throw new IllegalArgumentException("Số lượng sử dụng phải lớn hơn 0 cho vật tư: " + supplyDTO.getSupplyName());
+                }
+                if (supplyDTO.getQuantityUsed() > supply.getQuantityAvailable()) {
+                    throw new IllegalArgumentException("Không đủ " + supplyDTO.getSupplyName() + " trong kho");
+                }
+                int newQuantity = supply.getQuantityAvailable() - supplyDTO.getQuantityUsed();
+                supply.setQuantityAvailable(newQuantity);
+                medicalSupplyRepository.save(supply);
+
+                event.addMedicalSupply(supply, supplyDTO.getQuantityUsed());
+            }
+
+
             // Lưu sự kiện đã cập nhật
             MedicalEvent updatedEvent = medicalEventRepository.save(event);
 
-
+            medicalEventType.deleteByMedicalEvent_EventID(eventId);
             MedicalEvent_EventType m = new MedicalEvent_EventType();
             m.setEventId(optionalEvent.get().getEventID());
             m.setEventTypeId(eventTypeId);
@@ -285,7 +398,6 @@ public class MedicalEventService {
 
 
             MedicalEventUpdateDTO result = new MedicalEventUpdateDTO();
-            result.setEventId(updatedEvent.getEventID());
             result.setUsageMethod(updatedEvent.getUsageMethod());
             result.setIsEmergency(updatedEvent.getIsEmergency());
             result.setHasParentBeenInformed(updatedEvent.getHasParentBeenInformed());
@@ -298,6 +410,19 @@ public class MedicalEventService {
             result.setProcessingStatus(details.getProcessingStatus());
             result.setNurseId(nurseOptional.get().getNurseID());
             result.setNurseName(nurseOptional.get().getFullName());
+
+            List<MedicalSupplyQuantityDTO> medicalSupplies = new ArrayList<>();
+            for (MedicalEventMedicalSupply link : updatedEvent.getMedicalEventMedicalSupplies()) {
+                MedicalSupplyQuantityDTO d = new MedicalSupplyQuantityDTO(
+                        link.getMedicalSupply().getMedicalSupplyId(),
+                        link.getMedicalSupply().getSupplyName(),
+                        link.getMedicalSupply().getUnit(),
+                        link.getQuantityUsed()
+                );
+                medicalSupplies.add(d);
+            }
+            result.setMedicalSupplies(medicalSupplies);
+
             return result;
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Lỗi ràng buộc dữ liệu: " + e.getMessage(), e);
@@ -358,6 +483,7 @@ public class MedicalEventService {
             dto.setUpdatedByNurseId(medicalEvent.getUpdatedByNurse().getNurseID());
             dto.setUpdatedByNurseName(medicalEvent.getUpdatedByNurse().getFullName());
         }
+        dto.setListMedicalSupplies(getMedicalSuppliesForEvent(eventId));
         return dto;
     }
 
@@ -386,9 +512,4 @@ public class MedicalEventService {
 
     }
 }
-
-
-
-
-
 

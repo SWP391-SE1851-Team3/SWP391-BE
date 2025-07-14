@@ -26,18 +26,10 @@ public class Vaccination_records_SentParent_DTO {
     private String CreateNurseName;
     private String editNurseName;
     private Integer editnurseID;
-
+    private Integer cosentID;
     // Trả về cho phụ huynh
     private Integer parentID;
     @JsonIgnore
     private String email;
-
-
-
-
-
-
-
-
 
 }

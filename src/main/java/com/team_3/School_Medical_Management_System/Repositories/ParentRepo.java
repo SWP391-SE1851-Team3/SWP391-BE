@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.InterfaceRepo.ParentInterFace
 import com.team_3.School_Medical_Management_System.Model.Parent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Repository;
@@ -55,7 +56,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public Parent LoginByAccount(String email, String password) {
-        String sql = "SELECT p FROM Parent p WHERE p.Email = :email AND p.Password = :password";
+        String sql = "SELECT p FROM Parent p WHERE p.email = :email AND p.Password = :password";
         try {
             return entityManager.createQuery(sql, Parent.class)
                     .setParameter("email", email)
@@ -74,7 +75,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public boolean changePassword(String email, String oldPassword, String newPassword) {
-        String jpql = "SELECT p FROM Parent p WHERE p.Email = :email";
+        String jpql = "SELECT p FROM Parent p WHERE p.email = :email";
         List<Parent> results = entityManager.createQuery(jpql, Parent.class)
                 .setParameter("email", email)
                 .getResultList();
@@ -94,10 +95,44 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public Parent getParentByEmail(String Email) {
-        String jpql = "SELECT p FROM Parent p WHERE p.Email = :Email";
+        String jpql = "SELECT p FROM Parent p WHERE p.email = :Email";
         return entityManager.createQuery(jpql, Parent.class)
                 .setParameter("Email", Email)
                 .getSingleResult();
+    }
+    @Transactional
+    @Override
+    public void deleteParent(int id) {
+        String jpql = "DELETE FROM Parent p WHERE p.ParentID = :id";
+        entityManager.createQuery(jpql)
+                .setParameter("id", id)
+                .executeUpdate();
+        entityManager.flush();
+    }
+
+    @Override
+    public Parent getParentByEmailName(String emailName) {
+        String jpql = "SELECT p FROM Parent p WHERE p.email = :emailName";
+        try {
+            return entityManager.createQuery(jpql, Parent.class)
+                    .setParameter("emailName", emailName)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null; // Không tìm thấy kết quả
+        }
+    }
+
+    @Override
+    public Parent checkIdAndRoleExist(int id, int role) {
+        String jpql = "SELECT p FROM Parent p WHERE p.ParentID = :id AND p.RoleID = :role";
+        try {
+            return entityManager.createQuery(jpql, Parent.class)
+                    .setParameter("id", id)
+                    .setParameter("role", role)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null; // Không tìm thấy kết quả
+        }
     }
 
 
@@ -112,7 +147,7 @@ public class ParentRepo implements ParentInterFace  {
 
     @Override
     public boolean existsByEmail(String mail) {
-        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.Email = :Email", Long.class)
+        return entityManager.createQuery("SELECT COUNT(p) FROM Parent p WHERE p.email = :Email", Long.class)
                 .setParameter("Email", mail)
                 .getSingleResult() > 0;
     }

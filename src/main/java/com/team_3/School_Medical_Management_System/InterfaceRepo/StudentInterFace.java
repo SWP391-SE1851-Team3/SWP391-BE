@@ -4,13 +4,14 @@ import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.Model.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentInterFace {
     public void addStudent(Student student);
 
-    public void removeStudent(int id);
+    public void removeStudent(Integer id);
 
-    public Student getStudent(int id);
+    public Student getStudent(Integer id);
 
     public List<Student> getStudents();
 
@@ -20,6 +21,9 @@ public interface StudentInterFace {
 
     public List<Student> getStudentsByParentID(int parentID);
 
+    public Optional<Student> findById(int studentId);
 
+    List<Student> findByClassName(String className);
 
+    public void setNullParentIDByParentID(int parentID);
 }
