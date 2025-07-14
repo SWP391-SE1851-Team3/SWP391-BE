@@ -147,6 +147,30 @@ public class EmailService {
         }
     }
 
+    public void sendHtmlNotificationEmailForConfirmMedication(Parent parent, String title, String content, Integer notificationId) {
+        try {
+            // Lấy thông tin người dùng hiện tại và thời gian
+            String currentUser = getCurrentUsername();
+            String currentDateTime = getCurrentVietnamDateTime();
+
+            // Tạo MimeMessage với nội dung HTML
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(parent.getEmail());
+            helper.setSubject(title);
+            helper.setText(createHtmlContentForMedicationConfirmation(parent, content, currentDateTime, currentUser), true);
+
+            mailSender.send(message);
+
+            // Cập nhật trạng thái thông báo
+            updateNotificationStatus(notificationId);
+
+        } catch (MessagingException e) {
+            throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+        }
+    }
+
     /**
      * Lấy tên người dùng hiện tại từ context bảo mật
      */
@@ -167,6 +191,142 @@ public class EmailService {
     /**
      * Tạo nội dung HTML đẹp mắt cho email
      */
+
+    private String createHtmlContentForMedicationConfirmation(Parent parent, String content, String datetime, String username) {
+        return String.format(
+                "<!DOCTYPE html>" +
+                        "<html lang=\"vi\">" +
+                        "<head>" +
+                        "    <meta charset=\"UTF-8\">" +
+                        "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
+                        "    <title>Thông báo cho học sinh uống thuốc</title>" +
+                        "    <style>" +
+                        "        * { margin: 0; padding: 0; box-sizing: border-box; }" +
+                        "        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; padding: 20px; }" +
+                        "        .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }" +
+                        "        .header { background: linear-gradient(135deg, #17a2b8, #138496); color: white; padding: 30px 25px; text-align: center; }" +
+                        "        .header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 600; }" +
+                        "        .header .icon { font-size: 40px; margin-bottom: 12px; }" +
+                        "        .header .subtitle { font-size: 14px; opacity: 0.9; }" +
+                        "        .success-badge { background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; display: inline-block; }" +
+                        "        .greeting { background: #f8f9fa; padding: 25px; border-left: 4px solid #17a2b8; }" +
+                        "        .greeting h2 { color: #17a2b8; font-size: 20px; margin-bottom: 12px; font-weight: 600; }" +
+                        "        .greeting p { color: #495057; line-height: 1.6; font-size: 15px; }" +
+                        "        .main-content { padding: 30px 25px; }" +
+                        "        .medication-status { background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 25px; margin: 20px 0; text-align: center; }" +
+                        "        .medication-status h4 { color: #155724; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; }" +
+                        "        .medication-status .status-icon { color: #28a745; margin-right: 8px; font-size: 28px; }" +
+                        "        .medication-status p { color: #155724; font-size: 16px; font-weight: 500; }" +
+                        "        .medication-status .timestamp { color: #6c757d; font-size: 14px; margin-top: 10px; font-style: italic; }" +
+                        "        .medication-info { background: #e8f6f3; border: 2px solid #17a2b8; border-radius: 8px; padding: 25px; margin: 20px 0; }" +
+                        "        .medication-info h3 { color: #17a2b8; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; }" +
+                        "        .medication-info .icon { color: #17a2b8; margin-right: 10px; font-size: 20px; }" +
+                        "        .content-text { color: #495057; line-height: 1.7; font-size: 15px; }" +
+                        "        .safety-info { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 20px 0; }" +
+                        "        .safety-info h4 { color: #856404; font-size: 16px; margin-bottom: 15px; display: flex; align-items: center; }" +
+                        "        .safety-info .safety-icon { color: #ffc107; margin-right: 8px; font-size: 18px; }" +
+                        "        .safety-info p { color: #856404; font-size: 14px; line-height: 1.6; margin-bottom: 8px; }" +
+                        "        .contact-info { background: #e8f4f8; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }" +
+                        "        .contact-info h4 { color: #0c5460; font-size: 16px; margin-bottom: 15px; }" +
+                        "        .contact-button { background: #17a2b8; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin: 8px; display: inline-block; transition: all 0.3s ease; }" +
+                        "        .contact-button:hover { background: #138496; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(23,162,184,0.3); }" +
+                        "        .info-section { background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0; }" +
+                        "        .info-title { color: #495057; font-weight: 600; font-size: 16px; margin-bottom: 15px; }" +
+                        "        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }" +
+                        "        .info-item { background: #ffffff; border: 1px solid #dee2e6; padding: 15px; border-radius: 6px; }" +
+                        "        .info-label { font-weight: 600; color: #6c757d; font-size: 12px; margin-bottom: 5px; text-transform: uppercase; }" +
+                        "        .info-value { color: #495057; font-size: 14px; }" +
+                        "        .footer { background: #343a40; color: #ffffff; padding: 25px; text-align: center; }" +
+                        "        .footer h3 { font-size: 18px; margin-bottom: 15px; color: #ffffff; }" +
+                        "        .footer p { line-height: 1.6; margin-bottom: 8px; font-size: 14px; color: #adb5bd; }" +
+                        "        .footer .divider { height: 1px; background: #495057; margin: 15px 0; }" +
+                        "        .highlight { background: #bee5eb; color: #0c5460; padding: 3px 8px; border-radius: 4px; font-weight: 500; }" +
+                        "        .medication-success { color: #28a745; font-weight: 600; }" +
+                        "        .pulse { animation: pulse 2s infinite; }" +
+                        "        @keyframes pulse { 0%% { transform: scale(1); } 50%% { transform: scale(1.05); } 100%% { transform: scale(1); } }" +
+                        "        @media (max-width: 600px) {" +
+                        "            body { padding: 10px; }" +
+                        "            .email-container { border-radius: 4px; }" +
+                        "            .info-grid { grid-template-columns: 1fr; }" +
+                        "            .main-content, .greeting { padding: 20px; }" +
+                        "            .header { padding: 25px 20px; }" +
+                        "        }" +
+                        "    </style>" +
+                        "</head>" +
+                        "<body>" +
+                        "    <div class=\"email-container\">" +
+                        "        <div class=\"header\">" +
+                        "            <div class=\"icon\">💊</div>" +
+                        "            <h1>Thông Báo Cho Học Sinh Uống Thuốc</h1>" +
+                        "            <p class=\"subtitle\">Hệ thống quản lý y tế trường học</p>" +
+                        "            <span class=\"success-badge pulse\">✅ ĐÃ HOÀN THÀNH</span>" +
+                        "        </div>" +
+                        "        <div class=\"greeting\">" +
+                        "            <h2>Kính chào Quý Phụ huynh %s</h2>" +
+                        "            <p>Chúng tôi xin thông báo đến Quý Phụ huynh rằng con em đã được <span class=\"highlight\">cho uống thuốc an toàn</span> theo đúng chỉ định và quy trình y tế của trường.</p>" +
+                        "        </div>" +
+                        "        <div class=\"main-content\">" +
+                        "            <div class=\"medication-status\">" +
+                        "                <h4><span class=\"status-icon\">✅</span>Thực Hiện Thành Công</h4>" +
+                        "                <p class=\"medication-success\">Con em đã được cho uống thuốc một cách an toàn</p>" +
+                        "                <p class=\"timestamp\">Đã xác nhận bởi đội ngũ y tế trường học</p>" +
+                        "            </div>" +
+                        "            <div class=\"medication-info\">" +
+                        "                <h3><span class=\"icon\">📋</span>Chi Tiết Thông Tin Dùng Thuốc</h3>" +
+                        "                <div class=\"content-text\">%s</div>" +
+                        "            </div>" +
+                        "            <div class=\"safety-info\">" +
+                        "                <h4><span class=\"safety-icon\">🛡️</span>Cam Kết An Toàn</h4>" +
+                        "                <p>• Việc cho học sinh uống thuốc đã được thực hiện theo đúng quy trình nghiêm ngặt</p>" +
+                        "                <p>• Y tá đã kiểm tra kỹ lưỡng thông tin học sinh và loại thuốc trước khi thực hiện</p>" +
+                        "                <p>• Học sinh đã được theo dõi sát sau khi uống thuốc để đảm bảo không có phản ứng bất thường</p>" +
+                        "                <p>• Nếu có bất kỳ thắc mắc nào, Quý Phụ huynh vui lòng liên hệ ngay với ban y tế</p>" +
+                        "            </div>" +
+                        "            <div class=\"contact-info\">" +
+                        "                <h4>📞 Liên Hệ Hỗ Trợ 24/7</h4>" +
+                        "                <p style=\"color: #0c5460; margin-bottom: 15px;\">Đội ngũ y tế luôn sẵn sàng hỗ trợ Quý Phụ huynh</p>" +
+                        "                <a href=\"tel:+84123456789\" class=\"contact-button\">📞 Gọi điện ngay</a>" +
+                        "                <a href=\"mailto:ytetrường@school.edu.vn\" class=\"contact-button\">📧 Gửi email</a>" +
+                        "            </div>" +
+                        "            <div class=\"info-section\">" +
+                        "                <div class=\"info-title\">📊 Thông tin chi tiết</div>" +
+                        "                <div class=\"info-grid\">" +
+                        "                    <div class=\"info-item\">" +
+                        "                        <div class=\"info-label\">⏰ Thời gian thông báo</div>" +
+                        "                        <div class=\"info-value\">%s</div>" +
+                        "                    </div>" +
+                        "                    <div class=\"info-item\">" +
+                        "                        <div class=\"info-label\">👨‍⚕️ Người thực hiện</div>" +
+                        "                        <div class=\"info-value\">%s</div>" +
+                        "                    </div>" +
+                        "                    <div class=\"info-item\">" +
+                        "                        <div class=\"info-label\">🏥 Đơn vị</div>" +
+                        "                        <div class=\"info-value\">Ban Y Tế Trường Học</div>" +
+                        "                    </div>" +
+                        "                    <div class=\"info-item\">" +
+                        "                        <div class=\"info-label\">📋 Trạng thái</div>" +
+                        "                        <div class=\"info-value medication-success\">Hoàn thành</div>" +
+                        "                    </div>" +
+                        "                </div>" +
+                        "            </div>" +
+                        "        </div>" +
+                        "        <div class=\"footer\">" +
+                        "            <h3>🏫 Ban Y Tế Trường Học</h3>" +
+                        "            <p>Chúng tôi cam kết đảm bảo an toàn và chăm sóc sức khỏe tốt nhất cho các em học sinh.</p>" +
+                        "            <div class=\"divider\"></div>" +
+                        "            <p>🎯 Sức khỏe của con em là ưu tiên hàng đầu của chúng tôi</p>" +
+                        "            <p>📧 Email tự động - Vui lòng không trả lời trực tiếp</p>" +
+                        "            <p>🔒 Thông tin này được bảo mật theo quy định</p>" +
+                        "        </div>" +
+                        "    </div>" +
+                        "</body>" +
+                        "</html>",
+                parent.getFullName() != null ? parent.getFullName() : "Quý Phụ huynh",
+                formatContentToHtml(content),
+                datetime,
+                username
+        );
+    }
     private String createHtmlContentMedicalEvent(Parent parent, String content, String datetime, String username, String nameNurse) {
         return String.format(
                 "<!DOCTYPE html>" +
