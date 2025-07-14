@@ -40,7 +40,14 @@ public class SecurityConfig  {
                         .requestMatchers("/api/vaccination_records/**").hasAuthority("ROLE_NURSE") // Chỉ NURSE được phép truy cập
                         .requestMatchers("/api/Consent_forms/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
                         .requestMatchers("/api/StudentHealthProfiles/**").hasAnyAuthority("ROLE_PARENT")
+                        .requestMatchers("/api/health-check-schedule/**").hasAnyAuthority("ROLE_NURSE", "ROLE_ADMIN")
+                        .requestMatchers("/api/health-check-results/**").hasAuthority("ROLE_NURSE")
+                        .requestMatchers("/api/health-consent/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
+                        .requestMatchers("/api/medical-supplies/**").hasAnyAuthority("ROLE_NURSE", "ROLE_MANAGER")
+                        .requestMatchers("/api/medication-submission/**").permitAll()
+                        .requestMatchers("/api/medication-confirmations/*").permitAll()
                         .anyRequest().authenticated() // Tất cả request khác (bao gồm /api/** khác và không phải /api) cần token
+
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

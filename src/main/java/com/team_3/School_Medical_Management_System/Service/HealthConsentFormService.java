@@ -229,11 +229,11 @@ public class HealthConsentFormService {
     }
 
     public List<HealthConsentForm> getAcceptedConsentForms(Integer scheduleId) {
-        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "true");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "Đồng ý");
     }
 
     public List<HealthConsentForm> getRejectedConsentForms(Integer scheduleId) {
-        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "false");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "Từ chối");
     }
 
 
