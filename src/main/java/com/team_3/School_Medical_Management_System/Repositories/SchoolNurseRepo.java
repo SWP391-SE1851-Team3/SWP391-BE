@@ -134,5 +134,14 @@ public class SchoolNurseRepo implements SchoolNurseInterFace {
         }
     }
 
+    @Override
+    public void updateNurse(int id, int isActive) {
+        String jpql = "UPDATE SchoolNurse s SET s.IsActive = :isActive WHERE s.NurseID = :id";
+        entityManager.createQuery(jpql)
+                .setParameter("isActive", isActive)
+                .setParameter("id", id)
+                .executeUpdate();
+    }
+
 
 }
