@@ -98,7 +98,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .completedSchedules(healthCheckStatsRepository.countCompletedSchedules(startDate, endDate))
                 .totalChecked(healthCheckStatsRepository.countTotalChecked(startDate, endDate))
                 .consentRate(healthCheckStatsRepository.calculateConsentRate(startDate, endDate))
-                .averageBMI(healthCheckStatsRepository.calculateAverageBMI(startDate, endDate))
+                .averageBMI(healthCheckStatsRepository.calculateAverageBMI())
                 .build();
     }
 

@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public class MedicalSupplyReportDTO {
+    private int supplyId;
     private String supplyName;
     private String categoryName;
     private String unit;
@@ -13,4 +14,5 @@ public class MedicalSupplyReportDTO {
     private Integer reorderLevel;
     private Boolean isBelowReorderLevel;
     private Date dateAdded;
+    private String storageTemperature;
 }
