@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,10 +27,13 @@ public class ExcelImportController {
     @Autowired
     private StudentRepository studentRepo;
 
+    @Autowired
+    private ExcelHelper excelHelper;
+
     @PostMapping(value = "/import-students", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> importStudents(@RequestParam("file") MultipartFile file) {
         try {
-            List<Student> students = ExcelHelper.parseStudentExcel(file, parentRepo);
+            List<Student> students = excelHelper.parseStudentExcel(file, parentRepo);
             studentRepo.saveAll(students);
             return ResponseEntity.ok("Import thành công");
         } catch (Exception e) {

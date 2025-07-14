@@ -17,7 +17,6 @@ public class Vaccine_BatchesDTO {
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
     private String dot;
-    private Integer quantity_received;
     private LocalDateTime scheduled_date;
     private String location;
     private String status;

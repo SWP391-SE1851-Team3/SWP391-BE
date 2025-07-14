@@ -7,6 +7,7 @@ import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccine_Batc
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccine_BatchesInterFace;
 import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
+import com.team_3.School_Medical_Management_System.Repositories.Vaccine_BatchesRepo;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
 
     @Autowired
-    private VaccineBatchRepo vaccineBatch;
+    private Vaccine_BatchesRepo vaccineBatch;
 
 //    @Autowired
 //    private MedicalSupplyRepository supplyRepo;
