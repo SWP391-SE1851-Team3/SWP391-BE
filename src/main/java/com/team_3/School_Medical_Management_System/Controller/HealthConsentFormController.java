@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
+import com.team_3.School_Medical_Management_System.DTO.UpdateConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthConsentForm;
 import com.team_3.School_Medical_Management_System.Service.HealthConsentFormService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,10 +41,13 @@ public class HealthConsentFormController {
     @Operation(summary = "Cập nhật mẫu đơn đồng ý về sức khỏe theo ID")
     public ResponseEntity<HealthConsentFormDTO> updateConsentForm(
             @PathVariable int formId,
-            @RequestParam String isAgreed,
-            @RequestParam(required = false) String notes) {
+            @RequestBody UpdateConsentFormRequestDTO request) {
 
-        HealthConsentForm updatedForm = healthConsentFormService.updateConsentForm(formId, isAgreed, notes);
+        HealthConsentForm updatedForm = healthConsentFormService.updateConsentForm(
+                formId,
+                request.getIsAgree(),
+                request.getNotes()
+        );
 
         if (updatedForm != null) {
             return new ResponseEntity<>(healthConsentFormService.convertToDTO(updatedForm), HttpStatus.OK);

@@ -1,16 +1,14 @@
-
 package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
-import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
-import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
+import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.ConfirmMedicationSubmissionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,6 +24,16 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     @Autowired
     private ConfirmMedicationSubmissionInterFace confirmMedicationSubmissionInterFace;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private StudentRepository studentRepository; // or whatever your actual repository interface is named
+
+    @Autowired
+    private SchoolNurseRepository schoolNurseRepository;
+    @Autowired
+    private NotificationsParentRepository notificationsParentRepository;
     @Override
     public ConfirmMedicationSubmissionDTO createConfirmation(ConfirmMedicationSubmissionDTO confirmDTO) {
         ConfirmMedicationSubmission confirmation = convertToEntity(confirmDTO);
@@ -113,11 +121,60 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
             }
 
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
+            if(confirmation.getStatus().equalsIgnoreCase("Administered  ")){
+                // Lấy thông tin học sinh và y tá
+                Optional<MedicationSubmission> medicationSubmissionOpt = medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
+                if(medicationSubmissionOpt.isPresent()){
+                    MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
+                    Optional<Student> studentOpt = studentRepository.findById(medicationSubmission.getStudentId());
+                    if (studentOpt.isPresent()) {
+                        Student student = studentOpt.get();
+                        SchoolNurse nurse = null;
+                        if(confirmation.getNurseId() != null){
+                            Optional<SchoolNurse> nurseOpt = schoolNurseRepository.findById(confirmation.getNurseId());
+                            if (nurseOpt.isPresent()) {
+                                nurse = nurseOpt.get();
+                            }
+                        }
+                        sendConsentFormNotification(student, nurse, confirmation);
+                    }
+                }
+            }
             return convertToDTO(savedConfirmation);
         }
         return null;
     }
 
+    private void sendConsentFormNotification(Student student, SchoolNurse nurse, ConfirmMedicationSubmission confirmation) {
+        if (student.getParent() != null) {
+            String title = "Thông báo đã cho học sinh uống thuốc - " + student.getFullName();
+            String content = "Học sinh " + student.getFullName() +
+                    " (Lớp: " + student.getClassName() + ")" +
+                    " đã được cho uống thuốc bởi y tá " + nurse.getFullName() +
+                    ". Thời gian: " + LocalDateTime.now().toString() +
+                    (confirmation.getReason() != null ? ". Ghi chú: " + confirmation.getReason() : "");
+
+            NotificationsParent notification = new NotificationsParent();
+            notification.setParent(student.getParent());
+            notification.setTitle(title);
+            notification.setContent(content);
+            notification.setCreateAt(LocalDateTime.now());
+            notification.setStatus(false);
+            notificationsParentRepository.save(notification);
+
+            try {
+                // Gửi email với thông tin người dùng và thời gian
+                emailService.sendHtmlNotificationEmailForConfirmMedication(
+                        student.getParent(),
+                        title,
+                        content,
+                        notification.getNotificationId()
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+            }
+        }
+    }
     @Override
     public ConfirmMedicationSubmissionDTO getConfirmationById(int confirmId) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
