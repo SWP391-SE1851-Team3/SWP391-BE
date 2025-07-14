@@ -139,6 +139,8 @@ public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
 
     private MedicalSupplyReportDTO toReportDTO(MedicalSupply supply) {
         MedicalSupplyReportDTO dto = new MedicalSupplyReportDTO();
+
+        dto.setSupplyId(supply.getMedicalSupplyId());
         dto.setSupplyName(supply.getSupplyName());
         // Kiểm tra null để tránh lỗi khi danh mục không tồn tại
         dto.setCategoryName(supply.getCategory() != null ? supply.getCategory().getCategoryName() : "Không xác định");
@@ -148,6 +150,7 @@ public class MedicalSupplyService implements MedicalSupplyServiceInterFace {
         // Kiểm tra xem số lượng có dưới mức đặt hàng lại không
         dto.setIsBelowReorderLevel(supply.getQuantityAvailable() < supply.getReorderLevel());
         dto.setDateAdded(supply.getDateAdded());
+        dto.setStorageTemperature(supply.getStorageTemperature());
         return dto;
     }
 
