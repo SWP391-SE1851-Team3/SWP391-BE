@@ -21,11 +21,9 @@ public class Vaccine_Batches {
     private String location;
     private String status;
     private String notes;
-
     @ManyToOne
     @JoinColumn(name = "CreatedByNurseID")
     private SchoolNurse createdByNurse;
-
     @ManyToOne
     @JoinColumn(name = "UpdatedByNurseID")
     private SchoolNurse updatedByNurse;
