@@ -34,7 +34,7 @@ public class MedicalEventController {
 
     @PostMapping("/emergency")
     @Operation(summary = "Tạo sự kiện y tế đột xuất và chi tiết liên quan")
-    public ResponseEntity<MedicalEventDTO> createEmergencyEvent(
+    public ResponseEntity<MedicalEventDTO> createEmergencyEvent(@Valid
             @RequestBody MedicalEventDTO dto) {
         MedicalEventDTO r = medicalEventService.createEmergencyEvent(dto);
         return ResponseEntity.ok(r);
