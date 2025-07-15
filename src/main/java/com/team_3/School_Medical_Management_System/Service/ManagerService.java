@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,6 +27,9 @@ import java.util.Optional;
 public class ManagerService implements ManagerServiceInterFace {
     private ManagerInterFace managerInterFace;
 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private StudentRepo studentRepo;
 
@@ -172,7 +176,7 @@ public class ManagerService implements ManagerServiceInterFace {
             case 2: // SchoolNurse
                 SchoolNurse n = new SchoolNurse();
                 n.setUserName(userDTO.getUserName());
-                n.setPassword(userDTO.getPassword());
+                n.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 n.setFullName(userDTO.getFullName());
                 n.setPhone(userDTO.getPhone());
                 n.setEmail(userDTO.getEmail());
@@ -203,7 +207,7 @@ public class ManagerService implements ManagerServiceInterFace {
                     Parent p = parentRepository.GetParentById(id);
                     p.setUserName(userDTO.getUserName());
                     //    p.setUserName(userDTO.getUserName());
-                    p.setPassword(userDTO.getPassword());
+                    p.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                     p.setFullName(userDTO.getFullName());
                     p.setPhone(userDTO.getPhone());
                     p.setEmail(userDTO.getEmail());
@@ -220,7 +224,7 @@ public class ManagerService implements ManagerServiceInterFace {
                 }
                 //SchoolNurse n = nurseRepository.GetSchoolNursesById(id);
                 n.setUserName(userDTO.getUserName());
-                n.setPassword(userDTO.getPassword());
+                n.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 n.setFullName(userDTO.getFullName());
                 n.setPhone(userDTO.getPhone());
                 n.setEmail(userDTO.getEmail());
