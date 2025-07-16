@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
 
             return new UserDetailsImpl(
-                    Long.valueOf(nurse.getNurseID()), nurse.getUserName(), nurse.getEmail(),
+                    Long.valueOf(nurse.getNurseID()), nurse.getFullName(), nurse.getEmail(),
                     nurse.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_NURSE"))
             );
         } else if ("ADMIN".equalsIgnoreCase(role)) {
@@ -54,7 +54,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
 
             return new UserDetailsImpl(
-                    Long.valueOf(admin.getManagerID()), admin.getUserName(), admin.getEmail(),
+                    Long.valueOf(admin.getManagerID()), admin.getFullName(), admin.getEmail(),
                     admin.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))
             );
         } else if ("PARENT".equalsIgnoreCase(role)) {
@@ -63,7 +63,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 throw new UsernameNotFoundException("Parent not found: " + emailName);
             }
             return new UserDetailsImpl(
-                   Long.valueOf(parent.getParentID()), parent.getUserName(), parent.getEmail(),
+                   Long.valueOf(parent.getParentID()), parent.getFullName(), parent.getEmail(),
                     parent.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_PARENT"))
             );
         } else {

@@ -59,7 +59,6 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-
             // Tìm người dùng theo username và role
             UserDetails userDetails = userDetailsService.loadUserByUsernameAndRole(
                     loginRequest.getEmailName(), loginRequest.getRole()
@@ -90,6 +89,7 @@ public class AuthController {
 
 
             return ResponseEntity.ok(new JwtResponse(
+
                     jwt, userDetailsImpl.getId(), userDetailsImpl.getUsername(),
                     userDetailsImpl.getEmail(), roles
             ));
@@ -125,30 +125,30 @@ public class AuthController {
 //        return ResponseEntity.ok("Nurse registered successfully");
 //    }
 
-//    @PostMapping("/signup/admin")
-//    public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignUpRequest signUpRequest) {
-////        if (adminRepository.(signUpRequest.getUsername())) {
-////            return ResponseEntity.badRequest().body("Username is already taken!");
-////        }
-////        if (adminRepository.existsByEmail(signUpRequest.getEmail())) {
-////            return ResponseEntity.badRequest().body("Email is already taken!");
-////        }
-//        Manager admin = new Manager();
-//        admin.setUserName(signUpRequest.getUsername());
-//        admin.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-//        admin.setEmail(signUpRequest.getEmail());
-//        admin.setFullName("Nguyen Van A");
-//        admin.setPhone("0357899455");
-//        Role role = roleRepo.findById(signUpRequest.getRole())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid role ID: " + signUpRequest.getRole()));
-//        admin.setRole(role);
-//
-//     admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
-//
-//        // Giả sử 3 là ID của vai trò Adminf
-//        adminRepository.saveManager(admin);
-//        return ResponseEntity.ok("Admin registered successfully");
-//    }
+    @PostMapping("/signup/admin")
+    public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignUpRequest signUpRequest) {
+//        if (adminRepository.(signUpRequest.getUsername())) {
+//            return ResponseEntity.badRequest().body("Username is already taken!");
+//        }
+//        if (adminRepository.existsByEmail(signUpRequest.getEmail())) {
+//            return ResponseEntity.badRequest().body("Email is already taken!");
+//        }
+        Manager admin = new Manager();
+        admin.setUserName(signUpRequest.getUsername());
+        admin.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        admin.setEmail(signUpRequest.getEmail());
+        admin.setFullName("Nguyen Van A");
+        admin.setPhone("0357899455");
+        Role role = roleRepo.findById(signUpRequest.getRole())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role ID: " + signUpRequest.getRole()));
+        admin.setRole(role);
+
+     admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
+
+        // Giả sử 3 là ID của vai trò Adminf
+        adminRepository.saveManager(admin);
+        return ResponseEntity.ok("Admin registered successfully");
+    }
 //
 //    @PostMapping("/signup/parent")
 //    public ResponseEntity<?> registerParent(@Valid @RequestBody SignUpRequest signUpRequest) {

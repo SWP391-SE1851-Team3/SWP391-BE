@@ -187,7 +187,16 @@ public class ManagerService implements ManagerServiceInterFace {
 
                 nurseRepository.AddNewSchoolNurses(n);
                 return ResponseEntity.ok(n);
-
+            case 3:
+                Manager m = new Manager();
+                m.setUserName(userDTO.getUserName());
+                m.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                m.setFullName(userDTO.getFullName());
+                m.setPhone(userDTO.getPhone());
+                m.setEmail(userDTO.getEmail());
+                m.setIsActive(userDTO.getIsActive());
+                m.setRole(role.get());
+                managerRepository.save(m);
             default:
                 return ResponseEntity.badRequest().body("Không thể thêm mới tài khoản cho vai trò này!");
         }
