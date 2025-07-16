@@ -169,6 +169,7 @@ public class TransferModelsDTO {
             dto.setStudentID(null);
             dto.setClassName(null);
         }
+        dto.setParentID(vaccination_records.getStudent().getParent().getParentID());
 
         // Basic info
         dto.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
