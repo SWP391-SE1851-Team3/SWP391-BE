@@ -36,6 +36,11 @@ public class HealthCheckScheduleService {
 
     // Create a new health check schedule
     public HealthCheck_Schedule createHealthCheckSchedule(HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
+        // Kiểm tra tên schedule đã tồn tại chưa
+        if (healthCheckScheduleRepository.existsByName(healthCheckScheduleDTO.getName())) {
+            throw new RuntimeException("Tên lịch kiểm tra sức khỏe '" + healthCheckScheduleDTO.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
+        }
+
         HealthCheck_Schedule healthCheckSchedule = new HealthCheck_Schedule();
         healthCheckSchedule.setName(healthCheckScheduleDTO.getName());
         healthCheckSchedule.setSchedule_Date(healthCheckScheduleDTO.getSchedule_Date());
@@ -197,5 +202,3 @@ public class HealthCheckScheduleService {
         return healthCheckScheduleRepository.save(schedule);
     }
 }
-
-

@@ -9,4 +9,10 @@ import java.util.List;
 @Repository
 public interface HealthCheckScheduleRepository extends JpaRepository<HealthCheck_Schedule, Integer> {
     List<HealthCheck_Schedule> findByStatus(String status);
+
+    // Tìm schedule theo tên để kiểm tra trùng lặp
+    HealthCheck_Schedule findByName(String name);
+
+    // Kiểm tra tồn tại theo tên
+    boolean existsByName(String name);
 }

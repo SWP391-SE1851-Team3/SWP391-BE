@@ -94,10 +94,20 @@ public class HealthConsentFormController {
     public ResponseEntity<?> createConsentFormsForMultipleClasses(@RequestBody ConsentFormRequestDTO request) {
         try {
             healthConsentFormService.createConsentFormsForMultipleClasses(request);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Tạo phiếu đồng ý thành công cho tất cả các lớp được chọn.");
+        } catch (RuntimeException e) {
+            // Kiểm tra nếu là lỗi do lớp đã tồn tại consent form
+            if (e.getMessage().contains("đã tồn tại phiếu xác nhận")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(e.getMessage());
+            }
+            // Các lỗi khác
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi khi tạo phiếu đồng ý: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error: " + e.getMessage());
+                    .body("Lỗi hệ thống: " + e.getMessage());
         }
     }
 
