@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class UpdateConsentFormRequestDTO {
-    private String isAgree;
+    private String isAgreed;
     private String notes;
 }

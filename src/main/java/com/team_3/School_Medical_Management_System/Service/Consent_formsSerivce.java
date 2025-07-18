@@ -206,7 +206,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         form.setIsAgree(dto.getIsAgree());
         form.setReason(dto.getReason());
         form.setHasAllergy(dto.getHasAllergy());
-        form.setStatus("ĐÃ PHÊ DUYỆT");
+        form.setStatus("Đã phê duyệt");
 
         // 👉 Nếu bạn để transactional bên ngoài, hãy đảm bảo catch lỗi đúng để không rollback
         consent_formsRepos.save(form);

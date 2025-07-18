@@ -38,6 +38,7 @@ public class HealthConsentFormService {
     @Autowired
     private SchoolNurseRepository schoolNurseRepository;
 
+
     // Update consent form with parent's decision
     public HealthConsentForm updateConsentForm(int formId, String isAgreed, String notes) {
         Optional<HealthConsentForm> optionalForm = healthConsentFormRepository.findById(formId);
@@ -166,17 +167,18 @@ public class HealthConsentFormService {
         List<String> skippedClasses = new ArrayList<>();
         List<String> invalidClasses = new ArrayList<>();
 
+
         HealthCheck_Schedule schedule = healthCheckScheduleRepository.findById(request.getHealthScheduleId())
-            .orElseThrow(() -> new RuntimeException("HealthCheck_Schedule not found with id: " + request.getHealthScheduleId()));
+                .orElseThrow(() -> new RuntimeException("HealthCheck_Schedule not found with id: " + request.getHealthScheduleId()));
 
         // Validate nurseID if provided
         if (request.getCreatedByNurseId() != null &&
-            !schoolNurseRepository.existsById(request.getCreatedByNurseId())) {
+                !schoolNurseRepository.existsById(request.getCreatedByNurseId())) {
             throw new RuntimeException("Nurse with ID " + request.getCreatedByNurseId() + " does not exist");
         }
 
         if (request.getUpdatedByNurseID() != null &&
-            !schoolNurseRepository.existsById(request.getUpdatedByNurseID())) {
+                !schoolNurseRepository.existsById(request.getUpdatedByNurseID())) {
             throw new RuntimeException("Nurse with ID " + request.getUpdatedByNurseID() + " does not exist");
         }
 
@@ -184,6 +186,7 @@ public class HealthConsentFormService {
         for (String className : request.getClassName()) {
             // Lấy danh sách học sinh theo tên lớp
             List<Student> students = studentRepository.findByClassName(className);
+
 
             // Kiểm tra xem lớp có tồn tại không (có học sinh không)
             if (students.isEmpty()) {

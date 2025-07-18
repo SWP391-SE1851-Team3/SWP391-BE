@@ -45,7 +45,7 @@ public class HealthConsentFormController {
 
         HealthConsentForm updatedForm = healthConsentFormService.updateConsentForm(
                 formId,
-                request.getIsAgree(),
+                request.getIsAgreed(),
                 request.getNotes()
         );
 

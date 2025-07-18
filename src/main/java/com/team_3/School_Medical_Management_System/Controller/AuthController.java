@@ -102,28 +102,28 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/signup/nurse")
-//    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
-//            return ResponseEntity.badRequest().body("Username is already taken!");
-//        }
-//        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
-//            return ResponseEntity.badRequest().body("Email is already taken!");
-//        }
-//        SchoolNurse nurse = new SchoolNurse();
-//        nurse.setUserName(signUpRequest.getUsername());
-//        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-//        nurse.setEmail(signUpRequest.getEmail());
-//        nurse.setFullName("tuan");
-//       // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
-//        nurse.setRoleID(signUpRequest.getRole());
-//        nurse.setPhone("0357899455");
-//        nurse.setIsActive(1);
-//        nurse.setCertification("jaja");
-//        nurse.setSpecialisation("aaa");
-//        nurseRepo.save(nurse);
-//        return ResponseEntity.ok("Nurse registered successfully");
-//    }
+    @PostMapping("/signup/nurse")
+    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken!");
+          }
+        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken!");
+        }
+        SchoolNurse nurse = new SchoolNurse();
+        nurse.setUserName(signUpRequest.getUsername());
+        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        nurse.setEmail(signUpRequest.getEmail());
+        nurse.setFullName("tuan");
+       // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
+        nurse.setRoleID(signUpRequest.getRole());
+        nurse.setPhone("0357899455");
+        nurse.setIsActive(1);
+        nurse.setCertification("jaja");
+        nurse.setSpecialisation("aaa");
+        nurseRepo.save(nurse);
+        return ResponseEntity.ok("Nurse registered successfully");
+    }
 
     @PostMapping("/signup/admin")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignUpRequest signUpRequest) {

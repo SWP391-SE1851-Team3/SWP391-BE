@@ -3,6 +3,7 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.StudentHealthProfileDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentHealthProfileServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentHealthProfileInterFace;
+import com.team_3.School_Medical_Management_System.Model.Student;
 import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +68,8 @@ public class StudentHealthProfileService implements StudentHealthProfileServiceI
     }
 
     @Override
-    public StudentHealthProfile getStudentHealthProfileByStudentId(int studentId) {
-        var student = studentHealthProfileInterFace.getHealthProfileByStudentId(studentId);
+    public StudentHealthProfile getStudentHealthProfileByStudentId(Integer studentId) {
+        var student = studentHealthProfileInterFace.getStudentHealthProfileByStudentId(studentId);
         if (student == null) {
             throw new RuntimeException("StudentProfile not found");
         }else {

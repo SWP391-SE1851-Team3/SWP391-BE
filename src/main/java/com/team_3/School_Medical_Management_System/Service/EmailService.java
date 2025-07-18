@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,15 +24,18 @@ public class EmailService {
 
     @Autowired
     private NotificationsParentRepository notificationsParentRepository;
+
+    @Async("emailTaskExecutor")
     public void sendOTP(String toEmail, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("thanhdinhphot@gmail.com ");
+        message.setFrom("thanhdinhphot@gmail.com");
         message.setTo(toEmail);
         message.setSubject("Mã xác nhận khôi phục mật khẩu");
         message.setText("Mã xác nhận của bạn là: " + otp);
         mailSender.send(message);
     }
 
+    @Async("emailTaskExecutor")
     public void sendSimpleNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(parent.getEmail());
@@ -51,7 +55,8 @@ public class EmailService {
         updateNotificationStatus(notificationId);
     }
 
-    public void sendHtmlNotificationEmailMedicalEvent(Parent parent, String title, String content, Integer notificationId,String nameNurse) {
+    @Async("emailTaskExecutor")
+    public void sendHtmlNotificationEmailMedicalEvent(Parent parent, String title, String content, Integer notificationId, String nameNurse) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
             String currentUser = getCurrentUsername();
@@ -63,7 +68,7 @@ public class EmailService {
 
             helper.setTo(parent.getEmail());
             helper.setSubject(title);
-            helper.setText(createHtmlContentMedicalEvent(parent, content, currentDateTime, currentUser,nameNurse), true);
+            helper.setText(createHtmlContentMedicalEvent(parent, content, currentDateTime, currentUser, nameNurse), true);
 
             mailSender.send(message);
 
@@ -75,6 +80,7 @@ public class EmailService {
         }
     }
 
+    @Async("emailTaskExecutor")
     public void sendHtmlNotificationEmailForHealthCheck(Parent parent, String title, String content, Integer notificationId) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
@@ -99,6 +105,7 @@ public class EmailService {
         }
     }
 
+    @Async("emailTaskExecutor")
     public void sendHtmlNotificationEmailForHealthCheckStudent(Parent parent, String title, String content, Integer notificationId) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
@@ -123,6 +130,7 @@ public class EmailService {
         }
     }
 
+    @Async("emailTaskExecutor")
     public void sendHtmlNotificationEmailForHealthCheckConsultation(Parent parent, String title, String content, Integer notificationId) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
@@ -147,6 +155,7 @@ public class EmailService {
         }
     }
 
+    @Async("emailTaskExecutor")
     public void sendHtmlNotificationEmailForConfirmMedication(Parent parent, String title, String content, Integer notificationId) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
@@ -177,7 +186,7 @@ public class EmailService {
     private String getCurrentUsername() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = "NHÂN VIÊN Y TẾ TRƯỜNG FP";
-        return  name;
+        return name;
     }
 
     /**
@@ -327,6 +336,7 @@ public class EmailService {
                 username
         );
     }
+
     private String createHtmlContentMedicalEvent(Parent parent, String content, String datetime, String username, String nameNurse) {
         return String.format(
                 "<!DOCTYPE html>" +

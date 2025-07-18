@@ -169,7 +169,7 @@ public class HealthCheckScheduleService {
         for (HealthCheck_Schedule schedule : schedules) {
             // Get creator nurse name if available
             if (schedule.getCreatedByNurseID() != null && schedule.getCreatedByNurseID() > 0
-                && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
+                    && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
                 try {
                     SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getCreatedByNurseID());
                     if (nurse != null) {
@@ -182,7 +182,7 @@ public class HealthCheckScheduleService {
 
             // Get updater nurse name if available
             if (schedule.getUpdatedByNurseID() != null && schedule.getUpdatedByNurseID() > 0
-                && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
+                    && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
                 try {
                     SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getUpdatedByNurseID());
                     if (nurse != null) {
