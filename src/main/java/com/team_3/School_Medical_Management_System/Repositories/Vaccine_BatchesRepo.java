@@ -40,6 +40,8 @@ public class Vaccine_BatchesRepo implements Vaccine_BatchesInterFace {
         return entityManager.find(Vaccine_Batches.class, VaccineId);
     }
 
+
+
     @Override
     public Vaccine_Batches AddVaccine_batch(Vaccine_Batches vaccine) {
          entityManager.persist(vaccine);
