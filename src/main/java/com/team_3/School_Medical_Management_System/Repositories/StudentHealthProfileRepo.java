@@ -134,9 +134,16 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
                     .setParameter("studentId", studentId)
                     .getSingleResult();
         } catch (NoResultException ex) {
-            return null;  // Hoặc throw custom exception nếu muốn controller xử lý 404
+            return null;
         }
     }
+
+
+
+
+
+
+
 
 
 
