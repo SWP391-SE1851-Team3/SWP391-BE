@@ -768,9 +768,7 @@ public class EmailService {
                 .replace("\n", "<br>") + "</p>";
     }
 
-    /**
-     * Cập nhật trạng thái thông báo
-     */
+
     private void updateNotificationStatus(Integer notificationId) {
         NotificationsParent notification = notificationsParentRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found with ID: " + notificationId));

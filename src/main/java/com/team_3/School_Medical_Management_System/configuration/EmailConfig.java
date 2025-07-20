@@ -17,17 +17,17 @@ public class EmailConfig {
 
     @Value("${spring.mail.password}")
     private String password;
-
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
+
         // Cấu hình server email
-        mailSender.setHost("smtp.gmail.com");
+        mailSender.setHost("smtp.gmail.com"); // Thay đổi nếu bạn sử dụng nhà cung cấp email khác
         mailSender.setPort(587);
         mailSender.setUsername(username);
         mailSender.setPassword(password);
-        mailSender.setDefaultEncoding("UTF-8");
+        mailSender.setDefaultEncoding("UTF-8"); // Hỗ trợ tiếng Việt
 
         // Cấu hình thuộc tính bổ sung
         Properties props = mailSender.getJavaMailProperties();
@@ -45,3 +45,5 @@ public class EmailConfig {
         return mailSender;
     }
 }
+
+

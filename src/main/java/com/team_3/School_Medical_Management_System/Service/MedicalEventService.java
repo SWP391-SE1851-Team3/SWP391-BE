@@ -81,9 +81,6 @@ public class MedicalEventService {
     }
 
 
-
-
-
     // mình thiếu API dựa vào ID học sinh lấy Thôgn tin của Cha
     // Thiếu API để thông tin tên sự kiên và trả về ID sự kiện
     //===============================================================================================
@@ -107,9 +104,9 @@ public class MedicalEventService {
         }
 
         // Kiểm tra xem học sinh có tồn tại trong cơ sở dữ liệu không
-        Optional<Student> studentOptional = studentRepository.findById(dto.getStudentId());
-        if (studentOptional.isEmpty()) {
-            throw new RuntimeException("Học sinh không tồn tại với ID: " + dto.getStudentId());
+        Student studentOptional = studentRepository.findStudentIdAndParentID(dto.getStudentId(), dto.getParentID());
+        if (studentOptional == null) {
+            throw new RuntimeException("k tìm thấy học sinh ID: " + dto.getStudentId() + " và ParentID: " + dto.getParentID());
         }
         // Kiểm tra phụ huynh
         Optional<Parent> parent = parentRepository.findById(dto.getParentID());
@@ -127,7 +124,7 @@ public class MedicalEventService {
         event.setUpdatedByNurse(nurseOptional.get());
 
 
-    for (MedicalSupplyQuantityDTO supplyDTO : dto.getMedicalSupplies()) {
+        for (MedicalSupplyQuantityDTO supplyDTO : dto.getMedicalSupplies()) {
             // Kiểm tra vật tư
             Optional<MedicalSupply> supplyOptional = medicalSupplyRepository.findById(supplyDTO.getMedicalSupplyId());
             if (supplyOptional.isEmpty()) {
@@ -154,7 +151,6 @@ public class MedicalEventService {
         }
 
 
-
         // vif đầu tiên cũng là người y tá này luônn
         MedicalEvent savedEvent = medicalEventRepository.save(event);
         //========================================================================================
@@ -172,7 +168,7 @@ public class MedicalEventService {
         // Tạo chi tiết sự kiện
 
         MedicalEventDetails details = new MedicalEventDetails();
-        details.setStudent(studentOptional.get());
+        details.setStudent(studentOptional);
         details.setMedicalEvent(savedEvent);
         details.setNote(dto.getNote());
         details.setResult(dto.getResult());
@@ -190,11 +186,11 @@ public class MedicalEventService {
                     "Kính gửi phụ huynh %s,\n\n" +
                             "Có sự kiện y tế khẩn cấp xảy ra vào %s tại trường học. " +
                             "Thông tin: Con anh/chị %s là: %s. Em đã bị %s tại trường học. " +
-                            "Vui lòng liên h�� số điện thoại trường (\"19001818\") để biết thêm chi tiết.",
+                            "Vui lòng liên hệ số điện thoại trường (\"19001818\") để biết thêm chi tiết.",
                     parent.get().getFullName(),
                     savedEvent.getEventDateTime(),
                     parent.get().getFullName(),
-                    studentOptional.get().getFullName(),
+                    studentOptional.getFullName(),
                     me.get().getTypeName()
             );
 
@@ -294,30 +290,21 @@ public class MedicalEventService {
 
 
             MedicalEvent event = optionalEvent.get();
-            // Cập nhật thông tin cơ bản
+
             event.setUsageMethod(dto.getUsageMethod());
             event.setIsEmergency(dto.getIsEmergency());
             event.setHasParentBeenInformed(dto.getHasParentBeenInformed());
+
+
             event.setTemperature(dto.getTemperature());
             event.setHeartRate(dto.getHeartRate());
             event.setEventDateTime(dto.getEventDateTime());
             event.setParent(event.getParent());
             event.setUpdatedByNurse(nurseOptional.get()); // Cập nhật người y tá đã cập nhật sự kiện
 
-
-           // Khôi phục số lượng v���t tư cũ
-
-//            for (MedicalEventMedicalSupply oldLink : event.getMedicalEventMedicalSupplies()) {
-//
-//                MedicalSupply oldSupply = oldLink.getMedicalSupply();
-//                int sum = oldSupply.getQuantityAvailable() + oldLink.getQuantityUsed();
-//                oldSupply.setQuantityAvailable(sum);
-//                medicalSupplyRepository.save(oldSupply);
-//            }
             medicalEventRepository.deleteMedicalEventMedicalSuppliesByEventId(eventId);
 
-             event.getMedicalEventMedicalSupplies().clear();
-
+            event.getMedicalEventMedicalSupplies().clear();
 
 
             // Bước 10: Cập nhật danh sách vật tư mới
@@ -342,31 +329,54 @@ public class MedicalEventService {
                 event.addMedicalSupply(supply, supplyDTO.getQuantityUsed());
             }
 
+            if (dto.getHasParentBeenInformed()) {
 
+                String title = "Thông báo cập nhật sự cố y tế khẩn cấp tại trường F";
+                String content = String.format(
+                        "Kính gửi phụ huynh %s,\n\n" +
+                                "Chúng tôi đã cập nhật sự cố y tế khẩn cấp xảy ra vào %s tại trường học. " +
+                                "Thông tin: Chúng tôi đã cập nhật quá trình sử lý sự cố y tế và một số mục khác liên quan đến sự cố y tế của con anh/chị: %s " +
+                                "Vui lòng liên hệ số điện thoại trường (\"19001818\") hoặc truy cập trang web:<> để biết thêm chi tiết.",
+                        optionalEvent.get().getParent().getFullName(),
+                        optionalEvent.get().getEventDateTime(),
+                        optionalEvent.get().getParent().getFullName()
+
+                );
+
+                NotificationsParent notification = new NotificationsParent();
+                notification.setParent(optionalEvent.get().getParent());
+                notification.setTitle(title);
+                notification.setContent(content);
+                notification.setCreateAt(optionalEvent.get().getEventDateTime());
+
+                notificationsParentRepository.save(notification);
+                try {
+                    // Gửi email với thông tin người dùng và thời gian
+                    emailService.sendHtmlNotificationEmailMedicalEvent(optionalEvent.get().getParent(), title, content, notification.getNotificationId(), event.getCreatedByNurse().getFullName());
+
+                } catch (Exception e) {
+                    throw new RuntimeException("Lỗi khi gửi email thông báo: " + e.getMessage(), e);
+                }
+                // Gửi email với thông tin người dùng và thời gian
+
+            }
             // Lưu sự kiện đã cập nhật
             MedicalEvent updatedEvent = medicalEventRepository.save(event);
 
-            medicalEventType.deleteByMedicalEvent_EventID(eventId);
-            MedicalEvent_EventType m = new MedicalEvent_EventType();
+            // medicalEventType.deleteByMedicalEvent_EventID(eventId);
+            MedicalEvent_EventType m = medicalEventType.findByMedicalEvent_EventT(eventId);
             m.setEventId(optionalEvent.get().getEventID());
             m.setEventTypeId(eventTypeId);
             medicalEventType.save(m);
 
-
-            // Xử lý MedicalEventDetails
-            Integer studentId = dto.getStudentId();
-            if (studentId == null) {
-                throw new RuntimeException("StudentID không được để trống");
-            }
-
-            Optional<Student> optionalStudent = studentRepository.findById(studentId);
+            Optional<Student> optionalStudent = studentRepository.findById(dto.getStudentId());
             if (optionalStudent.isEmpty()) {
-                throw new RuntimeException("Học sinh không tồn tại với ID: " + studentId);
+                throw new RuntimeException("Học sinh không tồn tại với ID: " + dto.getStudentId());
             }
 
 
             // Tạo MedicalEventDetailsId
-            MedicalEventDetailsId detailsId = new MedicalEventDetailsId(studentId, eventId);
+            MedicalEventDetailsId detailsId = new MedicalEventDetailsId(dto.getStudentId(), eventId);
 
             // Kiểm tra và xử lý MedicalEventDetails
             Optional<MedicalEventDetails> optionalDetails = medicalEventDetailsRepository.findById(detailsId);
@@ -374,7 +384,7 @@ public class MedicalEventService {
             if (optionalDetails.isPresent()) {
                 details = optionalDetails.get();
             } else {
-                throw new RuntimeException("MedicalEventDetails không tồn tại cho StudentID: " + studentId + " và EventID: " + eventId);
+                throw new RuntimeException("MedicalEventDetails không tồn tại cho StudentID: " + dto.getStudentId() + " và EventID: " + eventId);
             }
 
             // Cập nhật thông tin MedicalEventDetails
@@ -404,7 +414,7 @@ public class MedicalEventService {
             result.setTemperature(updatedEvent.getTemperature());
             result.setHeartRate(updatedEvent.getHeartRate());
             result.setEventDateTime(updatedEvent.getEventDateTime());
-            result.setStudentId(studentId);
+            result.setStudentId(dto.getStudentId());
             result.setNote(details.getNote());
             result.setResult(details.getResult());
             result.setProcessingStatus(details.getProcessingStatus());
@@ -429,6 +439,7 @@ public class MedicalEventService {
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi cập nhật sự kiện y tế: " + e.getMessage(), e);
         }
+
     }
 
     @Transactional

@@ -41,8 +41,8 @@ public class MedicalEventController {
     }
 
 
-    @GetMapping("/{className}")
-    public ResponseEntity<List<StudentsDTO>> getAllByClassName(@PathVariable String className) {
+    @GetMapping("/className")
+    public ResponseEntity<List<StudentsDTO>> getAllByClassName(@RequestParam List<String> className) {
         List<StudentsDTO> events = studentService.getAllStudentsByClassName(className);
         return ResponseEntity.ok(events);
     }

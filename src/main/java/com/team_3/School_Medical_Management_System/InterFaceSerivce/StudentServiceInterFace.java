@@ -14,5 +14,5 @@ public interface StudentServiceInterFace {
     public Student UpdateStudent(Student student);
     public Student GetStudentByName(String FullName, String ClassName);
     public List<StudentMappingParent> getStudentsByParentID(int parentID);
-    public List<StudentsDTO> getAllStudentsByClassName(String className);
+    public List<StudentsDTO> getAllStudentsByClassName(List<String> className);
 }
