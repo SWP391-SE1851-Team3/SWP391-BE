@@ -19,4 +19,7 @@ public interface MedicalEventDetailsRepository extends JpaRepository<MedicalEven
 
     void deleteByMedicalEvent_EventID(Integer eventId);
 
+
+    @Query("SELECT med FROM MedicalEventDetails med JOIN med.medicalEvent me WHERE med.student.StudentID = :studentId AND me.parent.ParentID= :parentId")
+    List<MedicalEventDetails> findByStudentIdAndParentId(@Param("studentId") int studentId, @Param("parentId") int parentId);
 }

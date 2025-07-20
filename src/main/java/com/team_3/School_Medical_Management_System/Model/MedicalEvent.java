@@ -53,7 +53,6 @@ public class MedicalEvent {
 
 
 
-
     @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MedicalEventMedicalSupply> medicalEventMedicalSupplies = new ArrayList<>();
 

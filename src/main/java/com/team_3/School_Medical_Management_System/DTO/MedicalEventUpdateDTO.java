@@ -23,7 +23,7 @@ public class MedicalEventUpdateDTO {
     private String processingStatus;
      // Y tá cập nhật sự kiện
     private String nurseName;
-
+    private List<MedicalTypeDTO> listMedicalEventTypes;
     private List<MedicalSupplyQuantityDTO> medicalSupplies;
 
 
