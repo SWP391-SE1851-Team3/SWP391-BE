@@ -106,39 +106,8 @@ public class ParentService implements ParentSerivceInterFace {
        }
     }
 
-    @Override
-    public UserDTO convertParentToUserDTO(Parent parent) {
-        UserDTO dto = new UserDTO();
-        //dto.setId(parent.getParentID());
 
-        dto.setUserName(parent.getUserName());
-        dto.setPassword(parent.getPassword());
-        dto.setFullName(parent.getFullName());
-        dto.setPhone(parent.getPhone());
-        dto.setEmail(parent.getEmail());
-        dto.setIsActive(parent.getIsActive());
-        dto.setOccupation(parent.getOccupation());
-        dto.setRelationship(parent.getRelationship());
-        dto.setRoleId(parent.getRoleID());
-        return dto;
 
-    }
-
-    @Override
-    public Parent convertToParentEntity(UserDTO dto) {
-
-        Parent parent = new Parent();
-        parent.setUserName(dto.getUserName());
-        parent.setPassword(dto.getPassword());
-        parent.setFullName(dto.getFullName());
-        parent.setPhone(dto.getPhone());
-        parent.setEmail(dto.getEmail());
-        parent.setIsActive(dto.getIsActive());
-        parent.setOccupation(dto.getOccupation());
-        parent.setRelationship(dto.getRelationship());
-        parent.setRoleID(dto.getRoleId());
-        return parent;
-    }
 
 
 }

@@ -44,12 +44,14 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         }
         Student student = listStudent.get(0); // lấy ra 1tk student
         List<StudentHealthProfile> existing = entityManager.createQuery(
-                        "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :id", StudentHealthProfile.class)
+                        "SELECT s FROM StudentHealthProfile s WHERE s.student.StudentID = :id", StudentHealthProfile.class)
                 .setParameter("id", student.getStudentID())
                 .getResultList();
         if(!existing.isEmpty()){
             StudentHealthProfile profile = existing.get(0); //lấy tk  vừa tìm thấy
-            profile.setStudentID(student.getStudentID());
+            Student s = new Student();
+            s.setStudentID(student.getStudentID());
+            profile.setStudent(s);
             profile.setParentID(student.getParent().getParentID());
             profile.setAllergyDetails(dto.getAllergyDetails());
             profile.setChronicDiseases(dto.getChronicDiseases());
@@ -84,14 +86,16 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
         }
         Student student = students.get(0);// lấy tk student đầu tiên ra
         List<StudentHealthProfile> existing = entityManager.createQuery(
-                        "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :id", StudentHealthProfile.class)
+                        "SELECT s FROM StudentHealthProfile s WHERE s.student.StudentID = :id", StudentHealthProfile.class)
                 .setParameter("id", student.getStudentID())
                 .getResultList();
         if (!existing.isEmpty()) {
             throw new RuntimeException("StudentHealthProfile already exists .");
         } else {
             StudentHealthProfile profile = new StudentHealthProfile();
-            profile.setStudentID(student.getStudentID());
+            Student s = new Student();
+            s.setStudentID(student.getStudentID());
+            profile.setStudent(s);
             profile.setParentID(student.getParent().getParentID());
             profile.setAllergyDetails(dto.getAllergyDetails());
             profile.setChronicDiseases(dto.getChronicDiseases());
@@ -112,7 +116,7 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
 
     @Override
     public StudentHealthProfile getHealthProfileByStudentName(String studentName) {
-        String jpql = "SELECT s FROM StudentHealthProfile s JOIN Student st ON s.StudentID = st.StudentID WHERE st.FullName = :studentName";
+        String jpql = "SELECT s FROM StudentHealthProfile s JOIN Student st ON s.student.StudentID = st.StudentID WHERE st.FullName = :studentName";
         try {
             return entityManager.createQuery(jpql, StudentHealthProfile.class)
                     .setParameter("studentName", studentName)
@@ -123,10 +127,25 @@ public class StudentHealthProfileRepo implements StudentHealthProfileInterFace {
     }
 
     @Override
-    public StudentHealthProfile getStudentHealthProfileByStudentId(int studentId) {
-        String sql = "SELECT s FROM StudentHealthProfile s WHERE s.StudentID = :studentId";
-        return entityManager.createQuery(sql, StudentHealthProfile.class).getSingleResult();
+    public StudentHealthProfile getStudentHealthProfileByStudentId(Integer studentId) {
+        String sql = "SELECT s FROM StudentHealthProfile s WHERE s.student.StudentID = :studentId";
+        try {
+            return entityManager.createQuery(sql, StudentHealthProfile.class)
+                    .setParameter("studentId", studentId)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
+
+
+
+
+
+
+
+
+
 
 
 

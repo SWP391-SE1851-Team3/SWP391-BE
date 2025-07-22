@@ -11,6 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // cho phép tất cả endpoint
                 .allowedOrigins("http://localhost:5173") // frontend origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("Content-Type", "Authorization")
                 .allowCredentials(true);
     }
 }

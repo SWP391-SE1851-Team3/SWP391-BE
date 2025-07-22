@@ -7,6 +7,7 @@ import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import com.team_3.School_Medical_Management_System.Model.Vaccination_records;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.team_3.School_Medical_Management_System.DTO.StudentVaccinationDTO;
@@ -56,8 +57,27 @@ public class Vaccination_recordsRepo implements Vaccination_recordsInterFace {
 
     @Override
     public Vaccination_records getVaccination_records_by_id(int id) {
-        return entityManager.find(Vaccination_records.class, id);
+        String sql = "SELECT s FROM Vaccination_records  s WHERE s.VaccinationRecordID = : id";
+        try {
+            return entityManager.createQuery(sql, Vaccination_records.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (Exception e) {
+           return null;
+        }
     }
+
+//    @Override
+//    public StudentHealthProfile getStudentHealthProfileByStudentId(Integer studentId) {
+//        String sql = "SELECT s FROM StudentHealthProfile s WHERE s.student.StudentID = :studentId";
+//        try {
+//            return entityManager.createQuery(sql, StudentHealthProfile.class)
+//                    .setParameter("studentId", studentId)
+//                    .getSingleResult();
+//        } catch (NoResultException ex) {
+//            return null;
+//        }
+//    }
 
     @Override
     public Vaccination_records updateVaccination_records(Vaccination_records vaccination_records) {

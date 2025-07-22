@@ -111,6 +111,18 @@ public class ParentRepo implements ParentInterFace  {
     }
 
     @Override
+    public Parent getParentByEmailName(String emailName) {
+        String jpql = "SELECT p FROM Parent p WHERE p.email = :emailName";
+        try {
+            return entityManager.createQuery(jpql, Parent.class)
+                    .setParameter("emailName", emailName)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null; // Không tìm thấy kết quả
+        }
+    }
+
+    @Override
     public Parent checkIdAndRoleExist(int id, int role) {
         String jpql = "SELECT p FROM Parent p WHERE p.ParentID = :id AND p.RoleID = :role";
         try {

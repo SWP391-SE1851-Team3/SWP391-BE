@@ -13,5 +13,6 @@ import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
-
+    @Query("SELECT s FROM Student s WHERE s.StudentID = :sId AND s.parent.ParentID = :pId")
+    public Student findStudentIdAndParentID(@Param("sId") int sId, @Param("pId") int pId);
 }

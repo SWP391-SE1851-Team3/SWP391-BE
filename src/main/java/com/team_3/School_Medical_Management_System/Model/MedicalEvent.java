@@ -25,8 +25,13 @@ public class MedicalEvent {
     private Boolean isEmergency;
     @NotNull(message = "Thông báo phụ huynh không được để trống")
     private Boolean hasParentBeenInformed;
+    @NotBlank(message = "Nhiệt độ không được để trống")
+   // @Pattern(regexp = "^\\d+(\\.\\d+)?°C$", message = "Nhiệt độ phải có định dạng số và kết thúc bằng ' °C'")
     private String temperature;
+    @NotBlank(message = "Nhịp tim không được để trống")
+  //@Pattern(regexp = "^\\d+\\s?bpm$", message = "Nhịp tim phải có định dạng số và kết thúc bằng 'bpm'")
     private String heartRate;
+    @NotNull(message = "Thời gian sự kiện không được để trống")
     private LocalDateTime eventDateTime;
 
 
@@ -45,7 +50,6 @@ public class MedicalEvent {
 
     @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL)
     private List<MedicalEvent_EventType> medicalEventEventTypes = new ArrayList<>();
-
 
 
 

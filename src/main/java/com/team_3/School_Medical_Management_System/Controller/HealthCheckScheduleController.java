@@ -31,39 +31,53 @@ public class HealthCheckScheduleController {
     // Create a new health check schedule with nurse information
     @PostMapping
     @Operation(summary = "Tạo lịch kiểm tra sức khỏe mới")
-    public ResponseEntity<HealthCheck_Schedule> createHealthCheckSchedule(@RequestBody HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
-        // If we have creator nurse ID, get the nurse name
-        if (healthCheckScheduleDTO.getCreatedByNurseID() != null && healthCheckScheduleDTO.getCreatedByNurseID() > 0) {
-            // Get the nurse by ID and set the name if found
-            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(healthCheckScheduleDTO.getCreatedByNurseID());
-            if (nurse != null) {
-                // Always set creator nurse name from nurse ID
-                healthCheckScheduleDTO.setCreatedByNurseName(nurse.getFullName());
+    public ResponseEntity<?> createHealthCheckSchedule(@RequestBody HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
+        try {
+            // If we have creator nurse ID, get the nurse name
+            if (healthCheckScheduleDTO.getCreatedByNurseID() != null && healthCheckScheduleDTO.getCreatedByNurseID() > 0) {
+                // Get the nurse by ID and set the name if found
+                SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(healthCheckScheduleDTO.getCreatedByNurseID());
+                if (nurse != null) {
+                    // Always set creator nurse name from nurse ID
+                    healthCheckScheduleDTO.setCreatedByNurseName(nurse.getFullName());
+                }
             }
-        }
 
-        // If we have updater nurse ID, get the nurse name
-        if (healthCheckScheduleDTO.getUpdatedByNurseID() != null && healthCheckScheduleDTO.getUpdatedByNurseID() > 0) {
-            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(healthCheckScheduleDTO.getUpdatedByNurseID());
-            if (nurse != null) {
-                // Always set updater nurse name from nurse ID
-                healthCheckScheduleDTO.setUpdatedByNurseName(nurse.getFullName());
+            // If we have updater nurse ID, get the nurse name
+            if (healthCheckScheduleDTO.getUpdatedByNurseID() != null && healthCheckScheduleDTO.getUpdatedByNurseID() > 0) {
+                SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(healthCheckScheduleDTO.getUpdatedByNurseID());
+                if (nurse != null) {
+                    // Always set updater nurse name from nurse ID
+                    healthCheckScheduleDTO.setUpdatedByNurseName(nurse.getFullName());
+                }
             }
-        }
 
-        HealthCheck_Schedule createdSchedule = healthCheckScheduleService.createHealthCheckSchedule(healthCheckScheduleDTO);
+            HealthCheck_Schedule createdSchedule = healthCheckScheduleService.createHealthCheckSchedule(healthCheckScheduleDTO);
 
-
-        if (createdSchedule.getUpdatedByNurseID() != null &&
-                (createdSchedule.getUpdatedByNurseName() == null || createdSchedule.getUpdatedByNurseName().isEmpty())) {
-            SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(createdSchedule.getUpdatedByNurseID());
-            if (nurse != null) {
-                createdSchedule.setUpdatedByNurseName(nurse.getFullName());
-                healthCheckScheduleService.updateScheduleWithoutNotifications(createdSchedule);
+            if (createdSchedule.getUpdatedByNurseID() != null &&
+                    (createdSchedule.getUpdatedByNurseName() == null || createdSchedule.getUpdatedByNurseName().isEmpty())) {
+                SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(createdSchedule.getUpdatedByNurseID());
+                if (nurse != null) {
+                    createdSchedule.setUpdatedByNurseName(nurse.getFullName());
+                    healthCheckScheduleService.updateScheduleWithoutNotifications(createdSchedule);
+                }
             }
-        }
 
-        return new ResponseEntity<>(createdSchedule, HttpStatus.CREATED);
+            return new ResponseEntity<>(createdSchedule, HttpStatus.CREATED);
+
+        } catch (RuntimeException e) {
+            // Kiểm tra nếu là lỗi do tên trùng lặp
+            if (e.getMessage().contains("đã tồn tại")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(e.getMessage());
+            }
+            // Các lỗi khác
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi khi tạo lịch kiểm tra sức khỏe: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
     // Get all health check schedules

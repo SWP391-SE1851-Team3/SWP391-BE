@@ -5,6 +5,7 @@ import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccination_
 import com.team_3.School_Medical_Management_System.configuration.EmailConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class Vaccination_recordsController {
         return vaccination_recordsServiceInterFace.getVaccination_records();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/vaccination_records{id}")
     public Vaccination_recordsDTO getVaccination_records(@PathVariable int id) {
         return vaccination_recordsServiceInterFace.getVaccination_records_by_id(id);
     }
@@ -74,10 +75,13 @@ public class Vaccination_recordsController {
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/StudentFollowedbyNurse")
     public List<StudentVaccinationDTO> getStudentFollowedbyNurse() {
         return vaccination_recordsServiceInterFace.getStudentFollowedbyNurse();
     }
+
+
     @PutMapping("/updateStudentFollowedbyNurse/{id}")
     public StudentVaccinationDTO updateStudentFollowedbyNurse(@PathVariable Integer id ,@RequestBody StudentVaccinationDTO studentVaccinationDTO){
         studentVaccinationDTO.setRecordId(id);

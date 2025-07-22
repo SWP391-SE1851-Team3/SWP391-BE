@@ -35,7 +35,7 @@ public class TransferModelsDTO {
         vaccinesDTO.setStatus(vaccines.getStatus());
         vaccinesDTO.setNotes(vaccines.getNotes());
         vaccinesDTO.setScheduled_date(vaccines.getScheduled_date());
-        vaccinesDTO.setQuantity_received(vaccines.getQuantity_received());
+
         vaccinesDTO.setVaccineTypeID(vaccines.getVaccineType().getVaccineTypeID());
         vaccinesDTO.setCreated_at(vaccines.getCreated_at());
         vaccinesDTO.setUpdated_at(vaccines.getUpdated_at());
@@ -77,7 +77,7 @@ public class TransferModelsDTO {
         vaccines.setCreated_at(vaccinesDTO.getCreated_at());
         vaccines.setUpdated_at(vaccinesDTO.getUpdated_at());
         vaccines.setDot(vaccinesDTO.getDot());
-        vaccines.setQuantity_received(vaccinesDTO.getQuantity_received());
+
         vaccines.setScheduled_date(vaccinesDTO.getScheduled_date());
         vaccines.setLocation(vaccinesDTO.getLocation());
         vaccines.setStatus(vaccinesDTO.getStatus());
@@ -169,6 +169,7 @@ public class TransferModelsDTO {
             dto.setStudentID(null);
             dto.setClassName(null);
         }
+        dto.setParentID(vaccination_records.getStudent().getParent().getParentID());
 
         // Basic info
         dto.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
@@ -263,7 +264,7 @@ public class TransferModelsDTO {
         entity.setStatus(vaccineBatches.getStatus());
         entity.setNotes(vaccineBatches.getNotes());
         entity.setScheduled_date(vaccineBatches.getScheduled_date());
-        entity.setQuantity_received(vaccineBatches.getQuantity_received());
+      
 
         // VaccineType
         if (vaccineBatches.getVaccineType() != null) {
@@ -310,7 +311,8 @@ public class TransferModelsDTO {
         entity.setStatus(dto.getStatus());
         entity.setNotes(dto.getNotes());
         entity.setScheduled_date(dto.getScheduled_date());
-        entity.setQuantity_received(dto.getQuantity_received());
+      
+
         entity.setBatchID(dto.getBatchID());
 
         // Vaccine type
@@ -853,7 +855,6 @@ public class TransferModelsDTO {
         vaccinesDTO.setStatus(vaccines.getStatus());
         vaccinesDTO.setNotes(vaccines.getNotes());
         vaccinesDTO.setScheduled_date(vaccines.getScheduled_date());
-        vaccinesDTO.setQuantity_received(vaccines.getQuantity_received());
         vaccinesDTO.setVaccineTypeID(vaccines.getVaccineType().getVaccineTypeID());
         vaccinesDTO.setCreated_at(vaccines.getCreated_at());
         vaccinesDTO.setUpdated_at(vaccines.getUpdated_at());

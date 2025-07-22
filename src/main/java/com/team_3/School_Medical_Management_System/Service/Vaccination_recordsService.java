@@ -117,7 +117,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         Optional<Consent_forms> consentOpt = cosentRepo.findByStudentIdAndBatchIdAndStatus(
                 dto.getStudentId(),
                 dto.getVaccineBatchId(),
-                "đã phê duyệt"
+                "Đã phê duyệt"
         );
 
         Consent_forms consent = consentOpt.orElseThrow(() ->

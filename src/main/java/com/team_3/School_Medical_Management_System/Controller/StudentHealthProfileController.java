@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.StudentHealthProfileDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentHealthProfileServiceInterFace;
+import com.team_3.School_Medical_Management_System.Model.Student;
 import com.team_3.School_Medical_Management_System.Model.StudentHealthProfile;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public class StudentHealthProfileController {
     }
 
     @GetMapping("/byStudentId/{studentId}")
-    public ResponseEntity<StudentHealthProfile> getByStudentId(@PathVariable int studentId) {
+    public ResponseEntity<StudentHealthProfile> getByStudentId(@PathVariable Integer studentId) {
         var profile = studentHealthProfileServiceInterFace.getStudentHealthProfileByStudentId(studentId);
         if(profile == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

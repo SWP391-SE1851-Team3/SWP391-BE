@@ -36,6 +36,9 @@ public class HealthConsentFormService implements HealthCheckConsentFormServiceIn
     private HealthCheckStudentService healthCheckStudentService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private SchoolNurseRepository schoolNurseRepository;
+
 
     // Update consent form with parent's decision
     public HealthConsentForm updateConsentForm(int formId, String isAgreed, String notes) {
@@ -161,62 +164,95 @@ public class HealthConsentFormService implements HealthCheckConsentFormServiceIn
     }
 
     public void createConsentFormsForMultipleClasses(ConsentFormRequestDTO request) {
-        try {
-            List<HealthConsentForm> consentForms = new ArrayList<>();
-            List<String> skippedClasses = new ArrayList<>();
-            HealthCheck_Schedule schedule = healthCheckScheduleRepository.findById(request.getHealthScheduleId())
+        List<HealthConsentForm> consentForms = new ArrayList<>();
+        List<String> skippedClasses = new ArrayList<>();
+        List<String> invalidClasses = new ArrayList<>();
+
+
+        HealthCheck_Schedule schedule = healthCheckScheduleRepository.findById(request.getHealthScheduleId())
                 .orElseThrow(() -> new RuntimeException("HealthCheck_Schedule not found with id: " + request.getHealthScheduleId()));
 
-            // Lặp qua danh sách các lớp
-            for (String className : request.getClassName()) {
-                // Kiểm tra xem lớp này đã có form cho schedule này chưa
-                List<HealthConsentForm> existingForms = healthConsentFormRepository.findByClassNameAndHealthScheduleID(className, request.getHealthScheduleId());
+        // Validate nurseID if provided
+        if (request.getCreatedByNurseId() != null &&
+                !schoolNurseRepository.existsById(request.getCreatedByNurseId())) {
+            throw new RuntimeException("Nurse with ID " + request.getCreatedByNurseId() + " does not exist");
+        }
 
-                if (!existingForms.isEmpty()) {
-                    // Nếu đã có form cho lớp này với schedule này, bỏ qua
-                    skippedClasses.add(className);
-                    continue;
-                }
+        if (request.getUpdatedByNurseID() != null &&
+                !schoolNurseRepository.existsById(request.getUpdatedByNurseID())) {
+            throw new RuntimeException("Nurse with ID " + request.getUpdatedByNurseID() + " does not exist");
+        }
 
-                // Lấy danh sách học sinh theo tên lớp
-                List<Student> students = studentRepository.findByClassName(className);
+        // Lặp qua danh sách các lớp
+        for (String className : request.getClassName()) {
+            // Lấy danh sách học sinh theo tên lớp
+            List<Student> students = studentRepository.findByClassName(className);
 
-                // Tạo consent form cho từng học sinh
-                for (Student student : students) {
-                    // Create HealthConsentForm
-                    HealthConsentForm consentForm = new HealthConsentForm();
-                    consentForm.setStudentID(student.getStudentID());
-                    consentForm.setParentID(student.getParent().getParentID());
-                    consentForm.setHealthScheduleID(schedule.getHealth_ScheduleID()); // Set scheduleID thay vì Schedule object
-                    consentForm.setSend_date(new Date());
-                    consentForm.setExpire_date(request.getExpireDate());
-                    consentForm.setIsAgreed("Chờ phản hồi"); // Set mặc định là "Chờ phản hồi"
-                    consentForm.setNotes(request.getNotes());
-                    consentForm.setCreatedByNurseID(request.getCreatedByNurseId());
-                    consentForm.setUpdatedByNurseID(request.getUpdatedByNurseID());
 
-                    // Thêm consentForm vào list
-                    consentForms.add(consentForm);
-
-                    // Send notification and email to parent
-                    sendConsentFormNotification(student, schedule);
-                }
+            // Kiểm tra xem lớp có tồn tại không (có học sinh không)
+            if (students.isEmpty()) {
+                invalidClasses.add(className);
+                continue;
             }
 
-            // Lưu tất cả cùng một lúc
-            if (!consentForms.isEmpty()) {
-                healthConsentFormRepository.saveAll(consentForms);
+            // Kiểm tra xem lớp này đã có form cho schedule này chưa
+            List<HealthConsentForm> existingForms = healthConsentFormRepository.findByClassNameAndHealthScheduleID(className, request.getHealthScheduleId());
+
+            if (!existingForms.isEmpty()) {
+                // Nếu đã có form cho lớp này với schedule này, bỏ qua
+                skippedClasses.add(className);
+                continue;
             }
 
-            // Thông báo về các lớp bị bỏ qua
-            if (!skippedClasses.isEmpty()) {
-                String scheduleName = schedule.getName();
-                String message = "Lớp " + String.join(", ", skippedClasses) + " đã tồn tại phiếu xác nhận của đợt " + scheduleName;
-                throw new RuntimeException(message);
+            // Tạo consent form cho từng học sinh
+            for (Student student : students) {
+                // Create HealthConsentForm
+                HealthConsentForm consentForm = new HealthConsentForm();
+                consentForm.setStudentID(student.getStudentID());
+                consentForm.setParentID(student.getParent().getParentID());
+                consentForm.setHealthScheduleID(schedule.getHealth_ScheduleID());
+                consentForm.setSend_date(new Date());
+                consentForm.setExpire_date(request.getExpireDate());
+                consentForm.setIsAgreed("Chờ phản hồi");
+                consentForm.setNotes(request.getNotes());
+
+                // Chỉ set nurseID nếu hợp lệ, nếu không để null
+                consentForm.setCreatedByNurseID(request.getCreatedByNurseId());
+                consentForm.setUpdatedByNurseID(request.getUpdatedByNurseID());
+
+                // Thêm consentForm vào list
+                consentForms.add(consentForm);
+
+                // Send notification and email to parent
+                sendConsentFormNotification(student, schedule);
             }
+        }
 
-        } catch (Exception e) {
+        // Lưu tất cả cùng một lúc
+        if (!consentForms.isEmpty()) {
+            healthConsentFormRepository.saveAll(consentForms);
+        }
 
+        // Tạo thông báo lỗi tổng hợp
+        List<String> errorMessages = new ArrayList<>();
+
+        if (!invalidClasses.isEmpty()) {
+            errorMessages.add("Lớp " + String.join(", ", invalidClasses) + " không tồn tại hoặc không có học sinh nào");
+        }
+
+        if (!skippedClasses.isEmpty()) {
+            String scheduleName = schedule.getName();
+            errorMessages.add("Lớp " + String.join(", ", skippedClasses) + " đã tồn tại phiếu xác nhận của đợt " + scheduleName);
+        }
+
+        // Nếu có lỗi, throw exception
+        if (!errorMessages.isEmpty()) {
+            throw new RuntimeException(String.join(". ", errorMessages));
+        }
+
+        // Nếu không có consent form nào được tạo
+        if (consentForms.isEmpty()) {
+            throw new RuntimeException("Không có phiếu đồng ý nào được tạo. Vui lòng kiểm tra lại thông tin các lớp.");
         }
     }
 
@@ -230,11 +266,11 @@ public class HealthConsentFormService implements HealthCheckConsentFormServiceIn
     }
 
     public List<HealthConsentForm> getAcceptedConsentForms(Integer scheduleId) {
-        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "true");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "Đồng ý");
     }
 
     public List<HealthConsentForm> getRejectedConsentForms(Integer scheduleId) {
-        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "false");
+        return healthConsentFormRepository.findByHealthScheduleIDAndIsAgreed(scheduleId, "Từ chối");
     }
 
 

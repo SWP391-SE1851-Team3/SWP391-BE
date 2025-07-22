@@ -37,6 +37,11 @@ public class HealthCheckScheduleService implements HealthCheckScheduleServiceInt
 
     // Create a new health check schedule
     public HealthCheck_Schedule createHealthCheckSchedule(HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
+        // Kiểm tra tên schedule đã tồn tại chưa
+        if (healthCheckScheduleRepository.existsByName(healthCheckScheduleDTO.getName())) {
+            throw new RuntimeException("Tên lịch kiểm tra sức khỏe '" + healthCheckScheduleDTO.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
+        }
+
         HealthCheck_Schedule healthCheckSchedule = new HealthCheck_Schedule();
         healthCheckSchedule.setName(healthCheckScheduleDTO.getName());
         healthCheckSchedule.setSchedule_Date(healthCheckScheduleDTO.getSchedule_Date());
@@ -165,7 +170,7 @@ public class HealthCheckScheduleService implements HealthCheckScheduleServiceInt
         for (HealthCheck_Schedule schedule : schedules) {
             // Get creator nurse name if available
             if (schedule.getCreatedByNurseID() != null && schedule.getCreatedByNurseID() > 0
-                && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
+                    && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
                 try {
                     SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getCreatedByNurseID());
                     if (nurse != null) {
@@ -178,7 +183,7 @@ public class HealthCheckScheduleService implements HealthCheckScheduleServiceInt
 
             // Get updater nurse name if available
             if (schedule.getUpdatedByNurseID() != null && schedule.getUpdatedByNurseID() > 0
-                && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
+                    && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
                 try {
                     SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getUpdatedByNurseID());
                     if (nurse != null) {

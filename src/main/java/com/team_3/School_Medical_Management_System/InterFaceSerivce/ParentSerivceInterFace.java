@@ -14,6 +14,5 @@ public interface ParentSerivceInterFace {
     public Parent LoginByAccount(String Phone, String Password);
     public Parent GetParentById(int id);
     public boolean changePassword(String email, String oldPassword, String newPassword);
-    public UserDTO convertParentToUserDTO(Parent parent);
-   public Parent convertToParentEntity(UserDTO dto);
+
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class EmailVaccinesService {
     @Autowired
     private NotificationsParentRepository notificationsParentRepository;
 
+    @Async("emailTaskExecutor")
     public void sendSimpleNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(parent.getEmail());
@@ -41,6 +43,7 @@ public class EmailVaccinesService {
         updateNotificationStatus(notificationId);
     }
 
+    @Async("emailTaskExecutor")
     public void sendHtmlNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian
@@ -82,42 +85,103 @@ public class EmailVaccinesService {
         return LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).format(formatter);
     }
 
-    /**
-     * Tạo nội dung HTML đẹp mắt cho email
-     */
     private String createHtmlContent(Parent parent, String content, String datetime, String username) {
-        return String.format(
-                "<html>" +
-                        "<head>" +
-                        "    <meta charset=\"UTF-8\">" +
-                        "    <style>" +
-                        "        body { font-family: Arial, sans-serif; }" +
-                        "        .header { background-color: #28a745; color: white; padding: 10px; text-align: center; }" +
-                        "        .content { margin: 20px; line-height: 1.6; }" +
-                        "        .footer { background-color: #f8f9fa; padding: 10px; font-size: smaller; }" +
-                        "        .info { color: #6c757d; }" +
-                        "    </style>" +
-                        "</head>" +
-                        "<body>" +
-                        "   <div class=\"header\"><h2>Cập nhật hồ sơ tiêm chủng của học sinh </h2></div>" +
-                        "    <div class=\"content\">" +
-                        "        %s" +
-                        "    </div>" +
-                        "    <div class=\"footer\">" +
-                        "        <p class=\"info\">Thông tin bổ sung:</p>" +
-                        "        <p>Thời gian gửi: %s</p>" +
-                        "        <p>Người gửi: %s</p>" +
-                        "        <hr>" +
-                        "        <p>Trân trọng,<br>Ban y tế trường học</p>" +
-                        "    </div>" +
-                        "</body>" +
-                        "</html>",
-                formatContentToHtml(content),
-                datetime,
-                username
-        );
+        return String.format("""
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background-color: #f8f9fa;
+                    margin: 0;
+                    padding: 0;
+                    color: #212529;
+                }
+                .card {
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                    overflow: hidden;
+                }
+                .header {
+                    background-color: #28a745;
+                    padding: 20px;
+                    text-align: center;
+                    color: white;
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+                .subtitle {
+                    background-color: #218838;
+                    color: #e9ecef;
+                    padding: 12px 20px;
+                    font-weight: 600;
+                    font-size: 15px;
+                }
+                .content {
+                    padding: 20px;
+                    line-height: 1.6;
+                }
+                .section {
+                    margin-bottom: 16px;
+                    padding: 15px;
+                    background-color: #e9f7ef;
+                    border-left: 4px solid #28a745;
+                    border-radius: 4px;
+                }
+                .section-title {
+                    font-weight: 600;
+                    color: #28a745;
+                    margin-bottom: 8px;
+                }
+                .footer {
+                    background-color: #f1f3f5;
+                    padding: 15px;
+                    font-size: 13px;
+                    text-align: center;
+                    color: #6c757d;
+                }
+                .footer hr {
+                    margin: 10px 0;
+                    border: none;
+                    border-top: 1px solid #dee2e6;
+                }
+                .highlight {
+                    color: #28a745;
+                    font-weight: 600;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <div class="header">📋 Cập nhật hồ sơ tiêm chủng học sinh</div>
+                <div class="subtitle">
+                    Kính chào Quý Phụ huynh <span class="highlight">%s</span>
+                </div>
+                <div class="content">
+                    <div class="section">
+                        <div class="section-title">✔ Chi tiết hồ sơ tiêm chủng</div>
+                        %s
+                    </div>
+                    <div class="section">
+                        <div class="section-title">📨 Thông tin bổ sung</div>
+                        <p>⏰ Thời gian gửi: <strong>%s</strong></p>
+                        <p>👤 Người gửi: <strong>%s</strong></p>
+                    </div>
+                </div>
+                <div class="footer">
+                    <hr>
+                    Trân trọng,<br>
+                    <strong>Ban Y tế trường học</strong>
+                </div>
+            </div>
+        </body>
+        </html>
+    """, parent.getFullName(), formatContentToHtml(content), datetime, username);
     }
-
     /**
      * Chuyển đổi nội dung văn bản thành HTML
      */

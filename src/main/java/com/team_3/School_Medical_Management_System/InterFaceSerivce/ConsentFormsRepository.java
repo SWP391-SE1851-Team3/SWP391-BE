@@ -1,6 +1,8 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
 import com.team_3.School_Medical_Management_System.Model.Consent_forms;
+import com.team_3.School_Medical_Management_System.Model.Student;
+import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +20,8 @@ public interface ConsentFormsRepository extends JpaRepository<Consent_forms, Int
             @Param("studentId") int studentId,
             @Param("scheduleId") int scheduleId
     );
+
+    boolean existsByStudentAndVaccineBatches(Student student, Vaccine_Batches batch);
 }
 
 
