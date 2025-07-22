@@ -2,7 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
-import com.team_3.School_Medical_Management_System.DTO.UpdateConsentFormRequestDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckConsentFormServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.HealthConsentForm;
 import com.team_3.School_Medical_Management_System.Service.HealthConsentFormService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class HealthConsentFormController {
 
     @Autowired
-    private HealthConsentFormService healthConsentFormService;
+    private HealthCheckConsentFormServiceInterFace healthConsentFormService;
 
 
     @GetMapping("/all")
@@ -41,13 +41,10 @@ public class HealthConsentFormController {
     @Operation(summary = "Cập nhật mẫu đơn đồng ý về sức khỏe theo ID")
     public ResponseEntity<HealthConsentFormDTO> updateConsentForm(
             @PathVariable int formId,
-            @RequestBody UpdateConsentFormRequestDTO request) {
+            @RequestParam String isAgreed,
+            @RequestParam(required = false) String notes) {
 
-        HealthConsentForm updatedForm = healthConsentFormService.updateConsentForm(
-                formId,
-                request.getIsAgreed(),
-                request.getNotes()
-        );
+        HealthConsentForm updatedForm = healthConsentFormService.updateConsentForm(formId, isAgreed, notes);
 
         if (updatedForm != null) {
             return new ResponseEntity<>(healthConsentFormService.convertToDTO(updatedForm), HttpStatus.OK);
@@ -94,20 +91,10 @@ public class HealthConsentFormController {
     public ResponseEntity<?> createConsentFormsForMultipleClasses(@RequestBody ConsentFormRequestDTO request) {
         try {
             healthConsentFormService.createConsentFormsForMultipleClasses(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Tạo phiếu đồng ý thành công cho tất cả các lớp được chọn.");
-        } catch (RuntimeException e) {
-            // Kiểm tra nếu là lỗi do lớp đã tồn tại consent form
-            if (e.getMessage().contains("đã tồn tại phiếu xác nhận")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(e.getMessage());
-            }
-            // Các lỗi khác
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi khi tạo phiếu đồng ý: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi hệ thống: " + e.getMessage());
+                    .body("Error: " + e.getMessage());
         }
     }
 

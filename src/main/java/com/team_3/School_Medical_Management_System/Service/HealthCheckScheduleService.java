@@ -5,6 +5,7 @@ import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthCheckSche
 import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthConsentFormRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.NotificationsParentRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckScheduleServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthCheckScheduleRepository;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class HealthCheckScheduleService {
+public class HealthCheckScheduleService implements HealthCheckScheduleServiceInterFace {
 
     @Autowired
     private HealthCheckScheduleRepository healthCheckScheduleRepository;

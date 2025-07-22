@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckConsentFormServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class HealthConsentFormService {
+public class HealthConsentFormService implements HealthCheckConsentFormServiceInterFace {
 
     @Autowired
     private HealthConsentFormRepository healthConsentFormRepository;

@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleRespon
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_ScheduleDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateFullDTO;
 import com.team_3.School_Medical_Management_System.DTO.StatusUpdateDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckScheduleServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckScheduleService;
@@ -22,7 +23,7 @@ import java.util.Optional;
 public class HealthCheckScheduleController {
 
     @Autowired
-    private HealthCheckScheduleService healthCheckScheduleService;
+    private HealthCheckScheduleServiceInterFace healthCheckScheduleService;
 
     @Autowired
     private SchoolNurseService schoolNurseService;
