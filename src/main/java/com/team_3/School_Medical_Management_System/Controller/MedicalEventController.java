@@ -74,7 +74,7 @@ public class MedicalEventController {
         return ResponseEntity.ok(eventTypes);
     }
 
-
+//
     @GetMapping("/viewDetails/{eventId}")
     @Operation(summary = "Xem chi tiết sự kiện y tế")
     public ResponseEntity<MedicalEventDetailsDTO> getMedicalEventDetails(@PathVariable Integer eventId) {
@@ -82,7 +82,7 @@ public class MedicalEventController {
         return ResponseEntity.ok(response);
     }
 
-
+//
     @DeleteMapping("/deleteEvent/{eventId}")
     public ResponseEntity deleteMedicalEvent(@PathVariable Integer eventId) {
         medicalEventService.deleteMedicalEvent(eventId);

@@ -14,7 +14,7 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     // Truy xuất phụ huynh dựa trên ID học sinh
     @Query("SELECT s.parent FROM Student s WHERE s.StudentID = :studentId")
     Parent GetParentByStudentId(@Param("studentId") Integer studentId);
-   // Optional<Parent> findByUsername (String username);
+    // Optional<Parent> findByUsername (String username);
 
 
     @Query("SELECT p FROM Parent p WHERE p.IsActive =1")
@@ -26,5 +26,6 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     @Query("UPDATE Parent p SET p.IsActive = :isActive WHERE p.ParentID = :parentId")
     void updateParent(@Param("parentId") Integer parentId, @Param("isActive") int isActive);
 
-
+//    @Query("SELECT p FROM Parent p JOIN Student s ON s.parent = p WHERE s.StudentID = :studentID AND p.ParentID = :parentID")
+//   public Parent getParentByStudentIDAndParentID(@Param("studentID") Integer studentID, @Param("parentID") Integer parentID);
 }

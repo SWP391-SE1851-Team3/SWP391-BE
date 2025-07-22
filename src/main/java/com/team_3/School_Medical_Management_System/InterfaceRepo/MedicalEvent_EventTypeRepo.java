@@ -19,7 +19,7 @@ public interface MedicalEvent_EventTypeRepo extends JpaRepository<MedicalEvent_E
     @Modifying
     @Query("DELETE FROM MedicalEvent_EventType met WHERE met.medicalEvent.eventID = :eventId")
     void deleteByMedicalEvent_EventID(@Param("eventId") Integer eventId);
-   // void deleteByMedicalEvent_EventID(Integer eventId);
+
 
 
 

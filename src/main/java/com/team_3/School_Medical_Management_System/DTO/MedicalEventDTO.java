@@ -20,9 +20,9 @@ public class MedicalEventDTO {
     private String temperature;
     private String heartRate;
     private LocalDateTime eventDateTime;
-    private Integer parentID;
-    private Integer studentId;
-    // private String typeName;
+    private List<Integer> parentID;
+    private List<Integer> studentId;
+
     private Integer nurseId;// Y tá tạo sự kiện
     private String nurseName; // Tên y tá tạo sự kiện
     private Integer updatedByNurseId; // Y tá cập nhật sự kiện
@@ -36,5 +36,13 @@ public class MedicalEventDTO {
 
 
     public MedicalEventDTO() {
+    }
+
+    public boolean isEmergency() {
+        return isEmergency;
+    }
+
+    public void setEmergency(boolean emergency) {
+        isEmergency = emergency;
     }
 }

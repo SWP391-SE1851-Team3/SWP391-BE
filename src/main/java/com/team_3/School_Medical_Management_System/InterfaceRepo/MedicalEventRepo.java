@@ -16,8 +16,6 @@ import java.util.Optional;
 public interface MedicalEventRepo extends JpaRepository<MedicalEvent, Integer> {
 
 
-    @Query("SELECT me FROM MedicalEvent me JOIN MedicalEventDetails med ON me.eventID = med.medicalEvent.eventID WHERE med.student.StudentID = :studentId AND me.parent.ParentID = :parentId")
-    List<MedicalEvent> findByStudentIdAndParentId(@Param("studentId") int studentId, @Param("parentId") int parentId);
 
     @Modifying
     @Query("DELETE FROM MedicalEventMedicalSupply mems WHERE mems.medicalEvent.eventID = :eventId")

@@ -35,9 +35,9 @@ public class MedicalEvent {
     private LocalDateTime eventDateTime;
 
 
-    @ManyToOne
-    @JoinColumn(name = "ParentID")
-    private Parent parent;
+//    @ManyToOne
+//    @JoinColumn(name = "ParentID")
+//    private Parent parent;
 
     @ManyToOne
     @JoinColumn(name = "CreatedByNurseID")
