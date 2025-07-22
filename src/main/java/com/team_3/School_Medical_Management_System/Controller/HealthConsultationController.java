@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationUpdateDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthConsultationServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.HealthConsultation;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthConsultationService;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class HealthConsultationController {
 
     @Autowired
-    private HealthConsultationService healthConsultationService;
+    private HealthConsultationServiceInterface healthConsultationService;
 
     @Autowired
     private SchoolNurseService schoolNurseService;

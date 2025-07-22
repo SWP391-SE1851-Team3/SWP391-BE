@@ -3,6 +3,7 @@ package com.team_3.School_Medical_Management_System.Service;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationUpdateDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthConsultationServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class HealthConsultationService {
+public class HealthConsultationService implements HealthConsultationServiceInterface {
 
     @Autowired
     private HealthConsultationRepository healthConsultationRepository;

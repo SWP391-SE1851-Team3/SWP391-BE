@@ -2,6 +2,7 @@ package com.team_3.School_Medical_Management_System.Controller;
 
 import com.team_3.School_Medical_Management_System.DTO.ConsentFormRequestDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsentFormDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckConsentFormServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.HealthConsentForm;
 import com.team_3.School_Medical_Management_System.Service.HealthConsentFormService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class HealthConsentFormController {
 
     @Autowired
-    private HealthConsentFormService healthConsentFormService;
+    private HealthCheckConsentFormServiceInterFace healthConsentFormService;
 
 
     @GetMapping("/all")

@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentCreate
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckStudentSimplifiedDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckStudentServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class HealthCheckStudentService {
+public class HealthCheckStudentService implements HealthCheckStudentServiceInterface {
 
     @PersistenceContext
     private EntityManager entityManager;

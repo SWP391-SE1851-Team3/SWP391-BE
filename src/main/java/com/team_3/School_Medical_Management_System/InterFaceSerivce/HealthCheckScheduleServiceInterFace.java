@@ -1,5 +1,7 @@
 package com.team_3.School_Medical_Management_System.InterFaceSerivce;
 
+import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateDTO;
+import com.team_3.School_Medical_Management_System.DTO.HealthCheckScheduleUpdateFullDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_ScheduleDTO;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Schedule;
 
@@ -22,4 +24,19 @@ public interface HealthCheckScheduleServiceInterFace {
 
     // Update health check schedule status
     HealthCheck_Schedule updateHealthCheckScheduleStatus(int id, String status);
+
+    // Update health check schedule with partial fields
+    HealthCheck_Schedule updateHealthCheckSchedule(int id, HealthCheckScheduleUpdateDTO dto);
+
+    // Update health check schedule
+    HealthCheck_Schedule updateHealthCheckSchedule(int id, HealthCheck_ScheduleDTO dto);
+
+    // Update health check schedule with UpdateFullDTO
+    HealthCheck_Schedule updateHealthCheckScheduleWithUpdateDTO(int id, HealthCheckScheduleUpdateFullDTO dto);
+
+    // Get all health check schedules with nurse names
+    List<HealthCheck_Schedule> getAllHealthCheckSchedulesWithNurseNames();
+
+    // Update schedule without sending notifications
+    HealthCheck_Schedule updateScheduleWithoutNotifications(HealthCheck_Schedule schedule);
 }
