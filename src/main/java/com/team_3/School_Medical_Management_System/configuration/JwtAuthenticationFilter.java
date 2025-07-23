@@ -40,9 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 3. Đọc thông tin trên thẻ
         String username = jwtUtils.getUsernameFromJwtToken(jwt);      // Tên: "Nguyễn Văn A"
         List<String> roles = jwtUtils.getRolesFromJwtToken(jwt);      // Chức vụ: ["ROLE_NURSE"]
-            
-        
-        
+
         if (roles != null) {
              // 4. Tạo phiếu thông hành nội bộ
                 List<SimpleGrantedAuthority> authorities = roles.stream()
