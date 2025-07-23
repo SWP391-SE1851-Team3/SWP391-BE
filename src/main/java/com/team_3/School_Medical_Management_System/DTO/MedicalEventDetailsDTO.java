@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MedicalEventDetailsDTO {
-    private Integer eventId;
+    private Long evenDetailsId;
     private String usageMethod;
     private Boolean isEmergency;
     private Boolean hasParentBeenInformed;

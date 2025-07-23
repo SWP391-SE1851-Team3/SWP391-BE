@@ -56,13 +56,13 @@ public class MedicalEventController {
         return ResponseEntity.ok(medicalEvents);
     }
 
-    @PutMapping("/{eventId}")
+    @PutMapping("/{eventDetailsId}")
     @Operation(summary = "Cập nhật sự kiện y tế")
     public ResponseEntity<MedicalEventUpdateDTO> updateMedicalEvent(
-            @PathVariable int eventId,
+            @PathVariable int eventDetailsId,
             @RequestBody MedicalEventUpdateDTO dto
            ) {
-        MedicalEventUpdateDTO r = medicalEventService.updateMedicalEvent(eventId, dto);
+        MedicalEventUpdateDTO r = medicalEventService.updateMedicalEvent(eventDetailsId, dto);
         return ResponseEntity.ok(r);
     }
 
@@ -75,10 +75,10 @@ public class MedicalEventController {
     }
 
 //
-    @GetMapping("/viewDetails/{eventId}")
+    @GetMapping("/viewDetails/{eventDetailsId}")
     @Operation(summary = "Xem chi tiết sự kiện y tế")
-    public ResponseEntity<MedicalEventDetailsDTO> getMedicalEventDetails(@PathVariable Integer eventId) {
-        MedicalEventDetailsDTO response = medicalEventService.getMedicalEventDetails(eventId);
+    public ResponseEntity<MedicalEventDetailsDTO> getMedicalEventDetails(@PathVariable("eventDetailsId") Integer eventDetailId) {
+        MedicalEventDetailsDTO response = medicalEventService.getMedicalEventDetails(eventDetailId);
         return ResponseEntity.ok(response);
     }
 

@@ -14,8 +14,15 @@ import java.util.Optional;
 // dựa vào các interface này thì có thể tìm kiếm sự chung giữa 2 bảng đó
 public interface MedicalEventDetailsRepository extends JpaRepository<MedicalEventDetails, Integer> {
     List<MedicalEventDetails> findAllByOrderByMedicalEventEventDateTimeDesc();
-    Optional<MedicalEventDetails> findByMedicalEvent_EventID(Integer eventId);
 
+  @Query("SELECT m FROM MedicalEventDetails m WHERE m.detailsID = :eventDetailsId")
+    Optional<MedicalEventDetails> findByDetailsID(@Param("eventDetailsId") Integer eventDetailsId);
+
+
+
+    @Query("SELECT m FROM MedicalEventDetails m WHERE m.detailsID = :eventDetailsId AND m.student.StudentID = :studentId")
+    Optional<MedicalEventDetails> findByMedicalEventDetailsAndStudentID(@Param("eventDetailsId") Integer eventDetailsId,
+                                                                        @Param("studentId") Integer studentId);
     @Modifying
     @Query("DELETE FROM MedicalEventDetails m WHERE m.medicalEvent.eventID = :eventId")
     void deleteByMedicalEvent_EventID(@Param("eventId") Integer eventId);

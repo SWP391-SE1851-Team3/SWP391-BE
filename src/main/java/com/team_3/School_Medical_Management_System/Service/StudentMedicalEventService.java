@@ -23,7 +23,7 @@ public class StudentMedicalEventService {
 
         for (MedicalEventDetails detail : details) {
             String studentName = detail.getStudent().getFullName() + " - " + detail.getStudent().getClassName();
-
+            Long eventDetailsID = detail.getDetailsID();
            Integer eventId =  detail.getMedicalEvent().getEventID();
             String eventType = "Không xác định"; // Giá trị mặc định
             LocalDateTime time = detail.getMedicalEvent().getEventDateTime() != null
@@ -44,7 +44,7 @@ public class StudentMedicalEventService {
                 }
             }
 
-            dtos.add(new StudentMedicalEventDto(studentName, eventType, time, status, actions,eventId));
+            dtos.add(new StudentMedicalEventDto(studentName, eventType, time, status, actions,eventId,eventDetailsID));
         }
 
         return dtos;
