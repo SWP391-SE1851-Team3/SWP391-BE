@@ -38,6 +38,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         MedicationSubmission submission = new MedicationSubmission();
         submission.setParentId(medicationSubmissionDTO.getParentId());
         submission.setStudentId(medicationSubmissionDTO.getStudentId());
+        submission.setSubmissionDate(medicationSubmissionDTO.getMedicationDate());
 
         // Không cần xử lý ảnh ở đây, sẽ upload riêng sau
 
@@ -57,10 +58,6 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
 
             submission.setMedicationDetails(medicationDetails);
         }
-
-        // Set submissionDate khi submit đơn
-        submission.setSubmissionDate(java.time.LocalDateTime.now());
-
         // Save the medication submission
         MedicationSubmission savedSubmission = medicationSubmissionInterFace.save(submission);
 
