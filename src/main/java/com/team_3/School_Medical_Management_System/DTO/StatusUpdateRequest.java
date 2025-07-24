@@ -4,7 +4,6 @@ public class StatusUpdateRequest {
     private String status;
     private String reason;
     private Integer nurseId;
-    private String evidence;
     public String getStatus() {
         return status;
     }
@@ -22,11 +21,5 @@ public class StatusUpdateRequest {
     }
     public void setNurseId(Integer nurseId) {
         this.nurseId = nurseId;
-    }
-    public String getEvidence() {
-        return evidence;
-    }
-    public void setEvidence(String evidence) {
-        this.evidence = evidence;
     }
 }

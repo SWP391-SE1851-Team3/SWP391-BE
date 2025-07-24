@@ -1,9 +1,16 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
-import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.team_3.School_Medical_Management_System.DTO.MedicationDetailDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicationDetailsExtendedDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
@@ -12,13 +19,8 @@ import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmis
 import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.List;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class MedicationSubmissionService implements MedicationSubmissionServiceInterface {
@@ -130,9 +132,9 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                 dto.setDosage(detail.getDosage());
                 dto.setTimeToUse(detail.getTimeToUse());
                 dto.setNote(detail.getNote());
+                dto.setMedicationDetailId(detail.getMedicationDetailId());
                 return dto;
             }).collect(java.util.stream.Collectors.toList());
-            // Lấy status từ ConfirmMedicationSubmission
             String status = "PENDING";
             Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
             if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
@@ -142,12 +144,16 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
             if (submission.getSubmissionDate() != null) {
                 submissionDate = java.sql.Timestamp.valueOf(submission.getSubmissionDate());
             }
+            int confirmId = confirmOpt.map(ConfirmMedicationSubmission::getConfirmId).orElse(0);
             return new MedicationSubmissionInfoDTO(
                     studentName,
                     submissionDate,
                     status,
                     className,
-                    detailDTOs
+                    detailDTOs,
+                    submission.getStudentId(),
+                    submission.getMedicationSubmissionId(),
+                    confirmId
             );
         }).collect(java.util.stream.Collectors.toList());
     }
@@ -164,9 +170,9 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                 dto.setDosage(detail.getDosage());
                 dto.setTimeToUse(detail.getTimeToUse());
                 dto.setNote(detail.getNote());
+                dto.setMedicationDetailId(detail.getMedicationDetailId());
                 return dto;
             }).collect(java.util.stream.Collectors.toList());
-            // Lấy status từ ConfirmMedicationSubmission
             String status = "PENDING";
             Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
             if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
@@ -176,12 +182,16 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
             if (submission.getSubmissionDate() != null) {
                 submissionDate = java.sql.Timestamp.valueOf(submission.getSubmissionDate());
             }
+            int confirmId = confirmOpt.map(ConfirmMedicationSubmission::getConfirmId).orElse(0);
             return new MedicationSubmissionInfoDTO(
                     studentName,
                     submissionDate,
                     status,
                     className,
-                    detailDTOs
+                    detailDTOs,
+                    submission.getStudentId(),
+                    submission.getMedicationSubmissionId(),
+                    confirmId
             );
         }).collect(java.util.stream.Collectors.toList());
     }
@@ -228,6 +238,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                     dto.setDosage(detail.getDosage());
                     dto.setTimeToUse(detail.getTimeToUse());
                     dto.setNote(detail.getNote());
+                    dto.setMedicationDetailId(detail.getMedicationDetailId());
                     return dto;
                 })
                 .collect(Collectors.toList());

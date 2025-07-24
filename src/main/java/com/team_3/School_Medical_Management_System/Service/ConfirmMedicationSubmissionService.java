@@ -1,17 +1,26 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
-import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
-import com.team_3.School_Medical_Management_System.Model.*;
-import com.team_3.School_Medical_Management_System.Repositories.ConfirmMedicationSubmissionRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.MedicationSubmissionInterFace;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.NotificationsParentRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.SchoolNurseRepository;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
+import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmission;
+import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
+import com.team_3.School_Medical_Management_System.Model.NotificationsParent;
+import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
+import com.team_3.School_Medical_Management_System.Model.Student;
+import com.team_3.School_Medical_Management_System.Repositories.ConfirmMedicationSubmissionRepo;
 
 @Service
 public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubmissionServiceInterface {
@@ -103,26 +112,18 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
     }
 
     // Thêm hàm này để cập nhật status và nurseId khi cần
-    public ConfirmMedicationSubmissionDTO updateStatusAndNurse(int confirmId, String status, String reason, Integer nurseId, String evidence) {
+    public ConfirmMedicationSubmissionDTO updateStatusAndNurse(int confirmId, String status, String reason, Integer nurseId) {
         Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
         if (confirmationOpt.isPresent()) {
             ConfirmMedicationSubmission confirmation = confirmationOpt.get();
             confirmation.setStatus(status); // Set any status directly
             if (reason != null) confirmation.setReason(reason);
-
-            // Set nurseId if provided, without requiring specific status
             if (nurseId != null) {
                 confirmation.setNurseId(nurseId);
             }
-
-            // Set evidence if provided
-            if (evidence != null) {
-                confirmation.setEvidence(evidence);
-            }
-
+            // Do NOT set evidence here
             ConfirmMedicationSubmission savedConfirmation = confirmRepository.save(confirmation);
             if(confirmation.getStatus().equalsIgnoreCase("Administered  ")){
-                // Lấy thông tin học sinh và y tá
                 Optional<MedicationSubmission> medicationSubmissionOpt = medicationSubmissionInterFace.findById(confirmation.getMedicationSubmissionId());
                 if(medicationSubmissionOpt.isPresent()){
                     MedicationSubmission medicationSubmission = medicationSubmissionOpt.get();
@@ -225,5 +226,17 @@ public class ConfirmMedicationSubmissionService implements ConfirmMedicationSubm
         dto.setReason(entity.getReason());
         dto.setEvidence(entity.getEvidence());
         return dto;
+    }
+
+    @Override
+    public ConfirmMedicationSubmissionDTO updateEvidence(int confirmId, String evidence) {
+        Optional<ConfirmMedicationSubmission> confirmationOpt = confirmRepository.findById(confirmId);
+        if (confirmationOpt.isPresent()) {
+            ConfirmMedicationSubmission confirmation = confirmationOpt.get();
+            confirmation.setEvidence(evidence);
+            ConfirmMedicationSubmission updated = confirmRepository.save(confirmation);
+            return convertToDTO(updated);
+        }
+        return null;
     }
 }

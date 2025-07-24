@@ -9,16 +9,22 @@ public class MedicationSubmissionInfoDTO {
     private String status;
     private String className;
     private List<MedicationDetailDTO> medicationDetails;
+    private int studentId;
+    private int submissionId;
+    private int confirmId;
 
     // Constructors
     public MedicationSubmissionInfoDTO() {}
 
-    public MedicationSubmissionInfoDTO(String studentName, Date submissionDate, String status,String className, List<MedicationDetailDTO> medicationDetails) {
+    public MedicationSubmissionInfoDTO(String studentName, Date submissionDate, String status, String className, List<MedicationDetailDTO> medicationDetails, int studentId, int submissionId, int confirmId) {
         this.studentName = studentName;
         this.submissionDate = submissionDate;
         this.status = status;
         this.className = className;
         this.medicationDetails = medicationDetails;
+        this.studentId = studentId;
+        this.submissionId = submissionId;
+        this.confirmId = confirmId;
     }
 
     // Getters and Setters
@@ -60,5 +66,27 @@ public class MedicationSubmissionInfoDTO {
     public void setMedicationDetails(List<MedicationDetailDTO> medicationDetails) {
         this.medicationDetails = medicationDetails;
     }
-}
 
+    public int getStudentId() {
+        return studentId;
+    }
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public int getSubmissionId() {
+        return submissionId;
+    }
+
+    public void setSubmissionId(int submissionId) {
+        this.submissionId = submissionId;
+    }
+    public int getConfirmId() {
+        return confirmId;
+    }
+
+    public void setConfirmId(int confirmId) {
+        this.confirmId = confirmId;
+    }
+
+}
