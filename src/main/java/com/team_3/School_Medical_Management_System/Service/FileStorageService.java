@@ -1,9 +1,5 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +7,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileStorageService {
@@ -20,6 +20,7 @@ public class FileStorageService {
 
     /**
      * Chuyển đổi file ảnh thành Base64 string
+     *
      * @param file MultipartFile từ request
      * @return Base64 string của file ảnh
      */
@@ -30,6 +31,7 @@ public class FileStorageService {
 
     /**
      * Chuyển đổi Base64 string thành byte array
+     *
      * @param base64String Base64 string của ảnh
      * @return byte array của ảnh
      */
@@ -39,6 +41,7 @@ public class FileStorageService {
 
     /**
      * Lưu file ảnh vào thư mục trên server
+     *
      * @param file MultipartFile từ request
      * @return đường dẫn file đã lưu
      */
@@ -69,7 +72,7 @@ public class FileStorageService {
     }
 
     /**
-     * Kiểm tra file có phải là ảnh không
+     * Kiểm tra file có phải là ảnh không (PNG, JPG, JPEG, GIF, ...)
      * @param file MultipartFile cần kiểm tra
      * @return true nếu là file ảnh
      */

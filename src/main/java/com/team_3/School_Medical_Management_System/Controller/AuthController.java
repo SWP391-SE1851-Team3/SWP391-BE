@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -102,29 +103,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signup/nurse")
-    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken!");
-          }
-        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body("Email is already taken!");
-        }
-        SchoolNurse nurse = new SchoolNurse();
-        nurse.setUserName(signUpRequest.getUsername());
-        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        nurse.setEmail(signUpRequest.getEmail());
-        nurse.setFullName("tuan");
-       // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
-        nurse.setRoleID(signUpRequest.getRole());
-        nurse.setPhone("0357899455");
-        nurse.setIsActive(1);
-        nurse.setCertification("jaja");
-        nurse.setSpecialisation("aaa");
-        nurseRepo.save(nurse);
-        return ResponseEntity.ok("Nurse registered successfully");
-    }
-
     @PostMapping("/signup/admin")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignUpRequest signUpRequest) {
 //        if (adminRepository.(signUpRequest.getUsername())) {
@@ -139,15 +117,39 @@ public class AuthController {
         admin.setEmail(signUpRequest.getEmail());
         admin.setFullName("Nguyen Van A");
         admin.setPhone("0357899455");
-        Role role = roleRepo.findById(signUpRequest.getRole())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid role ID: " + signUpRequest.getRole()));
-        admin.setRole(role);
 
-     admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
+        Optional<Role> role = roleRepo.findById(3);
+        admin.setRole(role.get());
+
+        admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
 
         // Giả sử 3 là ID của vai trò Adminf
         adminRepository.saveManager(admin);
         return ResponseEntity.ok("Admin registered successfully");
+    }
+
+    @PostMapping("/signup/nurse")
+    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken!");
+        }
+        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken!");
+        }
+        SchoolNurse nurse = new SchoolNurse();
+        nurse.setUserName(signUpRequest.getUsername());
+        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        nurse.setEmail(signUpRequest.getEmail());
+        nurse.setFullName(signUpRequest.getFullName());
+
+        // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
+        nurse.setRoleID(2);
+        nurse.setPhone(signUpRequest.getPhone());
+        nurse.setIsActive(1);
+        nurse.setCertification(signUpRequest.getCertification());
+        nurse.setSpecialisation(signUpRequest.getSpecialisation());
+        nurseRepo.save(nurse);
+        return ResponseEntity.ok("Nurse registered successfully");
     }
 //
 //    @PostMapping("/signup/parent")

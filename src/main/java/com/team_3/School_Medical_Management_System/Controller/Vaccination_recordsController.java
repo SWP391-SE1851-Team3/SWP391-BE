@@ -28,7 +28,7 @@ public class Vaccination_recordsController {
         return vaccination_recordsServiceInterFace.getVaccination_records();
     }
 
-    @GetMapping("/vaccination_records{id}")
+    @GetMapping("/{id}")
     public Vaccination_recordsDTO getVaccination_records(@PathVariable int id) {
         return vaccination_recordsServiceInterFace.getVaccination_records_by_id(id);
     }

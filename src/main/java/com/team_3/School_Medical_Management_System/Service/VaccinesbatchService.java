@@ -1,19 +1,21 @@
 package com.team_3.School_Medical_Management_System.Service;
-
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_BatchesDTO;
 import com.team_3.School_Medical_Management_System.DTO.Vaccine_Batches_EditDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.Vaccine_BatchesServiceInterFace;
-import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepo;
+import com.team_3.School_Medical_Management_System.InterfaceRepo.VaccineBatchRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.Vaccine_BatchesInterFace;
 import com.team_3.School_Medical_Management_System.Model.MedicalSupply;
 import com.team_3.School_Medical_Management_System.Model.Vaccine_Batches;
+import com.team_3.School_Medical_Management_System.Repositories.Vaccine_BatchesRepo;
 import com.team_3.School_Medical_Management_System.TransferModelsDTO.TransferModelsDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,14 +23,16 @@ import java.util.stream.Collectors;
 public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
 
     @Autowired
-    private VaccineBatchRepo vaccineBatch;
+    private Vaccine_BatchesRepo vaccineBatch;
 
-//    @Autowired
+    //    @Autowired
 //    private MedicalSupplyRepository supplyRepo;
     @Autowired
     private Consent_formsSerivce consentFormService ;
 
 
+    @Autowired
+    private VaccineBatchRepository vaccineBatchRepository;
     private Vaccine_BatchesInterFace vaccinesInterFace;
 
     @Autowired
@@ -58,13 +62,55 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
         }
     }
 
+
+    private String normalizeAndValidate(String input, String fieldName) {
+        if (input == null || input.trim().isEmpty()) {
+            throw new IllegalArgumentException(fieldName + " không nhập đúng yêu cầu");
+        }
+        if (input.startsWith(" ")) {
+            throw new IllegalArgumentException(fieldName + " không được bắt đầu bằng khoảng trắng");
+        }
+        if (!input.matches("[\\p{L}0-9\\s]+")) {
+            throw new IllegalArgumentException(fieldName + " không được chứa ký tự đặc biệt");
+        }
+
+        char firstChar = input.charAt(0);
+        if (Character.isLetter(firstChar) && Character.isLowerCase(firstChar)) {
+            throw new IllegalArgumentException(fieldName + " phải bắt đầu bằng chữ cái viết hoa");
+        }
+
+        input = input.toLowerCase();
+        String[] words = input.split("\\s+");
+        StringBuilder result = new StringBuilder();
+        for (String w : words) {
+            if (!w.isEmpty()) {
+                result.append(Character.toUpperCase(w.charAt(0)))
+                        .append(w.substring(1))
+                        .append(" ");
+            }
+        }
+        return result.toString().trim();
+    }
+
     @Override
     public Vaccine_BatchesDTO AddVaccinebatch(Vaccine_BatchesDTO vaccinesDTO) {
-        // Mapping DTO sang entity
-        Vaccine_Batches newBatchEntity = TransferModelsDTO.MappingVaccineDTO(vaccinesDTO);
+        Optional<Vaccine_Batches> existingBatch = vaccineBatchRepository.findByDot(vaccinesDTO.getDot());
+        if (existingBatch.isPresent()) {
+            throw new IllegalArgumentException("Dot \"" + vaccinesDTO.getDot() + "\" đã tồn tại. Vui lòng chọn tên khác.");
+        }
 
-        // Lưu batch mới và nhận lại object đã có batch_id
+        String dot = normalizeAndValidate(vaccinesDTO.getDot(), "Dot");
+        vaccinesDTO.setDot(dot);
+
+        String location = normalizeAndValidate(vaccinesDTO.getLocation(), "Location");
+        vaccinesDTO.setLocation(location);
+
+        String notes = normalizeAndValidate(vaccinesDTO.getNotes(), "Notes");
+        vaccinesDTO.setNotes(notes);
+
+        Vaccine_Batches newBatchEntity = TransferModelsDTO.MappingVaccineDTO(vaccinesDTO);
         Vaccine_Batches savedBatch = vaccinesInterFace.AddVaccine_batch(newBatchEntity);
+        return TransferModelsDTO.MappingVaccines(savedBatch);
 
 //         int doseCount = vaccinesDTO.getQuantity_received(); // ví dụ: 100 liều
 //
@@ -85,13 +131,20 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
 //            supplyRepo.save(supply);
 //        }
 
-        // Trả về DTO
-        return TransferModelsDTO.MappingVaccines(savedBatch);
+
     }
 
 
     @Override
     public Vaccine_Batches_EditDTO UpdateVaccinebatch(Vaccine_Batches_EditDTO dto) {
+        String dot = normalizeAndValidate(dto.getDot(), "Dot");
+        dto.setDot(dot);
+
+        String location = normalizeAndValidate(dto.getLocation(), "Location");
+        dto.setLocation(location);
+
+        String notes = normalizeAndValidate(dto.getNotes(), "Notes");
+        dto.setNotes(notes);
         var entity = TransferModelsDTO.MappingVaccineBatchesDTO(dto);
         var updatedVaccine = vaccinesInterFace.UpdateVaccine_batch(entity);
 //        int doseCount = dto.getQuantity_received(); // ví dụ: 100 liều
@@ -110,8 +163,8 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
 //            supply.setQuantityAvailable(supply.getQuantityAvailable() - used);
 //            supplyRepo.save(supply);
         //}
-            return TransferModelsDTO.MappingVaccineBatches(updatedVaccine);
-        }
+        return TransferModelsDTO.MappingVaccineBatches(updatedVaccine);
+    }
 
 
     @Override
@@ -147,5 +200,3 @@ public class VaccinesbatchService implements Vaccine_BatchesServiceInterFace {
 //    }
 
 }
-
-

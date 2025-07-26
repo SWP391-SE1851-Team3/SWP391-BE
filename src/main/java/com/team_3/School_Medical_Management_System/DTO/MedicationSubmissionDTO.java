@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -25,6 +27,8 @@ public class MedicationSubmissionDTO {
     private int studentId;
 
     private String medicineImage;
+
+    private LocalDateTime medicationDate;
 
     @Valid
     @Size(min = 1, message = "At least one medication detail is required")
