@@ -22,4 +22,5 @@ public class HealthConsultationDTO {
     private Date update_at;
     private String createdByNurseName;
     private String updatedByNurseName;
+    private String scheduleName;
 }

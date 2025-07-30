@@ -47,9 +47,9 @@ public class MedicationStatsRepositoryImpl implements MedicationStatsRepository 
     public Long countApprovedSubmissions(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = 'APPROVED' AND SubmissionDate BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = N'Đã phát thuốc' AND SubmissionDate BETWEEN :startDate AND :endDate";
         } else {
-            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = 'APPROVED'";
+            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = N'Đã phát thuốc'";
         }
         try {
             //String sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = 'APPROVED'";
@@ -70,9 +70,9 @@ public class MedicationStatsRepositoryImpl implements MedicationStatsRepository 
     public Long countRejectedSubmissions(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
         if (startDate != null && endDate != null) {
-            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = 'REJECTED' AND SubmissionDate BETWEEN :startDate AND :endDate";
+            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = N'Đã hủy' AND SubmissionDate BETWEEN :startDate AND :endDate";
         } else {
-            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = 'REJECTED'";
+            sql = "SELECT COUNT(*) FROM Confirm_MedicationSubmission WHERE Status = N'Đã hủy'";
         }
         try {
 
@@ -95,16 +95,16 @@ public class MedicationStatsRepositoryImpl implements MedicationStatsRepository 
         if (startDate != null && endDate != null) {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN Status = 'APPROVED' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN Status = N'Đã phát thuốc' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM Confirm_MedicationSubmission
-                WHERE Status IN ('APPROVED', 'REJECTED') AND SubmissionDate BETWEEN :startDate AND :endDate
+                WHERE Status IN (N'Đã phát thuốc', N'Đã hủy') AND SubmissionDate BETWEEN :startDate AND :endDate
                 """;
         } else {
             sql = """
                 SELECT 
-                    CAST(SUM(CASE WHEN Status = 'APPROVED' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
+                    CAST(SUM(CASE WHEN Status = N'Đã phát thuốc' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS DECIMAL(5,2))
                 FROM Confirm_MedicationSubmission
-                WHERE Status IN ('APPROVED', 'REJECTED')
+                WHERE Status IN (N'Đã phát nhận', N'Đã hủy')
                 """;
         }
         try {

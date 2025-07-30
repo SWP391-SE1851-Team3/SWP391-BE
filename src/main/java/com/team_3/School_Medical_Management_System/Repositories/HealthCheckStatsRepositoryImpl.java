@@ -67,12 +67,20 @@ public class HealthCheckStatsRepositoryImpl implements HealthCheckStatsRepositor
     }
 
     @Override
-    public Long countTotalChecked(LocalDateTime startDate, LocalDateTime endDate) {
+    public Long countRejected(LocalDateTime startDate, LocalDateTime endDate) {
         String sql;
-        sql = "SELECT COUNT(DISTINCT StudentID) FROM HealthCheck_Student";
+        if (startDate != null && endDate != null) {
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = N'Đã từ chối' AND Schedule_Date BETWEEN :startDate AND :endDate";
+        } else {
+            sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = N'Đã từ chối'";
+        }
         try {
+            //String sql = "SELECT COUNT(*) FROM HealthCheck_Schedule WHERE Status = 1";
             Query query = entityManager.createNativeQuery(sql);
-//
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
             Number result = (Number) query.getSingleResult();
             return result.longValue();
         } catch (Exception e) {
