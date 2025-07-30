@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,9 +86,10 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
 
-            List<String> roles = userDetailsImpl.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
+            List<String> roles = new ArrayList<>();
+            for (GrantedAuthority authority : userDetailsImpl.getAuthorities()) {
+                roles.add(authority.getAuthority());
+            }
 
 
             return ResponseEntity.ok(new JwtResponse(
@@ -101,30 +104,6 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Lỗi hệ thống: " + e.getMessage());
         }
-    }
-
-    @PostMapping("/signup/nurse")
-    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken!");
-          }
-        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body("Email is already taken!");
-        }
-        SchoolNurse nurse = new SchoolNurse();
-        nurse.setUserName(signUpRequest.getUsername());
-        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        nurse.setEmail(signUpRequest.getEmail());
-        nurse.setFullName(signUpRequest.getFullName());
-
-       // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
-        nurse.setRoleID(2);
-        nurse.setPhone(signUpRequest.getPhone());
-        nurse.setIsActive(1);
-        nurse.setCertification(signUpRequest.getCertification());
-        nurse.setSpecialisation(signUpRequest.getSpecialisation());
-        nurseRepo.save(nurse);
-        return ResponseEntity.ok("Nurse registered successfully");
     }
 
     @PostMapping("/signup/admin")
@@ -145,11 +124,35 @@ public class AuthController {
         Optional<Role> role = roleRepo.findById(3);
         admin.setRole(role.get());
 
-     admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
+        admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
 
         // Giả sử 3 là ID của vai trò Adminf
         adminRepository.saveManager(admin);
         return ResponseEntity.ok("Admin registered successfully");
+    }
+
+    @PostMapping("/signup/nurse")
+    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken!");
+        }
+        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken!");
+        }
+        SchoolNurse nurse = new SchoolNurse();
+        nurse.setUserName(signUpRequest.getUsername());
+        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        nurse.setEmail(signUpRequest.getEmail());
+        nurse.setFullName(signUpRequest.getFullName());
+
+        // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
+        nurse.setRoleID(2);
+        nurse.setPhone(signUpRequest.getPhone());
+        nurse.setIsActive(1);
+        nurse.setCertification(signUpRequest.getCertification());
+        nurse.setSpecialisation(signUpRequest.getSpecialisation());
+        nurseRepo.save(nurse);
+        return ResponseEntity.ok("Nurse registered successfully");
     }
 //
 //    @PostMapping("/signup/parent")

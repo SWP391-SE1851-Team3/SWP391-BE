@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ManagerRepository extends JpaRepository<Manager, Integer> {
-    @Query("SELECT m FROM Manager m WHERE m.IsActive = 1")
+    @Query("SELECT m FROM Manager m")
     public List<Manager> getAllWithIsActive();
 
 

@@ -1,9 +1,16 @@
 package com.team_3.School_Medical_Management_System.Service;
 
-import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
-import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.team_3.School_Medical_Management_System.DTO.MedicationDetailDTO;
 import com.team_3.School_Medical_Management_System.DTO.MedicationDetailsExtendedDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.ConfirmMedicationSubmissionInterFace;
@@ -12,13 +19,8 @@ import com.team_3.School_Medical_Management_System.Model.ConfirmMedicationSubmis
 import com.team_3.School_Medical_Management_System.Model.MedicationDetail;
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.List;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class MedicationSubmissionService implements MedicationSubmissionServiceInterface {
@@ -38,6 +40,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         MedicationSubmission submission = new MedicationSubmission();
         submission.setParentId(medicationSubmissionDTO.getParentId());
         submission.setStudentId(medicationSubmissionDTO.getStudentId());
+        submission.setSubmissionDate(medicationSubmissionDTO.getMedicationDate());
 
         // Không cần xử lý ảnh ở đây, sẽ upload riêng sau
 
@@ -57,17 +60,13 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
 
             submission.setMedicationDetails(medicationDetails);
         }
-
-        // Set submissionDate khi submit đơn
-        submission.setSubmissionDate(java.time.LocalDateTime.now());
-
         // Save the medication submission
         MedicationSubmission savedSubmission = medicationSubmissionInterFace.save(submission);
 
         // Create and save a confirmation record with PENDING status
         ConfirmMedicationSubmission confirmation = new ConfirmMedicationSubmission();
         confirmation.setMedicationSubmissionId(savedSubmission.getMedicationSubmissionId());
-        confirmation.setStatus("PENDING"); // Using string literal instead of constant
+        confirmation.setStatus("Chờ nhận thuốc"); // Using string literal instead of constant
 
         // Note: nurseId and evidence will be updated later when a nurse processes this
 
@@ -86,10 +85,9 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         Optional<ConfirmMedicationSubmission> confirmationOptional = confirmMedicationSubmissionInterFace
                 .findByMedicationSubmissionId(submissionId);
 
-        // Check if confirmation exists and has PENDING status
         if (!confirmationOptional.isPresent() ||
 
-                confirmationOptional.get().getStatus().equalsIgnoreCase("PENDING")) {
+                confirmationOptional.get().getStatus().equalsIgnoreCase("Chờ nhận thuốc")) {
 
 
             // If confirmation exists, delete it first
@@ -133,10 +131,10 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                 dto.setDosage(detail.getDosage());
                 dto.setTimeToUse(detail.getTimeToUse());
                 dto.setNote(detail.getNote());
+                dto.setMedicationDetailId(detail.getMedicationDetailId());
                 return dto;
             }).collect(java.util.stream.Collectors.toList());
-            // Lấy status từ ConfirmMedicationSubmission
-            String status = "PENDING";
+            String status = "Chờ nhận thuốc";
             Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
             if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
                 status = confirmOpt.get().getStatus();
@@ -145,12 +143,16 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
             if (submission.getSubmissionDate() != null) {
                 submissionDate = java.sql.Timestamp.valueOf(submission.getSubmissionDate());
             }
+            int confirmId = confirmOpt.map(ConfirmMedicationSubmission::getConfirmId).orElse(0);
             return new MedicationSubmissionInfoDTO(
                     studentName,
                     submissionDate,
                     status,
                     className,
-                    detailDTOs
+                    detailDTOs,
+                    submission.getStudentId(),
+                    submission.getMedicationSubmissionId(),
+                    confirmId
             );
         }).collect(java.util.stream.Collectors.toList());
     }
@@ -167,10 +169,10 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                 dto.setDosage(detail.getDosage());
                 dto.setTimeToUse(detail.getTimeToUse());
                 dto.setNote(detail.getNote());
+                dto.setMedicationDetailId(detail.getMedicationDetailId());
                 return dto;
             }).collect(java.util.stream.Collectors.toList());
-            // Lấy status từ ConfirmMedicationSubmission
-            String status = "PENDING";
+            String status = "Chờ nhận thuốc";
             Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
             if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
                 status = confirmOpt.get().getStatus();
@@ -179,12 +181,16 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
             if (submission.getSubmissionDate() != null) {
                 submissionDate = java.sql.Timestamp.valueOf(submission.getSubmissionDate());
             }
+            int confirmId = confirmOpt.map(ConfirmMedicationSubmission::getConfirmId).orElse(0);
             return new MedicationSubmissionInfoDTO(
                     studentName,
                     submissionDate,
                     status,
                     className,
-                    detailDTOs
+                    detailDTOs,
+                    submission.getStudentId(),
+                    submission.getMedicationSubmissionId(),
+                    confirmId
             );
         }).collect(java.util.stream.Collectors.toList());
     }
@@ -231,6 +237,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                     dto.setDosage(detail.getDosage());
                     dto.setTimeToUse(detail.getTimeToUse());
                     dto.setNote(detail.getNote());
+                    dto.setMedicationDetailId(detail.getMedicationDetailId());
                     return dto;
                 })
                 .collect(Collectors.toList());

@@ -17,7 +17,7 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     // Optional<Parent> findByUsername (String username);
 
 
-    @Query("SELECT p FROM Parent p WHERE p.IsActive =1")
+    @Query("SELECT p FROM Parent p")
     public List<Parent> getAllWithIsActive();
 
     Optional<Parent> findByEmail(String email);

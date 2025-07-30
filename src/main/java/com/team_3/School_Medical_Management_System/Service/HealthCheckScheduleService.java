@@ -39,7 +39,7 @@ public class HealthCheckScheduleService implements HealthCheckScheduleServiceInt
     public HealthCheck_Schedule createHealthCheckSchedule(HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
         // Kiểm tra tên schedule đã tồn tại chưa
         if (healthCheckScheduleRepository.existsByName(healthCheckScheduleDTO.getName())) {
-            throw new RuntimeException("Tên lịch kiểm tra sức khỏe '" + healthCheckScheduleDTO.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
+            throw new IllegalArgumentException("Tên lịch kiểm tra sức khỏe '" + healthCheckScheduleDTO.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
         }
 
         HealthCheck_Schedule healthCheckSchedule = new HealthCheck_Schedule();
@@ -98,6 +98,12 @@ public class HealthCheckScheduleService implements HealthCheckScheduleServiceInt
         Optional<HealthCheck_Schedule> optionalSchedule = healthCheckScheduleRepository.findById(id);
         if (optionalSchedule.isPresent()) {
             HealthCheck_Schedule schedule = optionalSchedule.get();
+            // Chỉ kiểm tra trùng tên nếu tên mới khác tên cũ
+            if (dto.getName() != null && !dto.getName().equals(schedule.getName())) {
+                if (healthCheckScheduleRepository.existsByName(dto.getName())) {
+                    throw new IllegalArgumentException("Tên lịch kiểm tra sức khỏe '" + dto.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
+                }
+            }
             if (dto.getName() != null) schedule.setName(dto.getName());
             if (dto.getLocation() != null) schedule.setLocation(dto.getLocation());
             if (dto.getNotes() != null) schedule.setNotes(dto.getNotes());

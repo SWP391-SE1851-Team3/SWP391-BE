@@ -93,5 +93,4 @@ public class SignUpRequest {
 
     // Thêm trường role (có thể tùy chọn nếu dùng endpoint riêng)
 
-
 }

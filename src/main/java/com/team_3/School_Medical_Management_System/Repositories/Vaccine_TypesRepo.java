@@ -21,6 +21,7 @@ public class Vaccine_TypesRepo implements Vaccine_TypesInterFace {
        return entityManager.createQuery(jpql, Vaccine_Types.class).getResultList();
     }
 
+    // lấy ra 1 đối tượng trong VaccineType
     @Override
     public VaccineTypeShortDTO getVaccine_Type(int id) {
         String jpql = "SELECT new com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO(v.id, v.Name) FROM Vaccine_Types v WHERE v.id = :id";
@@ -63,6 +64,8 @@ public class Vaccine_TypesRepo implements Vaccine_TypesInterFace {
         return vaccine_Types;
     }
 
+
+    // lấy ra môt list trong VaccineType
     @Override
     public List<VaccineTypeShortDTO> getVaccine_TypeByName() {
         String jpql = "SELECT new com.team_3.School_Medical_Management_System.DTO.VaccineTypeShortDTO(v.id, v.Name) FROM Vaccine_Types v";

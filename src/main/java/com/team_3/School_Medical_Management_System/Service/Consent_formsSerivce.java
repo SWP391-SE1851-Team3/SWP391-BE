@@ -246,14 +246,14 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Override
     public List<Consent_formViewDTO> getAllConsentForms() {
-       var listConsent = consent_formsRepo.getAllConsentForms();
+        var listConsent = consent_formsRepo.getAllConsentForms();
         return listConsent.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
     public Consent_formsDTO updateConsent(Consent_formsDTO consentFormsDTO) {
-       var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
-       return TransferModelsDTO.MappingConsent(updateConsent);
+        var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
+        return TransferModelsDTO.MappingConsent(updateConsent);
     }
 
     @Override
@@ -287,10 +287,9 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
                 boolean alreadySent = consent_forms_repo.existsByStudentAndVaccineBatches(student, batch);
                 if (alreadySent) {
-                    errors.add("Đã gửi phiếu cho học sinh " + student.getFullName() + " trong batch này.");
+                    errors.add("Đã gửi phiếu cho học sinh " + student.getFullName() + " trong đợt này.");
                     continue;
                 }
-
                 Consent_forms form = new Consent_forms();
                 form.setStudent(student);
                 form.setParent(parent);

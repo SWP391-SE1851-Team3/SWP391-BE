@@ -39,22 +39,28 @@ public class SecurityConfig  {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll().
-                        requestMatchers("/api/medical-events/emergency").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/medical-events/emergency").permitAll()
                         .requestMatchers("/api/excel/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()// Chỉ /api/auth/** được phép truy cập mà không cần token
-                        .requestMatchers("/api/vaccine_types/**").hasAuthority("ROLE_NURSE")
-                        .requestMatchers("/api/vaccinebatches/**").hasAnyAuthority("ROLE_NURSE", "ROLE_MANAGER") // Cho phép NURSE và MANAGER
-                        .requestMatchers("/api/vaccination_records/**").hasAuthority("ROLE_NURSE") // Chỉ NURSE được phép truy cập
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Chỉ /api/auth/** được phép truy cập mà không cần token
+                        .requestMatchers("/api/vaccine_types/**").hasAnyAuthority("ROLE_NURSE", "ROLE_ADMIN")
+                        .requestMatchers("/api/vaccinebatches/**").hasAnyAuthority("ROLE_NURSE", "ROLE_ADMIN") // Cho phép NURSE và ADMIN
+                        .requestMatchers("/api/vaccination_records/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT") // Chỉ NURSE và PHỤ HUYNH
                         .requestMatchers("/api/Consent_forms/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
                         .requestMatchers("/api/StudentHealthProfiles/**").hasAnyAuthority("ROLE_PARENT")
+                        .requestMatchers("/api/health-check/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
+                        .requestMatchers("/api/health-check-schedule/**").hasAnyAuthority("ROLE_NURSE", "ROLE_ADMIN")
+                        .requestMatchers("/api/health-check-result/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
+                        .requestMatchers("/api/health-consent/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
+                        .requestMatchers("/api/medical-events/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
+                        .requestMatchers("/api/medical-submission/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
+                        .requestMatchers("/api/medical-confirmations/**").hasAnyAuthority("ROLE_NURSE", "ROLE_PARENT")
                         .anyRequest().authenticated() // Tất cả request khác (bao gồm /api/** khác và không phải /api) cần token
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -79,7 +85,5 @@ public class SecurityConfig  {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-
 
 }
