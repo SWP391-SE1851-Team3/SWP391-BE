@@ -130,7 +130,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
         Student student = consent.getStudent();
         Vaccine_Batches vaccine_Batches = consent.getVaccineBatches();
 
-        // 1. Tạo entity từ DTO
+        // 1. Tạo Model từ DTO
         Vaccination_records record = new Vaccination_records();
         record.setNotes(dto.getNotes());
         record.setSymptoms(dto.getSymptoms());
@@ -178,7 +178,7 @@ public class Vaccination_recordsService implements Vaccination_recordsServiceInt
             SchoolNurse currentNurse = SchoolNurseRepository.findById(dto.getEditNurseID())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên y tế"));
 
-            // ✅ Sửa: Luôn cập nhật nếu DTO có dữ liệu (không kiểm tra null trong record nữa)
+            // Luôn cập nhật nếu DTO có dữ liệu (không kiểm tra null trong record nữa)
             if (dto.getNotes() != null) {
                 record.setNotes(dto.getNotes());
             }
