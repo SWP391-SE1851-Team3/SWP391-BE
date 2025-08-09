@@ -66,7 +66,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
         // Create and save a confirmation record with PENDING status
         ConfirmMedicationSubmission confirmation = new ConfirmMedicationSubmission();
         confirmation.setMedicationSubmissionId(savedSubmission.getMedicationSubmissionId());
-        confirmation.setStatus("Chờ phản hồi"); // Using string literal instead of constant
+        confirmation.setStatus("Chờ nhận thuốc"); // Using string literal instead of constant
 
         // Note: nurseId and evidence will be updated later when a nurse processes this
 
@@ -87,7 +87,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
 
         if (!confirmationOptional.isPresent() ||
 
-                confirmationOptional.get().getStatus().equalsIgnoreCase("Chờ phản hồi")) {
+                confirmationOptional.get().getStatus().equalsIgnoreCase("Chờ nhận thuốc")) {
 
 
             // If confirmation exists, delete it first
@@ -134,7 +134,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                 dto.setMedicationDetailId(detail.getMedicationDetailId());
                 return dto;
             }).collect(java.util.stream.Collectors.toList());
-            String status = "Chờ phản hồi";
+            String status = "Chờ nhận thuốc";
             Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
             if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
                 status = confirmOpt.get().getStatus();
@@ -172,7 +172,7 @@ public class MedicationSubmissionService implements MedicationSubmissionServiceI
                 dto.setMedicationDetailId(detail.getMedicationDetailId());
                 return dto;
             }).collect(java.util.stream.Collectors.toList());
-            String status = "Chờ phản hồi";
+            String status = "Chờ nhận thuốc";
             Optional<ConfirmMedicationSubmission> confirmOpt = confirmMedicationSubmissionInterFace.findByMedicationSubmissionId(submission.getMedicationSubmissionId());
             if (confirmOpt.isPresent() && confirmOpt.get().getStatus() != null) {
                 status = confirmOpt.get().getStatus();

@@ -91,8 +91,6 @@ public class AuthController {
                 roles.add(authority.getAuthority());
             }
 
-
-
             return ResponseEntity.ok(new JwtResponse(
 
                     jwt, userDetailsImpl.getId(), userDetailsImpl.getUsername(),
@@ -155,29 +153,7 @@ public class AuthController {
         nurseRepo.save(nurse);
         return ResponseEntity.ok("Nurse registered successfully");
     }
-//
-//    @PostMapping("/signup/parent")
-//    public ResponseEntity<?> registerParent(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if (parentRepository.existsByUserName(signUpRequest.getUsername())) {
-//            return ResponseEntity.badRequest().body("Username is already taken!");
-//        }
-//        if (parentRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return ResponseEntity.badRequest().body("Email is already taken!");
-//        }
-//        Parent parent = new Parent();
-//        parent.setUsername(signUpRequest.getUsername());
-//        parent.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-//        parent.setEmail(signUpRequest.getEmail());
-//        parent.setChildId(signUpRequest.getChildId());
-//        parentRepository.save(parent);
-//        return ResponseEntity.ok("Parent registered successfully");
-//    }
 
-//    @PostMapping("/encode-password")
-//    public ResponseEntity<?> encodePassword(@RequestBody String plainPassword) {
-//        String encodedPassword = passwordEncoder.encode(plainPassword);
-//        return ResponseEntity.ok("Encoded password: " + encodedPassword);
-//    }
 
     @PostMapping("/manual-check")
     public ResponseEntity<?> manualCheckPassword(@RequestBody LoginRequest loginRequest) {
@@ -204,30 +180,7 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/reset-password")
-//    public ResponseEntity<?> resetPassword(@RequestBody LoginRequest loginRequest) {
-//        try {
-//            // Tìm user theo role
-//            String newPlainPassword = "123456"; // Mật khẩu mới đơn giản
-//            String encodedPassword = passwordEncoder.encode(newPlainPassword);
-//
-//            if ("NURSE".equalsIgnoreCase(loginRequest.getRole())) {
-//                SchoolNurse nurse = schoolNurseRepo.(loginRequest.getUsername());
-//                if (nurse == null) {
-//                    return ResponseEntity.status(404).body("Không tìm thấy y tá với username: " + loginRequest.getUsername());
-//                }
-//                nurse.setPassword(encodedPassword);
-//                nurseRepo.save(nurse);
-//            }
-//            // Thêm các role khác ở đây nếu cần
-//
-//            return ResponseEntity.ok("Đã reset mật khẩu thành: " + newPlainPassword +
-//                                    "\nMật khẩu đã mã hóa: " + encodedPassword);
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("Lỗi khi reset mật khẩu: " + e.getMessage());
-//        }
-//    }
+
 
     @PostMapping("/test-bcrypt")
     public ResponseEntity<?> testBCrypt(@RequestBody String password) {

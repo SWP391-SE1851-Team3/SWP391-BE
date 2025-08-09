@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class HealthCheckStats {
     private Long totalSchedules;
     private Long completedSchedules;
-    private Long totalChecked;
+    private Long countRejected;
     private Double consentRate;
     private Double averageBMI;
 }
