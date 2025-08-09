@@ -206,7 +206,7 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
         form.setIsAgree(dto.getIsAgree());
         form.setReason(dto.getReason());
         form.setHasAllergy(dto.getHasAllergy());
-        form.setStatus("ĐÃ PHÊ DUYỆT");
+        form.setStatus("Đã phê duyệt");
 
         // 👉 Nếu bạn để transactional bên ngoài, hãy đảm bảo catch lỗi đúng để không rollback
         consent_formsRepos.save(form);
@@ -246,30 +246,28 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
 
     @Override
     public List<Consent_formViewDTO> getAllConsentForms() {
-       var listConsent = consent_formsRepo.getAllConsentForms();
+        var listConsent = consent_formsRepo.getAllConsentForms();
         return listConsent.stream().map(TransferModelsDTO::MappingConent_View).collect(Collectors.toList());
     }
 
     @Override
     public Consent_formsDTO updateConsent(Consent_formsDTO consentFormsDTO) {
-       var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
-       return TransferModelsDTO.MappingConsent(updateConsent);
+        var updateConsent = consent_formsRepo.updateConsent(TransferModelsDTO.MappingConsentDTO(consentFormsDTO));
+        return TransferModelsDTO.MappingConsent(updateConsent);
     }
 
     @Override
-    public SendConsentFormResult sendConsentFormsByClassName(
+    public void sendConsentFormsByClassName(
             List<String> className,
             Integer batchId,
             LocalDateTime sendDate,
             LocalDateTime expireDate,
             String status
     ) {
-
         Vaccine_Batches batch = vaccineBatchRepository.findById(batchId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lô vắc xin"));
 
         List<String> getALlClass = studentRepository.findAllClassNames();
-        List<Consent_forms> sentForms = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
         for (String nameclass : className) {
@@ -287,7 +285,11 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
                     continue;
                 }
 
-                // Tạo và lưu form
+                boolean alreadySent = consent_forms_repo.existsByStudentAndVaccineBatches(student, batch);
+                if (alreadySent) {
+                    errors.add("Đã gửi phiếu cho học sinh " + student.getFullName() + " trong đợt này.");
+                    continue;
+                }
                 Consent_forms form = new Consent_forms();
                 form.setStudent(student);
                 form.setParent(parent);
@@ -296,27 +298,23 @@ public class Consent_formsSerivce implements Consent_formsServiceInterFace {
                 form.setExpire_date(expireDate);
                 form.setStatus(status);
                 consent_formsRepos.save(form);
-                sentForms.add(form);
 
-                // Gửi thông báo cho từng phụ huynh
                 String title = "Gửi phiếu tiêm chủng cho học sinh " + student.getFullName();
                 String content = "Một đợt tiêm chủng mới đã được lên lịch cho học sinh " + student.getFullName() +
                         ". Vui lòng truy cập hệ thống để xác nhận đồng ý hoặc từ chối.";
-
-                NotificationsParent notification = new NotificationsParent();
-                notification.setParent(parent);
-                notification.setTitle(title);
-                notification.setContent(content);
-                notification.setCreateAt(LocalDateTime.now());
-                notification.setStatus(false); // chưa đọc
 
                 Integer notificationId = notificationsParentService.createAutoNotification(
                         parent.getParentID(), title, content);
                 emailService.sendHtmlNotificationEmail(parent, title, content, notificationId);
             }
         }
-        return new SendConsentFormResult(sentForms, errors);
+
+        // 👉 Nếu có lỗi thì ném exception luôn, không trả result nữa
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException("Có lỗi khi gửi phiếu:\n" + String.join("\n", errors));
+        }
     }
+
 
 
     @Override

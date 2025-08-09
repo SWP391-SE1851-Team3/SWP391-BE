@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,6 +27,9 @@ import java.util.Optional;
 public class ManagerService implements ManagerServiceInterFace {
     private ManagerInterFace managerInterFace;
 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private StudentRepo studentRepo;
 
@@ -124,55 +128,51 @@ public class ManagerService implements ManagerServiceInterFace {
         }
 
         // Kiểm tra Username
-        if (parentRepository.existsByUserName(userDTO.getUserName()) ||
-                nurseRepository.existsByUserName(userDTO.getUserName())) {
+        if (nurseRepository.existsByUserName(userDTO.getUserName())) {
             return ResponseEntity.badRequest().body("Username đã tồn tại");
         }
 
         // Kiểm tra Email
-        if (parentRepository.existsByEmail(userDTO.getEmail()) ||
-                nurseRepository.existsByEmail(userDTO.getEmail())) {
+        if (nurseRepository.existsByEmail(userDTO.getEmail())) {
             return ResponseEntity.badRequest().body("Email đã tồn tại");
         }
 
 
-        switch (userDTO.getRoleId()) {
-
-
-
-
-                case 1: // Parent
-                    Parent p = new Parent();
-                    //  ParentDTO parentDTO = new ParentDTO();
-                    p.setUserName(userDTO.getUserName());
-                    p.setPassword(userDTO.getPassword());
-                    p.setFullName(userDTO.getFullName());
-                    p.setPhone(userDTO.getPhone());
-                    p.setEmail(userDTO.getEmail());
-                    p.setIsActive(userDTO.getIsActive());
-                    p.setOccupation(userDTO.getOccupation());
-                    p.setRelationship(userDTO.getRelationship());
-                    p.setRoleID(userDTO.getRoleId());
-
-
-                p.setUserName(userDTO.getUserName());
-                p.setPassword(userDTO.getPassword());
-                p.setFullName(userDTO.getFullName());
-                p.setPhone(userDTO.getPhone());
-                p.setEmail(userDTO.getEmail());
-                p.setIsActive(userDTO.getIsActive());
-                p.setOccupation(userDTO.getOccupation());
-                p.setRelationship(userDTO.getRelationship());
-                p.setRoleID(userDTO.getRoleId());
-
-                parentRepository.AddNewParent(p);
-                return ResponseEntity.ok(p);
-
-
-            case 2: // SchoolNurse
+//        switch (userDTO.getRoleId()) {
+//
+//
+//            case 1: // Parent
+//                Parent p = new Parent();
+//                //  ParentDTO parentDTO = new ParentDTO();
+//                p.setUserName(userDTO.getUserName());
+//                p.setPassword(userDTO.getPassword());
+//                p.setFullName(userDTO.getFullName());
+//                p.setPhone(userDTO.getPhone());
+//                p.setEmail(userDTO.getEmail());
+//                p.setIsActive(userDTO.getIsActive());
+//                p.setOccupation(userDTO.getOccupation());
+//                p.setRelationship(userDTO.getRelationship());
+//                p.setRoleID(userDTO.getRoleId());
+//
+//
+//                p.setUserName(userDTO.getUserName());
+//                p.setPassword(userDTO.getPassword());
+//                p.setFullName(userDTO.getFullName());
+//                p.setPhone(userDTO.getPhone());
+//                p.setEmail(userDTO.getEmail());
+//                p.setIsActive(userDTO.getIsActive());
+//                p.setOccupation(userDTO.getOccupation());
+//                p.setRelationship(userDTO.getRelationship());
+//                p.setRoleID(userDTO.getRoleId());
+//
+//                parentRepository.AddNewParent(p);
+//                return ResponseEntity.ok(p);
+//
+//
+//            case 2: // SchoolNurse
                 SchoolNurse n = new SchoolNurse();
                 n.setUserName(userDTO.getUserName());
-                n.setPassword(userDTO.getPassword());
+                n.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 n.setFullName(userDTO.getFullName());
                 n.setPhone(userDTO.getPhone());
                 n.setEmail(userDTO.getEmail());
@@ -182,15 +182,25 @@ public class ManagerService implements ManagerServiceInterFace {
                 n.setRoleID(userDTO.getRoleId());
 
                 nurseRepository.AddNewSchoolNurses(n);
-                return ResponseEntity.ok(n);
-
-            default:
-                return ResponseEntity.badRequest().body("Không thể thêm mới tài khoản cho vai trò này!");
-        }
+               return ResponseEntity.ok(n);
+//            case 3:
+//                Manager m = new Manager();
+//                m.setUserName(userDTO.getUserName());
+//                m.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+//                m.setFullName(userDTO.getFullName());
+//                m.setPhone(userDTO.getPhone());
+//                m.setEmail(userDTO.getEmail());
+//                m.setIsActive(userDTO.getIsActive());
+//                m.setRole(role.get());
+//                managerRepository.save(m);
+//            default:
+//                return ResponseEntity.badRequest().body("Không thể thêm mới tài khoản cho vai trò này!");
+//        }
 
 
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> updateUser(int id, int roleId, UserUpdateDTO userDTO) {
 
@@ -203,7 +213,7 @@ public class ManagerService implements ManagerServiceInterFace {
                     Parent p = parentRepository.GetParentById(id);
                     p.setUserName(userDTO.getUserName());
                     //    p.setUserName(userDTO.getUserName());
-                    p.setPassword(userDTO.getPassword());
+                    p.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                     p.setFullName(userDTO.getFullName());
                     p.setPhone(userDTO.getPhone());
                     p.setEmail(userDTO.getEmail());
@@ -220,7 +230,8 @@ public class ManagerService implements ManagerServiceInterFace {
                 }
                 //SchoolNurse n = nurseRepository.GetSchoolNursesById(id);
                 n.setUserName(userDTO.getUserName());
-                n.setPassword(userDTO.getPassword());
+                String password = passwordEncoder.encode(userDTO.getPassword());
+                n.setPassword(password);
                 n.setFullName(userDTO.getFullName());
                 n.setPhone(userDTO.getPhone());
                 n.setEmail(userDTO.getEmail());
@@ -228,7 +239,7 @@ public class ManagerService implements ManagerServiceInterFace {
                 SchoolNurse updateN = nurseRepository.UpdateSchoolNurses(n);
                 return ResponseEntity.ok(updateN);
         }
-        return null;
+        return ResponseEntity.badRequest().body("Can not update with role: " + roleId);
     }
 
     @Transactional
@@ -244,11 +255,11 @@ public class ManagerService implements ManagerServiceInterFace {
                     }
 
 //                    parent.setIsActive(0); // Set the parent as inactive instead of deleting
-                    if(parent.getIsActive() == 0) {
-                        parentRepo.updateParent(parent.getParentID(),1);
+                    if (parent.getIsActive() == 0) {
+                        parentRepo.updateParent(parent.getParentID(), 1);
 
-                    }else {
-                        parentRepo.updateParent(parent.getParentID(),0);
+                    } else {
+                        parentRepo.updateParent(parent.getParentID(), 0);
                     }
 
                     return ResponseEntity.ok("Parent data deleted successfully.");
@@ -260,11 +271,10 @@ public class ManagerService implements ManagerServiceInterFace {
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("SchoolNurse with ID " + id + " and RoleID " + roleId + " not found.");
                     }
 
-                    if(n.getIsActive() ==0){
-                        nurseRepository.updateNurse(n.getNurseID(),1);
-                    }
-                    else {
-                        nurseRepository.updateNurse(n.getNurseID(),0);
+                    if (n.getIsActive() == 0) {
+                        nurseRepository.updateNurse(n.getNurseID(), 1);
+                    } else {
+                        nurseRepository.updateNurse(n.getNurseID(), 0);
                     }
                     return ResponseEntity.ok("SchoolNurse data deleted successfully.");
                 case 3: // Student

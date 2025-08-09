@@ -28,7 +28,10 @@ public class StudentHealthProfile {
     private double Weight;
     private String NoteOfParent;
     private Date LastUpdated;
-    private  int StudentID;
+//    private  int StudentID;
+   @ManyToOne
+   @JoinColumn(name = "StudentID")  // Đây là khóa ngoại tham chiếu cột StudentID trong bảng hiện tại
+    private Student student;
     private int ParentID;
     private String Vaccines;
 }

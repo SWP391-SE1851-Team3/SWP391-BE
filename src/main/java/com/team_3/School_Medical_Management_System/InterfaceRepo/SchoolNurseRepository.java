@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface SchoolNurseRepository extends JpaRepository<SchoolNurse, Integer> {
-    @Query("SELECT s FROM SchoolNurse s WHERE s.IsActive = 1")
+    @Query("SELECT s FROM SchoolNurse s")
     public List<SchoolNurse> getAllWithIsActive();
 
 }

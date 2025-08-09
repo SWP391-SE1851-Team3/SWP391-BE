@@ -23,9 +23,10 @@ public class StudentMedicalEventService {
 
         for (MedicalEventDetails detail : details) {
             String studentName = detail.getStudent().getFullName() + " - " + detail.getStudent().getClassName();
-
+            Long eventDetailsID = detail.getDetailsID();
            Integer eventId =  detail.getMedicalEvent().getEventID();
-            String eventType = "Không xác định"; // Giá trị mặc định
+           // String eventType = ""; // Giá trị mặc định
+            List<String> eventTypeName = new ArrayList<>();
             LocalDateTime time = detail.getMedicalEvent().getEventDateTime() != null
                     ? detail.getMedicalEvent().getEventDateTime()
                     : LocalDateTime.now();
@@ -36,15 +37,14 @@ public class StudentMedicalEventService {
 
             // Lấy typeName từ MedicalEventType qua MedicalEvent_EventType
             if (detail.getMedicalEvent().getMedicalEventEventTypes()!= null && !detail.getMedicalEvent().getMedicalEventEventTypes().isEmpty()) {
-                MedicalEvent_EventType eventTypeLink = detail.getMedicalEvent().getMedicalEventEventTypes().get(0); // Lấy loại sự kiện đầu tiên
-                if (eventTypeLink.getMedicalEvent() != null) {
-                    eventType = eventTypeLink.getEventType().getTypeName() != null
-                            ? eventTypeLink.getEventType().getTypeName()
-                            : "Không xác định";
+                for (MedicalEvent_EventType eventTypeLink : detail.getMedicalEvent().getMedicalEventEventTypes()) {
+                    if (eventTypeLink.getEventType() != null && eventTypeLink.getEventType().getTypeName() != null) {
+                        eventTypeName.add(eventTypeLink.getEventType().getTypeName());
+                    }
                 }
             }
 
-            dtos.add(new StudentMedicalEventDto(studentName, eventType, time, status, actions,eventId));
+            dtos.add(new StudentMedicalEventDto(studentName, eventTypeName, time, status, actions,eventId,eventDetailsID));
         }
 
         return dtos;

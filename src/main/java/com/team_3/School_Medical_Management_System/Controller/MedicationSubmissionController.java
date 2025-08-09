@@ -1,6 +1,31 @@
 package com.team_3.School_Medical_Management_System.Controller;
 
-import com.team_3.School_Medical_Management_System.DTO.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.team_3.School_Medical_Management_System.DTO.ConfirmMedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationDetailsExtendedDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionDTO;
+import com.team_3.School_Medical_Management_System.DTO.MedicationSubmissionInfoDTO;
+import com.team_3.School_Medical_Management_System.DTO.StudentMappingParent;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.ConfirmMedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.MedicationSubmissionServiceInterface;
 import com.team_3.School_Medical_Management_System.InterFaceSerivce.SchoolNurseServiceInterFace;
@@ -8,20 +33,9 @@ import com.team_3.School_Medical_Management_System.InterFaceSerivce.StudentServi
 import com.team_3.School_Medical_Management_System.Model.MedicationSubmission;
 import com.team_3.School_Medical_Management_System.Model.Student;
 import com.team_3.School_Medical_Management_System.Service.FileStorageService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/medication-submission")
@@ -168,7 +182,7 @@ public class MedicationSubmissionController {
      * Upload ảnh thuốc (PNG) cho medication submission
      */
     @PostMapping(value = "/upload-medicine-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload medicine image", description = "Upload PNG image for medication submission")
+    @Operation(summary = "Upload medicine image", description = "Upload image (PNG, JPG, JPEG, GIF, ...) for medication submission")
     public ResponseEntity<?> uploadMedicineImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("submissionId") int submissionId,
@@ -180,9 +194,9 @@ public class MedicationSubmissionController {
                 return ResponseEntity.badRequest().body("Please select a file to upload");
             }
 
-            // Kiểm tra file có phải PNG không
-            if (!fileStorageService.isPngFile(file)) {
-                return ResponseEntity.badRequest().body("Only PNG files are allowed");
+            // Kiểm tra file có phải là ảnh không
+            if (!fileStorageService.isImageFile(file)) {
+                return ResponseEntity.badRequest().body("Only image files are allowed (PNG, JPG, JPEG, GIF, ...)");
             }
 
             // Kiểm tra kích thước file (tối đa 5MB)
@@ -229,36 +243,45 @@ public class MedicationSubmissionController {
     }
 
     /**
-     * Lấy ảnh thuốc từ database
+     * Lấy ảnh thuốc từ database (trả về base64 có header)
      */
     @GetMapping("/medicine-image/{submissionId}")
-    @Operation(summary = "Get medicine image", description = "Retrieve medicine image by submission ID")
-    public ResponseEntity<byte[]> getMedicineImage(@PathVariable int submissionId) {
+    @Operation(summary = "Get medicine image", description = "Retrieve medicine image by submission ID (base64 with header)")
+    public ResponseEntity<String> getMedicineImage(@PathVariable int submissionId) {
         try {
             MedicationSubmission submission = medicationSubmissionService.getMedicationSubmissionById(submissionId);
             if (submission == null || submission.getMedicineImage() == null || submission.getMedicineImage().isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
-            byte[] imageBytes;
+            String base64WithHeader = null;
+            String imageData = submission.getMedicineImage();
 
-            // Kiểm tra xem có phải Base64 string không
-            if (fileStorageService.isBase64(submission.getMedicineImage())) {
-                // Chuyển đổi từ Base64 thành byte array
-                imageBytes = fileStorageService.convertFromBase64(submission.getMedicineImage());
+            if (fileStorageService.isBase64(imageData)) {
+                // Nếu đã có header, trả về luôn
+                if (imageData.startsWith("data:")) {
+                    base64WithHeader = imageData;
+                } else {
+                    // Nếu không có header, mặc định là PNG
+                    base64WithHeader = "data:image/png;base64," + imageData;
+                }
             } else {
-                // Đọc từ file system (trường hợp lưu đường dẫn file)
+                // Nếu là file, đọc file và convert sang base64 có header
                 try {
-                    imageBytes = Files.readAllBytes(fileStorageService.getFilePath(submission.getMedicineImage()));
+                    String fileName = imageData;
+                    byte[] fileBytes = Files.readAllBytes(fileStorageService.getFilePath(fileName));
+                    String ext = fileName.toLowerCase();
+                    String contentType = "image/png";
+                    if (ext.endsWith(".jpg") || ext.endsWith(".jpeg")) contentType = "image/jpeg";
+                    else if (ext.endsWith(".gif")) contentType = "image/gif";
+                    String base64 = java.util.Base64.getEncoder().encodeToString(fileBytes);
+                    base64WithHeader = "data:" + contentType + ";base64," + base64;
                 } catch (IOException e) {
                     return ResponseEntity.notFound().build();
                 }
             }
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
-                    .body(imageBytes);
-
+            return ResponseEntity.ok(base64WithHeader);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

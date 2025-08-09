@@ -32,6 +32,7 @@ public class HealthCheckStudentSimplifiedDTO {
     private int formID;
     private String className;
     private String fullName;
+    private  String scheduleName;
 
 
 

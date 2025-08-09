@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface MedicalEventRepo extends JpaRepository<MedicalEvent, Integer> {
 
 
+
     @Modifying
     @Query("DELETE FROM MedicalEventMedicalSupply mems WHERE mems.medicalEvent.eventID = :eventId")
     void deleteMedicalEventMedicalSuppliesByEventId(@Param("eventId") Integer eventId);

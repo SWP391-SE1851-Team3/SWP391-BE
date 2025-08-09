@@ -5,6 +5,7 @@ import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentCreate
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentUpdateDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckStudentUpdateResponseDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckStudentServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.HealthCheck_Student;
 import com.team_3.School_Medical_Management_System.Model.SchoolNurse;
 import com.team_3.School_Medical_Management_System.Service.HealthCheckStudentService;
@@ -23,7 +24,7 @@ import java.util.List;
 public class HealthCheckStudentController {
 
     @Autowired
-    private HealthCheckStudentService healthCheckStudentService;
+    private HealthCheckStudentServiceInterface healthCheckStudentService;
 
     @Autowired
     private SchoolNurseService schoolNurseService;

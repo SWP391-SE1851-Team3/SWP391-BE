@@ -14,11 +14,15 @@ import java.util.List;
 public interface MedicalEvent_EventTypeRepo extends JpaRepository<MedicalEvent_EventType, MedicalEvent_EventTypeId> {
     // Interface này sẽ tự động cung cấp các phương thức CRUD cho MedicalEvent_EventType
     // Bạn có thể thêm các phương thức tùy chỉnh nếu cần thiết
-    List<MedicalEvent_EventType> findByMedicalEvent_EventID(Integer eventId);
+    MedicalEvent_EventType findByMedicalEvent_EventID(Integer eventId);
 
     @Modifying
-
     @Query("DELETE FROM MedicalEvent_EventType met WHERE met.medicalEvent.eventID = :eventId")
     void deleteByMedicalEvent_EventID(@Param("eventId") Integer eventId);
-   // void deleteByMedicalEvent_EventID(Integer eventId);
+
+
+
+
+    @Query("select met FROM MedicalEvent_EventType met WHERE met.medicalEvent.eventID = :eventId")
+ public List<MedicalEvent_EventType> findByMedicalEvent_Event(@Param("eventId") Integer eventId);
 }

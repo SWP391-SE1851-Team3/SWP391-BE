@@ -91,22 +91,25 @@ public class StudentService implements StudentServiceInterFace {
     }
 
     @Override
-    public List<StudentsDTO> getAllStudentsByClassName(String className) {
+    public List<StudentsDTO> getAllStudentsByClassName(List<String> className) {
 
-        List<Student> clasName = studentRepository.findAll();
+        List<Student> listStudent = studentRepository.findAll();
         List<StudentsDTO> sameClassName = new ArrayList<>();
-        for (Student m : clasName) {
-            if(m.getClassName().equalsIgnoreCase(className)){
-                StudentsDTO studentsDTO = new StudentsDTO();
-                studentsDTO.setStudentID(m.getStudentID());
+        for (Student m : listStudent) {
 
-                studentsDTO.setGender(m.getGender());
-                studentsDTO.setFullName(m.getFullName());
-                studentsDTO.setClassName(m.getClassName());
-                studentsDTO.setIsActive(m.getIsActive());
-                studentsDTO.setParentID(m.getParent().getParentID());
-                sameClassName.add(studentsDTO);
+            for (String classNameItem : className) {
+                if (m.getClassName().equalsIgnoreCase(classNameItem)) {
+                    StudentsDTO studentsDTO = new StudentsDTO();
+                    studentsDTO.setStudentID(m.getStudentID());
+                    studentsDTO.setGender(m.getGender());
+                    studentsDTO.setFullName(m.getFullName());
+                    studentsDTO.setClassName(m.getClassName());
+                    studentsDTO.setIsActive(m.getIsActive());
+                    studentsDTO.setParentID(m.getParent().getParentID());
+                    sameClassName.add(studentsDTO);
+                }
             }
+
         }
 
         return sameClassName;

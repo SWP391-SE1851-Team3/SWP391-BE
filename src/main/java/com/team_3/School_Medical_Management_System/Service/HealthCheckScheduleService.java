@@ -5,6 +5,7 @@ import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthCheckSche
 import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthConsentFormRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.NotificationsParentRepository;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.StudentRepository;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckScheduleServiceInterFace;
 import com.team_3.School_Medical_Management_System.Model.*;
 import com.team_3.School_Medical_Management_System.Repositories.*;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.HealthCheckScheduleRepository;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class HealthCheckScheduleService {
+public class HealthCheckScheduleService implements HealthCheckScheduleServiceInterFace {
 
     @Autowired
     private HealthCheckScheduleRepository healthCheckScheduleRepository;
@@ -36,6 +37,11 @@ public class HealthCheckScheduleService {
 
     // Create a new health check schedule
     public HealthCheck_Schedule createHealthCheckSchedule(HealthCheck_ScheduleDTO healthCheckScheduleDTO) {
+        // Kiểm tra tên schedule đã tồn tại chưa
+        if (healthCheckScheduleRepository.existsByName(healthCheckScheduleDTO.getName())) {
+            throw new IllegalArgumentException("Tên lịch kiểm tra sức khỏe '" + healthCheckScheduleDTO.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
+        }
+
         HealthCheck_Schedule healthCheckSchedule = new HealthCheck_Schedule();
         healthCheckSchedule.setName(healthCheckScheduleDTO.getName());
         healthCheckSchedule.setSchedule_Date(healthCheckScheduleDTO.getSchedule_Date());
@@ -92,6 +98,12 @@ public class HealthCheckScheduleService {
         Optional<HealthCheck_Schedule> optionalSchedule = healthCheckScheduleRepository.findById(id);
         if (optionalSchedule.isPresent()) {
             HealthCheck_Schedule schedule = optionalSchedule.get();
+            // Chỉ kiểm tra trùng tên nếu tên mới khác tên cũ
+            if (dto.getName() != null && !dto.getName().equals(schedule.getName())) {
+                if (healthCheckScheduleRepository.existsByName(dto.getName())) {
+                    throw new IllegalArgumentException("Tên lịch kiểm tra sức khỏe '" + dto.getName() + "' đã tồn tại. Vui lòng chọn tên khác.");
+                }
+            }
             if (dto.getName() != null) schedule.setName(dto.getName());
             if (dto.getLocation() != null) schedule.setLocation(dto.getLocation());
             if (dto.getNotes() != null) schedule.setNotes(dto.getNotes());
@@ -164,7 +176,7 @@ public class HealthCheckScheduleService {
         for (HealthCheck_Schedule schedule : schedules) {
             // Get creator nurse name if available
             if (schedule.getCreatedByNurseID() != null && schedule.getCreatedByNurseID() > 0
-                && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
+                    && (schedule.getCreatedByNurseName() == null || schedule.getCreatedByNurseName().isEmpty())) {
                 try {
                     SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getCreatedByNurseID());
                     if (nurse != null) {
@@ -177,7 +189,7 @@ public class HealthCheckScheduleService {
 
             // Get updater nurse name if available
             if (schedule.getUpdatedByNurseID() != null && schedule.getUpdatedByNurseID() > 0
-                && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
+                    && (schedule.getUpdatedByNurseName() == null || schedule.getUpdatedByNurseName().isEmpty())) {
                 try {
                     SchoolNurse nurse = schoolNurseService.GetSchoolNursesById(schedule.getUpdatedByNurseID());
                     if (nurse != null) {
@@ -197,5 +209,3 @@ public class HealthCheckScheduleService {
         return healthCheckScheduleRepository.save(schedule);
     }
 }
-
-

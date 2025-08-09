@@ -4,6 +4,7 @@ import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentCreate
 import com.team_3.School_Medical_Management_System.DTO.HealthCheck_StudentDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthCheckStudentSimplifiedDTO;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckStudentServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class HealthCheckStudentService {
+public class HealthCheckStudentService implements HealthCheckStudentServiceInterface {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -49,6 +50,9 @@ public class HealthCheckStudentService {
 
     @Autowired
     private HealthConsultationService healthConsultationService;
+
+    @Autowired
+    private HealthCheckScheduleService healthCheckScheduleService;
 
     // Create health check results using DTO with CheckID
     @Transactional
@@ -293,9 +297,16 @@ public class HealthCheckStudentService {
     // Helper method to convert HealthCheck_Student entity to simplified DTO
     private HealthCheckStudentSimplifiedDTO convertToSimplifiedDTO(HealthCheck_Student entity) {
         HealthCheckStudentSimplifiedDTO dto = new HealthCheckStudentSimplifiedDTO();
-
+        String scheduleName = null;
+        if (entity.getHealth_ScheduleID() != null) {
+            Optional<HealthCheck_Schedule> schedule = healthCheckScheduleService.getHealthCheckScheduleById(entity.getHealth_ScheduleID());
+            if (schedule.isPresent()) {
+                scheduleName = schedule.get().getName();
+            }
+        }
         // Basic health check info
         dto.setCheckID(entity.getCheckID());
+        dto.setScheduleName(scheduleName);
         dto.setStudentID(entity.getStudentID());
         dto.setStatus(entity.getStatus()); // Thêm set status
         dto.setHeight(entity.getHeight());

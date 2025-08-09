@@ -9,7 +9,7 @@ import java.util.List;
 @Transactional
 @Data
 public class MedicalEventUpdateDTO {
-    private Integer eventId;
+
     private String usageMethod;
     private Boolean isEmergency;
     private Boolean hasParentBeenInformed;
@@ -23,7 +23,7 @@ public class MedicalEventUpdateDTO {
     private String processingStatus;
      // Y tá cập nhật sự kiện
     private String nurseName;
-
+    private List<MedicalTypeDTO> listMedicalEventTypes;
     private List<MedicalSupplyQuantityDTO> medicalSupplies;
 
 

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,7 +62,6 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-
             // Tìm người dùng theo username và role
             UserDetails userDetails = userDetailsService.loadUserByUsernameAndRole(
                     loginRequest.getEmailName(), loginRequest.getRole()
@@ -84,12 +86,13 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
 
-            List<String> roles = userDetailsImpl.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .collect(Collectors.toList());
-
+            List<String> roles = new ArrayList<>();
+            for (GrantedAuthority authority : userDetailsImpl.getAuthorities()) {
+                roles.add(authority.getAuthority());
+            }
 
             return ResponseEntity.ok(new JwtResponse(
+
                     jwt, userDetailsImpl.getId(), userDetailsImpl.getUsername(),
                     userDetailsImpl.getEmail(), roles
             ));
@@ -102,76 +105,55 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/signup/nurse")
-//    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
+    @PostMapping("/signup/admin")
+    public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignUpRequest signUpRequest) {
+//        if (adminRepository.(signUpRequest.getUsername())) {
 //            return ResponseEntity.badRequest().body("Username is already taken!");
 //        }
-//        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
+//        if (adminRepository.existsByEmail(signUpRequest.getEmail())) {
 //            return ResponseEntity.badRequest().body("Email is already taken!");
 //        }
-//        SchoolNurse nurse = new SchoolNurse();
-//        nurse.setUserName(signUpRequest.getUsername());
-//        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-//        nurse.setEmail(signUpRequest.getEmail());
-//        nurse.setFullName("tuan");
-//       // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
-//        nurse.setRoleID(signUpRequest.getRole());
-//        nurse.setPhone("0357899455");
-//        nurse.setIsActive(1);
-//        nurse.setCertification("jaja");
-//        nurse.setSpecialisation("aaa");
-//        nurseRepo.save(nurse);
-//        return ResponseEntity.ok("Nurse registered successfully");
-//    }
+        Manager admin = new Manager();
+        admin.setUserName(signUpRequest.getUsername());
+        admin.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        admin.setEmail(signUpRequest.getEmail());
+        admin.setFullName("Nguyen Van A");
+        admin.setPhone("0357899455");
 
-//    @PostMapping("/signup/admin")
-//    public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignUpRequest signUpRequest) {
-////        if (adminRepository.(signUpRequest.getUsername())) {
-////            return ResponseEntity.badRequest().body("Username is already taken!");
-////        }
-////        if (adminRepository.existsByEmail(signUpRequest.getEmail())) {
-////            return ResponseEntity.badRequest().body("Email is already taken!");
-////        }
-//        Manager admin = new Manager();
-//        admin.setUserName(signUpRequest.getUsername());
-//        admin.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-//        admin.setEmail(signUpRequest.getEmail());
-//        admin.setFullName("Nguyen Van A");
-//        admin.setPhone("0357899455");
-//        Role role = roleRepo.findById(signUpRequest.getRole())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid role ID: " + signUpRequest.getRole()));
-//        admin.setRole(role);
-//
-//     admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
-//
-//        // Giả sử 3 là ID của vai trò Adminf
-//        adminRepository.saveManager(admin);
-//        return ResponseEntity.ok("Admin registered successfully");
-//    }
-//
-//    @PostMapping("/signup/parent")
-//    public ResponseEntity<?> registerParent(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if (parentRepository.existsByUserName(signUpRequest.getUsername())) {
-//            return ResponseEntity.badRequest().body("Username is already taken!");
-//        }
-//        if (parentRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return ResponseEntity.badRequest().body("Email is already taken!");
-//        }
-//        Parent parent = new Parent();
-//        parent.setUsername(signUpRequest.getUsername());
-//        parent.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-//        parent.setEmail(signUpRequest.getEmail());
-//        parent.setChildId(signUpRequest.getChildId());
-//        parentRepository.save(parent);
-//        return ResponseEntity.ok("Parent registered successfully");
-//    }
+        Optional<Role> role = roleRepo.findById(3);
+        admin.setRole(role.get());
 
-//    @PostMapping("/encode-password")
-//    public ResponseEntity<?> encodePassword(@RequestBody String plainPassword) {
-//        String encodedPassword = passwordEncoder.encode(plainPassword);
-//        return ResponseEntity.ok("Encoded password: " + encodedPassword);
-//    }
+        admin.setIsActive(1); // Giả sử 1 là trạng thái hoạt động
+
+        // Giả sử 3 là ID của vai trò Adminf
+        adminRepository.saveManager(admin);
+        return ResponseEntity.ok("Admin registered successfully");
+    }
+
+    @PostMapping("/signup/nurse")
+    public ResponseEntity<?> registerNurse(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if (schoolNurseRepo.existsByUserName(signUpRequest.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken!");
+        }
+        if (schoolNurseRepo.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken!");
+        }
+        SchoolNurse nurse = new SchoolNurse();
+        nurse.setUserName(signUpRequest.getUsername());
+        nurse.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        nurse.setEmail(signUpRequest.getEmail());
+        nurse.setFullName(signUpRequest.getFullName());
+
+        // nurse.setLicenseNumber(signUpRequest.getLicenseNumber());
+        nurse.setRoleID(2);
+        nurse.setPhone(signUpRequest.getPhone());
+        nurse.setIsActive(1);
+        nurse.setCertification(signUpRequest.getCertification());
+        nurse.setSpecialisation(signUpRequest.getSpecialisation());
+        nurseRepo.save(nurse);
+        return ResponseEntity.ok("Nurse registered successfully");
+    }
+
 
     @PostMapping("/manual-check")
     public ResponseEntity<?> manualCheckPassword(@RequestBody LoginRequest loginRequest) {
@@ -198,30 +180,7 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/reset-password")
-//    public ResponseEntity<?> resetPassword(@RequestBody LoginRequest loginRequest) {
-//        try {
-//            // Tìm user theo role
-//            String newPlainPassword = "123456"; // Mật khẩu mới đơn giản
-//            String encodedPassword = passwordEncoder.encode(newPlainPassword);
-//
-//            if ("NURSE".equalsIgnoreCase(loginRequest.getRole())) {
-//                SchoolNurse nurse = schoolNurseRepo.(loginRequest.getUsername());
-//                if (nurse == null) {
-//                    return ResponseEntity.status(404).body("Không tìm thấy y tá với username: " + loginRequest.getUsername());
-//                }
-//                nurse.setPassword(encodedPassword);
-//                nurseRepo.save(nurse);
-//            }
-//            // Thêm các role khác ở đây nếu cần
-//
-//            return ResponseEntity.ok("Đã reset mật khẩu thành: " + newPlainPassword +
-//                                    "\nMật khẩu đã mã hóa: " + encodedPassword);
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("Lỗi khi reset mật khẩu: " + e.getMessage());
-//        }
-//    }
+
 
     @PostMapping("/test-bcrypt")
     public ResponseEntity<?> testBCrypt(@RequestBody String password) {

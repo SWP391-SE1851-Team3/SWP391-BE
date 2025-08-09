@@ -169,6 +169,7 @@ public class TransferModelsDTO {
             dto.setStudentID(null);
             dto.setClassName(null);
         }
+        dto.setParentID(vaccination_records.getStudent().getParent().getParentID());
 
         // Basic info
         dto.setVaccinationRecordID(vaccination_records.getVaccinationRecordID());
@@ -178,6 +179,7 @@ public class TransferModelsDTO {
         dto.setSymptoms(vaccination_records.getSymptoms());
         dto.setNotes(vaccination_records.getNotes());
         dto.setStatus(vaccination_records.getStatus());
+        dto.setDot(vaccination_records.getVaccineBatches().getDot());
 
         // Nurse info - mapping riêng từng trường
         if (vaccination_records.getCreatedByNurse() != null) {
@@ -444,8 +446,7 @@ public class TransferModelsDTO {
         viewDTO.setStatus(consent_forms.getStatus());
         viewDTO.setLocation(consent_forms.getVaccineBatches().getLocation());
         viewDTO.setBacthID(consent_forms.getVaccineBatches().getBatchID());
-
-
+        viewDTO.setDot(consent_forms.getVaccineBatches().getDot());
         return viewDTO;
     }
 

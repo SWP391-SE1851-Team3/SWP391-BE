@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-
+@AllArgsConstructor
 public class MedicalEventDTO {
     private Integer eventId;
     private String usageMethod;
@@ -20,9 +20,9 @@ public class MedicalEventDTO {
     private String temperature;
     private String heartRate;
     private LocalDateTime eventDateTime;
-    private Integer parentID;
-    private Integer studentId;
-    private String typeName;
+    private List<Integer> parentID;
+    private List<Integer> studentId;
+
     private Integer nurseId;// Y tá tạo sự kiện
     private String nurseName; // Tên y tá tạo sự kiện
     private Integer updatedByNurseId; // Y tá cập nhật sự kiện
@@ -30,32 +30,19 @@ public class MedicalEventDTO {
     private String note;
     private String result;
     private String processingStatus;
-    private Integer eventTypeId;
-
+    // private Integer eventTypeId;
+    private List<MedicalTypeDTO> listMedicalEventTypes;
     private List<MedicalSupplyQuantityDTO> medicalSupplies;
 
-    public MedicalEventDTO(Integer eventId, String usageMethod, boolean isEmergency, boolean hasParentBeenInformed, String temperature, String heartRate, LocalDateTime eventDateTime, Integer parentID, Integer studentId, String typeName, Integer nurseId, String nurseName, Integer updatedByNurseId, String updatedByNurseName, String note, String result, String processingStatus, Integer eventTypeId, List<MedicalSupplyQuantityDTO> medicalSupplies) {
-        this.eventId = eventId;
-        this.usageMethod = usageMethod;
-        this.isEmergency = isEmergency;
-        this.hasParentBeenInformed = hasParentBeenInformed;
-        this.temperature = temperature;
-        this.heartRate = heartRate;
-        this.eventDateTime = eventDateTime;
-        this.parentID = parentID;
-        this.studentId = studentId;
-        this.typeName = typeName;
-        this.nurseId = nurseId;
-        this.nurseName = nurseName;
-        this.updatedByNurseId = updatedByNurseId;
-        this.updatedByNurseName = updatedByNurseName;
-        this.note = note;
-        this.result = result;
-        this.processingStatus = processingStatus;
-        this.eventTypeId = eventTypeId;
-        this.medicalSupplies = medicalSupplies;
-    }
 
     public MedicalEventDTO() {
+    }
+
+    public boolean isEmergency() {
+        return isEmergency;
+    }
+
+    public void setEmergency(boolean emergency) {
+        isEmergency = emergency;
     }
 }

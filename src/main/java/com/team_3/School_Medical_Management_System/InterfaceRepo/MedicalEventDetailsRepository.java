@@ -1,7 +1,6 @@
 package com.team_3.School_Medical_Management_System.InterfaceRepo;
 
 import com.team_3.School_Medical_Management_System.Model.MedicalEventDetails;
-import com.team_3.School_Medical_Management_System.Model.MedicalEventDetailsId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,10 +12,23 @@ import java.util.Optional;
 
 @Repository
 // dựa vào các interface này thì có thể tìm kiếm sự chung giữa 2 bảng đó
-public interface MedicalEventDetailsRepository extends JpaRepository<MedicalEventDetails, MedicalEventDetailsId> {
+public interface MedicalEventDetailsRepository extends JpaRepository<MedicalEventDetails, Integer> {
     List<MedicalEventDetails> findAllByOrderByMedicalEventEventDateTimeDesc();
-    Optional<MedicalEventDetails> findByMedicalEvent_EventID(Integer eventId);
 
-    void deleteByMedicalEvent_EventID(Integer eventId);
+  @Query("SELECT m FROM MedicalEventDetails m WHERE m.detailsID = :eventDetailsId")
+    Optional<MedicalEventDetails> findByDetailsID(@Param("eventDetailsId") Integer eventDetailsId);
 
+
+
+    @Query("SELECT m FROM MedicalEventDetails m WHERE m.detailsID = :eventDetailsId AND m.student.StudentID = :studentId")
+    Optional<MedicalEventDetails> findByMedicalEventDetailsAndStudentID(@Param("eventDetailsId") Integer eventDetailsId,
+                                                                        @Param("studentId") Integer studentId);
+    @Modifying
+    @Query("DELETE FROM MedicalEventDetails m WHERE m.medicalEvent.eventID = :eventId")
+    void deleteByMedicalEvent_EventID(@Param("eventId") Integer eventId);
+
+
+
+ @Query("SELECT m FROM MedicalEventDetails m WHERE m.student.StudentID = :studentId AND m.parent.ParentID = :parentId")
+ public List<MedicalEventDetails> findByStudentIdAndParentId(@Param("studentId") int studentId, @Param("parentId") int parentId);
 }

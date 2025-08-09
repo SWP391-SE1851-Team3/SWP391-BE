@@ -2,7 +2,9 @@ package com.team_3.School_Medical_Management_System.Service;
 
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationDTO;
 import com.team_3.School_Medical_Management_System.DTO.HealthConsultationUpdateDTO;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthCheckStudentServiceInterface;
 import com.team_3.School_Medical_Management_System.InterfaceRepo.*;
+import com.team_3.School_Medical_Management_System.InterFaceSerivce.HealthConsultationServiceInterface;
 import com.team_3.School_Medical_Management_System.Model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class HealthConsultationService {
+public class HealthConsultationService implements HealthConsultationServiceInterface {
 
     @Autowired
     private HealthConsultationRepository healthConsultationRepository;
@@ -24,14 +26,18 @@ public class HealthConsultationService {
     @Autowired
     private NotificationsParentRepository notificationsParentRepository;
 
+
     @Autowired
-    private SchoolNurseService schoolNurseService;
+    private HealthCheckStudentRepository healthCheckStudentRepository;
 
     @Autowired
     private SchoolNurseInterFace schoolNurseRepository;
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private HealthCheckScheduleRepository healthCheckScheduleRepository;
 
     // Helper method to get nurse name by ID
     public String getNurseNameById(Integer nurseId) {
@@ -64,7 +70,6 @@ public class HealthConsultationService {
     // Update consultation status
     public HealthConsultation updateConsultationStatus(int consultationId, String status, String notes, String location, Date consultDate, Integer updatedByNurseID) {
         Optional<HealthConsultation> optionalConsultation = healthConsultationRepository.findById(consultationId);
-
         if (optionalConsultation.isPresent()) {
             HealthConsultation consultation = optionalConsultation.get();
             consultation.setStatus(status);
@@ -80,9 +85,18 @@ public class HealthConsultationService {
             consultation.setUpdatedByNurseID(updatedByNurseID);
 
             HealthConsultation updatedConsultation = healthConsultationRepository.save(consultation);
-            if(status.equalsIgnoreCase("Đang chờ xử lý")) {
+            if (status.equalsIgnoreCase("Đang chờ xử lý")) {
                 // Notify parent about consultation completion
                 notifyParentAboutConsultationInvitation(updatedConsultation);
+            }
+
+            if (status.equalsIgnoreCase("Đã hoàn thành")) {
+                Optional<HealthCheck_Student> healthCheckStudentOpt = healthCheckStudentRepository.findById(consultation.getCheckID());
+                if (healthCheckStudentOpt.isPresent()) {
+                    HealthCheck_Student healthCheckStudent = healthCheckStudentOpt.get();
+                    healthCheckStudent.setStatus(status);
+                    healthCheckStudentRepository.save(healthCheckStudent);
+                }
             }
             return updatedConsultation;
         }
@@ -156,11 +170,25 @@ public class HealthConsultationService {
         dto.setUpdatedByNurseID(consultation.getUpdatedByNurseID());
         dto.setCreate_at(consultation.getCreate_at());
         dto.setUpdate_at(consultation.getUpdate_at());
-
-        // Get nurse names dynamically
         dto.setCreatedByNurseName(getNurseNameById(consultation.getCreatedByNurseID()));
         dto.setUpdatedByNurseName(getNurseNameById(consultation.getUpdatedByNurseID()));
 
+        // Lấy tên lịch tư vấn sức khỏe
+        String scheduleName = null;
+        if (consultation.getCheckID() > 0) {
+            Optional<HealthCheck_Student> checkStudentOpt = healthCheckStudentRepository.findById(consultation.getCheckID());
+            if (checkStudentOpt.isPresent()) {
+                HealthCheck_Student checkStudent = checkStudentOpt.get();
+                Integer scheduleId = checkStudent.getHealth_ScheduleID();
+                if (scheduleId != null) {
+                    Optional<HealthCheck_Schedule> scheduleOpt = healthCheckScheduleRepository.findById(scheduleId);
+                    if (scheduleOpt.isPresent()) {
+                        scheduleName = scheduleOpt.get().getName();
+                    }
+                }
+            }
+        }
+        dto.setScheduleName(scheduleName);
         return dto;
     }
 
@@ -184,6 +212,7 @@ public class HealthConsultationService {
         dto.setUpdatedByNurseID(consultation.getUpdatedByNurseID());
         return dto;
     }
+
     // Create a new consultation
     public HealthConsultation createConsultation(HealthConsultationDTO dto) {
         Optional<Student> studentOpt = studentRepository.findById(dto.getStudentID());

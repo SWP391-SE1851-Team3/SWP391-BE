@@ -174,13 +174,13 @@ public class HealthCheckScheduleRepo implements com.team_3.School_Medical_Manage
     }
 
     @Override
-    public <S extends HealthCheck_Schedule> Optional<S> findOne(Example<S> example) {
-        return repository.findOne(example);
+    public <S extends HealthCheck_Schedule, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+        return repository.findBy(example, queryFunction);
     }
 
     @Override
-    public Page<HealthCheck_Schedule> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+    public <S extends HealthCheck_Schedule> Optional<S> findOne(Example<S> example) {
+        return repository.findOne(example);
     }
 
     @Override
@@ -189,7 +189,32 @@ public class HealthCheckScheduleRepo implements com.team_3.School_Medical_Manage
     }
 
     @Override
-    public <S extends HealthCheck_Schedule, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
-        return repository.findBy(example, queryFunction);
+    public Page<HealthCheck_Schedule> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    // Implementation cho các phương thức mới được thêm vào interface
+    @Override
+    public HealthCheck_Schedule findByName(String name) {
+        TypedQuery<HealthCheck_Schedule> query = entityManager.createQuery(
+                "SELECT h FROM HealthCheck_Schedule h WHERE h.name = :name",
+                HealthCheck_Schedule.class
+        );
+        query.setParameter("name", name);
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null; // Trả về null nếu không tìm thấy
+        }
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(h) FROM HealthCheck_Schedule h WHERE h.name = :name",
+                Long.class
+        );
+        query.setParameter("name", name);
+        return query.getSingleResult() > 0;
     }
 }

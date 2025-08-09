@@ -26,14 +26,14 @@ public class UserController {
     @Autowired
     private ManagerService managerService;
 
-    private ParentRepository parentRepository;
-    private SchoolNurseRepository schoolNurseRepository;
-
     @Autowired
-    public UserController(ParentRepository parentRepository, SchoolNurseRepository schoolNurseRepository) {
-        this.parentRepository = parentRepository;
-        this.schoolNurseRepository = schoolNurseRepository;
+    public UserController(RoleService roleService, ManagerService managerService) {
+        this.roleService = roleService;
+        this.managerService = managerService;
     }
+
+
+
 
 
     @PostMapping("/createUser")

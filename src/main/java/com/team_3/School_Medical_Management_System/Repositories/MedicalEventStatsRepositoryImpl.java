@@ -73,7 +73,7 @@ public class MedicalEventStatsRepositoryImpl implements MedicalEventStatsReposit
     public Long countCompletedEvents(LocalDateTime startDate, LocalDateTime endDate) {
         String jpql;
 
-            jpql = "SELECT COUNT(e) FROM MedicalEventDetails e WHERE e.processingStatus = 'COMPLETED'";
+            jpql = "SELECT COUNT(e) FROM MedicalEventDetails e WHERE e.processingStatus = 'Hoàn thành'";
 
         try {
             Query query = entityManager.createQuery(jpql);
@@ -92,7 +92,7 @@ public class MedicalEventStatsRepositoryImpl implements MedicalEventStatsReposit
 
         String sql;
 
-            sql = "SELECT COUNT(*) FROM MedicalEventDetails WHERE ProcessingStatus = 'PENDING'";
+            sql = "SELECT COUNT(*) FROM MedicalEventDetails WHERE ProcessingStatus = N'Chờ xử lí'";
 
         try {
 //            String sql = """

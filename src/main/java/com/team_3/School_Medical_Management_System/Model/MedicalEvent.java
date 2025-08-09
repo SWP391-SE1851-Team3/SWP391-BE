@@ -21,18 +21,23 @@ public class MedicalEvent {
     private Integer eventID;
     @NotBlank(message = "Phương pháp xử lí không được để trống")
     private String usageMethod;
-    @NotNull(message = "Tình trạng khẩn cấp không được để trống")
+
     private Boolean isEmergency;
-    @NotNull(message = "Thông báo phụ huynh không được để trống")
+
     private Boolean hasParentBeenInformed;
+
+   // @Pattern(regexp = "^\\d+(\\.\\d+)?°C$", message = "Nhiệt độ phải có định dạng số và kết thúc bằng ' °C'")
     private String temperature;
+
+  //@Pattern(regexp = "^\\d+\\s?bpm$", message = "Nhịp tim phải có định dạng số và kết thúc bằng 'bpm'")
     private String heartRate;
+
     private LocalDateTime eventDateTime;
 
 
-    @ManyToOne
-    @JoinColumn(name = "ParentID")
-    private Parent parent;
+//    @ManyToOne
+//    @JoinColumn(name = "ParentID")
+//    private Parent parent;
 
     @ManyToOne
     @JoinColumn(name = "CreatedByNurseID")
@@ -45,7 +50,6 @@ public class MedicalEvent {
 
     @OneToMany(mappedBy = "medicalEvent", cascade = CascadeType.ALL)
     private List<MedicalEvent_EventType> medicalEventEventTypes = new ArrayList<>();
-
 
 
 

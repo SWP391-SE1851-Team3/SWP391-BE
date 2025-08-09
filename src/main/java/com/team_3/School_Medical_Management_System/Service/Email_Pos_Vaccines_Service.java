@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class Email_Pos_Vaccines_Service {
     @Autowired
     private NotificationsParentRepository notificationsParentRepository;
 
+    @Async("emailTaskExecutor")
     public void sendSimpleNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(parent.getEmail());
@@ -40,6 +42,7 @@ public class Email_Pos_Vaccines_Service {
         updateNotificationStatus(notificationId);
     }
 
+    @Async("emailTaskExecutor")
     public void sendHtmlNotificationEmail(Parent parent, String title, String content, Integer notificationId) {
         try {
             // Lấy thông tin người dùng hiện tại và thời gian

@@ -10,20 +10,26 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@IdClass(MedicalEventDetailsId.class)
+
 public class MedicalEventDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long detailsID;
+
+
     @ManyToOne
     @JoinColumn(name = "StudentID")
     private Student student;
 
-    @Id
+
     @ManyToOne
     @JoinColumn(name = "EventID")
     private MedicalEvent medicalEvent;
 
-
+    @ManyToOne
+    @JoinColumn(name = "ParentID")
+    private Parent parent;
 
     @Column(columnDefinition = "nvarchar(MAX)", nullable = false)
     private String note; // Ghi chú (ví dụ: "Đã cho uống paracetamol")
@@ -40,6 +46,7 @@ public class MedicalEventDetails {
     @ManyToOne
     @JoinColumn(name = "UpdatedByNurseID")
     private SchoolNurse updatedByNurse;
+
     public MedicalEventDetails() {
     }
 
